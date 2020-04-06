@@ -29,11 +29,11 @@
             <a href="/chantier/plaquette/{{.IdChantier}}/op/update/{{.Id}}">
                 <img src="/static/img/update.png" title="Modifier cette opération">
             </a>
-            <a href="#" onclick="deleteOperationSimple({{.Id}}, {{.IdChantier}}, {{.TypOp}})" class="padding-left05">
+            <a href="#" onclick="deleteOperationSimple({{.Id}}, {{.IdChantier}}, {{.TypOp | labelActivite}})" class="padding-left05">
                 <img src="/static/img/delete.png" title="Supprimer cette opération">
             </a>
         </td>
-        <td>{{.TypOp | LabelActivite}}</td>
+        <td>{{.TypOp | labelActivite}}</td>
         <td><a href="/acteur/{{.Acteur.Id}}">{{.Acteur.String}}</a></td>
         <td class="center">{{.DateOp | dateFr}}</td>
         <td><script>document.write(round({{.Qte}}, 2));</script> {{.Unite | labelUnite}}</td>

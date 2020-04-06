@@ -31,7 +31,7 @@ func init() {
 		"labelUnite":        labelUnite,
 		"labelExploitation": labelExploitation,
 		"labelValorisation": labelValorisation,
-		"LabelActivite":    LabelActivite,
+		"labelActivite":     labelActivite,
 		"twoDigits":         twoDigits,
 		"ucFirst":           ucFirst,
 		"zero2empty":        zero2empty,
@@ -77,7 +77,7 @@ func labelValorisation(str string) template.HTML {
 }
 
 // Type d'opération simple (abattage, débardage...)
-func LabelActivite(str string) template.HTML {
+func labelActivite(str string) template.HTML {
 	return template.HTML(model.LabelActivite(str))
 }
 

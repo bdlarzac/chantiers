@@ -67,7 +67,7 @@ func AnonymizeActeurs(){
 		Bic: "",
 		Iban: "",
 		Siret: "",
-		Notes: "Données de test - nor correspond à aucune personne réelle",
+		Notes: "Données de test - ne correspond à aucune personne réelle",
     }
     
     acteurs, _ := model.SortedActeurs(ctx.DB, "id")
@@ -81,6 +81,7 @@ func AnonymizeActeurs(){
         a.Tel = autres.Tel
         a.TelPortable = autres.TelPortable
         a.Email = autres.Email
+        a.Notes = autres.Notes
 fmt.Printf("%+v\n",a)
         err := model.UpdateActeur(ctx.DB, a)
         if err != nil {
