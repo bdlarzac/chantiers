@@ -138,13 +138,21 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	_, fontSize := pdf.GetFontSize()
     colW = 28 // largeur de toutes les colonnes - devrait en fait être calculé col par col
     colH = fontSize+2
+    //_, topMarg,_,bottomMarg := pdf.GetMargins()
+    maxY := 274 // mesuré empiriquement
+    //maxY := 297 - topMarg - bottomMarg
     //
     pdf.Ln(4*colH)
 	for _, item := range aff.Items {
+	    heightNeeded := float64(colH * float64(4 + 2 * len(item.Lignes)))
+	    if heightNeeded + pdf.GetY() > float64(maxY) {
+	        pdf.AddPage()
+	    }
 	    // titre item
 	    pdf.SetX(x0)
 		pdf.SetFont("Arial", "B", 10)
 		pdf.Cell(50, colH*2, tr(item.Titre + " " + tiglib.DateFrText(item.Date)))
+		//pdf.Cell(50, colH*2, tr(item.Titre + " " + tiglib.DateFrText(item.Date)))
         pdf.Ln(2*colH)
 		for _, ligne := range(item.Lignes){
             // titre colonnes                                                                                                              

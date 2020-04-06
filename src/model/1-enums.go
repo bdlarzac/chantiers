@@ -91,6 +91,26 @@ func LabelUnite(abbrev string) string {
 	return "??? BUG LabelUnite ???"
 }
 
+// Labels des unités manipulées par l'appli - format adapté à select html (à cause de m3)
+// @param abbrev : unité telle que stockée en base
+func LabelUniteSelect(abbrev string) string {
+	switch abbrev {
+	case "HE":
+		return "heures"
+	case "JO":
+		return "jours"
+	case "M3":
+		return "m3"
+	case "MA":
+		return "maps"
+	case "ST":
+		return "stères"
+	case "TO":
+		return "tonnes"
+	}
+	return "??? BUG LabelUnite ???"
+}
+
 // ************************** Type de valorisation *******************************
 // cf type postgres typevalo
 

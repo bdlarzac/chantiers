@@ -172,7 +172,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			},
 			Details: detailsChautreForm{
 				Chantier:            chantier,
-				EssenceOptions:      webo.FmtOptions(WeboEssence(), chantier.Essence),
+				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-" + chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "valorisation-"+chantier.TypeValo),
 				UniteOptions:        webo.FmtOptions(WeboChautreUnite(), "unite-"+chantier.Unite),
