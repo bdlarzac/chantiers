@@ -1,0 +1,21 @@
+<h1>
+Unité de gestion {{.Details.UG.Code}}
+</h1>
+
+<div class="tab">
+  <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-general')">GENERAL</button>
+  <button class="tablinks" onclick="openTab(event, 'tab-recap')">Récapitulatif</button>
+</div>
+
+<div id="tab-general" class="tabcontent">
+    <p>
+        {{ template "ug-show-general.html" . }}
+    </p>
+</div>
+
+<div id="tab-recap" class="tabcontent">
+    <h2>PROTO</h2>
+    <p>
+        {{ template "ug-show-recap.html" . }}
+    </p>
+</div>

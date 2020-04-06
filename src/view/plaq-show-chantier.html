@@ -1,0 +1,433 @@
+{{with .Details.Chantier}}
+<h2>
+    Opérations
+    <a class="padding-left" href="/chantier/plaquette/{{.Id}}/op/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Ajouter une opération simple (abattage, débardage, déchiquetage, broyage)">
+    </a>
+</h2>
+
+{{if .Operations}}
+<table class="bordered">
+    <tr>
+        <th></th>
+        <th>Opération</th>
+        <th>Personne</th>
+        <th>Date</th>
+        <th>Qté</th>
+        <th>PU HT</th>
+        <th>Prix HT</th>
+        <th>TVA</th>
+        <th>Prix TTC</th>
+        <th>Date paiement</th>
+        <th>Notes</th>
+    </tr>
+{{end}}
+    
+    {{range .Operations}}
+    <tr>
+        <td>
+            <a href="/chantier/plaquette/{{.IdChantier}}/op/update/{{.Id}}">
+                <img src="/static/img/update.png" title="Modifier cette opération">
+            </a>
+            <a href="#" onclick="deleteOperationSimple({{.Id}}, {{.IdChantier}}, {{.TypOp}})" class="padding-left05">
+                <img src="/static/img/delete.png" title="Supprimer cette opération">
+            </a>
+        </td>
+        <td>{{.TypOp | LabelActivite}}</td>
+        <td><a href="/acteur/{{.Acteur.Id}}">{{.Acteur.String}}</a></td>
+        <td class="center">{{.DateOp | dateFr}}</td>
+        <td><script>document.write(round({{.Qte}}, 2));</script> {{.Unite | labelUnite}}</td>
+        <td><script>document.write(round({{.PUHT}}, 2));</script> &euro;</td>
+        <td><script>document.write(round(prixHT({{.PUHT}}, {{.Qte}}), 2));</script> &euro;</td>
+        <td>{{.TVA}} %</td>
+        <td><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2));</script> &euro;</td>
+        <td class="center">{{.DatePay | dateFr}}</td>
+        <td>{{.Notes | nl2br}}</td>
+    </tr>
+    {{end}}
+    
+{{if .Operations}}
+</table>
+{{end}}
+
+<script>
+    // Variables utilisées à la fois pour transport et rangement
+    let totalLigne = 0;
+    let coutHT = 0;
+    let coutTTC = 0;
+</script>
+
+<!-- *********************************************** -->
+<h2>
+    Transport plateforme
+    <a class="padding-left" href="/chantier/plaquette/{{.Id}}/transport/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Ajouter un transport">
+    </a>
+</h2>
+
+{{if .Transports}}
+<script>
+    let totalTransport = 0;
+</script>
+<table class="bordered">
+    <tr>
+        <th colspan="2">Transport</th>
+        <th colspan="2">Coût</th>
+        <th>Total HT</th>
+    </tr>
+{{end}}
+    
+    {{range .Transports}}
+    <script>
+        totalLigne = 0;
+    </script>
+    <tr>
+        <td>
+            <a href="/chantier/plaquette/{{.IdChantier}}/transport/update/{{.Id}}">
+                <img src="/static/img/update.png" title="Modifier ce transport">
+            </a>
+            <a href="#" onclick="deleteTransport({{.Id}}, {{.IdChantier}})" class="padding-left05">
+                <img src="/static/img/delete.png" title="Supprimer ce transport">
+            </a>
+        </td>
+        
+        <td class="vertical-align-top">
+            <div class="padding-bottom05"><a href="/stockage/liste">{{.Tas.Nom}}</a></div>
+            <div class="grid2-pres">
+                <div>Transporteur</div>
+                <div><a href="/acteur/{{.IdTransporteur}}">{{.Transporteur.String}}</a></div>
+                
+                <div>Date</div>
+                <div class="bold">{{.DateTrans | dateFr}}</div>
+                
+                <div>Qté</div>
+                <div class="bold">{{.Qte}} maps</div>
+            </div>
+            {{if .Notes}}
+                <div class="bold margin-top">Notes</div>
+                <div>{{.Notes | nl2br}}</div>
+            {{end}}
+        </td>
+        
+        {{if eq .TypeCout "G"}}
+        <!-- Transport, coût global -->
+        <script>
+            coutHT = {{.GlPrix}};
+            coutTTC = prixTTC(coutHT, {{.GlTVA}});
+            totalLigne += coutHT;
+        </script>
+        <td colspan="2" class="vertical-align-top">
+            <div class="padding02 bg-ccc center margin-bottom05">Global</div>
+            <div class="grid2-pres">
+                <div>Prix HT</div>
+                <div class="bold">{{.GlPrix}} &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.GlTVA}} %</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.GlDatePay | dateFr}}</div>
+            </div>
+        </td>
+    
+        {{else}}
+        <!-- Transport, coût détaillé - transporteur -->
+        <script>
+            coutHT = prixHT({{.TrNheure}}, {{.TrPrixH}});
+            coutTTC = prixTTC(coutHT, {{.TrTVA}});
+            totalLigne += coutHT;
+        </script>
+        <td class="vertical-align-top">
+            <div class="padding02 bg-ccc center margin-bottom05">Transporteur</div>
+            <div class="grid2-pres">
+                <div>Nb heures</div>
+                <div class="bold">{{.TrNheure}}</div>
+                
+                <div>Prix HT / h</div>
+                <div class="bold">{{.TrPrixH}} &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.TrTVA}} %</div>
+                
+                <div class="padding-top05">Total HT</div>
+                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.TrDatePay | dateFr}}</div>
+            </div>
+        </td>
+        
+        <td class="vertical-align-top">
+            {{if eq .TypeCout "C"}}
+            <!-- Transport, coût détaillé - camion -->
+            <script>
+                coutHT = prixHT({{.CaNkm}}, {{.CaPrixKm}});
+                coutTTC = prixTTC(coutHT, {{.CaTVA}});
+                totalLigne += coutHT;
+            </script>
+            <div class="padding02 bg-ccc center margin-bottom05">Camion</div>
+            <div class="grid2-pres">
+                <div>Nb km</div>                                                        
+                <div class="bold">{{.CaNkm}}</div>
+                
+                <div>Prix HT / km</div>
+                <div class="bold">{{.CaPrixKm}} &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.CaTVA}} %</div>
+                
+                <div class="padding-top05">Total HT</div>
+                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.CaDatePay | dateFr}}</div>
+            </div>
+            {{else if eq .TypeCout "T"}}
+            <!-- Transport, coût détaillé - tracteur + benne -->
+            <script>
+                coutHT = {{.TbNbenne}} * {{.TbDuree}} * {{.TbPrixH}};
+                coutTTC = prixTTC(coutHT, {{.TbTVA}});
+                totalLigne += coutHT;
+            </script>
+            <div class="padding02 bg-ccc center margin-bottom05">Tracteur + benne</div>
+            <div class="grid2-pres">
+                <div>Nb bennes</div>
+                <div class="bold">{{.TbNbenne}}</div>
+                
+                <div>Durée / benne</div>
+                <div class="bold">{{.TbDuree}} h</div>
+                
+                <div>Prix HT / h</div>
+                <div class="bold">{{.TbPrixH}} &euro; / h</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.TbTVA}} %</div>
+                
+                <div class="padding-top05">Total HT</div>
+                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.TbDatePay | dateFr}}</div>
+            </div>
+            {{end}}
+        </td>
+        {{end}} {{/* end cout != G */}}
+
+        <td class="bold center">
+            <script>document.write(round(totalLigne, 2));</script> &euro;
+        </td>
+        
+    </tr>
+    <script>
+        totalTransport += totalLigne;
+    </script>
+    {{end}}
+    
+    {{if .Transports}}
+    <tr>
+        <td colspan="4" class="bold right">Total transport HT</td>
+        <td class="bold center">
+            <script>document.write(round(totalTransport, 2));</script> &euro;
+        </td>
+    </tr>
+    {{end}}
+    
+{{if .Transports}}
+</table>
+{{end}}
+
+
+<!-- *********************************************** -->
+<h2>
+    Rangement
+    <a class="padding-left" href="/chantier/plaquette/{{.Id}}/range/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Ajouter un rangement">
+    </a>
+</h2>
+
+{{if .Rangements}}
+<script>
+    let totalRangement = 0;
+</script>
+<table class="bordered">
+    <tr>
+        <th colspan="2">Rangement</th>
+        <th colspan="2">Coût</th>
+        <th>Total HT</th>
+    </tr>
+{{end}}
+    
+{{range .Rangements}}
+    <script>
+        totalLigne = 0;
+    </script>
+    <tr>
+        <td>
+            <a href="/chantier/plaquette/{{.IdChantier}}/range/update/{{.Id}}">
+                <img src="/static/img/update.png" title="Modifier ce rangement">
+            </a>
+            <a href="#" onclick="deleteRangement({{.Id}}, {{.IdChantier}})" class="padding-left05">
+                <img src="/static/img/delete.png" title="Supprimer ce rangement">
+            </a>
+        </td>
+        
+        <td class="vertical-align-top">
+            <div><a href="/stockage/liste">{{.Tas.Nom}}</a></div>
+            <div class="grid2-pres">
+                <div>Date</div>
+                <div class="bold">{{.DateRange | dateFr}}</div>
+                
+                <div>Conducteur</div>
+                <div class="bold"><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
+                
+                {{if .Notes}}
+                <div>Notes</div>
+                <div>{{.Notes | nl2br}}</div>
+                {{end}}
+            </div>
+        </td>
+        
+        {{if eq .TypeCout "G"}}
+        <script>
+            coutHT = {{.GlPrix}};
+            coutTTC = prixTTC(coutHT, {{.GlTVA}});
+            totalLigne += coutHT;
+        </script>
+        <td colspan="2">
+            <div class="padding02 bg-ccc center margin-bottom05">Global</div>
+            <div class="grid2-pres">
+                <div>Prix HT</div>
+                <div class="bold">{{.GlPrix}} &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.GlTVA}} %</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.GlDatePay | dateFr}}</div>
+            </div>
+        </td>
+        
+        {{else}}
+        <script>
+            coutHT = prixHT({{.CoNheure}}, {{.CoPrixH}});
+            coutTTC = prixTTC(coutHT, {{.CoTVA}});
+            totalLigne += coutHT;
+        </script>
+        <td class="vertical-align-top">
+            <div class="padding02 bg-ccc center margin-bottom05">Conducteur</div>
+            <div class="grid2-pres">
+                <div>Nb heures</div>
+                <div class="bold">{{.CoNheure}}</div>
+                
+                <div>Prix HT / h</div>
+                <div class="bold">{{.CoPrixH}} &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.CoTVA}} %</div>
+                
+                <div class="padding-top05">Total HT</div>
+                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.CoDatePay | dateFr}}</div>
+            </div>
+        </td>
+        
+        <script>
+            coutHT = {{.OuPrix}};
+            coutTTC = prixTTC(coutHT, {{.OuTVA}});
+            totalLigne += coutHT;                                             
+        </script>
+        <td class="vertical-align-top">
+            <div class="padding02 bg-ccc center margin-bottom05">Outil</div>
+            <div class="grid2-pres">
+                <div>Prix HT</div>
+                <div class="bold">{{.OuPrix}} &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.OuTVA}} %</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.OuDatePay | dateFr}}</div>
+            </div>
+        </td>
+        {{end}} {{/* end cout != G */}}
+        
+        <td class="bold center">
+            <script>document.write(round(totalLigne, 2));</script> &euro;
+        </td>
+        
+    </tr>
+    <script>
+        totalRangement += totalLigne;
+    </script>
+{{end}}
+    
+{{if .Rangements}}
+    <tr>
+        <td colspan="4" class="bold right">Total rangement HT</td>
+        <td class="bold center">
+            <script>document.write(round(totalRangement, 2));</script> &euro;
+        </td>
+    </tr>
+{{end}}
+    
+{{if .Rangements}}
+</table>
+{{end}}
+
+
+{{end}}
+
+<script>
+// *****************************************
+function deleteOperationSimple(idOp, idChantier, typOp){
+    var msg = "Attention, en cliquant sur OK,\n"
+            + "cette opération " + typOp + "\nsera définitivement supprimée";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/chantier/plaquette/" + idChantier + "/op/delete/" + idOp;
+    }
+}
+
+// *****************************************
+function deleteTransport(idTransport, idChantier){
+    var msg = "Attention, en cliquant sur OK,\n"
+            + "ce transport sera définitivement supprimé";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/chantier/plaquette/" + idChantier + "/transport/delete/" + idTransport;
+    }
+}
+
+// *****************************************
+function deleteRangement(idRangement, idChantier){
+    var msg = "Attention, en cliquant sur OK,\n"
+            + "ce rangement sera définitivement supprimé";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/chantier/plaquette/" + idChantier + "/range/delete/" + idRangement;
+    }
+}
+</script>

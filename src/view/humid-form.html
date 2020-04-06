@@ -1,0 +1,212 @@
+
+{{with .Details.Humid}}
+
+<form class="form margin-left2" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+    <div class="grid2-form">
+    
+        <label for="tas">Tas</label>
+        <select name="tas" id="tas">
+            {{$.Details.TasOptions}}
+        </select>
+        
+        <label for="date-mesure">Date de la mesure : </label>
+        <input type="date" id="date-mesure" name="date-mesure" value="{{.DateMesure | dateIso}}" required>
+        
+        <label for="valeur-mesure">Humidité : </label>
+        <span>
+            <input type="number" class="width5" id="valeur-mesure" name="valeur-mesure" value="{{.Valeur | zero2empty}}" step="1" min="0" max="100" required> (%)
+        </span>
+        
+        <label for="choix-personne">Personnes : </label>
+        <div>
+            <div class="grid2-form margin-bottom">
+                <div class="autocomplete">
+                    <input type="text" id="choix-personne" name="choix-personne" autocomplete="off" value="" class="width20">
+                </div>
+                <a id="ajout-personne" href="#" onclick="ajouterPersonne();">
+                    <img class="inline bigicon" src="/static/img/validate.png" title="Ajouter cette personne" />
+                </a>
+            </div>
+            
+            <ul id="personnes-choisies" class="naked margin0 padding0">
+            </ul>
+        </div>
+        
+        <label for="notes">Notes</label>
+        <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
+        
+    </div>
+    
+    <div class="margin-top">
+        <div class="float-left">
+            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
+        </div>
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Valider">
+        </div>
+    </div>
+
+    <input type="hidden" name="id-mesure" value="{{.Id}}">
+    <input type="hidden" name="ids-personnes" id="ids-personnes" value="">
+</form>
+
+<a name="help"></a>
+<div id="help" class="margin display-none">
+    <div class="help-content">
+        <div class="help-title">Aide</div>
+        <div class="section">
+            <b>Personnes</b> : pour choisir les personnes effectuant la mesure, saisissez le nom d'une personne, puis cliquez sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" alt="Valider"> afin que cette personne soit prise en compte.
+        </div>
+    </div>
+</div>
+
+
+<script>   
+
+// ***************************************
+window.addEventListener("load", function(){
+    autocomplete(document.getElementById('choix-personne'), getPersonnesPossibles);         
+    // Utilisé pour conserver les ids des personnes ajoutées
+    // tableau "added-" + id personne => nom de la personne
+    window.globalPersons = [];
+    initialize();
+});
+
+// ***************************************
+function initialize(){
+    if({{.Id}} != 0){
+        // form update
+        // initialise les personnes choisies
+        {{range .Mesureurs}}
+            window.globalPersons[{{.Id}}] = {{.String}};
+            doAjouterPersonne("added-" + {{.Id}}, {{.String}});
+        {{end}}
+    }
+}
+
+// ***************************************
+/** 
+    Fonction utilisée par autocomplete() pour s'alimenter en données
+    @param inputField input type=text utilisé
+                      pour récupérer des noms de personnes par ajax
+**/
+// @todo remplacer async = false par await et Promise
+function getPersonnesPossibles(inputField){
+    var result = [];
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response != null){
+                response.forEach(function(item) {
+                    result.push(item.name);
+                    window.globalPersons["added-" + item.id] = item.name;
+                });
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
+    xhr.send();
+    return result;
+}
+
+// ***************************************
+function ajouterPersonne(){
+    var personName = document.getElementById("choix-personne").value.trim();
+    if(personName == ""){
+        return;
+    }
+    var newId = "";
+    for(var tmp in window.globalPersons){
+        if(window.globalPersons[tmp] == personName){
+            newId = tmp;
+            break;
+        }
+    }
+    if(newId == ""){
+        alert("Impossible d'ajouter cette personne");
+        return;
+    }
+    // teste si la personne est déjà dans la liste
+    var personnesChoisies = document.getElementById("personnes-choisies");
+    for(var li=personnesChoisies.firstChild; li!==null; li=li.nextSibling){
+        if(li.id == newId){
+            alert("Impossible d'ajouter deux fois la même personne");
+            return;
+        }
+    }
+    //
+    doAjouterPersonne(newId, personName);
+    document.getElementById("choix-personne").value = "";
+}
+
+// ***************************************
+/** 
+    Ajoute une personne dans la liste "personnes-choisies"
+    Séparé de ajouterPersonne() car appelé par initialize() et par ajouterPersonne()
+**/
+function doAjouterPersonne(id, name){
+    var img = document.createElement("img");
+    img.setAttribute("class", "inline vertical-align-middle bigicon");
+    img.setAttribute("src", "/static/img/delete.png");
+    img.setAttribute("title", "Retirer cette personne");
+    var a = document.createElement("a");
+    a.setAttribute("href", "#");
+    a.setAttribute("onclick", "retirerPersonne('" + id + "');");
+    a.setAttribute("class", "padding-right05");
+    var li = document.createElement("li");
+    li.setAttribute("id", id);
+    li.setAttribute("class", "margin-bottom05");
+    var text = document.createTextNode(name);
+    a.appendChild(img);
+    li.appendChild(a);
+    li.appendChild(text);
+    document.getElementById("personnes-choisies").appendChild(li);
+}
+
+// ***************************************
+function retirerPersonne(id){
+    var personnesChoisies = document.getElementById("personnes-choisies");
+    var elt = document.getElementById(id);
+    personnesChoisies.removeChild(elt);
+}
+
+// ***************************************
+function validateForm(){
+    let msg = "";
+    if(document.getElementById("CHOOSE_TAS").selected == true){
+        msg += "\n- Vous devez choisir un tas";
+    }
+    
+    var personnesChoisies = document.getElementById("personnes-choisies");
+    var n = 0;
+    var ids = [];
+    for(var li=personnesChoisies.firstChild; li!==null; li=li.nextSibling){
+        if(li.id == null){
+            continue;
+        }
+        if(li.id.startsWith("added-")){
+            n++;
+            ids.push(li.id.replace("added-", ""));
+        }
+    }
+    if(n == 0){
+        msg += "\n- Vous devez au moins choisir une personne\nqui effectue la mesure";
+    }
+    else{
+        // remplit le champ hidden
+        document.getElementById("ids-personnes").value = ids.join("-");
+    }
+    //
+    if(msg != ""){
+        msg = "Impossible de valider ce formulaire :" + msg;
+        alert(msg);
+        return false;
+    }
+    return true;
+}
+
+</script>
+
+{{end}}

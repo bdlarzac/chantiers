@@ -1,0 +1,86 @@
+<h1>{{.Header.Title}}</h1>
+
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+
+    <div class="grid2-form">
+        <label>Personne</label>
+        <div><a href="/acteur/{{.Details.Acteur.Id}}">{{.Details.Acteur.String}}</a></div>
+
+        <label for="date-debut">Date début : </label>
+        <input type="date" id="date-debut" name="date-debut" value="" required>
+        
+        <label for="date-fin">Date fin : </label>
+        <input type="date" id="date-fin" name="date-fin" value="" required>
+        
+        <div>
+            <div class="bold">Activités à affacturer :</div>
+            <div class="padding-top right"><a id="op-tout-rien" href="#" onclick="changeOpToutRien();">Tout sélectionner</a></div>
+        </div>
+        <div>
+            <div><input type="checkbox" id="AB" name="AB"><label for="AB">Abattage</label></div>
+            <div><input type="checkbox" id="DB" name="DB"><label for="DB">Débardage</label></div>
+            <div><input type="checkbox" id="BR" name="BR"><label for="BR">Broyage</label></div>
+            <div><input type="checkbox" id="DC" name="DC"><label for="DC">Déchiquetage</label></div>
+            <div><input type="checkbox" id="TR" name="TR"><label for="TR">Transport plateforme</label></div>
+            <div><input type="checkbox" id="RG" name="RG"><label for="RG">Rangement</label></div>
+            <div><input type="checkbox" id="CG" name="CG"><label for="CG">Chargement</label></div>
+            <div><input type="checkbox" id="LV" name="LV"><label for="LV">Livraison</label></div>
+        </div>
+        
+    </div>
+    
+    <div class="float-right margin-top">
+        <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+        <input type="submit" class="margin-left" value="Valider">
+    </div>
+    
+    <input type="hidden" name="id-acteur" id="id-acteur" value="{{.Details.Acteur.Id}}">
+                                                                      
+</form>
+
+
+<script>                                                                                                         
+
+window.addEventListener("load", function(){
+    window.opToutRien = "tout";
+});
+
+function changeOpToutRien(){
+    if(window.opToutRien == "tout"){
+        document.getElementById("AB").checked = true;
+        document.getElementById("DB").checked = true;
+        document.getElementById("BR").checked = true;
+        document.getElementById("DC").checked = true;
+        document.getElementById("TR").checked = true;
+        document.getElementById("RG").checked = true;
+        document.getElementById("CG").checked = true;
+        document.getElementById("LV").checked = true;
+        document.getElementById("op-tout-rien").innerHTML = "Tout déselectionner";
+        window.opToutRien = "rien";
+    }
+    else{
+        document.getElementById("AB").checked = false;
+        document.getElementById("DB").checked = false;
+        document.getElementById("BR").checked = false;
+        document.getElementById("DC").checked = false;
+        document.getElementById("TR").checked = false;
+        document.getElementById("RG").checked = false;
+        document.getElementById("CG").checked = false;
+        document.getElementById("LV").checked = false;
+        document.getElementById("op-tout-rien").innerHTML = "Tout selectionner";
+        window.opToutRien = "tout";
+    }
+}
+
+
+// ***************************************
+function validateForm(){
+    var deb = document.getElementById("date-debut").value;
+    var fin = document.getElementById("date-fin").value;
+    if(fin <= deb){
+        alert("La date de fin doit se situer après la date de début");
+        return false;
+    }
+    return true;
+}
+</script>

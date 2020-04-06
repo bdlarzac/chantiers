@@ -1,0 +1,2 @@
+cd src/
+gin -i --all -a 8000 run main.go

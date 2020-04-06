@@ -1,0 +1,46 @@
+<div class="inline-block padding-right3">
+    <h1>Chantier plaquettes {{.Details.Chantier.String}}</h1>
+</div>
+
+<div class="inline-block">
+    <a href="/chantier/plaquette/update/{{.Details.Chantier.Id}}">
+        <img class="bigicon inline-block" src="/static/img/update.png" alt="Modifier les infos générales de ce chantier" title="Modifier les infos générales de ce chantier" >
+    </a>
+    <a href="#" onclick="deleteChantierPlaquette({{.Details.Chantier.Id}}, {{.Details.Chantier.String}})">
+        <img class="bigicon inline-block" src="/static/img/delete.png" alt="Supprimer ce chantier" title="Supprimer ce chantier">
+    </a>                                                              
+    <a class="padding-left2" href="/chantier/plaquette/new">
+        <img class="bigicon inline-block" src="/static/img/new.png" alt="Créer un nouveau chantier plaquettes" title="Créer un nouveau chantier plaquettes">
+    </a>
+</div>
+
+<div class="tab">
+  <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-general');" id="general">GENERAL</button>
+  <button class="tablinks" onclick="openTab(event, 'tab-chantier');" id="chantiers">Chantiers</button>
+  <button class="tablinks" onclick="openTab(event, 'tab-cout');" id="cout">Coût Exploitation</button>
+</div>
+
+<div id="tab-general" class="tabcontent">
+    <p>
+        {{ template "plaq-show-general.html" . }}
+    </p>
+</div>
+                                                                                                                                                      
+<div id="tab-chantier" class="tabcontent">
+    <p>
+        {{ template "plaq-show-chantier.html" . }}
+    </p>
+</div>
+
+<div id="tab-cout" class="tabcontent">
+    <p>
+        {{ template "plaq-show-cout.html" . }}
+    </p>
+</div>
+
+<script>
+// ***************************************
+window.addEventListener("load", function(){
+    document.getElementById("{{.Details.Tab}}").click();
+});
+</script>

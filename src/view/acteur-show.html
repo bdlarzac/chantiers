@@ -1,0 +1,91 @@
+<h1>
+    {{.Header.Title}}
+    <a class="padding-left" href="/affacture/form/{{.Details.Acteur.Id}}">
+        <span class="icon-euro" title="Payer cet acteur">&euro;</span>
+    </a>
+    
+</h1>
+
+<div class="flex-wrap">
+
+<div class="acteur-show">
+{{with .Details.Acteur}}
+    <div class="grid2-form">                  
+
+        <label>Nom / Dénomination</label>
+        <input readonly type="text" value="{{.Nom}}">
+    
+        <label>Prénom / Statut juridique</label>
+        <input readonly type="text" value="{{.Prenom}}">
+    
+        <label>Adresse 1 / Siège social</label>
+        <input readonly type="text" value="{{.Adresse1}}">
+    
+        <label>Adresse 2</label>
+        <input readonly type="text" value="{{.Adresse2}}">
+    
+        <label size="5">Code postal</label>
+        <div><input readonly type="text" size="5" value="{{.Cp}}"></div>
+    
+        <label>Ville</label>
+        <input readonly type="text" value="{{.Ville}}">
+        
+        <label>Téléphone</label>
+        <div><input readonly type="text" size="14" value="{{.Tel}}"></div>
+    
+        <label>Téléphone portable</label>
+        <div><input readonly type="text" size="14" value="{{.TelPortable}}"></div>
+    
+        <label>Email</label>
+        <input readonly type="text" value="{{.Email}}">
+    
+        <label>BIC</label>
+        <input readonly type="text" value="{{.Bic}}">
+    
+        <label>IBAN</label>
+        <input readonly type="text" value="{{.Iban}}">
+    
+        <label>Siret</label>
+        <input readonly type="text" value="{{.Siret}}">
+    
+        <label>Fournisseur plaquettes</label>
+        <div>{{if .Fournisseur}}Oui{{else}}Non{{end}}</div>
+        
+        <label>Propriétaire</label>
+        <div>{{if .Proprietaire}}Oui{{else}}Non{{end}}</div>
+        
+        <label>Actif</label>
+        <div>{{if .Actif}}Oui{{else}}Non{{end}}</div>
+        
+        <label>Commentaires</label>
+        <textarea readonly rows="6" cols="50">{{.Notes}}</textarea>
+</div>
+
+</div>
+{{end}}
+
+
+<div class="padding-left">
+    {{if .Details.Activites}}
+    <div class="big3 bold margin-bottom">Activité</div>
+    <table class="margin-left">
+    {{range .Details.Activites}}
+        <tr>
+            <td>
+                {{.Date | dateFr}} : {{.Role | ucFirst}}
+            </td>
+            <td class="padding-left">
+                <a href="{{.URL}}">{{.NomActivite}}</a>
+            </td>
+        </tr>
+    {{end}}
+    </table>
+    
+    {{else}}
+    <h3>Aucune activité</h3>
+    {{end}}
+</div>
+
+</div><!-- end class="flex-wrap" -->
+
+

@@ -1,0 +1,140 @@
+<h1>
+    Stockage plaquettes
+    <a class="padding-left" href="/stockage/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau lieu de stockage"/>
+    </a>
+</h1>
+
+
+{{range .Details}}
+    <hr>
+    {{$idStockage := .Id}}
+    {{$archived := .Archived}}
+    <h2>
+        {{.Nom}}
+        {{if not $archived}}
+            <a class="padding-left" href="/stockage/update/{{.Id}}">
+                <img class="bigicon inline" src="/static/img/update.png" title="Modifier ce lieu de stockage" />
+            </a>
+            <a href="#" onclick="deleteStockage({{.Id}}, {{.Nom}}, {{.Deletable}})">
+                <img class="bigicon inline" src="/static/img/delete.png" title="Supprimer ce lieu de stockage" />
+            </a>
+        {{end}}
+    </h2>
+    
+    <div class="margin-left2 margin-bottom2">
+    
+        <!-- ************************************* -->
+        {{if not $archived}}
+            <div class="big2 bold margin-top margin-bottom">Stock : {{.Stock}} maps</div>
+        {{end}}
+        
+        <!-- ************************************* -->
+        {{if not $archived}}
+            <div class="big2 bold margin-top margin-bottom">Tas courants</div>
+            {{if .TasActifs}}<ul class="naked">{{end}}
+            {{range .TasActifs}}
+                <li class="padding-bottom">
+                    <a class="padding-right" href="#" onclick="signalerTasVide({{.Id}}, {{.Nom}});" title="Signaler que ce tas est vide">
+                        <span class="bold big3 border2 padding-left02 padding-right02">&empty;</span>
+                    </a>
+                    <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = {{.Stock}} maps
+                </li>
+            {{end}}
+            {{if .TasActifs}}</ul>{{end}}
+        {{end}}
+        
+        <!-- ************************************* -->
+        <div class="big2 bold margin-top margin-bottom">
+            Loyers
+            {{if not $archived}}
+            <a class="padding-left" href="/loyer-stockage/new/{{.Id}}">
+                <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau loyer pour {{.Nom}}"/>
+            </a>
+            {{end}}
+        </div>
+        {{if .Loyers}}
+        <table class="bordered margin-left">
+            <tr>{{if not $archived}}<th></th>{{end}}<th>Début</th><th>Fin</th><th>Montant</th></tr>
+        {{end}}
+        {{range .Loyers}}                                         
+            <tr>
+                {{if not $archived}}
+                <td>
+                    <a href="#" onclick="deleteLoyer({{.Id}}, {{.DateDebut | dateFr}}, {{.DateFin | dateFr}}, {{.Montant}})">
+                        <img class="inline" src="/static/img/delete.png" title="Supprimer ce loyer" />
+                    </a>
+                    <a class="inline" href="loyer-stockage/update/{{.Id}}">
+                        <img src="/static/img/update.png" title="Modifier ce loyer" />
+                    </a>
+                </td>
+                {{end}}
+                <td>{{.DateDebut | dateFr}}</td>
+                <td>{{.DateFin | dateFr}}</td>
+                <td><b><script>document.write(round({{.Montant}}, 2));</script> &euro; / an</b></td>
+            </tr>
+        {{end}}
+        {{if .Loyers}}
+        </table>
+        {{end}}
+        
+    </div>
+{{end}}
+
+
+<script>
+// *****************************************
+function deleteStockage(id, nom, deletable){
+    var msg;
+    if(deletable){
+        msg = "Attention, en cliquant sur OK,\n"
+            + "le lieu de stockage \"" + nom + "\" sera définitivement supprimé.\n"
+            + "\n"
+            + "En effet, ce lieu de stockage n'est associé à aucun chantier plaquettes.\n"
+            + "Les loyers associés seront aussi définitivement supprimés.";
+    }
+    else{
+        msg = "Attention, en cliquant sur OK,\n"
+            + "le lieu de stockage \"" + nom + "\" sera archivé mais pas supprimé de la base\n"
+            + "(car il est associé à des chantiers plaquettes).";
+    }
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/stockage/delete/" + id;
+    }
+}
+
+// *****************************************
+function deleteLoyer(id, deb, fin, montant){
+    var msg = "Attention, en cliquant sur OK,\n"
+            + "ce loyer sera définitivement supprimé :\n"
+            + montant + " euros (du " + deb + " au " + fin + ")";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/loyer-stockage/delete/" + id;
+    }
+}
+
+// *****************************************
+function deleteHumid(id, date, valeur){
+    var msg = "Attention, en cliquant sur OK,\n"
+            + "la mesure d'humidité du " + date + "\nsera définitivement supprimée";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/humidite/delete/" + id;
+    }
+}
+
+// *****************************************
+function signalerTasVide(id, nom){
+    var msg = "En cliquant sur OK, vous indiquez que le tas :\n"
+            + "\"" + nom + "\"\nest vide.\n"
+            + "Il ne sera plus possible de l'utiliser pour des ventes.\n"
+            + "ATTENTION : cette action ne peut pas être annulée.";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/tas/empty/" + id;
+    }
+}
+
+</script>

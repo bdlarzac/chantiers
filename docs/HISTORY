@@ -1,0 +1,170 @@
+
+# 2e dépôt, réinitialisé pour supprimer le csv des exploitants agricoles des archives
+# ajouté par erreur dans le dernier commit - bordel, ça fait 2 fois la même connerie.
+
+* 690ede5 - (2020-04-06 10:04:12 +0200) Refactor partie install - Thierry (HEAD -> master, origin/master)
+* 8e4afb9 - (2020-04-05 00:18:49 +0200) Fin premier jet affacture - Thierry
+* 34db717 - (2020-04-04 03:32:16 +0200) Continue affacture - Thierry
+* 387a436 - (2020-04-03 20:06:44 +0200) Début affactures avec struct Items - Thierry
+* 8e3608b - (2020-04-03 08:12:50 +0200) Simplifie affichage transport et rangement - Thierry
+* eee2871 - (2020-04-02 18:19:14 +0200) Commence gestion uniforme des enums - Thierry
+* b85a590 - (2020-04-02 07:52:05 +0200) Nettoie code de création des tables (default values) - Thierry
+* b1fb802 - (2020-04-01 23:21:10 +0200) Ajoute index sur tables postgres - Thierry
+* 60fb2a8 - (2020-04-01 21:23:58 +0200) Utilise TVA venant de config pour BSPied - Thierry
+* 556abe1 - (2020-04-01 19:18:35 +0200) Remplace Qté dans vente par qté des chargements - Thierry
+* bcc524e - (2020-04-01 14:51:10 +0200) Remplace Qté dans Plaq par calcul sur op déchiquetage - Thierry
+* 79a0bb1 - (2020-04-01 11:07:34 +0200) Associe mesure humidité à un tas au lieu de hangar - Thierry
+* bbbdd79 - (2020-03-31 22:39:21 +0200) Gère stock d'un hangar, marquage d'un tas vide - Thierry
+* 130c68e - (2020-03-31 19:55:23 +0200) Debug form transport - Thierry
+* a1dd7b1 - (2020-03-31 18:41:16 +0200) Ajoute go mod - build ne marche pas - Thierry
+* 86100fb - (2020-03-30 21:41:13 +0200) Passe gofmt - Thierry
+* 7d27ece - (2020-03-30 19:06:09 +0200) Mets struct Config dans model ; supprime Stockage.Stock - Thierry
+* cf63e24 - (2020-03-27 15:40:25 +0100) Intègre nouveaux chantiers dans activités UG et acteur - Thierry
+* 8025efc - (2020-03-27 15:02:36 +0100) Fin Chaufer - Thierry
+* 746eb21 - (2020-03-27 10:16:19 +0100) Chaufer : fin new, liste - Thierry
+* bff5036 - (2020-03-26 16:17:19 +0100) Chaufer : javascript pour ajouter parcelle - surface / entière - Thierry
+* 6d71c18 - (2020-03-26 10:48:33 +0100) Démarre Chaufer - Thierry
+* ec4b1a7 - (2020-03-25 23:12:08 +0100) Fin Chautre - Thierry
+* 8a7493b - (2020-03-25 09:25:22 +0100) Débute Chautre - Thierry
+* d989464 - (2020-03-24 17:19:56 +0100) Ajoute UG à BSPied - Thierry
+* f128934 - (2020-03-24 14:39:32 +0100) Debug, complète BSPied - Thierry
+* 77c3200 - (2020-03-23 16:18:47 +0100) Continue refactor - Thierry
+* ceae02c - (2020-03-23 12:36:26 +0100) Refactor NomAffiche() / String() + fonctions Compute() systématiques - Thierry
+* 0d8b05c - (2020-03-20 19:10:05 +0100) Suite chargement - Thierry
+* 1614c5f - (2020-03-20 16:04:46 +0100) Gère update livraison - Thierry
+* eddc8c4 - (2020-03-20 14:31:25 +0100) Suite vente / livraison / chargement - Thierry
+* 576206b - (2020-03-20 11:40:00 +0100) Fin affichage vente livraison chargement - Thierry
+* e122024 - (2020-03-19 19:15:20 +0100) Suite chargement, début show - Thierry
+* 6f10d28 - (2020-03-19 15:45:39 +0100) Continue chargement - Thierry
+* f03413f - (2020-03-19 12:10:48 +0100) Commence chargement - Thierry
+* 53d7d12 - (2020-03-19 09:48:53 +0100) Livraison, form new et affichage liste - Thierry
+* 531b22b - (2020-03-15 16:12:34 +0100) Prépare tables chargement et livraison - Thierry
+* 5541c05 - (2020-03-13 04:41:21 +0100) Reprends form vente plaquette - Thierry
+* d87191b - (2020-03-12 23:11:03 +0100) Prépare vente, divers - Thierry
+* c234e4c - (2020-03-12 14:53:08 +0100) Debugs divers sur chantier plaquette - Thierry
+* 6edb31e - (2020-03-12 12:03:15 +0100) Finis coût global pour transport - Thierry
+* 2c9cd1d - (2020-03-12 05:29:17 +0100) Ajout prix global pour rangement - Thierry
+* 5bdb683 - (2020-03-11 16:03:42 +0100) Commence ajout prix global pour transport - Thierry
+* 8d98032 - (2020-03-11 11:37:46 +0100) Gestion stock des tas lors de new / update transport - Thierry
+* ba096f2 - (2020-03-11 08:04:16 +0100) Intègre tas à rangement - Thierry
+* 1e1fc15 - (2020-03-11 06:37:11 +0100) Intègre tas à transport - Thierry
+* 5e493e9 - (2020-03-10 05:22:37 +0100) Intègre tas à chantier plaquettes - Thierry
+* 4702bc5 - (2020-03-09 18:12:44 +0100) Suite tas - Thierry
+* 1590ef1 - (2020-03-09 10:58:04 +0100) Commence intégration tas - Thierry
+* e945b48 - (2020-03-05 18:30:36 +0100) Supprime UrlCancel, crée listes par année - Thierry
+* 11c9fd9 - (2020-03-05 16:36:08 +0100) Acteurs, deletable, divers - Thierry
+* fd9ec3d - (2020-03-05 10:52:52 +0100) Ajout acteur, help, debug - Thierry
+* ca2adef - (2020-03-05 06:25:39 +0100) Suite affactures, debugs - Thierry
+* d365e91 - (2020-03-03 21:41:33 +0100) Commence affactures - Thierry
+* 4a4e75f - (2020-03-03 11:20:41 +0100) Activités d'un acteur - Thierry
+* dcbc3d0 - (2020-03-02 19:54:58 +0100) Divers : facture, vente plaquettes - Thierry
+* 2cc7e87 - (2020-02-27 22:38:25 +0100) Facture BSPied - Thierry
+* baa3d52 - (2020-02-24 15:36:27 +0100) BSPied : liste - Thierry
+* 491291d - (2020-02-20 01:23:23 +0100) BSPied : form new - Thierry
+* cae20a9 - (2020-02-18 18:21:55 +0100) PlaqRange : affichage et form - Thierry
+* b0395a2 - (2020-02-17 22:12:34 +0100) Ajout favicon - Thierry
+* bf1f908 - (2020-02-12 02:34:47 +0100) Ajoute TVA dans PlaqTrans - Thierry
+* faaf522 - (2020-02-11 01:22:38 +0100) Ajoute TVA dans PlaqOp ; intégration options webo - Thierry
+* c2d755f - (2020-02-09 00:55:35 +0100) Debug build/install/acteur.go - Thierry
+* f84365c - (2020-02-07 08:59:27 +0100) Ajoute champs proprietaire et fournisseur à Acteur - Thierry
+* a7188b7 - (2020-02-06 10:28:35 +0100) Prépare chantiers autres valorisations et bois sur pied - Thierry
+* 051c922 - (2020-02-04 19:31:31 +0100) Create table chaufer (chantier bois de chauffage fermier) - Thierry
+* e622a12 - (2020-01-30 17:54:14 +0100) Fin rangement plaquette, début vente plaquette - Thierry
+* 0a33cef - (2020-01-29 21:04:41 +0100) Rangement plaquette : new, update, delete, affichage - Thierry
+* ed6b26d - (2020-01-29 11:54:08 +0100) Change menu et nettoyage - Thierry
+* 2e95771 - (2020-01-29 10:56:03 +0100) Suite transport plaquette - Thierry
+* 67c354d - (2020-01-28 11:28:28 +0100) Prépare transport plaquette, controller + form - Thierry
+* 6dfe27d - (2020-01-28 01:49:19 +0100) PlaqOp ok, liste et page Acteur - Thierry
+* 2bba5ea - (2020-01-27 19:08:09 +0100) Refactor, debug plaq, plaqop, stockage, humidite, loyer - Thierry
+* d8a051b - (2020-01-23 18:37:22 +0100) Commence refactor mesures humidité - Thierry
+* 69fd4d1 - (2020-01-23 16:57:40 +0100) Fix lieu stockage et loyer stockage, conforme au refactor - Thierry
+* 566bf9d - (2020-01-23 12:02:05 +0100) Gros refactor - Thierry
+* c137a91 - (2020-01-23 00:24:44 +0100) Refactor tables en models des classes de chantier plaquette - Thierry
+* 3d133ec - (2020-01-22 21:29:12 +0100) PlaqLivre : create table et model - Thierry
+* 86383c9 - (2020-01-22 15:50:30 +0100) Rangement, vente, chargement : model + create table - Thierry
+* e55a8b2 - (2020-01-22 02:23:20 +0100) Transport plaquette : model + create table - Thierry
+* 0ccde16 - (2020-01-21 17:39:11 +0100) Update (reste un bug), delete op plaquette - Thierry
+* 1d3bb5c - (2020-01-20 23:27:02 +0100) Gère ajax sur op plaquette - Thierry
+* ad0a0d0 - (2020-01-17 02:06:21 +0100) Op plaquette, début form new - Thierry
+* ccc9c38 - (2020-01-16 16:52:57 +0100) Update chantier plaquette et liste chantiers plaquettes - Thierry
+* 115f9f8 - (2020-01-15 02:41:38 +0100) Début update chantier plaquette et opération simple - Thierry
+* a28dd57 - (2020-01-15 00:48:34 +0100) Show chantier plaquettes, onglet général - Thierry
+* 388ccd6 - (2020-01-14 16:24:16 +0100) Form new chantier plaquettes : create tables, valide form new - Thierry
+* 5770fe3 - (2020-01-14 11:16:49 +0100) Continue form new chantier plaquettes - Thierry
+* ced5c6e - (2020-01-13 22:08:53 +0100) Continue form new chantier plaquettes - Thierry
+* 69eeff4 - (2020-01-09 19:10:34 +0100) Commence new chantier plaquette ; table lieudit_mot - Thierry
+* c177259 - (2020-01-09 10:46:51 +0100) Ajout update mesure humidité - Thierry
+* 283a22a - (2020-01-09 06:50:22 +0100) Suite stockage : humidité, loyer new/upd - Thierry
+* 36b94e1 - (2020-01-07 00:40:15 +0100) Form mesure humidité, javascript - Thierry
+* ef53803 - (2019-12-22 12:29:21 +0100) Réinitialise dépôt pour retirer csv avec exploitants" - Thierry
+
+# 1er dépôt, réinitialisé pour supprimer le csv des exploitants agricoles des archives
+
+* a911c31 - (2019-12-20 19:07:09 +0100) Prépare mesure humidité - Thierry (HEAD -> master, origin/master)
+* e8c9fc0 - (2019-12-20 16:26:06 +0100) Loyer stockage : CRUD mais manque vérif overlap dates - Thierry
+* 9fc053d - (2019-12-19 22:48:26 +0100) Remplace package context par ctxt - Thierry
+* eda25d3 - (2019-12-19 00:19:13 +0100) Ajout redirect après form, fix stockage - Thierry
+* 545203d - (2019-12-17 12:00:49 +0100) Continue refactor model - Thierry
+* c64c313 - (2019-12-17 00:31:53 +0100) Commence nettoyage model DB - Thierry
+* b3e9118 - (2019-12-16 23:18:11 +0100) Mets DB dans context et adapte model - Thierry
+* aa87ff5 - (2019-12-16 18:05:44 +0100) Refactor context, passe ctx en paramètre partout - Thierry
+* a5f30d0 - (2019-12-13 15:57:48 +0100) Refactor Erreurs, utilise werr.Wrapf() - Thierry (tag: OP1)
+* 150fb27 - (2019-12-13 15:57:13 +0100) Supprime define dans les templates - Thierry
+* 718a7f0 - (2019-12-12 03:16:41 +0100) Clean, move ctx.H() to package main - Thierry
+* f5875cf - (2019-12-12 02:20:32 +0100) Refactor ctx - Thierry
+* addb2cd - (2019-12-10 16:56:27 +0100) New / update / delete Stockage - Thierry
+* ba3cc6b - (2019-12-10 01:42:29 +0100) Form stockage - Thierry
+* c20d917 - (2019-12-06 12:15:53 +0100) Début formulaires lieu de stockage - Thierry
+* 973b573 - (2019-12-03 23:56:51 +0100) Modifie proto suite à réunion du 9/11/2019 - Thierry
+* 37aec75 - (2019-11-15 16:25:16 +0100) Ajout propriétaire parcelle - Thierry
+* 0203d37 - (2019-11-15 13:58:24 +0100) Intégration ugs - Thierry
+* 6b3c927 - (2019-11-14 19:24:35 +0100) Build : import ugs - Thierry
+* d5b32ec - (2019-11-13 13:48:06 +0100) Build :import acteurs - Thierry
+* 1b19eb0 - (2019-11-08 13:34:12 +0100) Début intégration acteur à l'appli - Thierry
+* 8cd0a94 - (2019-11-08 10:17:38 +0100) Build : fill tables acteur, role, parcelle_exploitant - Thierry
+* 59912ec - (2019-11-07 15:00:40 +0100) Intégration parcelles à l'appli - Thierry
+* 47c4117 - (2019-11-07 13:17:44 +0100) Build : Fill tables parcelle et lieudit_parcelle - Thierry
+* 5249bde - (2019-11-07 07:29:41 +0100) Build : liens lieux-dits - parcelles - Thierry
+* 649aa9c - (2019-11-05 12:40:36 +0100) Build : liens communes -lieux-dits - Thierry
+* 2a4b6af - (2019-11-04 16:42:21 +0100) Build : Fill table lieudit + check cohérence des liens commune - lieudit - Thierry
+* 476eab7 - (2019-11-04 11:59:32 +0100) Build : Fill table commune - Thierry
+* 0107372 - (2019-11-04 01:51:36 +0100) Build : Analyse lien UGs - parcelles et lieux-dits - communes - Thierry
+* c3cb87f - (2019-10-11 06:10:32 +0200) Proto : modifs faites en écrivant le cdc - Thierry
+* 1e9ccbc - (2019-10-09 11:04:50 +0200) Proto : ajout lieux de stockage plaquettes - Thierry
+* c7e60ed - (2019-10-08 18:01:11 +0200) Modifie proto chantier plaquettes - Thierry
+* 4e20f0c - (2019-10-07 09:32:29 +0200) Fixes ug et chantier-autre sur proto - Thierry
+* dd6f214 - (2019-10-04 23:21:08 +0200) Fix page ug - Thierry
+* 4983071 - (2019-09-27 17:59:01 +0200) Refactor, démarre install-db - Thierry
+* e5ab4c8 - (2019-09-17 10:50:51 +0200) Remplace sctl par bdl dans les imports - Thierry
+* 2c91084 - (2018-06-27 09:54:42 +0200) Suite proto - Thierry
+* 1c98337 - (2018-06-26 16:45:44 +0200) proto config - Thierry
+* 550cf57 - (2018-06-25 11:57:32 +0200) Supprime botstrap ; Proto chantier chauffage modifié - Thierry
+* 477da40 - (2018-06-25 09:26:03 +0200) Nouvelle version de tabstrip - Thierry
+* f983e57 - (2018-06-24 22:36:24 +0200) Suite proto - Thierry
+* 96d4c3f - (2018-06-22 11:14:34 +0200) Prepare addition bootstrap - Thierry
+* d33a82b - (2018-06-22 10:44:13 +0200) Suite proto - Thierry
+* edcf896 - (2018-06-22 08:46:00 +0200) Suite proto - Thierry
+* 4165606 - (2018-06-19 10:23:45 +0200) Suite proto - Thierry
+* b56d2be - (2018-06-13 22:02:12 +0200) Suite proto chantier plaquettes - Thierry
+* 2aea0b3 - (2018-06-07 16:12:58 +0200) Fin proto chauffage fermiers + particuliers - Thierry
+* 4d57722 - (2018-06-07 00:30:48 +0200) Suite proto, chantier chauffage fermiers - Thierry
+* 2dfd0f8 - (2018-06-06 10:29:51 +0200) Suite proto acteurs - Thierry
+* 7a1491c - (2018-06-05 17:10:44 +0200) Suite proto, début gestion acteurs - Thierry
+* b1ea734 - (2018-05-17 01:19:36 +0200) suite proto, début form chantiers - Thierry
+* 42743e7 - (2018-05-16 16:04:22 +0200) Suite proto : chantiers, ug - Thierry
+* 902a9ea - (2018-04-12 10:52:36 +0200) Essai génération pdf - Thierry
+* 9ec0b05 - (2018-04-10 15:52:27 +0200) Suite update / delete UG - Thierry
+* 248a47e - (2018-04-10 10:19:30 +0200) Suite update / delete UG - Thierry
+* 81f6449 - (2018-04-10 01:53:20 +0200) Nouvelle unité gestion ok, début update / delete - Thierry
+* 9da4e90 - (2018-04-09 18:53:07 +0200) Essai ajax pour nouvelle unité de gestion - Thierry
+* d56ee3f - (2018-04-06 15:29:23 +0200) Suite proto : fin premier jet, feuilles excel clients, mesure humidité, vente bois de chauffage - Thierry
+* a2b283a - (2018-04-06 12:06:34 +0200) Suite proto : début client - Thierry
+* 9939c7b - (2018-04-06 00:22:13 +0200) Suite proto - Thierry
+* 07962d3 - (2018-04-05 16:54:26 +0200) Suite proto : heures fermiers - Thierry
+* 2246eaf - (2018-04-05 11:06:35 +0200) Suite proto UG : list et show utilisent model - Thierry
+* ee0cd79 - (2018-04-05 01:09:06 +0200) Début affichage de données en lisant dans DB pour unité de gestion - Thierry
+* 78e64c6 - (2018-04-04 02:09:58 +0200) Premiers essais DB (sqlite) - Thierry
+* 3a0c1d8 - (2018-04-03 14:45:10 +0200) Déplace tout le code dans src/ - Thierry
+* b3cf172 - (2018-04-03 14:13:46 +0200) Organise view/ en sous-dossiers - Thierry
+* 03b7e49 - (2018-03-29 00:06:48 +0200) Suite proto - Thierry
+* 6799d3b - (2018-03-28 10:53:28 +0200) First commit - Thierry

@@ -1,0 +1,12 @@
+{{/* 
+    Page générale pour afficher un message d'erreur
+    .Details contient le message d'erreur à afficher
+*/}}
+
+<h1>Erreur</h1>
+Une anomalie est survenue.
+<br>
+<br>Contactez l'administrateur de l'application en lui recopiant le message suivant.
+<br>Décrivez aussi les actions que vous avez effectuées pour générer cette erreur.
+
+<div><div class="error">{{.Details | nl2br}}</div></div>

@@ -1,0 +1,322 @@
+
+{{with .Details.Vente}}
+{{$idVente := .Id}}
+<h1>
+    {{$.Header.Title}}
+    <a class="padding-left" href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
+        <img class="bigicon inline" src="/static/img/facture.png" title="Voir la facture" />
+    </a>
+    <a href="/vente/update/{{.Id}}">
+        <img class="bigicon inline" src="/static/img/update.png" title="Modifier cette vente">
+    </a>
+    <a href="#" onclick='deleteVentePlaquette({{.Id}}, "{{.Client.String}}", "{{.DateVente | dateFr}}");'>
+        <img class="bigicon inline" src="/static/img/delete.png" title="Supprimer cette vente">
+    </a>
+    <a class="padding-left2" href="/vente/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer une nouvelle vente"/>
+    </a>
+</h1>
+
+<div class="page-content">
+
+<div class="flex-wrap">
+
+<div class=" padding-right border-right">
+<div class="grid2-pres">
+    <span>Client</span>
+    <span class="bold"><a href="/acteur/{{.IdClient}}">{{.Client.String}}</a></span>
+    
+    <span>Fournisseur</span>
+    <span class="bold"><a href="/acteur/{{.IdFournisseur}}">{{.Fournisseur.Nom}}</a></span>
+    
+    <span>Date vente</span>
+    <span class="bold"><span>{{.DateVente | dateFr}}</span>
+</div>
+</div>
+
+<div class="grid2-pres padding-left padding-right border-right">
+    <span>Quantité</span>
+    <span class="bold">{{.Qte}} maps</span>
+    
+    <span>PU HT</span>
+    <span class="bold">{{.PUHT | twoDigits}} &euro;</span>
+    
+    <span>Prix HT</span>
+    <span class="bold"><script>document.write(round(prixHT({{.PUHT}}, {{.Qte}}), 2));</script> &euro;</span>
+    
+    <span>TVA</span>
+    <span class="bold">{{.TVA}} %</span>
+    
+    <span>Prix TTC</span>
+    <span class="bold"><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2));</script> &euro;</span>
+</div>
+
+</div><!-- end class="flex-wrap" -->
+
+<!-- ************************************* -->
+{{if .Chantiers}}
+    <div class="big3 bold margin-top margin-bottom">Chantiers</div>
+    {{range .Chantiers}}
+        <div class=""><a href="/chantier/plaquette/{{.Id}}">Chantier {{.String}}</a></div>
+        
+    {{end}}
+    
+{{end}}
+
+<!-- ************************************* -->
+{{if .Notes}}
+    <div class="big3 bold margin-top margin-bottom">Notes</div>
+    {{.Notes | nl2br}}
+{{end}}
+
+
+
+<!-- ************************************* -->
+<div class="big3 bold margin-top margin-bottom">Facture</div>
+
+<div class="flex-wrap">
+<div class="padding-right border-right margin-right">
+<div class="grid2-pres">
+    <span>Date</span>
+    <span class="bold">{{.DateFacture | dateFr}}</span>
+    
+    <span>Numéro</span>                                                                                          
+    <span class="bold">{{.NumFacture}}</span>
+</div>
+</div>
+
+<div>
+Dans la facture :
+<div class="grid2-pres">
+    <div>Faire apparaître un coût de livraison :</div> 
+    <div class="bold">{{if .FactureLivraison}}Oui{{else}}Non{{end}}</div>
+    
+    {{if .FactureLivraison}}
+    <div>PU HT livraison facturée</div>
+    <div class="bold">{{.FactureLivraisonPUHT}} &euro;</div>
+    {{end}}
+    
+    <div>Faire apparaître les notes :</div> 
+    <div class="bold">{{if .FactureNotes}}Oui{{else}}Non{{end}}</div>
+</div>
+</div>
+
+</div><!-- end class="flex-wrap" -->
+
+<!-- ************************************* -->
+<div class="big3 bold margin-top margin-bottom">
+Livraisons
+<a class="padding-left" href="/vente/{{.Id}}/livraison/new">
+    <img class="inline border" src="/static/img/new.png" title="Créer une nouvelle livraison pour cette vente"/>
+</a>
+</div>
+
+{{range .Livraisons}}
+{{$idLivraison := .Id}}
+<table class="bordered margin-bottom">
+    <tr>
+        <td rowspan="2" class="vertical-align-top">
+            <div class="margin-top">
+                <a href="/vente/{{.IdVente}}/livraison/update/{{.Id}}">
+                    <img src="/static/img/update.png" title="Modifier cette livraison">
+                </a>
+                <a href="#" onclick='deleteLivraison({{.Id}}, {{$idVente}}, "{{.Livreur.String}}", "{{.DateLivre | dateFr}}");'>
+                    <img src="/static/img/delete.png" title="Supprimer cette livraison">
+                </a>
+            </div>
+        </td>
+        <td class="vertical-align-top">
+            <div class="grid2-pres">
+                <div>Livreur</div>
+                <div class="bold"><a href="/acteur/{{.Livreur.Id}}">{{.Livreur.String}}</a></div>
+                
+                <div>Date livraison</div>
+                <div class="bold">{{.DateLivre | dateFr}}</div>
+                
+                {{if .DatePay}}
+                <div>Date paiement</div>
+                <div class="bold">{{.DatePay | dateFr}}</div>
+                {{end}}
+                
+                {{if .Notes}}
+                <div>Notes</div>
+                <div>{{.Notes | nl2br}}</div>
+                {{end}}
+            </div>
+        </td>
+        <td class="vertical-align-top">
+        {{if eq .TypeCout "G"}}
+            <div class="padding02 bg-ccc center margin-bottom05">Coût global</div>
+            <div class="grid2-pres">
+                <div>Prix HT</div>
+                <div class="bold">{{.GlPrix | twoDigits}} &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.GlTVA}} %</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2));</script> &euro;</div>
+            </div>
+        {{else}}
+            <div class="padding02 bg-ccc center margin-bottom05">Coût M.O.</div>
+            <div class="grid2-pres">
+                <div>Nb heures</div>
+                <div class="bold">{{.MoNHeure}}</div>
+                
+                <div>Prix HT / h</div>
+                <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
+                
+                <div>Total HT</div>
+                <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
+                
+                <div>TVA</div>
+                <div class="bold">{{.MoTVA}} %</div>
+                
+                <div>Total TTC</div>
+                <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
+            </div>
+        {{end}}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div>
+            <b>Chargements</b>
+            <a class="padding-left" href="/vente/{{.IdVente}}/livraison/{{.Id}}/chargement/new">
+                <img class="inline border" src="/static/img/new.png" title="Créer un nouveau chargement pour cette livraison"/>
+            </a>
+            </div>
+            {{if .Chargements}}
+            <table class="bordered">
+            {{end}}
+            {{range .Chargements}}
+                <tr>
+                    <td>
+                        <a href="/vente/{{$idVente}}/livraison/{{$idLivraison}}/chargement/update/{{.Id}}">
+                            <img src="/static/img/update.png" title="Modifier ce chargement">
+                        </a>
+                        <a href="#" onclick='deleteChargement({{.Id}}, {{$idLivraison}}, {{$idVente}}, "{{.Chargeur.String}}", "{{.DateCharge | dateFr}}");'>
+                            <img src="/static/img/delete.png" title="Supprimer ce chargement">
+                        </a>
+                    </td>
+                    <td>
+                        <div class="grid2-pres">
+                            <div>Chargeur</div>
+                            <div class="bold"><a href="/acteur/{{.Chargeur.Id}}">{{.Chargeur.String}}</a></div>
+                            
+                            <div>Tas</div>
+                            <div class="bold">{{.Tas.Nom}}</div>
+                            
+                            <div>Quantité</div>
+                            <div class="bold">{{.Qte}} maps</div>
+                            
+                            <div>Date chargement</div>
+                            <div class="bold">{{.DateCharge | dateFr}}</div>
+                            
+                            {{if .Notes}}
+                            <div>Notes</div>
+                            <div>{{.Notes | nl2br}}</div>
+                            {{end}}
+                        </div>
+                    </td>
+                    {{if eq .TypeCout "G"}}
+                    <!-- chargement, coût global -->
+                    <td colspan="2" class="vertical-align-top">
+                        <div class="padding02 bg-ccc center margin-bottom05">Coût global</div>
+                        <div class="grid2-pres">
+                            <div>Prix HT</div>
+                            <div class="bold">{{.GlPrix | twoDigits}} &euro;</div>
+                            
+                            <div>TVA</div>
+                            <div class="bold">{{.GlTVA}} %</div>
+                            
+                            <div>Total TTC</div>
+                            <div class="bold"><script>document.write(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2));</script> &euro;</div>
+                            
+                            <div>Paiement</div>
+                            <div class="bold">{{.GlDatePay | dateFr}}</div>
+                        </div>
+                    </td>
+                    {{else}}
+                    <!-- chargement, coût détaillé -->
+                    <td class="vertical-align-top">
+                        <div class="padding02 bg-ccc center margin-bottom05">Coût M.O.</div>
+                        <div class="grid2-pres">
+                            <div>Nb heures</div>
+                            <div class="bold">{{.MoNHeure}}</div>
+                            
+                            <div>Prix HT / h</div>
+                            <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
+                            
+                            <div>Total HT</div>
+                            <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
+                            
+                            <div>TVA</div>
+                            <div class="bold">{{.MoTVA}} %</div>
+                            
+                            <div>Total TTC</div>
+                            <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
+                            
+                            <div>Paiement</div>
+                            <div class="bold">{{.MoDatePay | dateFr}}</div>
+                        </div>
+                    </td>
+                    <td class="vertical-align-top">
+                        <div class="padding02 bg-ccc center margin-bottom05">Coût Outil</div>
+                        <div class="grid2-pres">
+                            <!-- 2 lignes blanches pour alignement coûts outil / m.o. -->
+                            <div>&nbsp;</div><div>&nbsp;</div>
+                            <div>&nbsp;</div><div>&nbsp;</div>
+                            <div>Prix HT</div>
+                            <div class="bold">{{.OuPrix | twoDigits}} &euro;</div>
+                            
+                            <div>TVA</div>
+                            <div class="bold">{{.OuTVA}} %</div>
+                            
+                            <div>Total TTC</div>
+                            <div class="bold"><script>document.write(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2));</script> &euro;</div>
+                            
+                            <div>Paiement</div>
+                            <div class="bold">{{.OuDatePay | dateFr}}</div>
+                        </div>
+                    </td>
+                    {{end}}
+                </tr>
+            {{end}}
+            {{if .Chargements}}
+            </table>
+            {{end}}
+        </td>
+    </tr>
+</table>
+{{end}}
+
+{{end}}
+
+</div><!-- end class="page-content" -->
+
+<script>
+// Pour VentePlaq Voir scripts dans static/js/venteplaq.js
+
+// *****************************************
+function deleteLivraison(idLivraison, idVente, nomLivreur, dateLivraison){
+    var msg = "ATTENTION, en cliquant sur OK,\n"
+            + "la livraison \"" + nomLivreur + " " + dateLivraison + "\" sera définitivement supprimée.\n"
+            + "\nAttention car les chargements associés à cette vente seront aussi supprimés.\n";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/vente/" + idVente + "/livraison/delete/" + idLivraison;
+    }
+}
+
+// *****************************************
+function deleteChargement(idChargement, idLivraison, idVente, nomChargeur, dateChargement){
+    var msg = "ATTENTION, en cliquant sur OK,\n"
+            + "le chargement \"" + nomChargeur + " " + dateChargement + "\" sera définitivement supprimé.\n";
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/vente/" + idVente + "/livraison/" + idLivraison + "/chargement/delete/" + idChargement;
+    }
+}
+</script>
+

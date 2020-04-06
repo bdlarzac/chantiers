@@ -1,0 +1,8 @@
+
+En prod, les seuls fichiers à conserver en l'état sont
+commune.csv
+lieudit.csv
+
+ug.csv doit être remplacé à chaque modification du PSG
+
+Les autres fichiers doivent être supprimés et remplacés par des accès à la base Access SCTL

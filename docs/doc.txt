@@ -1,0 +1,4 @@
+
+
+Tas
+Champ actif nécessaire pour différencier tas nouvellement créé (stock = 0) et tas complètement vidé par les ventes (stock = 0 aussi).

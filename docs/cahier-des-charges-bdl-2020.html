@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Cahier des charges - Bois du Larzac</title>
+    <style>
+body{
+    font-family:Verdana, Geneva, sans-serif;
+}
+.header{
+    display:flex;
+}
+.header > *{
+    padding:10px;
+    flex:1 100%;
+}
+.title{
+    text-align:center;
+}
+.adress1{
+}
+.adress2{
+}
+h2{
+    background:#717A9F;
+    color:white;
+    padding:5px 1em;
+}
+.question{
+    padding:.2em;
+    margin:1em;
+    border:2px solid red;
+    border-radius:10px;
+    background:lightpink;
+}
+.toc a{text-decoration:none}
+.toc ul li{list-style-type:none;}
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+<!-- 
+<div class="adress1">
+    Association Bois du Larzac
+    <br>Montredon
+    <br>12230 La Cavalerie
+</div>
+-->
+<div class="title">
+    <h1>Logiciel Bois du Larzac<br>Cahier des charges - 2019</h1>                                                                         
+</div>
+<!-- 
+<div class="adress2">
+    Thierry Graff                                                                                                                     
+    <br>La Resse
+    <br>12100 La Roque-Sainte-Marguerite
+</div>
+-->
+</div><!-- end class="header" -->
+
+<nav class="toc">
+    <ul>                                                                                               
+        <li>
+            <a href="#presentation">Présentation</a>
+        </li>
+        <li>
+            <a href="#donnees">Données</a>
+            <ul>
+                <li><a href="#2-1-donnees-geographiques-et-forestieres">Données géographiques et forestières</a></li>
+                <li><a href="#2-2-lieux-de-stockage-hangars-a-plaquettes">Lieux de stockage (hangars à plaquettes)</a></li>
+                <li><a href="#2-3-chantier-plaquettes">Chantier plaquettes</a></li>
+                <li><a href="#2-4-vente-plaquettes">Vente plaquettes</a></li>
+                <li><a href="#2-5-chantiers-bois-de-chauffage-fermiers">Chantiers Bois de chauffage fermiers</a></li>
+                <li><a href="#2-6-chantiers-bois-sur-pied">Chantiers Bois sur pied</a></li>
+                <li><a href="#2-7-chantiers-autres-valorisations">Chantiers Autres valorisations</a></li>
+                <li><a href="#2-8-acteurs">Acteurs</a></li>
+                <li><a href="#2-9-donnees-externes">Données externes</a></li>
+                <li><a href="#2-10-configuration">Configuration</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#fonctionnalites">Fonctionnalités</a>
+            <ul>
+                <li><a href="#3-1-communes-lieux-dits">Communes, lieux-dits</a></li>
+                <li><a href="#3-2-parcelles">Parcelles</a></li>
+                <li><a href="#3-3-ug">UG</a></li>
+                <li><a href="#3-4-chantiers-plaquettes">Chantiers plaquettes</a></li>
+                <li><a href="#3-5-chantiers-bois-de-chauffage-fermiers">Chantiers Bois de chauffage fermiers</a></li>
+                <li><a href="#3-6-chantiers-bois-sur-pied">Chantiers Bois sur pied</a></li>
+                <li><a href="#3-7-chantiers-autres-valorisations">Chantiers Autres valorisations</a></li>
+                <li><a href="#3-8-acteurs">Acteurs</a></li>
+                <li><a href="#3-9-lieux-de-stockage-plaquettes">Lieux de stockage plaquettes</a></li>
+                <li><a href="#3-10-recapitulatifs-generaux">Récapitulatifs généraux</a></li>
+                <li><a href="#3-11-mise-a-jour-des-donnees-externes">Mise à jour des données externes</a></li>
+                <li><a href="#3-12-sauvegarde-des-donnees">Sauvegarde des données</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#technologies">Technologies</a>
+        </li>
+        <li>
+            <a href="#questions-generales">Questions générales</a>
+        </li>
+    </ul>
+</nav>
+
+
+<!-- ********************************************************************************* -->
+<h2><a name="presentation">Présentation</a></h2>
+<!-- ********************************************************************************* -->
+
+L'activité économique de Bois du Larzac est actuellement gérée avec des feuilles Excel. Le but du logiciel est d'intégrer ces informations dans un tout cohérent. Le logiciel doit permettre de saisir et visualiser ces informations, générer les factures émises par BDL et fournir des récapitulatifs sur l'activité.
+<br>
+<br>Le logiciel dépend de deux sources de données extérieures :
+<ul>
+    <li>Le logiciel de la SCTL permettant la gestion des fermages, noté "logiciel SCTL".</li>
+    <li>Le logiciel contenant le Plan Simple de Gestion (PSG), utilisant acutellement Mapinfo, noté "couche typologie".</li>
+</ul>
+Le logiciel doit pouvoir intégrer des modifications de données effectuées dans chacun de ces deux logiciels.
+<br>
+<br>Une procédure de sauvegarde régulière des données manipulées par le logiciel doit être mise en place.
+<br>
+<br>Le logiciel est destiné à être utilisé dans les locaux de BDL, par les personnes de BDL affectées à son utilisation. Le logiciel ne connaît qu'un type d'utilisateur, qui a accès à toutes ses fonctionnalités. Etant utilisé comme une application de bureau, aucune précaution de sécurité n'est demandée (protection de son utilisation par mot de passe, chiffrement des données stockées sur ordinateur).
+
+<br><br>
+<div><b>
+Important : dans la spécification du logiciel, prendre les décisions en fonction de l'activité de BDL sur toute la durée de vie du logiciel ; ne pas se limiter à la situation actuelle ou passée.
+</b></div>
+
+<!-- ********************************************************************************* -->
+<h2><a name="donnees">Données</a></h2>
+<!-- ********************************************************************************* -->
+
+Données manipulées par le logiciel :
+<ul>
+    <li><b>Données géographiques</b> : Communes, lieux-dits, parcelles cadastrales.</li>
+    <li><b>Données forestières</b> Unités de gestion (notées UG).</li>
+    <li><b>Acteurs</b> : personnes physiques ou morales intervenant dans l'activité de BDL.</li>
+    <li><b>Activités</b> de BDL : chantiers et ventes.</li>
+</ul>
+
+<!-- *********************************************************** -->
+<h3><a name="2-1-donnees-geographiques-et-forestieres">Données géographiques et forestières</a></h3>
+
+Communes, lieux-dits et parcelles cadastrales sont à importer du "logiciel SCTL", ainsi que les associations entre exploitants (fermiers) et parcelles (voir plus loin).
+<br>Les UGs, leurs caractéristiques et associations avec les parcelles sont à importer de la couche typologie.
+
+<!-- ************************************* -->
+<h4>Communes, lieux-dits</h4>
+<ul>
+    <li>Une commune est caractérisée par son nom.</li>
+    <li>Un lieu-dit est caractérisé par son nom.</li>
+    <li>Un lieu-dit est associé à une ou plusieurs commune.</li>
+    <li>Une commune est associée à un ou plusieurs lieux-dits.</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Parcelles cadastrales</h4>
+<ul>
+    <li>
+        Une parcelle est caractérisée par :
+        <ul>
+            <li>un code (par exemple <code>0U0275</code>)</li>
+            <li>une superficie</li>
+            <li>un propriétaire, acteur identifié par le système</li>
+        </ul>
+    </li>
+    <li>Une parcelle est associée à un ou plusieurs lieux-dits.</li>
+    <li>Un lieu-dit est associé à zéro ou plusieurs parcelles.</li>
+    <li>Une parcelle est associée à zéro ou plusieurs exploitants.</li>
+    <li>Un exploitant est associé à une ou plusieurs parcelles.</li>
+    <li>Une parcelle est associée à zéro, une ou plusieurs UG.</li>
+    <li>Une UG est associée à une ou plusieurs parcelles.</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Unités de gestion</h4>
+<ul>
+    <li>
+        Une UG est caractérisée par :
+        <ul>
+            <li>un numéro</li>
+            <li>une superficie</li>
+        </ul>
+        Ainsi que des données forestières :
+        <ul>
+            <li>Un type de peuplement</li>
+            <li>Un type de coupe</li>
+            <li>Un prévisionnel de coupe</li>
+        </ul>
+    </li>
+    <li>Une UG ne contient pas d'association supplémentaires, les associations d'une UG sont déduites de ses parcelles associées.</li>
+</ul>
+
+<!-- *********************************************************** -->
+<h3><a name="2-2-lieux-de-stockage-hangars-a-plaquettes">Lieux de stockage (hangars à plaquettes)</a></h3>
+
+Caractéristiques :
+<ul>
+    <li>Nom</li>
+    <li>[si cartographie, longitude latitude]</li>
+</ul>
+Note : un lieu de stockage n'est pas associé à un lieu-dit, ce qui permet d'avoir des lieux de stockage hors de la zone géographique d'exploitation.
+
+<!-- ************************************* -->
+<h3>Tas</h3>
+Un tas de plaquette se situe dans un lieu de stockage (hangar), et sert à recueillir les plaquettes générées par un chantier.
+<br>Un tas est caractérisé par :
+<ul>
+    <li>Stock : quantité de plaquettes présente dans le tas à un moment donné.</li>
+    <li>Actif (oui / non) : indique si le tas est vide ou s'il contient encore des plaquettes.</li>
+</ul>
+
+Relation entre un tas et les autres entités :
+<ul>
+    <li>Un tas est lié à un seul lieu de stockage.</li>
+    <li>Un tas est lié à un seul chantier ; un chantier peut éventuellement être lié à plusieurs tas.</li>
+    <li>Plusieurs chantiers ne peuvent pas utiliser le même tas.</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Stock</h4>
+<ul>
+    <li>Stock d'un lieu de stockage = somme des stocks des tas présents dans ce hangar.</li>
+    <li>Stock d'un un tas = somme des quantités transportées vers ce tas, moins le pourcentage de perte, moins la somme des quantités chargées depuis ce tas (pour des ventes).</li>
+</ul>
+Deux opérations affectent le stock d'un tas :
+<ul>
+    <li>
+        Le <b>transport</b> depuis un chantier plaquettes.
+    </li>
+    <li>Le <b>chargement</b> (en vue d'effectuer une livraison pour une vente)</li>
+</ul>                                                                                                                                       
+
+Note : Il est impossible de suivre de manière précise le stock de plaquettes présentes dans un tas. Le problème vient du pourcentage de perte : différence entre le volume de bois vert broyé et la quantité de plaquettes sèches vendues. Ce pourcentage étant arbitraire et ne correspondant pas à une réalité mesurable, l'état des stocks ne peut être qu'indicatif.
+<br>Conséquence : on ne peut calculer par programme si un tas est vide ou pas ; <i>c'est donc à l'utilisateur de signaler qu'un tas est épuisé</i>.
+
+<!-- *********************************************************** -->
+<h3>Loyer</h3>
+Un lieu de stockage est associé à un ou plusieurs loyer. Chaque loyer est constitué par :
+<ul>
+    <li>date de début</li>
+    <li>date de fin</li>
+    <li>montant (coût annuel)</li>
+</ul>
+Le loyer est utilisé pour calculer le coût du stockage.
+
+<!-- *********************************************************** -->
+<h3>Mesures d'humidité</h3>
+<ul>
+    <li>Une mesure d'humidité est liée à un tas.</li>
+    <li>Une mesure d'humidité est effectuée par une ou plusieurs personnes.</li>
+    <li>Une mesure d'humidité est caractérisée par un nombre (pourcentage d'humidité).</li>
+    <li>Une mesure d'humidité est effectuée à une date.</li>
+</ul>
+
+Les mesures d'humidité ne sont impliquées dans aucun calcul.
+
+<!-- *********************************************************** -->
+<h3><a name="2-3-chantier-plaquettes">Chantier plaquettes</a></h3>
+Un chantier plaquette est relié à une (et une seule) unité de gestion.
+<br>Il possède des caractéristiques propres, et est associé à plusieurs opérations :
+<ul>
+    <li>Abattage</li>
+    <li>Débardage</li>
+    <li>Déchiquetage</li>
+    <li>Transport vers un lieu de stockage</li>
+    <li>Rangement sur le lieu de stockage</li>
+    <li>Broyage</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Caractéristiques propres à un chantier plaquettes</h4>
+Un chantier plaquettes est caractérisé par :
+<ul>
+    <li>Nom = nom du lieu-dit suivi de la date de début</li>
+    <li>Dates de début et de fin (déchiquetage)</li>
+    <li>Unité de gestion</li>
+    <li>Lieu-dit (déduit de l'unité de gestion)</li>
+    <li>Fermier</li>
+    <li>Type d'exploitation (1ère ... 5e exploitation)</li>                                            
+    <li>Surface concernée</li>
+    <li>Essence</li>
+    <li>Frais de repas</li>
+    <li>Frais de réparation</li>
+</ul>
+
+Un pourcentage de perte arbitraire (10%) est à mettre en configuration.
+<br>
+<br>Note : le volume de bois vert broyé au départ (en map) n'est pas une caractéristique d'un chantiier plaquette.
+<br>Ce volume est défini comme la somme des quantités déchiquetées.
+
+
+
+<!-- ************************************* -->
+<h4>Opérations simples</h4>
+Les opérations d'abattage, de débardage, de déchiquetage et de broyage peuvent être représentées de la même manière et contiennent les caractéristiques suivantes :
+<ul>
+    <li>Chantier plaquette identifié par le système</li>
+    <li>Personne effectuant l'opération, acteur identifié par le système</li>
+    <li>Date de l'opération</li>
+    <li>Quantité</li>
+    <li>Unité : heures, jours ou maps</li>
+    <li>PU HT</li>
+    <li>Taux de TVA</li>
+    <li>Date de paiement par BDL</li>
+    <li>Notes : champ texte libre</li>
+</ul>
+
+Unité réfère à Quantité (ex : Quantité = 10 et Unité = heures signifie : 10 heures)
+<br>L'unité "maps" est utile pour le déchiquetage, les autres opérations sont comptées en heures ou en jours.
+<br>
+<br>Il est possible d'associer 0, 1 ou plusieurs opérations simples de chaque type à un chantier plaquettes (il peut par exemple y avoir plusieurs opérations d'abattage).
+
+<!-- ************************************* -->
+<h4>Transport vers un lieu de stockage</h4>
+Chaque chantier plaquette donne lieu à 0, 1 ou plusieurs opérations de transport vers un lieu de stockage.
+<br>Le transport vers un lieu de stockage est constitué de deux opérations : le transport et le rangement.
+<br>
+<br>Transport et rangement ne sont pas liés.
+<br>
+<br>Le coût du transport doit pouvoir être précisé de 2 manières :
+<ul>
+    <li>Coût détaillé : <code>coût = coût transport + coût outil</code></li>
+    <li>Coût global</li>
+</ul>
+
+
+<h5>Transport</h5>
+Le transport a les caractéristiques suivantes :
+<ul>
+    <li>Chantier plaquette identifié par le système</li>
+    <li>Tas identifié par le système</li>
+    <li>Transporteur, acteur identifié par le système</li>
+    <li>Date du transport</li>
+    <li>Quantité transportée (en maps)</li>
+    <li>Nb d'heures travaillées par le transporteur</li>
+    <li>Prix HT du transporteur par heure</li>
+    <li>Taux de TVA</li>
+    <li>Date de paiement du transporteur</li>
+    <li>Notes : champ texte libre</li>
+</ul>
+
+Le transport peut être effectué soit par camion, soit par tracteur + benne.
+
+<h6>Transport par camion</h6>
+Dans le cas d'un transport par camion, les caractéristiques sont les suivantes : 
+<ul>
+    <li>Nb km</li>
+    <li>Prix / km HT</li>
+    <li>Taux de TVA</li>
+    <li>Date de paiement</li>
+</ul>
+
+<h6>Transport par tracteur + benne</h6>
+Dans le cas d'un transport par tracteur, les caractéristiques sont les suivantes : 
+<ul>
+    <li>Nombre de bennes</li>
+    <li>Durée du tour</li>
+    <li>Prix / h HT</li>
+    <li>Taux de TVA</li>
+    <li>Date de paiement</li>
+</ul>
+
+<h6>Coût global</h6>
+Caractéristiques :
+<ul>
+    <li>Prix HT</li>
+    <li>Taux de TVA</li>
+    <li>Date de paiement</li>
+</ul>
+
+<h5>Rangement</h5>
+Le rangement (déchargement) des plaquettes dans un lieu de stockage ; se fait à l'aide d'un télescopique.
+<br>
+<br>Le coût du chargement doit pouvoir être précisé de 2 manières :
+<ul>
+    <li>Coût détaillé : <code>coût = coût main-oeuvre + coût outil</code></li>
+    <li>Coût global</li>
+</ul>
+
+Unn rangement a les caractéristiques suivantes :
+<ul>
+    <li>Chantier plaquette identifié par le système</li>
+    <li>Tas identifié par le système</li>
+    <li>Conducteur, acteur identifié par le système</li>
+    <li>Date du rangement</li>
+    <li>
+        Pour le conducteur :
+        <ul>
+            <li>Nb heures travaillées par le conducteur</li>
+            <li>Prix HT du conducteur par h</li>
+            <li>Taux de TVA pour le conducteur</li>
+            <li>Date de paiement du conducteur</li>
+        </ul>
+    </li>
+    <li>
+        Pour l'outil :
+        <ul>
+            <li>Coût outil HT</li>
+            <li>Taux de TVA pour l'outil</li>
+            <li>Date de paiement de l'outil</li>
+        </ul>
+    </li>
+    <li>
+        Pour le coût global :
+        <ul>
+            <li>Coût global HT</li>
+            <li>Taux de TVA pour paiement global</li>
+            <li>Date de paiement global</li>
+        </ul>
+    </li>
+</ul>
+
+<!-- *********************************************************** -->
+<h3><a name="2-4-vente-plaquettes">Vente plaquettes</a></h3>
+
+Une vente de plaquettes est caractérisée par 3 opérations :
+<ul>
+    <li>La vente elle-même.</li>
+    <li>Le chargement des plaquettes dans un véhicule de transport.</li>
+    <li>La livraison.</li>
+</ul>
+
+Une vente fait l'objet d'une facturation ; une vente est liée à une et une seule facture ; une facture ne concerne qu'une seule vente.
+
+<!-- ************************************* -->
+<h4>Relations vente - chargement - livraison</h4>
+<ul>
+    <li>Une vente peut nécessiter plusieurs livraisons ; une livraison concerne une seule vente.</li>
+    <li>Une livraison peut nécessiter plusieurs chargements ; un chargement concerne une seule livraison.</li>
+    <li>Un chargement se fait à partir d'un seul tas.</li>
+</ul>
+
+Une vente se trouve donc liée à un chantier plaquette de la manière suivante :
+<ul>
+    <li>Une vente est liée à une ou plusieurs livraison(s).</li>
+    <li>Une livraison est liée à un ou plusieurs chargement(s).</li>
+    <li>Un chargement est lié à un tas.</li>
+    <li>Un tas est lié à un chantier.</li>
+</ul>
+
+Noter les limites concernant le chargement, qui peuvent conduire à définir plusieurs chargements, par exemple :
+<br>- On veut faire une livraison de 10 maps ; il reste 8 maps dans un tas => on doit faire 2 opérations de chargement pour la même livraison (un chargement de 8 maps depuis le premier tas, et un chargement de 2 maps depuis un autre tas).
+<br>- Le même chargeur va faire le chargement pour 2 livraisons distinctes => on doit faire 2 opérations de chargement, une pour chaque livraison.
+
+<!-- ************************************* -->
+<h4>Vente - caractéristiques générales</h4>
+Une vente est caractérisée par :
+<ul>
+    <li>Client, acteur identifié par le système</li>
+    <li>Fournisseur, acteur identifié par le système</li>
+    <li>Qté vendue (maps)</li>
+    <li>PU HT (prix d'une map de plaquettes)</li>
+    <li>Taux de TVA</li>
+    <li>Notes : champ texte libre</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Facture vente plaquettes</h4>
+Une facture reprend les informations liées à la vente, avec en plus :
+<ul>
+    <li>Le numéro de facture (saisi par l'utilisateur)</li>
+    <li>Date de facturation par BDL pour les plaquettes vendues</li>
+    <li>
+        La livraison facturée au client, différente du coût de la livraison payé par BDL.
+        <br>Ce coût est optionnel (il peut être intégré dans le coût de vente des plauettes).
+        <br>S'il est présent, il est composé de :
+        <ul>
+            <li>Quantité = quantité de plaquettes livrées</li>
+            <li>PU HT</li>
+            <li>Taux de TVA</li>
+        </ul>
+    </li>
+    <li>Une indication pour savoir si les notes apparaissent dans la facture (par exemple pour indiquer une remise).</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Livraison</h4>
+Une livraison est caractérisée par :
+<ul>
+    <li>Vente concernée par ce chargement</li>
+    <li>Livreur, acteur identifié par le système</li>
+    <li>Date livraison</li>
+    <li>
+        Coût, qui peut être :
+        <ul>
+            <li>
+                Coût global, composé de :
+                <ul>
+                    <li>Prix global HT</li>
+                    <li>Taux de TVA pour prix global</li>
+                </ul>
+            </li>
+            <li>
+                Coût main d'oeuvre, composé de :
+                <ul>
+                    <li>Nb heures</li>
+                    <li>Coût m.o. / h HT</li>
+                    <li>Taux de TVA pour m.o.</li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>Date paiement (main d'oeuvre ou prix global)</li>
+    <li>Notes : champ texte libre</li>
+</ul>
+La quantité livrée (en maps) est la somme des quantités chargées.
+                                                              
+
+<!-- ************************************* -->
+<h4>Chargement</h4>
+Le chargement est caractérisé par :
+<ul>
+    <li>Livraison concernée par ce chargement</li>
+    <li>Chargeur, acteur identifié par le système</li>
+    <li>Tas où vont être prises les plaquettes</li>
+    <li>Qté chargée (en maps)</li>
+    <li>Date chargement</li>
+    <li>
+        Coût, qui peut être :
+        <ul>
+            <li>
+                Coût global, composé de :
+                <ul>
+                    <li>Prix global HT</li>
+                    <li>Taux de TVA pour prix global</li>
+                    <li>Date paiement du prix global</li>
+                </ul>
+            </li>
+            <li>
+                Coût détaillé, composé de :
+                <ul>
+                    <li>
+                        Coût outil :
+                        <ul>
+                            <li>Prix outil HT</li>
+                            <li>Taux de TVA pour l'outil</li>
+                            <li>Date paiement outil</li>
+                        </ul>
+                    </li>
+                    <li>
+                        Coût Main d'oeuvre :
+                        <ul>
+                            <li>Nb heures m.o.</li>
+                            <li>Prix / h HT m.o.</li>
+                            <li>Taux de TVA pour la m.o.</li>
+                            <li>Date paiement m.o.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>Notes : champ texte libre</li>
+</ul>
+
+
+<!-- *********************************************************** -->
+<h3><a name="3-5-chantiers-bois-de-chauffage-fermiers">Chantiers Bois de chauffage fermiers</a></h3>
+Il s'agit de coupes effectués par des exploitants, que BDL ne facture pas.
+<br>Caractérisé par :
+<ul>
+    <li>Le fermier effectuant la coupe, acteur identifié par le système.</li>
+    <li>l'UG concernée par la coupe.</li>
+    <li>
+        Les parcelles concernées par la coupe, appartenant à l'UG.
+        <br>Pour chaque parcelle, on doit préciser s'il s'agit d'une parcelle entière ou pas.
+        <br>S'il ne s'agit pas d'une parcelle entière, il faut préciser la surface concernée par la coupe.
+    </li>
+    <li>La date du chantier.</li>
+    <li>Type d'exploitation (1ère ... 5e exploitation)</li>
+    <li>L'essence concernée par la coupe.</li>   
+    <li>Le volume de bois coupé.</li>
+    <li>Unité pour le volume : map ou stère</li>
+</ul>
+
+<div class="question">A confirmer : un fermier ne peut couper que des parcelles dont il est exploitant</div>
+
+<!-- *********************************************************** -->
+<h3><a name="3-6-chantiers-bois-sur-pied">Chantiers Bois sur pied</a></h3>
+
+Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par BDL.
+<br>Caractéristiques :
+<ul>
+    <li>Acheteur, acteur identifié par le système</li>
+    <li>Date du Contrat</li>
+    <li>Lieu-dit, identifié par le système</li>
+    <li>Parcelles concernées (appartenant au lieu-dit)</li>
+    <li>UG (appartenant au lieu-dit)</li>
+    <li>Type d'exploitation (1ère ... 5e exploitation)</li>
+    <li>Essence</li>
+    <li>Nb stères spécifiées sur le contrat</li>
+    <li>Nb stères effectivement coupées</li>
+    <li>Prix HT / stère</li>
+    <li>Taux de TVA</li>
+    <li>Date de facturation</li>
+    <li>Notes : champ texte libre</li>
+</ul>
+
+Noter que ce type de chantier est particulier, car il faut spécifier à la fois les parcelles ET l'unité de gestion.
+<br>Spécifier l'UG est nécessaire pour calculer le bilan forestier (qui se fait par UG, et pas par parcelle).
+
+<h4>Facture chantier bois sur pied</h4>
+Le numéro de facture doit être saisi par l'utilisateur.
+
+<div class="question">A vérifier : toujours en stères ? Eric parle de m<sup>3</sup></div>
+<div class="question">Facture : un seul ou plusieurs chantier(s) / facture ?</div>
+
+
+<!-- *********************************************************** -->
+<h3><a name="3-7-chantiers-autres-valorisations">Chantiers Autres valorisations</a></h3>
+Fait l'objet d'une facturation par BDL.
+<br>Caractéristiques :
+<ul>
+    <li>Client, acteur identifié par le système</li>
+    <li>UG</li>
+    <li>
+        Type de valorisation, pouvant être :
+        <ul>
+            <li>Bois d'oeuvre</li>
+            <li>Chauffage</li>
+            <li>Palette</li>
+            <li>Pâte à papier</li>
+        </ul>
+    </li>
+    <li>Date contrat</li>
+    <li>Type d'exploitation (1ère ... 5e exploitation)</li>
+    <li>Essence</li>
+    <li>Volume sorti</li>
+    <li>
+        Unité pour le volume, pouvant être :
+        <ul>
+            <li>Stères</li>
+            <li>Tonnes</li>
+            <li>m <sup>3</sup></li>
+        </ul>
+    </li>
+    <li>PU HT</li>
+    <li>Taux de TVA</li>
+    <li>Date de facturation</li>
+</ul>
+
+<h4>Facture chantier bois sur pied</h4>
+Le numéro de facture doit être saisi par l'utilisateur.
+
+<div class="question">Y a-t-il d'autres types de valorisation envisageables dans le futur ?</div>
+<div class="question">Facture : un seul ou plusieurs chantier(s) / facture ?</div>
+
+<!-- *********************************************************** -->
+<h3><a name="3-8-acteurs">Acteurs</a></h3>
+Tous les acteurs, personnes physiques et morales, sont représentés de la même manière.
+<br>Leurs caractéristiques sont :
+<ul>
+    <li>Nom (pour une personne physique) ou Dénomination (pour une personne morale)</li>
+    <li>Prénom (pour une personne physique) ou Statut juridique (pour une personne morale)</li>
+    <li>Adresse 1</li>
+    <li>Adresse 2</li>
+    <li>Code postal</li>
+    <li>Ville</li>
+    <li>Téléphone</li>
+    <li>Téléphone portable</li>
+    <li>Email</li>
+    <li>BIC</li>
+    <li>IBAN</li>
+    <li>Siret (pour une personne morale)</li>
+    <li>
+        Fournisseur plaquettes (O/N), pour la vente des plaquettes.
+        <br>N pour la majorité des acteurs ; O pour l'acteur BDL
+    </li>
+    <li>Commentaires</li>
+    <li>Actif (O/N) : voir règles de gestion</li>
+</ul>
+
+Règles de gestion des acteurs :
+<ul>
+    <li>
+        Les acteurs importés de la base SCTL (exploitants agricoles = fermiers) ne peuvent être ni modifiés ni supprimés dans le logiciel BDL (cela doit être géré dans le logiciel SCTL).
+    </li>
+    <li>
+        Si un acteur a été modifié dans la base SCTL entre deux imports, ces modifications seront reportées dans le logiciel BDL.
+        <br>Concerne aussi bien les modifications de ses caractéristiques (nom ...) que les associations fermiers - parcelles.
+    </li>
+    <li>
+        Si un acteur a été supprimé dans la base SCTL entre deux imports :
+        <br>- s'il n'est impliqué dans aucune activité BDL, il sera supprimé à l'import.
+        <br>- s'il a participé a des activités BDL, il sera marqué "inactif", mais ne sera pas supprimé.
+    </li>
+    <li>
+        Les acteurs créés dans le logiciel BDL :
+        <br>- pourront être supprimés s'ils n'ont pas participé à des activités BDL.
+        <br>- ne pourront pas être supprimés s'ils ont participé à des activités BDL, mais il sera possible de les marquer "inactif".
+    </li>
+    <li>
+        Les caractéristiques des acteurs créés dans le logiciel BDL pourront être modifiés.
+    </li>
+</ul>
+
+
+<!-- *********************************************************** -->                                                         
+<h3>Affacturation</h3>
+Le logiciel doit permettre de faire des "factures à l'envers" : factures devant être payée par BDL.
+<br>Pour créer une affacture, l'utilisateur doit spécifier :
+<ul>
+    <li>Acteur concerné par l'affacture</li>
+    <li>Période (date début et date fin)</li>
+    <li>Type(s) d'opération à affacturer</li>
+</ul>
+
+Une affacture doit générer un document PDF, facture au nom de l'acteur à payer par BDL.
+<br>Les affactures ne sont pas stockées en base de données.
+<br>Si une affacture comprend plusieurs pages, l'entête doit être répétée à chaque page, et les pages doivent être numérotées.
+
+<!-- *********************************************************** -->                                                         
+<h3><a name="2-9-donnees-externes">Données externes</a></h3>
+
+<!-- ************************************* -->
+<h4>Logiciel SCTL</h4>
+Les données à importer sont :
+<ul>
+    <li>
+        Fermiers SCTL, avec leurs caractéristiques (voir paragraphe "acteurs" pour la liste).
+        <br>Les sociétaires SCTL ayant un bail non-agricole ne sont pas importés.
+    </li>
+    <li>
+        Parcelles cadastrales, avec leurs caractéristiques : numéro et superficie
+    </li>
+    <li>Commune</li>
+    <li>Lieux-dits</li>
+    <li>Associations fermiers - parcelles</li>
+    <li>Associations parcelles - lieux-dits</li>
+    <li>Associations communes - lieux-dits</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Couche typo</h4>
+Les données à importer sont :
+<ul>
+    <li>
+        Unités de gestion, avec comme caractéristiques :
+        <ul>
+            <li>Numéro</li>
+            <li>Superficie</li>
+            <li>Type de peuplement</li>
+            <li>Type de coupe</li>
+            <li>Prévisionnel coupe</li>
+        </ul>
+    </li>
+</ul>
+
+<!-- *********************************************************** -->                                                         
+<h3><a name="2-10-configuration">Configuration</a></h3>
+
+Certaines données doivent pouvoir être configurées par l'utilisateur :
+
+<h4>Chemins vers chaque source extérieure de donées</h4>
+<ul>
+    <li>
+        <b>Chemin vers les données du logiciel SCTL</b> : fichier .mdb
+    </li>
+    <li>
+        <b>Chemin vers les données de la couche typologie</b> : fichier .TAB
+    </li>
+</ul>
+
+<h4>Taux de TVA</h4>
+Liste des taux de TVA possibles. La liste initiale contient : 0 ; 5,5 ; 10 ; 20.
+
+
+<!-- ********************************************************************************* -->
+<h2><a name="fonctionnalites">Fonctionnalités</a></h2>
+<!-- ********************************************************************************* -->
+
+Les fonctionnalités suivantes sont attendues pour toutes les entités et opérations gérées par le programme :
+<ul>
+    <li>Visualisation</li>
+    <li>Création</li>
+    <li>Modification</li>
+    <li>Suppression</li>
+    <li>Liste avec possibilité de recherche lorsque c'est judicieux</li>
+</ul>
+Ces fonctionnalités s'appliquent à toutes les entités du logiciel et ne sont pas répétées dans les paragraphes suivants.
+<br>Toute action de suppression doit être protégée par un message de confirmation.
+
+<!-- *********************************************************** -->
+<h3><a name="3-1-communes-lieux-dits">Communes, lieux-dits</a></h3>
+<ul>
+    <li>A partir d'une commune, l'utilisateur doit pouvoir accéder aux lieux-dits de cette commune.</li>
+    <li>A Partir d'un lieu-dit, l'utilisateur doit pouvoir accéder aux parcelles, aux UG et aux chantiers liés au lieu-dit.</li>
+</ul>
+
+<!-- *********************************************************** -->
+<h3><a name="3-2-parcelles">Parcelles</a></h3>
+A partir d'une parcelle, l'utilisateur doit pouvoir accéder au lieu-dit, au(x) exploitant(s), au propriétaire et aux UGs liés à cette parcelle.  
+
+<h3><a name="3-3-ug">UG</a></h3>
+<ul>
+    <li>
+        A partir d'une UG, l'utilisateur doit pouvoir accéder au lieu-dit, au(x) exploitant(s), au propriétaire, aux parcelles et aux chantiers liés à cette UG.
+    </li>
+    <li>
+        A partir d'une UG, l'utilisateur doit pouvoir accéder à des récapitulatifs.
+        <br>Par période d'exploitation, par type de chantier afficher :
+        <ul>
+            <li>La quantité de bois exploité (en map ou en stère suivant le type de chantier)</li>
+            <li>La superficie exploitée</li>
+            <li>Le coût d'exploitation</li>
+            <li>Le bénéfice</li>
+        </ul>
+    </li>
+</ul>
+
+<div class="question">Liste des chantiers par ordre chronologique ou par type de chantier ?</div>
+<div class="question">Pour les récapitulatifs, voir proto ; Manue avait une ligne "Plaquettes + Bois d'oeuvre".</div>
+
+<!-- *********************************************************** -->
+<h3><a name="3-4-chantiers-plaquettes">Chantiers plaquettes</a></h3>
+
+Le logiciel doit contenir 4 écrans permettant de gérer les chantiers plaquettes :
+<ul>
+    <li>Ecran "général"</li>
+    <li>Ecran "chantiers"</li>
+    <li>Ecran "coût d'exploitation"</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Chantiers plaquettes - écran "Général"</h4>
+Cet écran affiche les caractéristiques générales du chantier.
+<br>A partir de cet écran, l'utilisateur doit pouvoir accéder au lieu-dit, parcelles, fermiers exploitant ces parcelles et UG concernés.
+<br>
+<br>La quantité broyée au départ est affichée à part, dans un récapitulatif contenant :
+<ul>
+    <li>Quantité broyée au départ (volume vert)</li>
+    <li>Pourcentage de perte</li>
+    <li>Volume sec</li>
+    <li>Quantité vendue</li>
+    <li>Décompte (quantité restant à vendre)</li>
+</ul>
+
+<!-- ************************************* -->
+<h4>Chantiers plaquettes - écran "Chantiers"</h4>
+
+Cet écran présente la liste des opérations simples associées au chantier plaquette.
+<br>Cette liste affiche toutes les caractéristiques des opérations, ainsi que le prix HT de l'opération, calculé à partir du PU et du nombre de jours ou d'heures.
+<br>A partir de cette liste, l'utilisateur doit pouvoir accéder aux opérateurs.
+<br>
+<br>Dans cet écran, le détail du transport vers le lieu de stockage est aussi affiché :
+<ul>
+    <li>Toutes les caractéristiques du transporteur, ainsi que le coût total du transporteur.</li>
+    <li>Toutes les caractéristiques de l'outil de transport, ainsi que le coût total de l'outil de transport.</li>
+    <li>Le coût total du transport.</li>
+    <li>Toutes les caractéristiques du rangement, ainsi que le coût total du rangement.</li>
+    <li>Un récapitulatif qui affiche les coûts liés au transport ainsi que le prix / map.</li>
+</ul>
+
+<div class="question">Le prix / map intègre uniquement les coûts liés au transport ? Il est calculé à partir du volume vert ?</div>
+
+<!-- ************************************* -->
+<h4>Chantiers plaquettes - écran "Ventes"</h4>
+Cet écran affiche la liste des ventes liées à un chantier.
+<br>Pour chaque vente, sont affichés : les caractéristiques générales de la vente, le chargement, la livraison.
+<br>Pour chaque vente, la facture concernant cette vente doit pouvoir être éditée au format PDF. Cette facture utilise le taux de TVA "plaquettes forestières" de la configuration, en vigueur à la date de facturation.
+
+<h5>Caractéristiques générales</h5>
+Toutes les caractéristiques de la vente sont affichées, ainsi que le montant total HT de la vente.
+<br>L'utilisateur doit pouvoir accéder au client et au fournisseur.
+
+<!-- ************************************* -->
+<h4>Chantiers plaquettes - écran "Coût d'exploitation"</h4>
+
+Dans cet écran sont affichés :
+<ul>
+    <li>le coût /map de plaquettes sèches, poste par poste ;</li>
+    <li>un récapitulatif général pour la comptabilité.</li>
+</ul>
+
+<h5>Coût poste par poste</h5>
+Afficher le coût pour : 
+<ul>                                                                                                 
+    <li>Abattage</li>                                                                                             
+    <li>Débardage</li>
+    <li>Déchiquetage</li>
+    <li>
+        Transport plateforme, qui reprend le coût affiché dans l'écran "chantiers"
+        <pre style="padding-left:1em; margin:0;">
+        = coût m.o. transport
+        + coût outil transport (camion ou tracteur + benne)
+        + coût rangement
+        + coûts annexes (repas, réparations)</pre>
+    </li>
+    <li>Broyage</li>
+    <li>
+        Stockage
+        <pre style="padding-left:1em; margin:0;">
+        = coût location hangar à l'année x nb map de ce chantier / nb total de maps stockées pendant l'année.</pre>
+    </li>
+    <li>
+        Livraison
+        <pre style="padding-left:1em; margin:0;">
+        = somme des coûts de toutes les ventes liées à ce chantier</pre>
+        en utilisant :
+        <pre style="padding-left:1em; margin:0;">
+        coût d'une vente  = coût chargement + coût livraison</pre>
+    </li>
+</ul>
+
+Pour les opérations simples (abattage, débardage, déchiquetage, broyage), le coût est le prix total HT des opérations associées au chantier (si plusieurs opérations du même type, le coût à afficher est la somme des prix total HT des opérations de ce type).
+
+<div class="question">Noter que le coût de livraison ne peut être calculé que si les ventes sont associées aux chantiers (et pas au lieu de stockage).</div>
+
+<h5>Récapitulatif compta</h5>
+<div class="question">A PRÉCISER</div>
+
+
+<!-- *********************************************************** -->
+<h3><a name="3-5-chantiers-bois-de-chauffage-fermiers">Chantiers Bois de chauffage fermiers</a></h3>
+Ecran affichant la liste des chantiers classé par ordre anti-chronologique.
+<br>Pour chaque période d'exploitation, un récapitulatif est affiché.
+
+<h5>Liste des chantiers</h5>
+Pour chaque chantier, toutes les caractéristiques du chantier sont affichées, avec en plus :
+<ul>
+    <li>Les UGs correspondant aux parcelles concernées.</li>
+    <li>Les exploitants des parcelles concernées.</li>
+</ul>
+A partir de cet écran, l'utilisateur doit pouvoir accéder aux UGs, aux parcelles et aux exploitants concernés.
+
+<div class="question">Chantier défini sur une (des) parcelle(s) ou sur une (des) UG(s) ?</div>
+
+<h5>Récapitulatifs</h5>
+
+Pour chaque période d'exploitation, contient, essence par essence, deux volumes totaux, un exprimé en stères et un en maps.
+
+<!-- *********************************************************** -->
+<h3><a name="3-6-chantiers-bois-de-chauffage-particuliers">Chantiers Bois sur pied</a></h3>
+Ecran affichant la liste des chantiers classé par ordre anti-chronologique.
+<br>Pour chaque période d'exploitation, un récapitulatif est affiché.
+
+<h5>Liste des chantiers</h5>
+Pour chaque chantier, toutes les caractéristiques du chantier sont affichées, avec en plus :
+<ul>
+    <li>Le lieu-dit</li>
+    <li>La commune</li>
+    <li>Le taux de TVA utilisé pour la facture</li>
+    <li>Le prix total HT</li>
+    <li>Le prix total TTC</li>
+</ul>
+A partir de cet écran, l'utilisateur doit pouvoir accéder à l'acheteur, aux parcelles concernées et au lieu dit.
+<br>L'utilisateur doit aussi pouvoir afficher la facture (format PDF).
+
+<h5>Récapitulatifs</h5>
+
+Pour chaque période d'exploitation, contient, essence par essence, le volume total exprimé en stères.
+
+<!-- *********************************************************** -->                                                         
+<h3><a name="3-7-chantiers-autres-valorisations">Chantiers Autres valorisations</a></h3>
+Cet écran liste les chantiers par ordre chronologique inverse. Cette liste affiche les caractéristiques des chantiers, ainsi que :
+<ul>
+    <li>le client</li>
+    <li>la commune</li>
+    <li>le lieu dit</li>
+    <li>l'UG (ou les UGs ?)</li>
+    <li>le prix total HT</li>
+    <li>le taux de TVA</li>
+</ul>
+
+A partir de cet écran, l'utilisateur doit pouvoir accéder au client, à la commune et au lieu-dit.
+<br>A partir de cet écran, l'utilisateur doit pouvoir afficher la facture.
+                                                                                                           
+<!-- *********************************************************** -->                                                         
+<h3><a name="3-8-acteurs">Acteurs</a></h3>
+Plusieurs écrans sont liés aux acteurs :
+
+<!-- ************************************* -->
+<h4>Recherche - liste</h4>
+Formulaire de recherche permettant de trouver un acteur à partir de son nom (ou dénomination pour une personne morale), avec possibilité de filtrer par rôle.
+<br>Pour chaque acteur satisfaisant les critères de la recherche, l'utilisateur doit pouvoir accéder à la fiche détaillée de l'acteur.
+
+<!-- ************************************* -->
+<h4>Liste par rôle</h4>
+Pour chaque rôle, affichage de la liste complète des acteurs, avec possibilité d'accéder à la fiche de chaque acteur.
+
+<!-- ************************************* -->
+<h4>Fiche détaillée</h4>
+Contient les caractéristiques de l'acteur, la liste des chantiers où cet acteur intervient, et la liste des factures émises pour cet acteur, s'il y en a.
+
+<!-- *********************************************************** -->                                                         
+<h3><a name="3-9-lieux-de-stockage-plaquettes">Lieux de stockage plaquettes</a></h3>
+Page générale affichant la liste des lieux de stockage (pas de page spécifique pour un lieu de stockage).
+<br>Pour chaque lieu de stockage sont affichés :
+<ul>
+    <li>Le nom du lieu de stockage</li>
+    <li>
+        La liste des loyers associés avec leurs infos (motant, dates de début et de fin) et possibilité de créer / modifier / supprimer des loyers.
+    </li>
+    <li>
+        La liste des mesures d'humidité faites sur ce lieu de stockage avec leurs infos (date de mesure, résultat de la mesure (en %), personne(s) ayant effectué la mesure et possibilité de créer / modifier / supprimer des mesures d'humidité.
+    </li>
+</ul>
+
+<!-- *********************************************************** -->                                                                                                    <h3><a name="3-10-recapitulatifs-generaux">Récapitulatifs généraux</a></h3>
+<div class="question">A définir.</div>
+
+<!-- *********************************************************** -->                                                         
+<h3><a name="3-11-mise-a-jour-des-donnees-externes">Mise à jour des données externes</a></h3>
+
+<h4>Logiciel SCTL</h4>
+Seules les personnes ayant des baux non-agricoles doivent être importées.
+
+
+<!-- *********************************************************** -->                                                         
+<h3><a name="3-12-sauvegarde-des-donnees">Sauvegarde des données</a></h3>
+<div class="question">A définir ; noter qu'une sauvegarde n'est pertinente que si elle est stockée dans un lieu physique différent.</div>
+
+<!-- ********************************************************************************* -->
+<h2><a name="technologies">Technologies</a></h2>
+<!-- ********************************************************************************* -->
+Le logiciel sera développé sous la forme d'une application web, utilisée dans un navigateur internet.
+<br>Il sera utilisé sous un environnement Windows (fonctionnera aussi sous Linux et à priori sous Macintosh).
+<br>Il sera développé en utilisant les langages go, javascript, css, html.
+<br>Les données seront stockées en utilisant une base de données postgresql.
+
+<!-- ********************************************************************************* -->
+<h2><a name="questions-generales">Questions générales</a></h2>
+<!-- ********************************************************************************* -->
+<div class="question">
+<ul>
+    <li>
+        Pour l'affichage de récapitulatifs, définir la notion de période d'exploitation : année civile, saison... ?
+    </li>
+    <li>
+        Dans la liste des essences, est-ce qu'on prévoit autre chose que pin / chêne / châtaigner ?
+    </li>
+    <li>
+        Voir s'il faut mettre en place un mécanisme qui mémorise les associations parcelles - exploitants ?
+        <br>Cas d'utilisation :
+        <br>un chantier a lieu sur une parcelle exploitée par une personne 1 ;
+        <br>personne 1 part à la retraite, remplacé par personne 2 ;
+        <br>Sans mécanisme de mémorisaion, si on visite ce chantier après le départ à la retraite, on verra que ce chantier est associé à personne 2.
+    </li>
+</ul>
+</div>
+
+<!-- ************************************* -->
+<!-- *********************************************************** -->
+<!-- ********************************************************************************* -->
+
+</body>
+</html>

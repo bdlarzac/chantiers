@@ -1,0 +1,41 @@
+
+
+### Obslolete, refaire avec go.mod ###
+
+go get github.com/lib/pq
+go get gopkg.in/yaml.v3
+
+Unix ODBC, pour lire les bases access
+https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC
+https://github.com/alexbrainman/odbc/wiki/InstallingFreeTDS
+
+
+###### Install sur le server ######
+
+sudo -H certbot-auto --rsa-key-size 4096 --apache -d bdl.larzac.info
+
+Dans ~/go/src/larzac.info/bdl
+gin -i --all -a 8000 -p 3012 run main.go
+
+###### Install postgresql ######
+# cf config.yml pour le mot de passe
+
+sudo -s -u postgres
+psql
+
+CREATE USER bdl;
+ALTER ROLE bdl WITH CREATEDB;
+ALTER USER bdl WITH ENCRYPTED PASSWORD 'mon_mot_de_passe' ;
+CREATE DATABASE bdlbois OWNER bdl;
+\q
+
+exit
+
+sudo /etc/init.d/postgresql restart
+
+# Pour se connecter à la base :
+psql -U bdl -W -h localhost --cluster 10/main -d bdlbois
+
+
+###### Initialisatipon des tables ######
+

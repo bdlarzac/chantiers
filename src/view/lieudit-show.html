@@ -1,0 +1,30 @@
+<h1>Lieu-dit {{.Details.Nom}}</h1>
+
+<table class="entities">
+    
+    <tr><th>Parcelle</th><th>Fermier</th><th>Unités de gestion</th><th>Commune</th></tr>
+
+    {{range .Details.Parcelles}}
+    <tr>
+        <td><a href="/geo/parcelle/{{.Id}}">{{.Code}}</a></td>
+        <td>
+            {{range .Exploitants}}
+                <a href="/acteur/{{.Id}}">{{.Prenom}} {{.Nom}}</a>
+            {{end}}
+        </td>
+        <td>
+            {{range .UGs}}
+                <a href="/unite-gestion/{{.Id}}">{{.Code}}</a>
+            {{end}}
+        </td>
+        <td>
+        {{with $.Details.Communes}}
+            {{range .}}
+                {{.Nom}}
+            {{end}}
+        {{end}}
+        </td>
+    </tr>
+    {{end}}
+    
+</table>

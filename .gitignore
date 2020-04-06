@@ -1,0 +1,13 @@
+z.*
+
+config.yml
+
+# editor stuff
+*.vim
+*.code-workspace
+
+# temporary executable generated during development
+gin-bin
+
+# private data
+install/data/Exploita.csv

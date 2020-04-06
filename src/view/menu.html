@@ -1,0 +1,67 @@
+<ul class="menus">
+  <li class="dropdown">
+    <a class="dropbtn{{if eq .Menu "accueil"}} active{{end}}" href="/">Accueil</a>
+    <div class="dropdown-content">
+      <a href="/geo/commune/liste">Communes / Lieux-dits</a>
+      <a href="/stockage/liste">Stockage plaquettes</a>
+      <div>
+          <div class="float-left"><a href="/humidite/liste">Mesures d'humidité</a></div>
+          <div class="float-right"><a href="/humidite/new" class="bold">+</a></div>
+          <br style="clear:both;">
+      </div>
+      <hr style="width:80%;">
+      <a href="/admin/maj-foncier">Mise à jour données foncières</a>
+      <a href="/admin/maj-psg">Mise à jour données PSG</a>
+      <hr style="width:80%;">
+      <a href="/recap">Récapitulatifs</a>
+    </div>
+  </li>
+  
+  <li class="dropdown">
+    <a class="dropbtn{{if eq .Menu "acteurs"}} active{{end}}" href="/acteur/liste">Acteurs</a>
+    <div class="dropdown-content">
+      <a href="/acteur/liste">Liste</a>
+      <a href="/acteur/new">Nouvel acteur</a>
+    </div>
+  </li>
+
+  <li class="dropdown">
+    <span class="dropbtn{{if eq .Menu "chantiers"}} active{{end}}" href="/chantier">Chantiers</span>
+    <div class="dropdown-content">
+      <div>
+          <div class="float-left"><a href="/chantier/plaquette/liste">Plaquettes</a></div>
+          <div class="float-right"><a href="/chantier/plaquette/new" class="bold">+</a></div>
+          <br style="clear:both;">
+      </div>
+      <div>
+          <div class="float-left"><a href="/chantier/chauffage-fermier/liste">Chauffage fermiers</a></div>
+          <div class="float-right"><a href="/chantier/chauffage-fermier/new" class="bold">+</a></div>
+          <br style="clear:both;">
+      </div>
+      <div>
+          <div class="float-left"><a href="/chantier/bois-sur-pied/liste">Bois sur pied</a></div>
+          <div class="float-right"><a href="/chantier/bois-sur-pied/new" class="bold">+</a></div>
+          <br style="clear:both;">
+      </div>
+      <div>
+          <div class="float-left"><a href="/chantier/autre/liste">Autres valorisations</a></div>
+          <div class="float-right"><a href="/chantier/autre/new" class="bold">+</a></div>
+          <br style="clear:both;">
+      </div>
+      <hr style="width:80%;">
+      <a href="/chantier/plaquette/1">chantiers récents (todo)</a>
+    </div>
+  </li>
+  
+  <li class="dropdown">
+    <a class="dropbtn{{if eq .Menu "ventes"}} active{{end}}" href="/vente/liste">Ventes</a>
+    <div class="dropdown-content">
+      <a href="/vente/liste">Liste</a>
+      <a href="/vente/new">Nouvelle vente</a>
+      <hr style="width:80%;">
+      <a href="/vente/1">ventes récentes (todo)</a>
+    </div>
+  </li>
+  
+  
+</ul> 

@@ -1,0 +1,54 @@
+<h1>Parcelle {{.Details.Code}}</h1>
+
+<div class="page-content">
+    <h2>Données foncières</h2>
+    <table class="liste-carac">
+        <tr>
+            <td>Superficie</td>
+            <td>
+                {{.Details.Surface}} ha
+            </td>
+        </tr>
+        <tr>
+            <td>Lieu-dit</td>
+            <td>
+                {{range .Details.Lieudits}}
+                <div>
+                    <a href="/geo/lieudit/{{.Id}}">{{.Nom}}</a>
+                    ({{range .Communes}}
+                        {{.Nom}} 
+                    {{end}})
+                </div>
+                {{end}}
+            </td>
+        </tr>
+        <tr>
+            <td>Fermier</td>
+            <td>
+                {{range .Details.Exploitants}}
+                <div>
+                    <a href="/acteur/{{.Id}}">{{.String}}</a>
+                </div>
+                {{end}}
+            </td>
+        </tr>
+        <tr>
+            <td>Propriétaire</td>
+            <td>
+                <a href="/acteur/{{.Details.IdProprietaire}}">{{.Details.Proprietaire.String}}</a>
+            </td>
+        </tr>
+    </table>
+    <h2>Unités de gestion</h2>
+    {{if .Details.UGs}}
+    <ul>
+        {{range .Details.UGs}}
+        <li>
+            <a href="/unite-gestion/{{.Id}}">{{.Code}}</a>
+        </li>
+        {{end}}
+    </ul>
+    {{else}}
+    Aucune UG associée à cette parcelle
+    {{end}}
+</div><!-- end class="page-content" -->

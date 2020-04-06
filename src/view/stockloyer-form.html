@@ -1,0 +1,54 @@
+
+<h1>{{.Header.Title}}</h1>
+
+{{with .Details}}
+<form class="form margin-left2" action="{{.UrlAction}}" onsubmit="return validateForm();" method="post">
+    <div class="grid2-form">
+        <label>Lieu de stockage</label>
+        <input type="text" value="{{.Stockage.Nom}}" class="width20" readonly>
+    
+        <label for="date-debut">Date début : </label>
+        <input type="date" id="date-debut" name="date-debut" value="{{.Loyer.DateDebut | dateIso}}" required>
+        
+        <label for="date-fin">Date fin : </label>
+        <input type="date" id="date-fin" name="date-fin" value="{{.Loyer.DateFin | dateIso}}" required>
+        
+        <label for="montant">Montant annuel (&euro;) : </label>
+        <input type="number" id="montant" name="montant" step="0.01" min="0" min="0" value="{{.Loyer.Montant}}" class="width5" required>
+        
+        <input type="hidden" name="id-loyer" value="{{.Loyer.Id}}">
+        <input type="hidden" name="id-stockage" value="{{.Stockage.Id}}">
+    </div>
+    <br>
+    <div class="float-right margin-top">
+        <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+        <input type="submit" class="margin-left" value="Valider">
+    </div>
+</form>
+{{end}}
+
+
+<script>
+window.addEventListener("load", function(){
+    initialize();
+});
+
+// ***************************************
+function initialize(){
+    var inp = document.getElementById("montant");
+    if(inp.value == 0){
+        inp.value = "";
+    }
+}
+
+// ***************************************
+function validateForm(){
+    var deb = document.getElementById("date-debut").value;
+    var fin = document.getElementById("date-fin").value;
+    if(fin <= deb){
+        alert("La date de fin doit se situer après la date de début");
+        return false;
+    }
+    return true;
+}
+</script>

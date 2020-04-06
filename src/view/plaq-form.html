@@ -1,0 +1,397 @@
+<h1>{{.Header.Title}}</h1>
+
+{{with .Details.Chantier}}
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+
+    <div class="grid2-form">
+    
+        <label for="lieudit">Lieu-dit</label>      
+        <div class="autocomplete">
+            <input type="text" name="lieudit" id="lieudit" autocomplete="off" value="{{.Lieudit.Nom}}" required>
+            <a id="check-ld" href="#" onclick="checkLD();">
+                <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" title="Valider" />
+            </a>
+        </div>
+        
+        <label for="fermier">Fermier</label>
+        <select name="fermier" id="fermier" required></select>
+        
+        <label for="ug" >Unité de gestion</label>
+        <select name="ug" id="ug" required></select>
+                                                                          
+        <label>Dates déchiquetage :</label>
+        <div>                                                                                                                              
+            <div class="inline-block">
+                <div class="center"><label for="date-debut">Début</label></div>
+                <input type="date" name="date-debut" id="date-debut" value="{{.DateDebut | dateIso}}" required>
+            </div>
+            <div class="inline-block">
+                <div class="center"><label for="date-fin">Fin</label></div>
+                <input type="date" name="date-fin" id="date-fin" value="{{.DateFin | dateIso}}" required>
+            </div>
+        </div>
+        
+        <label for="stockage">Lieu de stockage (tas)</label>
+        <div>
+            <div>
+                <select name="stockage" id="stockage" class="width15 margin-bottom">
+                    {{$.Details.StockageOptions}}
+                </select>
+                <a id="ajout-stockage" href="#" onclick="ajouterStockage();">
+                    <img class="inline bigicon vertical-align-middle" src="/static/img/validate.png" title="Ajouter un tas dans ce hangar" />
+                </a>
+            </div>
+            
+            <ul id="stockages-choisis" class="naked margin0 padding0">
+            </ul>
+        </div>
+        
+        <label for="surface">Surface concernée (ha)</label>
+        <input type="number" name="surface" id="surface" step="0.1" value="{{.Surface | zero2empty}}" class="width5">
+        
+        <label for="exploitation">Exploitation</label>
+        <select name="exploitation" id="exploitation" class="width8">
+            {{$.Details.ExploitationOptions}}
+        </select>
+        
+        <label for="essence">Essence</label>
+        <select name="essence" id="essence" class="width">
+            {{$.Details.EssenceOptions}}
+        </select>
+        
+        <label for="frais-repas">Frais repas (&euro;)</label>
+        <input type="number" name="frais-repas" id="frais-repas" step="0.01" min="0" value="{{.FraisRepas | zero2empty}}" class="width5">
+        
+        <label for="frais-reparation">Frais réparation (&euro;)</label>
+        <input type="number" name="frais-reparation" id="frais-reparation" step="0.01" min="0" value="{{.FraisReparation | zero2empty}}" class="width5">
+        
+    </div>                                                                   
+    
+    <div class="margin-top">
+        <div class="float-left">
+            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
+        </div>
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Valider">
+        </div>
+    </div>
+
+    <input type="hidden" name="id" id="id" value="{{.Id}}">
+    <input type="hidden" name="id-lieudit" id="id-lieudit" value="{{.IdLieudit}}">
+    <input type="hidden" name="ids-stockages" id="ids-stockages" value="">
+    
+</form>
+
+<a name="help"></a>
+<div id="help" class="margin display-none">
+    <div class="help-content">
+        <div class="help-title">Aide</div>
+        <div class="section">
+            <b>Lieu-dit</b>, <b>Fermier</b>, <b>Unité de gestion</b> : pour accéder à la liste des fermiers et unités de gestion, il faut d'abord choisir un lieu dit, puis valider en cliquant sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" alt="Valider">
+            <br>Il faut ensuite obligatoirement choisir un fermier et une UG.
+        </div>
+        <div class="section">
+            <b>Lieu de stockage (tas)</b> : permet de spécifier les hangars contenant les tas associés au chantier.
+            <br>Un chantier peut être associé à plusieurs tas mais ne peut être associé qu'à un seul tas par hangar.
+            <br>Pour associer un hangar au chantier, choisissez un hangar dans la liste puis validez en cliquant sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" alt="Valider">
+            <br>A la création d'un chantier, un tas va être créé pour chaque hangar sélectionné.
+            <br>A la modification d'un chantier, ATTENTION car modifier les hangars associés au chantier a des conséquences :
+            <br>Toute supression d'une association chantier - tas entraîne :
+            <ul class="margin-top0">
+                <li>La supression du tas concerné.</li>
+                <li>La supression de toutes les opérations associées à ce tas (transport, rangement, vente, chargement, livraison).</li>
+                <li>La modification du stock du hangar.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+                                                               
+// ***************************************
+window.addEventListener("load", function(){
+    autocomplete(document.getElementById('lieudit'), getLDPossibles);
+    initialize();
+});
+
+// ***************************************
+function initialize() {
+    // form new
+    if({{.Id}} == 0){
+        // essence initalisée à pin sylvestre car c'est le cas le plus fréquent
+        document.getElementById("essence-PS").setAttribute("selected", "selected");
+        // fermier
+        var option1 = document.createElement('option');
+        option1.value = 0;
+        option1.text = "--- Sélectionnez d'abord un lieu-dit ---";
+        document.getElementById("fermier").appendChild(option1);
+        // ug
+        var option2 = document.createElement('option');
+        option2.value = 0;
+        option2.text = "--- Sélectionnez d'abord un lieu-dit ---";
+        document.getElementById("ug").appendChild(option2);
+    }
+    // form update
+    else{
+        // essence
+        document.getElementById("essence-" + "{{.Essence}}").setAttribute("selected", "selected");
+        // fermier
+        var option1 = document.createElement('option');
+        option1.value = {{.IdFermier}};
+        option1.text = {{.Fermier.Nom}};
+        document.getElementById("fermier").appendChild(option1);
+        // ug
+        var option2 = document.createElement('option');
+        option2.value = {{.IdUG}};
+        option2.text = {{.UG.String}};
+        document.getElementById("ug").appendChild(option2);
+        // exploitation
+        document.getElementById("exploitation-" + "{{.Exploitation}}").setAttribute("selected", "selected")
+        // tas
+        {{range .Tas}}
+            doAjouterStockage("added-stockage-" + "{{.Id}}", {{.Nom}});
+        {{end}}
+        // @todo Gérer dans le contrôleur la modification d'un tas
+        // en attendant, 
+        document.getElementById("stockage").setAttribute("disabled", true);
+    }
+}
+
+// ***************************************
+/** 
+    Fonction utilisée par autocomplete() pour s'alimenter en données
+    @param inputField input type=text utilisé
+                      pour récupérer des noms de personnes par ajax
+**/
+// @todo remplacer async = false par await et Promise
+function getLDPossibles(inputField){
+    var result = [];
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response != null){
+                response.forEach(function(item) {
+                    result.push(item.name);
+                });
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/autocomplete/lieudit/" + inputField.value, false);
+    xhr.send();
+    return result;
+}
+
+// ***************************************
+/** 
+    Vérifie par ajax que le lieu-dit sélectionné correspond à un LD existant.
+    Si non, efface le contenu de id-lieudit et de lieudit
+    Si oui,
+        - remplit le champ hidden id-lieudit
+        - remplit le select fermier avec la liste des fermiers possibles
+        - remplit le ug fermier avec la liste des ugs possibles
+**/
+function checkLD(){
+    var nomLD = document.getElementById("lieudit").value;
+    if(nomLD == ""){
+        alert("Lieu-dit invalide");
+        document.getElementById("id-lieudit").value = 0;
+        return;
+    }
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var idLD = JSON.parse(this.responseText);
+            if(idLD != null && idLD != 0){
+                document.getElementById("id-lieudit").value = idLD;
+            }
+            else{
+                alert("Lieu-dit invalide");
+                document.getElementById("id-lieudit").value = 0;
+                return;
+            }
+            actionAfterChangeLieudit();
+        }
+    };
+    xhr.open("GET", "/ajax/check/lieudit/" + nomLD);
+    xhr.send();
+}
+
+// ******************************************************
+/**
+    Lorsqu'un lieu-dit change, mettre à jour les fermiers et les ugs possibles
+**/
+function actionAfterChangeLieudit(){
+    var idLD = document.getElementById("id-lieudit").value
+    if(idLD == 0){
+        var option1 = document.createElement('option');
+        option1.value = 0;
+        option1.text = "--- Sélectionnez d'abord un lieu-dit ---";
+        document.getElementById("fermier").options.length = 0; // supprime toute les options du select
+        document.getElementById("fermier").appendChild(option1);
+        var option2 = document.createElement('option');
+        option2.value = 0;
+        option2.text = "--- Sélectionnez d'abord un lieu-dit ---";
+        document.getElementById("ug").options.length = 0; // supprime toute les options du select
+        document.getElementById("ug").appendChild(option2);
+    }
+    else{
+        // ajax pour récupérer les fermiers possibles
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                if(response != null){
+                    document.getElementById("fermier").options.length = 0; // supprime toute les options du select
+                    response.forEach(function(item) {
+                        var option = document.createElement('option');
+                        option.value = item.id;
+                        option.text = item.name;
+                        document.getElementById("fermier").appendChild(option);
+                    });
+                    // ajax pour récupérer les ugs possibles
+                    actionAfterChangeLieudit_suite(idLD);
+                }
+            }
+        };
+        xhr.open("GET", "/ajax/get/fermiers-from-lieudit/" + idLD);
+        xhr.send();
+    }
+}
+
+// ******************************************************
+/** 
+    Récupère ugs possibles par ajax
+    Mis dans une fonction à part pour que soit exécuté après l'ajax pour récup les fermiers
+**/
+function actionAfterChangeLieudit_suite(idLD){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response != null){
+                document.getElementById("ug").options.length = 0; // supprime toutes les options du select
+                response.forEach(function(item) {
+                    var option = document.createElement('option');
+                    option.value = item.id;
+                    option.text = item.name;
+                    document.getElementById("ug").appendChild(option);
+                });
+            }
+            else{
+                var option = document.createElement('option');
+                option.value = 0;
+                option.text = "--- Aucune UG pour ce lieu-dit ---";
+                document.getElementById("ug").options.length = 0; // supprime toute les options du select
+                document.getElementById("ug").appendChild(option);
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/get/ugs-from-lieudit/" + idLD);
+    xhr.send();
+}
+
+// ***************************************
+function ajouterStockage(){
+    var sel = document.getElementById("stockage"); // select contenant les stockages
+    var newName = sel.options[sel.selectedIndex].text;
+    var newId = "added-stockage-" + sel.options[sel.selectedIndex].value;
+    if(newId == "added-stockage-CHOOSE_STOCKAGE"){
+        alert("Sélectionnez un stockage avant de l'ajouter");
+        return;
+    }
+    // teste si le stockage est déjà dans la liste
+    var stockagesChoisis = document.getElementById("stockages-choisis");
+    for(var li=stockagesChoisis.firstChild; li!==null; li=li.nextSibling){
+        if(li.id == newId){
+            alert("Impossible d'ajouter deux fois le même stockage");
+            return;
+        }
+    }
+    //
+    doAjouterStockage(newId, newName);
+    sel.selected = document.getElementById("CHOOSE_STOCKAGE");
+}
+
+// ***************************************
+/** 
+    Ajoute un stockage dans la liste "stockages-choisis"
+    Séparé de ajouterStockage() car appelé par initialize() et par ajouterStockage()
+**/
+function doAjouterStockage(id, name){
+    var img = document.createElement("img");
+    img.setAttribute("class", "inline vertical-align-middle bigicon");
+    img.setAttribute("src", "/static/img/delete.png");
+    img.setAttribute("title", "Retirer ce stockage");
+    var a = document.createElement("a");
+    a.setAttribute("href", "#");
+    a.setAttribute("onclick", "retirerStockage('" + id + "');");
+    a.setAttribute("class", "padding-right05");
+    var li = document.createElement("li");
+    li.setAttribute("id", id);
+    li.setAttribute("class", "margin-bottom05");
+    var text = document.createTextNode(name);
+    a.appendChild(img);
+    li.appendChild(a);
+    li.appendChild(text);
+    document.getElementById("stockages-choisis").appendChild(li);
+}
+
+// ***************************************
+function retirerStockage(id){
+    const stockagesChoisis = document.getElementById("stockages-choisis");
+    const elt = document.getElementById(id);
+    if({{.Id}} != 0){ // Si on est dans form update
+        const msg = "ATTENTION\n"
+            + "Supprimer une association entre un chantier et un tas\n"
+            + "a pour effet de supprimer toutes les activités liées à ce tas :\n"
+            + "- transports\n"
+            + "- rangements\n"
+            + "- ventes (donc chargements et livraisons)\n"
+            + "\nEtes-vous bien sûr(e) de vouloir faire ça ?";
+        const r = confirm(msg);
+        if (r == false) {
+            return;
+        }
+    }
+    stockagesChoisis.removeChild(elt);
+}
+
+
+// ***************************************
+function validateForm(){
+    var deb = document.getElementsByName("date-debut")[0].value;
+    var fin = document.getElementsByName("date-fin")[0].value;
+    if(fin <= deb){
+        alert("La date de fin doit se situer après la date de début");
+        return false;
+    }
+    // check stockages
+    var stockagesChoisis = document.getElementById("stockages-choisis");
+    var n = 0;
+    var ids = [];
+    for(var li=stockagesChoisis.firstChild; li!==null; li=li.nextSibling){
+        if(li.id == null){
+            continue;
+        }
+        if(li.id.startsWith("added-stockage-")){
+            n++;
+            ids.push(li.id.replace("added-stockage-", ""));
+        }
+    }
+    if(n == 0){
+        alert("Vous devez au moins choisir un lieu de stockage");
+        return false;
+    }
+    // exploitation
+    if(document.getElementById("exploitation").value == "CHOOSE_EXPLOITATION"){
+        alert("Vous devez renseigner un type d'exploitation.");
+        return false;
+    }
+    // remplit le champ hidden
+    document.getElementById("ids-stockages").value = ids.join("-");
+    return true;
+}
+</script>   
+{{end}}

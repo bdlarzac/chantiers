@@ -1,0 +1,89 @@
+
+<h1>{{.Header.Title}}</h1>
+
+{{with .Details.Acteur}}
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+
+    <div class="grid2-form">
+        
+        <label for="nom">Nom / Dénomination</label>
+        <input type="text" name="nom" id="nom" value="{{.Nom}}" required>
+        
+        <label for="prenom">Prénom / Statut juridique</label>
+        <input type="text" name="prenom" id="prenom" value="{{.Prenom}}">
+        
+        <label for="adresse1">Adresse 1 / Siège social</label>
+        <input type="text" name="adresse1" id="adresse1" value="{{.Adresse1}}">
+        
+        <label for="adresse2">Adresse 2</label>
+        <input type="text" name="adresse2" id="adresse2" value="{{.Adresse2}}">
+        
+        <label for="cp">Code postal</label>
+        <div><input type="text" name="cp" id="cp" size="5" value="{{.Cp}}"></div>
+        
+        <label for="ville">Ville</label>
+        <input type="text" name="ville" id="ville" value="{{.Ville}}">
+        
+        <label for="tel">Téléphone</label>
+        <div><input type="text" name="tel" id="tel" size="14" value="{{.Tel}}"></div>
+        
+        <label for="telportable">Téléphone portable</label>
+        <div><input type="text" name="telportable" id="telportable" size="14" value="{{.TelPortable}}"></div>
+        
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" value="{{.Email}}">
+        
+        <label for="bic">BIC</label>
+        <input type="text" name="bic" id="bic" value="{{.Bic}}">
+        
+        <label for="iban">IBAN</label>
+        <input type="text" name="iban" id="iban" value="{{.Iban}}">
+        
+        <label for="siret">Siret</label>
+        <input type="text" name="siret" id="siret" value="{{.Siret}}">
+        
+        <label for="fournisseur">Fournisseur plaquettes</label>
+        <div>
+            <input type="checkbox" name="fournisseur" id="fournisseur" {{if .Fournisseur}} checked{{end}}>
+        </div>
+        
+        <label for="proprietaire">Propriétaire</label>
+        <div>
+            <input type="checkbox" name="proprietaire" id="proprietaire" {{if .Proprietaire}} checked{{end}}>
+        </div>
+        
+        <label for="notes">Notes</label>
+        <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
+
+    </div>
+    
+    <div class="margin-top">
+        <div class="float-left">
+            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
+        </div>
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Valider">
+        </div>
+    </div>
+    
+    <input type="hidden" name="id" id="id" value="{{.Id}}">
+    
+</form>
+
+<a name="help"></a>
+<div id="help" class="margin display-none">
+    <div class="help-content">
+        <div class="help-title">Aide</div>
+        <b>Fournisseur plaquettes</b> : cocher cette case si l'acteur peut être considéré comme un fournisseur lors d'une vente de plaquettes, comme l'est BDL.
+    </div>
+</div>
+
+
+<script>
+
+function validateForm(){
+}
+</script>
+
+{{end}}

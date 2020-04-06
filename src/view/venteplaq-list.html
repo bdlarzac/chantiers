@@ -1,0 +1,61 @@
+<h1>
+    {{.Header.Title}}
+    <a class="padding-left" href="/vente/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer une nouvelle vente"/>
+    </a>
+</h1>
+
+{{if .Details.Annees}}
+<div>
+    Autres années :
+    {{range .Details.Annees}}
+    <a class="padding-left" href="/vente/liste/{{.}}">{{.}}</a>
+    {{end}}
+</div>
+{{end}}
+
+
+{{if .Details.Ventes}}
+<table class="entities">
+    <tr>
+        <th colspan="2"></th>
+        <th>Qté</th>
+        <th>PU HT</th>
+        <th>Prix HT</th>
+        <th>Prix TTC</th>
+        <th>Num facture</th>
+        <th>Date facture</th>
+    </tr>
+{{end}}
+{{range .Details.Ventes}}
+    <tr>
+        <td>
+            <a href="/vente/{{.Id}}">
+                <img src="/static/img/details.png" title="Voir les détails de cette vente">
+            </a>
+            <a href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
+                <img src="/static/img/facture.png" title="Voir la facture" />
+            </a>
+            <a href="/vente/update/{{.Id}}">
+                <img src="/static/img/update.png" title="Modifier cette vente">
+            </a>
+            <a href="#" onclick='deleteVentePlaquette({{.Id}}, "{{.Client.String}}", "{{.DateVente | dateFr}}");'>
+                <img src="/static/img/delete.png" title="Supprimer cette vente">
+            </a>
+        </td>
+        <td><a href="/vente/{{.Id}}">Vente {{.String}}</a></td>
+        <td>{{.Qte}} maps</td>
+        <td>{{.PUHT}} &euro;</td>
+        <td><script>document.write(round(prixHT({{.PUHT}}, {{.Qte}}), 2));</script> &euro;</td>
+        <td><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2));</script> &euro;</td>
+        <td>{{.NumFacture}}</td>
+        <td>{{.DateFacture | dateFr}}</td>
+    </tr>
+{{end}}
+{{if .Details.Ventes}}
+</table>
+{{end}}
+
+<!-- 
+    Voir scripts dans static/js/venteplaq.js
+-->

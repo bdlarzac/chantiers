@@ -1,0 +1,66 @@
+<h1>
+    {{.Header.Title}}
+    <a class="padding-left" href="/humidite/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer une nouvelle mesure d'humidité" />
+    </a>
+</h1>
+
+{{if .Details.Annees}}
+<div>
+    Autres années :
+    {{range .Details.Annees}}
+    <a class="padding-left" href="/humidite/liste/{{.}}">{{.}}</a>
+    {{end}}
+</div>
+{{end}}
+
+{{if .Details.Humids}}
+<table class="entities">
+    
+    <tr>
+        <th></th>
+        <th>Date</th>
+        <th>Valeur</th>
+        <th>Tas</th>
+        <th>Mesureurs</th>
+        <th>Notes</th>
+    </tr>
+    {{range .Details.Humids}}
+    <tr>
+        <td class="whitespace-nowrap">
+            <a href="/humidite/update/{{.Id}}">
+                <img src="/static/img/update.png" title="Modifier cette mesure" />
+            </a>
+            <a href="#" onclick="deleteMesure({{.Id}}, {{.DateMesure | dateFr}});" class="padding-left05">
+                <img src="/static/img/delete.png" title="Supprimer cette mesure">     
+            </a>
+        </td>
+        <td>{{.DateMesure | dateFr}}</td>
+        <td>{{.Valeur}} %</td>
+        <td>
+            <a href="/stockage/liste">{{.Tas.Nom}}</a>
+        </td>
+        <td>
+            {{range .Mesureurs}}
+                <div>- <a href="/acteur/{{.Id}}">{{.String}}</a></div>
+            {{end}}
+        </td>
+        <td>{{.Notes | nl2br}}</td>
+    </tr>
+    {{end}}
+
+</table>                                                                 
+
+{{end}} {{/* end if .Details.Humids */}}
+
+<script>
+// *****************************************
+function deleteMesure(idMesure, acheteur, date){
+    const msg = "Attention, en cliquant sur OK,\n"
+            + "la mesure du " + date + "\nsera définitivement supprimée";
+    let r = confirm(msg);
+    if (r == true) {
+        window.location = "/mesure/delete/" + idMesure;
+    }
+}
+</script>

@@ -1,0 +1,75 @@
+
+{{$PourcentPerte := .Details.PourcentagePerte}}
+{{with .Details.Chantier}}
+<table class="th-left">
+    <tr>
+        <th>Dates (déchiquetage)</th>
+        <td>{{.DateDebut | dateFr}} - {{.DateFin | dateFr}}</td>
+    </tr>
+    
+    <tr>
+        <th>Lieu-dit</th>
+        <td><a href="/geo/lieudit/{{.IdLieudit}}">{{.Lieudit.Nom}}</a></td>
+    </tr>
+    
+    <tr>
+        <th>Unité de gestion</th>
+        <td><a href="/unite-gestion/{{.IdUG}}">{{.UG.Code}}</a></td>
+    </tr>
+    
+    <tr>
+        <th>Fermier</th>
+        <td><a href="/acteur/{{.IdFermier}}">{{.Fermier.Prenom}} {{.Fermier.Nom}}</a></td>
+    </tr>
+    
+    <tr>
+        <th>Surface concernée</th>
+        <td>{{.Surface}} ha</td>
+    </tr>
+    
+    <tr>
+        <th>Essence</th>
+        <td>{{.Essence | labelEssence}}</td>
+    </tr>
+    
+    <tr>
+        <th>Exploitation</th>
+        <td>{{.Exploitation | labelExploitation}}</td>
+    </tr>
+    
+    <tr>
+        <th class="vertical-align-top">Stockage (tas)</th>
+        <td>
+            {{range .Tas}}
+                <div><a href="/stockage/liste">{{.Nom}}</a> : {{.Stock}} maps</div>
+            {{end}}
+        </td>
+    </tr>
+    
+    {{if .Ventes}}
+    <tr>
+        <th class="vertical-align-top">Ventes</th>
+        <td>
+            {{range .Ventes}}
+                <div><a href="/vente/{{.Id}}">Vente {{.String}}</a></div>
+            {{end}}
+        </td>
+    </tr>
+    {{end}}
+    
+</table>
+
+<table class="bordered" style="margin-top:1em;">
+    <tr>
+        <th>Qté broyée au départ<br>(volume vert)</th>
+        <th>Perte<br>{{$PourcentPerte}} %</th>
+        <th>Volume sec</th>
+    </tr>
+    <tr>
+        <td>{{.Volume}} map</td>
+        <td><script>var nb = {{.Volume}}*{{$PourcentPerte}}/100; document.write(round(nb, 2));</script> map</td>
+        <td><script>var nb = {{.Volume}}*(1 - {{$PourcentPerte}}/100); document.write(round(nb, 2));</script> map</td>
+    </tr>
+</table>
+
+{{end}}

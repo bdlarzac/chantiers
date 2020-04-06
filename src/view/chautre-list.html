@@ -1,0 +1,123 @@
+<h1>
+    {{.Header.Title}}
+    <a class="padding-left" href="/chantier/autre/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau chantier autres valorisations" />
+    </a>
+</h1>
+
+{{if .Details.Annees}}
+<div>
+    Autres années :
+    {{range .Details.Annees}}
+    <a class="padding-left" href="/chantier/autre/liste/{{.}}">{{.}}</a>
+    {{end}}
+</div>
+{{end}}
+
+{{if .Details.Chantiers}}
+<table class="entities">
+    
+    <tr>
+        <th></th>
+        <th>Général</th>
+        <th>Chantier</th>
+        <th>Facture</th>
+        <th>Notes</th>
+    </tr>
+    {{range .Details.Chantiers}}
+    <tr>
+        <td class="whitespace-nowrap">
+            <a href="#" onclick='ShowFactureChautre({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
+                <img src="/static/img/facture.png" title="Voir la facture" />
+            </a>
+            <a href="/chantier/autre/update/{{.Id}}" class="padding-left05">
+                <img src="/static/img/update.png" title="Modifier ce chantier" />
+            </a>
+            <a href="#" onclick="deleteChantier({{.Id}}, {{.Client.String}}, {{.DateContrat | dateFr}});" class="padding-left05">
+                <img src="/static/img/delete.png" title="Supprimer ce chantier">     
+            </a>
+        </td>
+        <td>
+            <div class="grid2-pres">
+                <div>Client</div>
+                <div><a href="/acteur/{{.IdClient}}">{{.Client.String}}</a></div>
+                
+                <div>Valorisation</div>
+                <div>{{.TypeValo | labelValorisation}}</div>
+                
+                <div>Date contrat</div>    
+                <div>{{.DateContrat | dateFr}}</div>
+                
+                <div>Essence</div>
+                <div>{{.Essence | labelEssence}}</div>
+                
+                <div>Exploitation</div>
+                <div>{{.Exploitation | labelExploitation}}</div>
+                
+                <div>UG</div>
+                <div><a href="/unite-gestion/{{.IdUG}}">{{.UG.String}}</a></div>
+            </div>
+        </td>
+        <td>
+            <div class="grid2-pres">
+                <div>Volume</div>
+                <div>{{.Volume}} {{.Unite | labelUnite}}</div>
+                
+                <div>PU HT</div>
+                <div><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>
+                
+                <div>Total HT</div>
+                <div><script>document.write(round(prixHT({{.PUHT}}, {{.Volume}}), 2));</script></span> &euro;</div>
+                
+                <div>TVA</div>
+                <div>{{.TVA}}</span> %</div>
+                
+                <div>Total TTC</div>
+                <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Volume}}), {{.TVA}}), 2));</script></span> &euro;</div>
+            </div>
+        </td>
+        <td>
+            <div class="grid2-pres">
+                <div>Date</div>
+                <div>{{.DateFacture | dateFr}}</div>
+                
+                <div>Numéro</div>
+                <div>{{.NumFacture}}</div>
+            </div>
+        </td>
+        <td>{{.Notes | nl2br}}</td>
+    </tr>
+    {{end}}
+
+</table>                                                                 
+
+{{end}} {{/* end if .Details.Chantiers */}}
+
+<script>
+// *****************************************
+function deleteChantier(idChantier, acheteur, date){
+    const msg = "Attention, en cliquant sur OK,\n"
+            + "le chantier " + acheteur + " - "  + date + "\nsera définitivement supprimé";
+    let r = confirm(msg);
+    if (r == true) {
+        window.location = "/chantier/autre/delete/" + idChantier;
+    }
+}
+
+// *****************************************
+/** 
+    Sert de filtre pour afficher uniquement les factures contenant suffisamment d'information.
+**/
+function ShowFactureChautre(idChantier, numFacture, dateFacture) {
+    if(numFacture == "" || dateFacture == ""){
+        alert(
+            "Pour voir la facture, il faut d'abord renseigner :"
+            + "\n- le numéro de facture"
+            + "\n- la date de facture"
+            + "\nModifiez le chantier et renseignez ces 2 champs."
+        );
+        return;
+    }
+    window.location = "/facture/autre/" + idChantier;
+}
+</script>

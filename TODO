@@ -1,0 +1,128 @@
+Pour voir les fonctions foireuses :
+grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
+
+- uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure
+  vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps
+  dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité déabord ; modifier VenteCharge
+  Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
+
+- finir affacture
+
+- WeboTVAExt : remplacer param chooseId par suffix, pour avoir des ids html uniques
+
+- dans les form update, initialiser les webo essence avec préfixe "essence-"
+
+- model : remplacer Scan par sqlx
+
+- tester deletable pour stockage
+
+- tester deletable pour acteur
+
+- tester delete ou update tas dans un Plaq
+
+- plaqop-show -> simplifier affichage coût
+
+- BDD : voir not null ou pas
+
+- BDD : virer type proprio
+
+- js : faire des promesses pour remplacer async=true
+
+- js : remplacer partout var par let ou const qd c'est possible
+
+- Plaqop : modifier les unités pour avoir 2 caractères
+
+- signe euro sur les factures
+
+- dans form bspied, initialize() : remplacer setTimeout() par une promesse
+
+- weboTas et autres fonctions webo : doit inclure un préfixe pour avoir des ids uniques
+
+- Tester évolution du stock sur les hangars à plaquette
+
+- GetAffactureActivitesByDate - trouver un moyen de renvoyer []*interface{} au lieu de []interface{}
+
+- Dans toutes les fonctions Get*Full(), sortir les calculs dans des fonctions Compute()
+    Vérifier dans les classes extérieures que les fonctions Compute() sont utilisées à la place de GetXXX()
+    (en particulier GetActeur() pour VentePlaq ou Plaq)
+    =>  faire dans Plaq
+    => OK pour VentePlaq
+
+- Création loyer stockage : vérifier par ajax cohérence avec les loyers déjà existant (?)
+
+- tester liste stockages avec stockages archivés
+
+- Voir si possible de supprimer Acteur.Propriétaire
+
+- BUG Deletable dans acteur-list.html
+
+- Faire en sorte que les acteurs BDL et GFA ne soient pas supprimables ?
+
+- Autocomplete LD : bug lorsqu'il y a une apostrophe
+
+- (a *Acteur) GetActivitesByDate et GetAffactureActivitesByDate() : trier par date
+
+- Partie "facture" de la config pas prise en compte
+
+- Supprimer gestion d'erreur inutile, car filtrée par html5 ; par ex
+	bsp.PrixStere, err = strconv.ParseFloat(r.PostFormValue("prixstere"), 32)
+
+- js : getActeursPossibles() et getLDPossibles() peuvent être factorisés
+
+- js : factoriser code de calcul de id acteur dans validateForm()
+
+- Acteurs : créer champ "propriétaire" et "fournisseur" - ajouter acteur BDL
+
+- utiliser tiglib.Round partout ou ParseFloat est utilisé dans l'analyse des forms (fait dans plaqtrans et dans plaqop).
+
+- Gérer les cas où on veut accéder à une entité n'existant pas
+(par ex en mettant un faux id dans l'url)
+=> le model renvoie une error, pas géré pour l'instant au niveau du controleur.
+
+- voir bug DEVEZ GRAN / DEVEZ GRAND
+
+- mettre tous les ids en int au lieu de int64 dans les structs de model ?
+
+- remplacer scripts dans footer par scripts dans header avec attribut defer
+
+- remplacer dans les tmpl "liste-carac" par "th-left"
+
+- loyer lieu de stockage, new, update : vérifier que les dates ne chevauchent pas.
+
+- packaging ; rep build/ et coexistence de plusieurs main() - utiliser bdl.local/bois
+
+- read mdb / windows
+
+- bug transport par camion, Prix au km, on saisit 1,53 et affiche 1.5299999713897705 €
+
+- UG : Surf_Recalcul ou Surf_SIG ?
+
+- dans UG.type_coupe : garder 0 0 ?
+
+- Comment modéliser ça :
+  id  |   code   |   type_coupe    | previsionnel_coupe |      type_peuplement       | surface  
+------+----------+-----------------+--------------------+----------------------------+----------
+   24 | XIII-21  | ESP2 2021       | ESP3               | PS                         |  1.71119
+   25 | XIII-21  | ESP2 2021       | ESP3               | PS                         |  0.41453
+   26 | XIII-21  | ESP2 2021       | ESP3               | PS                         |  0.08319
+
+
+
+Notes vrac
+--------------------
+
+debug.stack()
+go.dev
+bookmyname
+
+access : mattn/go-adodb
+https://www.microsoft.com/en-us/download/details.aspx?id=54920
+
+pour embarquer les static et templates dans l'exe : genesis
+(à utiliser éventuellement avec go generate)
+https://github.com/benbjohnson/genesis
+
+go mod vendor
+
+voir pyramid pour la philo middleware, acl
+

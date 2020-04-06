@@ -1,0 +1,300 @@
+<h1>{{.Header.Title}}</h1>
+
+{{with .Details.VenteCharge}}
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+
+    <div class="grid2-form">           
+        
+        <label>Vente</label>
+        <div>{{.Livraison.Vente.String}}</div>
+        
+        <label>Livraison</label>
+        <div>{{.Livraison.String}}</div>
+        
+        <label for="chargeur">Chargeur</label>
+        <div class="autocomplete">
+            <input type="text" name="chargeur" id="chargeur" value="" autocomplete="off" class="width20" required>
+        </div>
+        
+        <label for="tas">Tas</label>
+        <select name="tas" id="tas">
+            {{$.Details.TasOptions}}
+        </select>
+
+        <label for="qte">Quantité (maps)</label>
+        <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5" required>
+        
+        <label for="datecharge">Date chargement</label>
+        <input type="date" name="datecharge" id="datecharge" value="{{.DateCharge | dateIso}}" class="width20" required>
+        
+    </div>
+    
+    <!-- ****************** Coût global ******************* -->
+    <div class="big5 bold margin-top2">
+        <input type="radio" name="type-cout" id="cout-global" value="cout-global">
+        <label for="cout-global">COÛT GLOBAL</label>
+    </div>
+                                      
+    <div class="grid2-form margin-top">
+        
+        <label for="glprix">Prix HT</label>
+        <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5">
+        
+        <label for="gltva">Taux TVA</label>
+        <select name="gltva" id="gltva" class="width8">
+            {{$.Details.GlTVAOptions}}
+        </select>
+        
+        <label for="gldatepay">Date Paiement</label>
+        <input type="date" name="gldatepay" id="gldatepay" value="{{.GlDatePay | dateIso}}" class="width20">
+        
+    </div>
+
+    <!-- ****************** Coût détaillé ******************* -->
+    <div class="big5 bold margin-top2">
+        <input type="radio" name="type-cout" id="cout-detail" value="cout-detail">
+        <label for="cout-detail">COÛT DÉTAILLÉ</label>
+    </div>
+    
+    <!-- ****************** Outil ******************* -->
+    <div class="big3 bold margin-top">Outil</div>
+    
+    <div class="grid2-form margin-top">
+        
+        <label for="ouprix">Prix HT</label>
+        <input type="number" name="ouprix" id="ouprix" step="0.01" min="0" value="{{.OuPrix | zero2empty}}" class="width5">
+        
+        <label for="outva">Taux TVA</label>
+        <select name="outva" id="outva" class="width8">
+            {{$.Details.OuTVAOptions}}
+        </select>
+        
+        <label for="oudatepay">Date Paiement</label>
+        <input type="date" name="oudatepay" id="oudatepay" value="{{.OuDatePay | dateIso}}" class="width20">
+        
+    </div>
+    
+    <!-- ****************** Main d'oeuvre ******************* -->
+    <div class="big3 bold margin-top">Main d'oeuvre</div>
+    
+    <div class="grid2-form margin-top">
+        
+        <label for="monheure">Nombre d'heures</label>
+        <input type="number" name="monheure" id="monheure" step="0.01" min="0" value="{{.MoNHeure | zero2empty}}" class="width5">
+        
+        <label for="moprixh">Prix de l'heure HT</label>
+        <input type="number" name="moprixh" id="moprixh" step="0.01" min="0" value="{{.MoPrixH | zero2empty}}" class="width5">
+        
+        <label for="motva">Taux TVA</label>
+        <select name="motva" id="motva" class="width8">
+            {{$.Details.MoTVAOptions}}
+        </select>
+        
+        <label for="modatepay">Date Paiement</label>
+        <input type="date" name="modatepay" id="modatepay" value="{{.MoDatePay | dateIso}}" class="width20">
+        
+    </div>
+    
+    <div class="grid2-form margin-top2">
+    
+        <label for="notes">Notes</label>
+        <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
+        
+    </div>
+    
+    <div class="float-right margin-top">
+        <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+        <input type="submit" class="margin-left" value="Valider">
+    </div>
+
+    <input type="hidden" name="id-chargement" id="id-chargement" value="{{.Id}}">
+    <input type="hidden" name="id-livraison" id="id-livraison" value="{{.IdLivraison}}">
+    <input type="hidden" name="id-vente" id="id-vente" value="{{.IdVente}}">
+    <input type="hidden" name="id-chargeur" id="id-chargeur" value="{{.IdChargeur}}">
+    
+</form>
+
+
+<script>
+window.addEventListener("load", function(){
+    autocomplete(document.getElementById("chargeur"), getActeursPossibles);
+    // Pour vérifier que le chargeur affiché correspond à une personne existant en base.
+    // on ne peut pas se fier uniquement à getElementById("id-chargeur")
+    // car l'utilisateur peut modifier le nom
+    window.globalPersons = [];
+    
+    let radios = document.getElementsByName("type-cout");
+    for( i = 0; i < radios.length; i++ ){
+        radios[i].onchange = changeTypeCout;
+    }
+    
+    initialize();
+});
+
+// ***************************************
+function initialize(){
+     // form new
+    if({{.Chargeur.Id}} == 0){
+        setCoutGlobal();
+        document.getElementById("cout-global").setAttribute("checked", true);
+    }
+    // form update
+    else{
+        window.globalPersons[{{.IdChargeur}}] = "{{.Chargeur.NomAutocomplete}}";
+        document.getElementById("chargeur").value = "{{.Chargeur.NomAutocomplete}}";
+        //
+        if("{{.TypeCout}}" == "G"){
+            document.getElementById("cout-global").setAttribute("checked", true);
+            setCoutGlobal();
+        }
+        else{
+            document.getElementById("cout-detaille").setAttribute("checked", true);
+            setCoutDetaille();
+        }
+    }
+}
+
+// ***************************************
+function changeTypeCout(){
+    if(document.getElementById("cout-global").checked){
+        setCoutGlobal();
+    }
+    else{
+        setCoutDetaille();
+    }
+}
+// ***************************************
+function setCoutGlobal(){
+    document.getElementById("glprix").readOnly = false;
+    document.getElementById("gltva").disabled = false;
+    document.getElementById("gldatepay").readOnly = false;
+    //
+    document.getElementById("ouprix").value = "";
+    document.getElementById("ouprix").readOnly = true;
+    document.getElementById("outva").value = "CHOOSE_TVA_OU";
+    document.getElementById("outva").disabled = true;
+    document.getElementById("oudatepay").value = "";
+    document.getElementById("oudatepay").readOnly = true;
+    //
+    document.getElementById("monheure").value = "";
+    document.getElementById("monheure").readOnly = true;
+    document.getElementById("moprixh").value = "";
+    document.getElementById("moprixh").readOnly = true;
+    document.getElementById("motva").value = "CHOOSE_TVA_MO";
+    document.getElementById("motva").disabled = true;
+    document.getElementById("modatepay").value = "";
+    document.getElementById("modatepay").readOnly = true;      
+}
+// ***************************************
+function setCoutDetaille(){
+    document.getElementById("glprix").value="";
+    document.getElementById("glprix").readOnly = true;
+    document.getElementById("gltva").value = "CHOOSE_TVA_GL";
+    document.getElementById("gltva").disabled = true;
+    document.getElementById("gldatepay").value = "";
+    document.getElementById("gldatepay").readOnly = true;
+    //
+    document.getElementById("ouprix").readOnly = false;
+    document.getElementById("outva").disabled = false;
+    document.getElementById("oudatepay").readOnly = false;
+    //
+    document.getElementById("monheure").readOnly = false;
+    document.getElementById("moprixh").readOnly = false;
+    document.getElementById("motva").disabled = false;
+    document.getElementById("modatepay").readOnly = false;
+    //
+}
+
+// ***************************************
+/** 
+    Fonction utilisée par autocomplete() pour s'alimenter en données
+    @param inputField input type=text utilisé
+                      pour récupérer des noms de personnes par ajax
+**/
+// @todo remplacer async = false par await et Promise
+function getActeursPossibles(inputField){
+    var result = [];
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response != null){
+                response.forEach(function(item) {
+                    result.push(item.name);
+                    window.globalPersons[item.id] = item.name;
+                });
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
+    xhr.send();
+    return result;
+}
+
+// ***************************************
+function validateForm(){
+    let msg = "";
+    if(document.getElementById("CHOOSE_TAS").selected == true){
+        msg += "\n- Vous devez choisir un tas";
+    }
+    // attribut required pas utilisable à cause du choix possible entre cout global / détaillé
+    // remplacé par tests et alert
+    // dates de paiement pas obligatoires
+    if(document.getElementById("cout-global").checked){
+        // Coût global
+        if(document.getElementById("glprix").value == ""){
+            msg += "\n- Vous devez indiquer un prix (coût global)";
+        }
+        if(document.getElementById("CHOOSE_TVA_GL").selected == true){
+            msg += "\n- Vous devez choisir un taux de TVA (coût global)";
+        }
+    } else {
+        // Main oeuvre
+        if(document.getElementById("monheure").value == ""){
+            msg += "\n- Vous devez indiquer un nombre d'heures (m.o.)";
+        }
+        if(document.getElementById("moprixh").value == ""){                      
+            msg += "\n- Vous devez indiquer un prix / h HT (m.o.)";
+        }
+        if(document.getElementById("CHOOSE_TVA_MO").selected == true){
+            msg += "\n- Vous devez choisir un taux de TVA (m.o.)";
+        }
+        // Outil
+        if(document.getElementById("ouprix").value == ""){                      
+            msg += "\n- Vous devez indiquer un prix HT (outil)";
+        }
+        if(document.getElementById("CHOOSE_TVA_OU").selected == true){
+            msg += "\n- Vous devez choisir un taux de TVA (outil)";
+        }
+    }
+    // calcule id-chargeur
+    var personName = document.getElementById("chargeur").value.trim();
+    if(personName == ""){
+        msg += "\n- Vous devez renseigner un chargeur.";
+    }
+    else{
+        var ok = false;
+        for(var idActeur in window.globalPersons){
+            if(window.globalPersons[idActeur] == personName){
+                ok = true;
+                break;
+            }
+        }
+        if(!ok){
+            msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+        }
+        else{
+            document.getElementById("id-chargeur").value = idActeur;
+        }
+    }
+    //
+    if(msg != ""){
+        msg = "Impossible de valider ce formulaire :" + msg;
+        alert(msg);
+        return false;
+    }
+    return true;
+}
+</script>
+
+{{end}}

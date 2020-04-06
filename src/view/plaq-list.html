@@ -1,0 +1,36 @@
+<h1>
+    {{.Header.Title}}
+    <a class="padding-left" href="/chantier/plaquette/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau chantier plaquettes" />
+    </a>
+</h1>
+
+{{if .Details.Annees}}
+<div>
+    Autres années :
+    {{range .Details.Annees}}
+    <a class="padding-left" href="/chantier/plaquette/liste/{{.}}">{{.}}</a>
+    {{end}}
+</div>
+{{end}}
+
+<table class="entities">
+{{range .Details.Chantiers}}
+    <tr>
+        <td>
+            {{/* deleteChantierPlaquette est dans static/js/plaq.js */}}
+            <a href="#" onclick="deleteChantierPlaquette({{.Id}}, {{.String}})">
+                <img src="/static/img/delete.png" alt="Supprimer ce chantier">
+            </a>
+            <a href="/chantier/plaquette/update/{{.Id}}">
+                <img src="/static/img/update.png" alt="Modifier ce chantier">
+            </a>
+        </td>
+        <td><a href="/chantier/plaquette/{{.Id}}"><b>{{.String}}</b></a></td>
+        <td><a href="/unite-gestion/{{.IdUG}}">UG {{.UG.String}}</a></td>
+        <td><a href="/geo/lieudit/{{.IdLieudit}}">{{.Lieudit.Nom}}</a></td>
+        <td>{{.DateDebut | dateFr}} - {{.DateFin | dateFr}}</td>
+    </tr>
+{{end}}
+</table>
+

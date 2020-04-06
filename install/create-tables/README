@@ -1,0 +1,3 @@
+
+Convention utilisée dans le code de création des tables :
+nom du fichier = nom de la table en base + ".sql"

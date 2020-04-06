@@ -1,0 +1,59 @@
+# ******************************************************************************
+#   Configuration à particulariser pour chaque nouvelle installation de l'application
+#     
+#   @copyright  BDL, Bois du Larzac
+#   @license    GPL
+#   @history    2019-09-26, Thierry Graff : Creation
+#     
+# ********************************************************************************
+
+# Paramètres BDD postgresql
+# psql -U bdl -W -h localhost --cluster 10/main -d bdlbois
+database:
+  host: localhost
+  port: 5432
+  user: my_user
+  password: my_password
+  dbname: my_db
+  schema: my_schema
+
+paths:
+  # Emplacement du fichier .mdb contenant la base access du logiciel de parts SCTL
+  logiciel-foncier: /path/to/file.mdb
+  
+  # Emplacement du fichier .TAB contenant la couche typo
+  couche-typo: /path/to/file.tab
+
+# Pourcentage arbitraire de perte
+# appliqué sur le bois vert lors d'un chantier plaquette.
+pourcentage-perte: 9
+
+# Taux de TVA pour les opérations facturées à BDL par des opérateurs extérieurs
+tva-ext:
+  - 0
+  - 5.5
+  - 10
+  - 20
+
+# Taux de TVA pour les opérations facturées par BDL
+tva-bdl:
+  # livraison : taux qui apparaît sur la facture,
+  # pas la TVA appliquée par les livreurs
+  livraison: 20
+  vente-plaquettes: 10
+  bois-sur-pied: 10
+  autre-valorisation: 20
+
+# Infos figurant sur les factures
+facture:
+  # Concerne le document PDF généré ; pas affiché
+  - auteur: BDL - Bois du Larzac
+  - créateur: BDL - Bois du Larzac
+  # Infos affichées sur les factures
+  - adresse: Montredon - 12100 La Roque Ste Marguerite
+  - tel: 05.65.62.13.39
+  - email: lesboisdularzac@larzac.org
+  - site-web: www.larzac.org
+  - siret: 792 959 892 00011
+  - tva: FR 84792959892
+  

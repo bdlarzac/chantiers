@@ -1,0 +1,70 @@
+<h1>
+    Acteurs
+    <a class="padding-left" href="/acteur/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouvel acteur" />
+    </a>
+</h1>
+
+<div class="big3 padding-left">{{.Details.Count}} acteurs</div>
+
+<table class="entities">
+<tr>
+    <th></th>
+    <th>Nom</th>         
+    <th>Adresse1</th>    
+    <th>CP</th>          
+    <th>Ville</th>       
+    <th>Tel</th>         
+    <th>Tel portable</th>
+    <th>Email</th>       
+    <th>Actif</th>       
+    <th>Commentaires</th>
+</tr>
+
+{{range .Details.List}}
+<tr>
+    <td class="whitespace-nowrap">
+        {{if not .IsSctl}}
+        <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
+            <img src="../static/img/delete.png" alt="Supprimer cet acteur">
+        </a>
+        <a href="/acteur/update/{{.Id}}">
+            <img src="../static/img/update.png" alt="Modifier cet acteur">
+        </a>
+        {{end}}
+    </td>
+    <td><a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>
+    <td>{{.Adresse1}}</td>
+    <td>{{.Cp}}</td>
+    <td>{{.Ville}}</td>
+    <td>{{.Tel}}</td>
+    <td>{{.TelPortable}}</td>
+    <td>{{.Email}}</td>
+    <td>{{.Actif}}</td>
+    <td>{{.Notes}}</td>
+</tr>
+{{end}}
+
+</table>
+
+
+<script>
+
+// *****************************************
+function deleteActeur(idActeur, nomActeur, deletable){
+    var msg;
+    if(deletable){
+        msg = "ATTENTION, en cliquant sur OK,\n"
+                + "l'acteur \"" + nomActeur + "\" sera définitivement supprimé.\n";
+    }
+    else{
+        msg = "ATTENTION, en cliquant sur OK,\n"
+                + "l'acteur \"" + nomActeur + "\" sera marqué \"inactif\".\n"
+                + "(Il ne peut pas être supprimé car il a participé à des activités)";
+    }
+    var r = confirm(msg);
+    if (r == true) {
+        window.location = "/acteur/delete/" + idActeur;
+    }
+}
+</script>

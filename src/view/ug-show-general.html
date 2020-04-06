@@ -1,0 +1,63 @@
+
+<div class="flex-wrap">
+{{with .Details.UG}}
+    <div class="padding-right padding-left border-right">
+        <!-- ********************************************** -->
+        <h2>Données foncières</h2>
+        <table class="liste-carac">
+            <tr>
+                <td>Code</td>
+                <td>{{.Code}}</td>
+            </tr>
+        </table>
+        <div class="bold">Parcelles</div>
+        <ul>
+        {{range .Parcelles}}
+            <li>
+                <a href="/geo/parcelle/{{.Id}}">{{.Code}}</a>
+                    {{range .Lieudits}}
+                        <div class="padding-left"><a href="/geo/lieudit/{{.Id}}">{{.Nom}}</a></div>
+                    {{end}}
+            </li>
+        {{end}}
+        </ul>
+        <!-- ********************************************** -->
+        <h2>Données forestières</h2>
+        <table class="liste-carac">
+            <tr>
+                <td>Type de peuplement</td>
+                <td>{{.TypePeuplement}}</td>
+            </tr>
+            <tr>
+                <td>Type de coupe</td>
+                <td>{{.TypeCoupe}}</td>
+            </tr>
+            <tr>
+                <td>Prévisionnel coupe</td>
+                <td>{{.PrevisionnelCoupe}}</td>
+            </tr>
+        </table>
+    </div>
+{{end}}
+    
+{{with .Details}}
+    <div class="padding-left">
+        <h2>Exploitation</h2>
+        {{if .Activites}}
+        <table class="margin-left">
+        {{range .Activites}}
+            <tr>
+                <td>{{.Date | dateFr}}</td>
+                <td class="padding-left05"><a href="{{.URL}}">{{.NomActivite}}</a></td>
+            </tr>
+        {{end}}
+        </table>
+        
+        {{else}}
+        <h3>Aucune activité</h3>
+        {{end}}
+    </div>
+{{end}}
+    
+</div><!-- end flex-wrap -->
+

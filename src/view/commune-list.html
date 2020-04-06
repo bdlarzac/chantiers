@@ -1,0 +1,15 @@
+<h1>Liste des communes</h1>
+
+<table class="entities">
+    <tr><th>Commune</th><th>Lieux-dits</th></tr>
+    {{range .Details}}
+    <tr>
+        <td style="whitespace:pre;">{{.Nom}}</td>
+        <td class="padding05">
+        {{range .Lieudits}}
+            <a class="padding-right" href="/geo/lieudit/{{.Id}}">{{.Nom}}</a>
+        {{end}}
+        </td>
+    </tr>
+    {{end}}
+</table>

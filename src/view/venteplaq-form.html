@@ -1,0 +1,218 @@
+<h1>{{.Header.Title}}</h1>
+
+{{with .Details.Vente}}
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+
+    <div class="grid2-form">
+        
+        <label for="client">Client</label>
+        <div class="autocomplete">
+            <input type="text" name="client" id="client" value="" autocomplete="off" class="width20" required>
+        </div>
+        
+        <label for="fournisseur">Fournisseur</label>
+        <select name="fournisseur" id="fournisseur" class="width15">
+            {{$.Details.FournisseurOptions}}
+        </select>
+                
+        <label for="puht">PU HT</label>
+        <div>
+            <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5" required>
+            &euro; / map
+        </div>
+        
+        <label for="tva">Taux TVA</label>
+        <div>{{.TVA}} %</div>
+        
+        <label for="datevente">Date Vente</label>
+        <input type="date" name="datevente" id="datevente" value="{{.DateVente | dateIso}}" class="width15" required>
+    
+    </div>
+    
+    <div class="big4 bold margin center">Facture</div>
+    
+    <div class="grid2-form">
+        
+        <label for="numfacture">Numéro Facture</label>
+        <input type="text" name="numfacture" id="numfacture" value="{{.NumFacture}}" class="width15">
+        
+        <label for="datefacture">Date Facture</label>
+        <input type="date" name="datefacture" id="datefacture" value="{{.DateFacture | dateIso}}" class="width15">
+        
+        <div class="right"><input type="checkbox" id="facturelivraison" name="facturelivraison"></div>
+        <div>
+            <label for="facturelivraison">Faire apparaître (les) livraison(s) dans la facture</label>
+            <div class=" margin-left2">
+                <div class="padding-top05">
+                    <label for="facturelivraisonpuht">PU HT livraison</label>
+                    <input type="number" name="facturelivraisonpuht" id="facturelivraisonpuht" step="0.01" min="0" value="{{.FactureLivraisonPUHT | zero2empty}}" class="width5"> &euro; / map
+                </div>
+                <div class="padding-top05"><b>TVA livraison</b> : {{.FactureLivraisonTVA}} %</div>
+            </div>
+        </div>
+       
+        <div class="right"><input type="checkbox" id="facturenotes" name="facturenotes"></div>
+        <div class="left"><label for="facturenotes">Faire apparaître les notes dans la facture</label></div>
+                                                                                 
+        <label for="notes">Notes</label>
+        <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
+
+    </div>
+
+    <div class="margin-top">
+        <div class="float-left">
+            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
+        </div>
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Valider">
+        </div>
+    </div>
+    
+    <input type="hidden" name="id-vente" id="id-vente" value="{{.Id}}">
+    <input type="hidden" name="id-client" id="id-client" value="{{.IdClient}}">
+    
+</form>
+
+<a name="help"></a>
+<div id="help" class="margin display-none">
+    <div class="help-content">
+        <div class="help-title">Aide</div>
+        <div class="section">
+            <b>Quantité</b> : La quantité d'une vente n'est pas renseignée ici.
+            <br>Elle est calculée à partir des quantités chargées en vue des livraisons effectuées pour cette vente.
+        </div>
+        <div class="section">
+            <b>Taux TVA</b> : ce taux concerne les plaquettes ; il est le même pour toutes les ventes. Il peut être changé dans la configuration :
+            <br>fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>vente-plaquettes</code>.
+        </div>
+        <div class="section">
+            <b>Faire apparaître la (les) livraison(s) dans la facture</b> :
+            <br>Le coût de la livraison facturée est distinct du coût payé par BDL aux livreurs.
+            <br>Ce coût doit être saisi dans <b>PU HT livraison</b>.
+            <br>La quantité utilisée par ce coût de livraison est la même que la quantité de la vente.
+            <br>Le taux de TVA est le même pour toutes les livraisons ; spécifié dans le fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>livraison</code>.
+        </div>
+        <div class="section">
+            <b>Notes</b> : des notes peuvent être saisies indépendamment de la facture ; si la case
+            <b>Faire apparaître les notes dans la facture</b> est cochée, le contenu des notes sera inclus dans la facture.
+        </div>
+    </div>
+</div>
+
+<script>
+window.addEventListener("load", function(){
+    autocomplete(document.getElementById("client"), getActeursPossibles);
+    autocomplete(document.getElementById("fournisseur"), getActeursPossibles);
+    // Pour vérifier que le client affiché correspond à une personne existant en base.
+    // on ne peut pas se fier uniquement à getElementById("id-client")
+    // car l'utilisateur peut modifier le nom
+    window.globalPersons = [];
+    initialize();
+    
+});
+
+// ***************************************
+function initialize(){
+    // form new
+    if({{.Client.Id}} == 0){
+        if(document.getElementById("fournisseur").length == 2){
+            // s'il n'y a qu'un seul fournisseur possible (BDL)
+            // donc 2 options : "choisir" et "BDL", alors on pré-sélectionne BDL
+            document.getElementById("fournisseur").selectedIndex = "1"; 
+        }
+        else{
+            document.getElementById("CHOOSE_FOURNISSEUR").setAttribute("selected", "selected");
+        }
+    }
+    // form update
+    else{
+        document.getElementById("client").value = "{{.Client.NomAutocomplete}}";
+        window.globalPersons[{{.IdClient}}] = "{{.Client.NomAutocomplete}}";
+        //
+        if({{.FactureLivraison}}){
+            document.getElementById("facturelivraison").checked = true;
+        }
+        //
+        if({{.FactureNotes}}){
+            document.getElementById("facturenotes").checked = true;
+        }
+    }
+}
+                     
+
+// ***************************************
+/** 
+    Fonction utilisée par autocomplete() pour s'alimenter en données
+    @param inputField input type=text utilisé
+                      pour récupérer des noms de personnes par ajax
+**/
+// @todo remplacer async = false par await et Promise
+function getActeursPossibles(inputField){
+    var result = [];
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response != null){
+                response.forEach(function(item) {
+                    result.push(item.name);
+                    window.globalPersons[item.id] = item.name;
+                });
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
+    xhr.send();
+    return result;
+}
+
+// ***************************************
+function validateForm(){
+    if(document.getElementById("CHOOSE_FOURNISSEUR").selected == true){
+        alert("Vous devez choisir un fournisseur");
+        return false;
+    }
+    //
+    if(document.getElementById("facturelivraison").checked == true){
+        if(document.getElementById("facturelivraisonpuht").value == ""){
+            alert("Si la livraison apparaît sur la facture,\nvous devez spécifier le PU HT livraison.");
+            return false;
+        }
+    }
+    //
+    document.getElementById("notes").value = document.getElementById("notes").value.trim();
+    if(document.getElementById("facturenotes").checked == true){
+        if(document.getElementById("notes").value == ""){
+            alert("Si les notes apparaissent sur la facture,\nvous devez saisir des notes.");
+            return false;
+        }
+    }
+    
+    // calcule id-client
+    var personName = document.getElementById("client").value.trim();
+    if(personName == ""){
+        alert("Vous devez renseigner un client.");
+        return false;
+    }
+    var ok = false;
+    for(var idActeur in window.globalPersons){
+        if(window.globalPersons[idActeur] == personName){
+            ok = true;
+            break;
+        }
+    }
+    if(!ok){
+        alert("Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.");
+        return false;
+    }
+    else{
+        document.getElementById("id-client").value = idActeur;
+    }
+    //
+    return true;
+}
+
+</script>
+
+{{end}}

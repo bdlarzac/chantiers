@@ -1,0 +1,80 @@
+<h1>
+    {{.Header.Title}}
+    <a class="padding-left" href="/chantier/chauffage-fermier/new">
+        <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau chantier autres valorisations" />
+    </a>
+</h1>
+
+{{if .Details.Annees}}
+<div>
+    Autres années :
+    {{range .Details.Annees}}
+    <a class="padding-left" href="/chantier/chauffage-fermier/liste/{{.}}">{{.}}</a>
+    {{end}}
+</div>
+{{end}}
+
+{{if .Details.Chantiers}}
+<table class="entities">
+    
+    <tr>
+        <th></th>
+        <th>Fermier</th>
+        <th>Date</th>
+        <th>Volume</th>
+        <th>Détails</th>
+        <th>Parcelles</th>
+        <th>Notes</th>
+    </tr>
+    {{range .Details.Chantiers}}
+    <tr>
+        <td class="whitespace-nowrap">
+            <a href="/chantier/chauffage-fermier/update/{{.Id}}">
+                <img src="/static/img/update.png" title="Modifier ce chantier" />
+            </a>
+            <a href="#" onclick="deleteChantier({{.Id}}, {{.Fermier.String}}, {{.DateChantier | dateFr}});" class="padding-left05">
+                <img src="/static/img/delete.png" title="Supprimer ce chantier">     
+            </a>
+        </td>
+        <td><a href="/acteur/{{.IdFermier}}">{{.Fermier.String}}</a></td>
+        <td>{{.DateChantier | dateFr}}</td>
+        <td>{{.Volume}} {{.Unite | labelUnite}}</td>
+        <td>
+            <div class="grid2-pres">
+                <div>UG</div>
+                <div><a href="/unite-gestion/{{.IdUG}}">{{.UG.String}}</a></div>
+                
+                <div>Essence</div>
+                <div>{{.Essence | labelEssence}}</div>
+                
+                <div>Exploitation</div>
+                <div>{{.Exploitation | labelExploitation}}</div>
+            </div>
+        </td>
+        <td>
+            <div class="grid2-pres">
+            {{range .LiensParcelles}}
+                <div>{{.Parcelle.Code}}</div>
+                <div>{{if .Entiere}}Entière{{else}}{{.Surface}} ha{{end}}</div>
+            {{end}}
+            </div>
+        </td>
+        <td>{{.Notes | nl2br}}</td>
+    </tr>
+    {{end}}
+
+</table>                                                                 
+
+{{end}} {{/* end if .Details.Chantiers */}}
+
+<script>
+// *****************************************
+function deleteChantier(idChantier, acheteur, date){
+    const msg = "Attention, en cliquant sur OK,\n"
+            + "le chantier " + acheteur + " - "  + date + "\nsera définitivement supprimé";
+    let r = confirm(msg);
+    if (r == true) {
+        window.location = "/chantier/chauffage-fermier/delete/" + idChantier;
+    }
+}
+</script>

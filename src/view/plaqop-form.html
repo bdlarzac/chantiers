@@ -1,0 +1,166 @@
+<h1>{{.Header.Title}}</h1>
+
+{{with .Details.Op}}
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+
+    <div class="grid2-form">
+        
+        <label>Chantier</label>                                            
+        <input type="text" value="{{.Chantier.String}}" readonly>
+        
+        <label for="type-op">Type d'opération</label>
+        <select name="type-op" id="type-op" class="width10" required>
+            {{$.Details.TypeOpOptions}}
+        </select>
+
+        <label for="acteur">Acteur</label>
+        <div class="autocomplete">
+            <input type="text" name="acteur" id="acteur" value="{{.Acteur.NomAutocomplete}}" autocomplete="off" class="width20" required>
+        </div>
+
+        <label for="date-op">Date</label>
+        <input type="date" name="date-op" id="date-op" value="{{.DateOp | dateIso}}" class="width15" required>
+        
+        <label for="qte">Quantité</label>
+        <div>
+            <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5" required>
+            <select name="unite" id="unite" class="width8" required>
+                {{$.Details.UniteOptions}}
+            </select>
+        </div>
+        
+        <label for="puht">PU HT</label>
+        <div>
+            <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5" required>
+            &euro;
+        </div>
+        
+        <label for="tva">Taux TVA</label>
+        <select name="tva" id="tva" class="width8" required>
+            {{$.Details.TVAOptions}}
+        </select>
+
+        <label for="date-pay">Date Paiement</label>
+        <input type="date" name="date-pay" id="date-pay" value="{{.DatePay | dateIso}}" class="width15">
+        
+        <label for="notes">Notes</label>
+        <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
+        
+    </div>                                                                   
+    
+    <div class="margin-top">
+        <div class="float-left">
+            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
+        </div>
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Valider">
+        </div>
+    </div>
+
+    <input type="hidden" name="id-op" id="id-op" value="{{.Id}}">
+    <input type="hidden" name="id-chantier" id="id-chantier" value="{{.IdChantier}}">
+    <input type="hidden" name="id-acteur" id="id-acteur" value="{{.IdActeur}}">
+    
+</form>
+
+<a name="help"></a>
+<div id="help" class="margin display-none">
+    <div class="help-content">
+        <div class="help-title">Aide</div>
+            <b>Quantité</b> : 
+            <br>- Pour le déchiquetage, correspond au nombre de maps.
+            <br>- Pour les autres opération, correspond au nombre de jours ou d'heures.
+    </div>
+</div>
+
+<script>
+window.addEventListener("load", function(){
+    autocomplete(document.getElementById("acteur"), getActeursPossibles);
+    // Pour vérifier que l'acteur affiché correspond à une personne existant en base.
+    // on ne peut pas se fier uniquement à getElementById("id-acteur")
+    // car l'utilisateur peut modifier le nom
+    window.globalPersons = [];
+    initialize();
+});
+
+// ***************************************
+function initialize(){
+    
+    if({{.Acteur.Id}} == 0){
+        // form new
+        document.getElementById("CHOOSE_TYPEOP").setAttribute("selected", "selected")
+    }
+    else{
+        // form update
+        window.globalPersons[{{.IdActeur}}] = "{{.Acteur.NomAutocomplete}}";
+        document.getElementById("{{.TypOp}}").setAttribute("selected", "selected")
+    }
+}
+
+// ***************************************
+/** 
+    Fonction utilisée par autocomplete() pour s'alimenter en données
+    @param inputField input type=text utilisé
+                      pour récupérer des noms de personnes par ajax
+**/
+// @todo remplacer async = false par await et Promise
+function getActeursPossibles(inputField){
+    var result = [];
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response != null){
+                response.forEach(function(item) {
+                    result.push(item.name);
+                    window.globalPersons[item.id] = item.name;
+                });
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
+    xhr.send();
+    return result;
+}
+
+// ***************************************
+function validateForm(){
+    if(document.getElementById("type-op").value == "CHOOSE_TYPEOP"){
+        alert("Vous devez renseigner un type d'opération.");
+        return false;
+    }
+    if(document.getElementById("unite").value == "CHOOSE_UNITE"){
+        alert("Vous devez renseigner une unité.");
+        return false;
+    }
+    if(document.getElementById("tva").value == "CHOOSE_TVA"){
+        alert("Vous devez renseigner un taux de TVA.");
+        return false;
+    }
+    // calcule id-acteur
+    var personName = document.getElementById("acteur").value.trim();
+    if(personName == ""){
+        alert("Vous devez renseigner un acteur.");
+        return false;
+    }
+    var ok = false;
+    for(var idActeur in window.globalPersons){
+        if(window.globalPersons[idActeur] == personName){
+            ok = true;
+            break;
+        }
+    }
+    if(!ok){
+        alert("Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.");
+        return false;
+    }
+    else{
+        document.getElementById("id-acteur").value = idActeur;
+    }
+    return true;
+}
+
+</script>
+
+{{end}}
