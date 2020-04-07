@@ -109,7 +109,7 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	tr := pdf.UnicodeTranslatorFromDescriptor("") // "" defaults to "cp1252"
 	pdf.AddPage()
-	MetaDataFacture(pdf, "Affacture", tr)
+	MetaDataFacture(pdf, tr, ctx.Config, "Affacture")
 	// Emetteur de la facture
 	str = StringActeurFacture(acteur)
 	pdf.SetXY(10, 10)

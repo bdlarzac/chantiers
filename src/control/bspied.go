@@ -299,9 +299,10 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	InitializeFacture(pdf)
 	tr := pdf.UnicodeTranslatorFromDescriptor("")
 	pdf.AddPage()
-	MetaDataFacture(pdf, "Facture bois sur pied", tr)
-	HeaderFacture(pdf, tr)
-	FooterFacture(pdf, tr)
+	//
+	MetaDataFacture(pdf, tr, ctx.Config, "Facture bois sur pied")
+	HeaderFacture(pdf, tr, ctx.Config)
+	FooterFacture(pdf, tr, ctx.Config)
 	//
 	// Acheteur
 	//

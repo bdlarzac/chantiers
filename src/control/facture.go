@@ -19,14 +19,14 @@ func InitializeFacture(pdf *gofpdf.Fpdf) {
 }
 
 // Métadonnées du PDF
-func MetaDataFacture(pdf *gofpdf.Fpdf, titre string, tr func(string) string) {
+func MetaDataFacture(pdf *gofpdf.Fpdf, tr func(string) string, conf *model.Config, titre string) {
 	pdf.SetTitle(tr(titre), true)
-	pdf.SetAuthor("BDL - Bois du Larzac", true)
-	pdf.SetCreator("BDL - Bois du Larzac", true)
+	pdf.SetAuthor(conf.Facture.Auteur, true)
+	pdf.SetCreator(conf.Facture.Createur, true)
 }
 
 // Header commun à toutes les factures
-func HeaderFacture(pdf *gofpdf.Fpdf, tr func(string) string) {
+func HeaderFacture(pdf *gofpdf.Fpdf, tr func(string) string, conf *model.Config) {
 	//
 	var opt gofpdf.ImageOptions
 	opt.ImageType = "jpg"
@@ -38,25 +38,25 @@ func HeaderFacture(pdf *gofpdf.Fpdf, tr func(string) string) {
 	//
 	pdf.SetXY(10, 30)
 	pdf.SetFont("Arial", "", 10)
-	pdf.Cell(100, 15, "Montredon - 12100 La Roque Ste Marguerite")
+	pdf.Cell(100, 15, tr(conf.Facture.Adresse))
 	//
 	pdf.SetXY(10, 33)
 	pdf.SetFont("Arial", "B", 10)
-	pdf.Cell(100, 20, "05.65.62.13.39")
+	pdf.Cell(100, 20, tr(conf.Facture.Tel))
 	//
 	pdf.SetXY(40, 33)
 	pdf.SetFont("Arial", "", 10)
-	pdf.Cell(100, 20, "lesboisdularzac@larzac.org")
+	pdf.Cell(100, 20, tr(conf.Facture.Email))
 }
 
 // Footer commun à toutes les factures
 // Attention, ne marche que si pdf.InitializeFacture() a été appelé avant (pour réduire la marge du bas)
-func FooterFacture(pdf *gofpdf.Fpdf, tr func(string) string) {
+func FooterFacture(pdf *gofpdf.Fpdf, tr func(string) string, conf *model.Config) {
 	pdf.SetFont("Arial", "", 10)
 	pdf.SetXY(80, 284)
-	pdf.MultiCell(50, 5, "Site internet : www.larzac.org", "", "C", false)
+	pdf.MultiCell(50, 5, "Site internet : " + tr(conf.Facture.SiteWeb), "", "C", false)
 	pdf.SetXY(50, 290)
-	pdf.MultiCell(100, 3, tr("N° SIRET : 792 959 892 00011 - N° TVA : FR 84792959892"), "", "C", false)
+	pdf.MultiCell(100, 3, tr("N° SIRET : " + tr(conf.Facture.Siret) + " - N° TVA : " + tr(conf.Facture.TVA)), "", "C", false)
 }
 
 // Renvoie une string permettant d'afficher un acteur avec son adresse dans une facture

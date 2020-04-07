@@ -30,18 +30,16 @@ type Config struct {
 		BoisSurPied       float64 `yaml:"bois-sur-pied"`
 		AutreValorisation float64 `yaml:"autre-valorisation"`
 	} `yaml:"tva-bdl"`
-	/*
-	   Facture struct{
-	       // Concerne le document PDF généré ; pas affiché
-	       Auteur      string `yaml:"auteur"`
-	       Createur    string `yaml:"créateur"`
-	       // Infos affichées sur les factures
-	       Adresse     string `yaml:"adresse"`
-	       Tel         string `yaml:"tel"`
-	       Email       string `yaml:"email"`
-	       SiteWeb     string `yaml:"site-web"`
-	       Siret       string `yaml:"siret"`
-	       TVA         string `yaml:"tva"`
-	   } `yaml:"facture"`
-	*/
+    Facture struct{
+        // metadata - pas affiché
+        Auteur      string `yaml:"auteur"`
+        Createur    string `yaml:"createur"`
+        // Infos affichées sur les factures
+        Adresse     string `yaml:"adresse"`
+        Tel         string `yaml:"tel"`
+        Email       string `yaml:"email"`
+        SiteWeb     string `yaml:"site-web"`
+        Siret       string `yaml:"siret"`
+        TVA         string `yaml:"tva"`
+    } `yaml:"facture"`
 }

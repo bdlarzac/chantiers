@@ -46,14 +46,14 @@ tva-bdl:
 
 # Infos figurant sur les factures
 facture:
-  # Concerne le document PDF généré ; pas affiché
-  - auteur: BDL - Bois du Larzac
-  - créateur: BDL - Bois du Larzac
+  # Metadata - pas affiché
+  auteur: BDL - Bois du Larzac
+  createur: BDL - Bois du Larzac
   # Infos affichées sur les factures
-  - adresse: Montredon - 12100 La Roque Ste Marguerite
-  - tel: 05.65.62.13.39
-  - email: lesboisdularzac@larzac.org
-  - site-web: www.larzac.org
-  - siret: 792 959 892 00011
-  - tva: FR 84792959892
+  adresse: Montredon - 12100 La Roque Ste Marguerite
+  tel: 05.65.62.13.39
+  email: lesboisdularzac@larzac.org
+  site-web: www.larzac.org
+  siret: 792 959 892 00011
+  tva: FR 84792959892
   

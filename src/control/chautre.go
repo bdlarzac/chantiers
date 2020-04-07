@@ -12,7 +12,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//    "github.com/jung-kurt/gofpdf"
+	"github.com/jung-kurt/gofpdf"
 	//"fmt"
 )
 
@@ -267,5 +267,153 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 
 // *********************************************************
 func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	return nil
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return err
+	}
+	//
+	chantier, err := model.GetChautreFull(ctx.DB, id)
+	if err != nil {
+		return err
+	}
+	//
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	InitializeFacture(pdf)
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	pdf.AddPage()
+	//
+	MetaDataFacture(pdf, tr, ctx.Config, "Facture bois sur pied")
+	HeaderFacture(pdf, tr, ctx.Config)
+	FooterFacture(pdf, tr, ctx.Config)
+	//
+	var str string
+	//
+	// Acheteur
+	//
+	pdf.SetXY(60, 70)
+	pdf.SetFont("Arial", "", 12)
+	pdf.MultiCell(100, 7, tr(StringActeurFacture(chantier.Client)), "1", "C", false)
+	//
+	// Date  + n° facture
+	//
+	var x0, x, y, wi, he float64
+	//
+	x0 = 10
+	x = x0
+	y = 110
+	wi = 50
+	he = 6
+	//
+	pdf.SetFont("Arial", "B", 10)
+	pdf.SetXY(x, y)
+	pdf.MultiCell(wi, he, "Date", "1", "C", false)
+	//
+	x += wi
+	pdf.SetXY(x, y)
+	pdf.MultiCell(wi, he, tr("Facture n°"), "TRB", "C", false)
+	//
+	pdf.SetFont("Arial", "", 10)
+	x = 10
+	y += he
+	//
+	pdf.SetXY(x, y)
+	pdf.MultiCell(wi, he, tiglib.DateFr(chantier.DateFacture), "LRB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	pdf.MultiCell(wi, he, chantier.NumFacture, "RB", "C", false)
+	//
+	// Tableau principal
+	//
+	var w1, w2, w3, w4, w5 = 70.0, 20.0, 20.0, 30.0, 30.0
+	x = x0
+	y = 140
+	pdf.SetXY(x, y)
+	wi = w1
+	pdf.MultiCell(wi, he, tr("Désignation"), "1", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w2
+	pdf.MultiCell(wi, he, tr("Quantité"), "TRB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w3
+	pdf.MultiCell(wi, he, tr("Unité"), "TRB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w4
+	pdf.MultiCell(wi, he, "P.U. H.T", "TRB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w5
+	pdf.MultiCell(wi, he, "Montant H.T", "TRB", "C", false)
+	//
+	x = x0
+	y += he
+	pdf.SetXY(x, y)
+	wi = w1
+	str = "Vente " + tr(model.LabelValorisation(chantier.TypeValo)) + " " + tr(model.LabelEssence(chantier.Essence))
+	pdf.MultiCell(wi, he, str, "LRB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w2
+	pdf.MultiCell(wi, he, strconv.FormatFloat(chantier.Volume, 'f', 2, 64), "RB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w3
+	pdf.MultiCell(wi, he, tr(model.LabelUniteSelect(chantier.Unite)), "RB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w4
+	pdf.MultiCell(wi, he, strconv.FormatFloat(chantier.PUHT, 'f', 2, 64), "RB", "C", false)
+	x += wi
+	pdf.SetXY(x, y)
+	wi = w5
+	prixHT := chantier.Volume * chantier.PUHT
+	pdf.MultiCell(wi, he, strconv.FormatFloat(prixHT, 'f', 2, 64), "RB", "C", false)
+	//
+	pdf.SetFont("Arial", "B", 10)
+	x = x0 + w1
+	y += he
+	pdf.SetXY(x, y)
+	wi = w2 + w3 + w4 + w5
+	// @todo arriver à dire euro : € \u20AC
+	pdf.MultiCell(wi, he, "Montant total E HT", "RBL", "C", false)
+	//
+	pdf.SetFont("Arial", "", 10)
+	x = x0 + w1
+	y += he
+	pdf.SetXY(x, y)
+	wi = w2 + w3
+	pdf.MultiCell(wi, he, "Montant TVA", "RBL", "C", false)
+	x += wi
+	wi = w4
+	pdf.SetXY(x, y)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(chantier.TVA, 'f', 2, 64)+" %", "RB", "C", false)
+	x += wi
+	wi = w5
+	pdf.SetXY(x, y)
+	prixTVA := prixHT * chantier.TVA / 100
+	pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVA, 'f', 2, 64), "RB", "C", false)
+	//
+	pdf.SetFont("Arial", "B", 10)
+	x = x0 + w1
+	y += 2 * he
+	pdf.SetXY(x, y)
+	wi = w2 + w3 + w4 + w5
+	pdf.MultiCell(wi, he, "Montant total TTC", "1", "C", false)
+	pdf.SetFont("Arial", "", 10)
+	x = x0 + w1
+	y += he
+	pdf.SetXY(x, y)
+	wi = w2 + w3 + w4
+	pdf.MultiCell(wi, he, tr("Net à payer en euros"), "RBL", "C", false)
+	pdf.SetFont("Arial", "B", 10)
+	x += wi
+	wi = w5
+	pdf.SetXY(x, y)
+	prixTTC := prixHT + prixTVA
+	pdf.MultiCell(wi, he, strconv.FormatFloat(prixTTC, 'f', 2, 64), "RB", "C", false)
+	//
+	return pdf.Output(w)
 }
