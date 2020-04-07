@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+//	"strings"
 	"time"
 
 	"bdl.local/bdl/ctxt"
@@ -12,7 +13,7 @@ import (
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
-	//"fmt"
+//"fmt"
 )
 
 type detailsVentePlaqForm struct {
@@ -431,6 +432,20 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
         prixHTLivraison = vente.Qte * vente.FactureLivraisonPUHT
         pdf.MultiCell(wi, he, strconv.FormatFloat(prixHTLivraison, 'f', 2, 64), "RB", "C", false)
         prixHT += prixHTLivraison
+	}
+	//
+	// ligne avec les notes
+	//
+	if vente.FactureNotes {
+        pdf.SetFont("Arial", "", 10)
+        x = x0
+        y += he
+        pdf.SetXY(x, y)
+        wi = w1 + w2 + w3 + w4 + w5
+        // @todo debugger tiglib.LimitLength pour gérer les notes très longues
+        //lines := tiglib.LimitLength(tr(vente.Notes), 108) // 108 mesuré empiriquement
+        //pdf.MultiCell(wi, he * float64(len(lines)), strings.Join(lines, "\n"), "LRB", "L", false)
+        pdf.MultiCell(wi, he, tr(vente.Notes), "LRB", "L", false)
 	}
 	//
 	// ligne montant total HT

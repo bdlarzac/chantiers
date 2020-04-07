@@ -12,6 +12,7 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
 - signe euro sur les factures
 - GetAffactureActivitesByDate - trouver un moyen de renvoyer []*interface{} au lieu de []interface{}
 - Utiliser StringActeurFacture dans bspied
+- Debugger tiglib.LimitLength() et utiliser dans notes facture vente
 
 - Remplacer LabelUnite par LabelUniteHtml, puis LabelUniteSelect par LabelUnite
 
