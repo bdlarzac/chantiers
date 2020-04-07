@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
-//	"strings"
+	"strings"
 	"time"
 
 	"bdl.local/bdl/ctxt"
@@ -13,7 +13,7 @@ import (
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
-//"fmt"
+"fmt"
 )
 
 type detailsVentePlaqForm struct {
@@ -443,16 +443,20 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
         pdf.SetXY(x, y)
         wi = w1 + w2 + w3 + w4 + w5
         // @todo debugger tiglib.LimitLength pour gérer les notes très longues
-        //lines := tiglib.LimitLength(tr(vente.Notes), 108) // 108 mesuré empiriquement
-        //pdf.MultiCell(wi, he * float64(len(lines)), strings.Join(lines, "\n"), "LRB", "L", false)
-        pdf.MultiCell(wi, he, tr(vente.Notes), "LRB", "L", false)
+        lines := tiglib.LimitLength(tr(vente.Notes), 108) // 108 mesuré empiriquement
+fmt.Printf("line: %d\n", len(lines))
+fmt.Println(strings.Join(lines, "\n"))
+        pdf.MultiCell(wi, he, strings.Join(lines, "\n"), "LRB", "L", false)
+        //pdf.MultiCell(wi, he, tr(vente.Notes), "LRB", "L", false)
+        y += he * float64(len(lines))
+	} else {
+        y += he
 	}
 	//
 	// ligne montant total HT
 	//
 	pdf.SetFont("Arial", "B", 10)
 	x = x0 + w1
-	y += he
 	pdf.SetXY(x, y)
 	wi = w2 + w3 + w4
 	pdf.MultiCell(wi, he, "Montant total E HT", "RBL", "C", false)
