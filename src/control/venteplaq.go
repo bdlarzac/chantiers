@@ -122,6 +122,7 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		vente.Client = &model.Acteur{}
 		vente.Fournisseur = &model.Acteur{}
 		vente.TVA = ctx.Config.TVABDL.VentePlaquettes
+		vente.FactureLivraisonTVA = ctx.Config.TVABDL.Livraison
 		ctx.TemplateName = "venteplaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -305,29 +306,16 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	InitializeFacture(pdf)
 	tr := pdf.UnicodeTranslatorFromDescriptor("") // "" defaults to "cp1252"
 	pdf.AddPage()
+	//
 	MetaDataFacture(pdf, tr, ctx.Config, "Facture vente plaquettes")
 	HeaderFacture(pdf, tr, ctx.Config)
 	FooterFacture(pdf, tr, ctx.Config)
 	//
 	// Client
 	//
-	str := tr(vente.Client.String())
-	if vente.Client.Adresse1 != "" {
-		str += "\n" + tr(vente.Client.Adresse1)
-	}
-	if vente.Client.Adresse2 != "" {
-		str += "\n" + tr(vente.Client.Adresse2)
-	}
-	if vente.Client.Cp != "" && vente.Client.Ville != "" {
-		str += "\n" + vente.Client.Cp + " " + tr(vente.Client.Ville)
-	} else if vente.Client.Cp != "" {
-		str += "\n" + vente.Client.Cp
-	} else if vente.Client.Ville != "" {
-		str += "\n" + tr(vente.Client.Ville)
-	}
 	pdf.SetXY(60, 70)
 	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(100, 7, str, "1", "C", false)
+	pdf.MultiCell(100, 7, tr(StringActeurFacture(vente.Client)), "1", "C", false)
 	//
 	// Date  + n° facture
 	//
@@ -355,11 +343,14 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	pdf.MultiCell(wi, he, tiglib.DateFr(vente.DateFacture), "LRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, "???", "RB", "C", false)
+	pdf.MultiCell(wi, he, tr(vente.NumFacture), "RB", "C", false)
 	//
 	// Tableau principal
 	//
 	var w1, w2, w3, w4, w5 = 70.0, 20.0, 20.0, 30.0, 30.0
+	//
+	// ligne entête des colonnes
+	//
 	x = x0
 	y = 140
 	pdf.SetXY(x, y)
@@ -382,12 +373,15 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	wi = w5
 	pdf.MultiCell(wi, he, "Montant H.T", "TRB", "C", false)
 	//
+	// ligne avec valeurs de la vente
+	//
+	var prixHTPlaquettes, prixHT float64
 	pdf.SetFont("Arial", "B", 10)
 	x = x0
 	y += he
 	pdf.SetXY(x, y)
 	wi = w1
-	pdf.MultiCell(wi, he, tr("Vente de plaquettes forestières"), "LRB", "C", false)
+	pdf.MultiCell(wi, he, tr("Vente de plaquettes forestières"), "LRB", "L", false)
 	pdf.SetFont("Arial", "", 10)
 	x += wi
 	pdf.SetXY(x, y)
@@ -404,33 +398,96 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w5
-	prixHT := vente.Qte * vente.PUHT
-	pdf.MultiCell(wi, he, strconv.FormatFloat(prixHT, 'f', 2, 64), "RB", "C", false)
+	prixHTPlaquettes = vente.Qte * vente.PUHT
+	pdf.MultiCell(wi, he, strconv.FormatFloat(prixHTPlaquettes, 'f', 2, 64), "RB", "C", false)
+	prixHT = prixHTPlaquettes
+	//
+	// ligne avec valeurs de la livraison
+	//
+	var prixHTLivraison float64
+	if vente.FactureLivraison {
+        pdf.SetFont("Arial", "B", 10)
+        x = x0
+        y += he
+        pdf.SetXY(x, y)
+        wi = w1
+        pdf.MultiCell(wi, he, tr("Livraison"), "LRB", "L", false)
+        pdf.SetFont("Arial", "", 10)
+        x += wi
+        pdf.SetXY(x, y)
+        wi = w2
+        pdf.MultiCell(wi, he, strconv.FormatFloat(vente.Qte, 'f', 2, 64), "RB", "C", false)
+        x += wi
+        pdf.SetXY(x, y)
+        wi = w3
+        pdf.MultiCell(wi, he, "MAP", "RB", "C", false)
+        x += wi
+        pdf.SetXY(x, y)
+        wi = w4
+        pdf.MultiCell(wi, he, strconv.FormatFloat(vente.FactureLivraisonPUHT, 'f', 2, 64), "RB", "C", false)
+        x += wi
+        pdf.SetXY(x, y)
+        wi = w5
+        prixHTLivraison = vente.Qte * vente.FactureLivraisonPUHT
+        pdf.MultiCell(wi, he, strconv.FormatFloat(prixHTLivraison, 'f', 2, 64), "RB", "C", false)
+        prixHT += prixHTLivraison
+	}
+	//
+	// ligne montant total HT
 	//
 	pdf.SetFont("Arial", "B", 10)
 	x = x0 + w1
 	y += he
 	pdf.SetXY(x, y)
-	wi = w2 + w3 + w4 + w5
+	wi = w2 + w3 + w4
 	pdf.MultiCell(wi, he, "Montant total E HT", "RBL", "C", false)
+	pdf.SetFont("Arial", "", 10)
+	x = x0 + w1 + w2 + w3 + w4
+	wi = w5
+	pdf.SetXY(x, y)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(prixHT, 'f', 2, 64), "RBL", "C", false)
 	//
+	// ligne TVA plaquettes
+	//
+	var prixTVAPlaquettes float64
 	pdf.SetFont("Arial", "", 10)
 	x = x0 + w1
 	y += he
 	pdf.SetXY(x, y)
 	wi = w2 + w3
-	pdf.MultiCell(wi, he, "Montant TVA", "RBL", "C", false)
+	pdf.MultiCell(wi, he, "Montant TVA plaquettes", "RBL", "L", false)
 	x += wi
 	wi = w4
 	pdf.SetXY(x, y)
-	TVA := 20.0 ////// @todo recup de la conf ou à stocker en base
-	pdf.MultiCell(wi, he, strconv.FormatFloat(TVA, 'f', 2, 64)+" %", "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(vente.TVA, 'f', 2, 64)+" %", "RB", "C", false)
 	x += wi
 	wi = w5
 	pdf.SetXY(x, y)
-	//prixTVA := prixHT * vente.TVA / 100
-	prixTVA := prixHT * TVA / 100
-	pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVA, 'f', 2, 64), "RB", "C", false)
+	prixTVAPlaquettes = prixHTPlaquettes * vente.TVA / 100
+	pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVAPlaquettes, 'f', 2, 64), "RB", "C", false)
+	//
+	// ligne TVA livraison
+	//
+	var prixTVALivraison float64
+	if vente.FactureLivraison {
+        pdf.SetFont("Arial", "", 10)
+        x = x0 + w1
+        y += he
+        pdf.SetXY(x, y)
+        wi = w2 + w3
+        pdf.MultiCell(wi, he, "Montant TVA livraison", "RBL", "L", false)
+        x += wi
+        wi = w4
+        pdf.SetXY(x, y)
+        pdf.MultiCell(wi, he, strconv.FormatFloat(vente.FactureLivraisonTVA, 'f', 2, 64)+" %", "RB", "C", false)
+        x += wi
+        wi = w5
+        pdf.SetXY(x, y)
+        prixTVALivraison = prixHTLivraison * vente.FactureLivraisonTVA / 100
+        pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVALivraison, 'f', 2, 64), "RB", "C", false)
+    }
+	//
+	// 2 lignes pour montant total TTC
 	//
 	pdf.SetFont("Arial", "B", 10)
 	x = x0 + w1
@@ -448,7 +505,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x += wi
 	wi = w5
 	pdf.SetXY(x, y)
-	prixTTC := prixHT + prixTVA
+	prixTTC := prixHT + prixTVAPlaquettes + prixTVALivraison // PrixHT inclue déjà prixHTLivraison
 	pdf.MultiCell(wi, he, strconv.FormatFloat(prixTTC, 'f', 2, 64), "RB", "C", false)
 	//
 	return pdf.Output(w)

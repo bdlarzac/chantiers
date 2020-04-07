@@ -1,6 +1,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
 
+- delete venteplaq => delete livraisons et chargements aussi
+
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure
   dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité déabord ; modifier VenteCharge
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
@@ -40,6 +42,7 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
 - js : getActeursPossibles() et getLDPossibles() peuvent être factorisés
 - js : factoriser code de calcul de id acteur dans validateForm()
 - Autocomplete LD : bug lorsqu'il y a une apostrophe
+- trier alpha autocomplete sur nom acteur
 
 - Dans toutes les fonctions Get*Full(), sortir les calculs dans des fonctions Compute()
     Vérifier dans les classes extérieures que les fonctions Compute() sont utilisées à la place de GetXXX()

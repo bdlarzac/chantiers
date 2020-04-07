@@ -63,7 +63,7 @@ func AnonymizeActeurs(){
 		Adresse2: "",
         Tel: "01 02 03 04 05",
         TelPortable: "06 07 08 09 10",
-        Email: "toto@mail.org",
+        Email: "test@mail.org",
 		Bic: "",
 		Iban: "",
 		Siret: "",
@@ -73,6 +73,9 @@ func AnonymizeActeurs(){
     acteurs, _ := model.SortedActeurs(ctx.DB, "id")
     
     for _,a := range(acteurs){
+        if a.Nom == "BDL" {
+            continue
+        }
         idxNom := rand.Intn(len(noms)-1)
         idxPrenom := rand.Intn(len(prenoms)-1)
         a.Nom = noms[idxNom]
@@ -82,7 +85,7 @@ func AnonymizeActeurs(){
         a.TelPortable = autres.TelPortable
         a.Email = autres.Email
         a.Notes = autres.Notes
-fmt.Printf("%+v\n",a)
+fmt.Printf("Anonymise %+v\n",a)
         err := model.UpdateActeur(ctx.DB, a)
         if err != nil {
             panic(err)

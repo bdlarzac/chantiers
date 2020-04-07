@@ -22,7 +22,7 @@ create table ventecharge (
     motva                   decimal,
     modatepay               date,
     --
-    notes                   text not null default ''
+    notes                   text
 );
 create index ventecharge_id_livraison_idx on ventecharge(id_livraison);
 create index ventecharge_id_tas_idx on ventecharge(id_tas);

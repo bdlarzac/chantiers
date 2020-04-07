@@ -12,6 +12,7 @@ create table venteplaq (
     datefacture             date,
     facturelivraison        boolean not null default false,
     facturelivraisonpuht    numeric,
+    facturelivraisontva     numeric not null,
     facturenotes            boolean not null default false,
     notes                   text
 );

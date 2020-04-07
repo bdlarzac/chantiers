@@ -37,7 +37,7 @@ tva-ext:
 
 # Taux de TVA pour les opérations facturées par BDL
 tva-bdl:
-  # livraison : taux qui apparaît sur la facture,
+  # livraison : taux qui apparaît sur la facture d'une vente plaquettes,
   # pas la TVA appliquée par les livreurs
   livraison: 20
   vente-plaquettes: 10

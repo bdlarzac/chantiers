@@ -11,7 +11,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
+//"fmt"
 )
 
 type detailsVenteChargeForm struct {
@@ -31,11 +31,11 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		//
 		// Process form
 		//
-		vl, err := venteChargeForm2var(r)
+		vc, err := venteChargeForm2var(r)
 		if err != nil {
 			return err
 		}
-		_, err = model.InsertVenteCharge(ctx.DB, vl)
+		_, err = model.InsertVenteCharge(ctx.DB, vc)
 		if err != nil {
 			return err
 		}
@@ -100,6 +100,10 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		//
 		vars := mux.Vars(r)
 		vc, err := venteChargeForm2var(r)
+		if err != nil {
+			return err
+		}
+		vc.Id, err = strconv.Atoi(r.PostFormValue("id-chargement"))
 		if err != nil {
 			return err
 		}

@@ -18,27 +18,27 @@ import (
 )
 
 type VentePlaq struct {
-	Id            int
-	IdClient      int `db:"id_client"`
-	IdFournisseur int `db:"id_fournisseur"`
-	PUHT          float64
-	TVA           float64
-	DateVente     time.Time
+	Id                   int
+	IdClient             int `db:"id_client"`
+	IdFournisseur        int `db:"id_fournisseur"`
+	PUHT                 float64
+	TVA                  float64
+	DateVente            time.Time
 	// Facture
 	NumFacture           string
 	DateFacture          time.Time
 	FactureLivraison     bool
 	FactureLivraisonPUHT float64
+	FactureLivraisonTVA  float64
 	FactureNotes         bool
 	//
-	Notes string
+	Notes                string
 	// Pas stocké en base
-	Qte                 float64 // maps
-	FactureLivraisonTVA float64
-	Client              *Acteur
-	Fournisseur         *Acteur
-	Livraisons          []*VenteLivre
-	Chantiers           []*Plaq
+	Qte                  float64 // maps
+	Client               *Acteur
+	Fournisseur          *Acteur
+	Livraisons           []*VenteLivre
+	Chantiers            []*Plaq
 }
 
 // ************************** Manipulation Quantité *******************************
@@ -238,9 +238,10 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
         datefacture,
         facturelivraison,
         facturelivraisonpuht,
+        facturelivraisontva,
         facturenotes,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
@@ -253,6 +254,7 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
 		vp.DateFacture,
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
+		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes).Scan(&id)
 	return id, err
@@ -269,9 +271,10 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
         datefacture,
         facturelivraison,
         facturelivraisonpuht,
+        facturelivraisontva,
         facturenotes,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) where id=$12`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) where id=$13`
 	_, err := db.Exec(
 		query,
 		vp.IdClient,
@@ -283,6 +286,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 		vp.DateFacture,
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
+		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes,
 		vp.Id)

@@ -94,6 +94,9 @@ Dans la facture :
     {{if .FactureLivraison}}
     <div>PU HT livraison facturée</div>
     <div class="bold">{{.FactureLivraisonPUHT}} &euro;</div>
+    
+    <div>TVA livraison facturée</div>
+    <div class="bold">{{.FactureLivraisonTVA}} %</div>
     {{end}}
     
     <div>Faire apparaître les notes :</div> 
@@ -137,12 +140,11 @@ Livraisons
                 <div>Date paiement</div>
                 <div class="bold">{{.DatePay | dateFr}}</div>
                 {{end}}
-                
-                {{if .Notes}}
-                <div>Notes</div>
-                <div>{{.Notes | nl2br}}</div>
-                {{end}}
             </div>
+            {{if .Notes}}
+                <div class="bold margin-top">Notes</div>
+                <div>{{.Notes | nl2br}}</div>
+            {{end}}
         </td>
         <td class="vertical-align-top">
         {{if eq .TypeCout "G"}}
@@ -212,74 +214,73 @@ Livraisons
                             
                             <div>Date chargement</div>
                             <div class="bold">{{.DateCharge | dateFr}}</div>
-                            
-                            {{if .Notes}}
-                            <div>Notes</div>
-                            <div>{{.Notes | nl2br}}</div>
-                            {{end}}
                         </div>
+                        {{if .Notes}}
+                            <div class="bold margin-top">Notes</div>
+                            <div>{{.Notes | nl2br}}</div>
+                        {{end}}
                     </td>
                     {{if eq .TypeCout "G"}}
-                    <!-- chargement, coût global -->
-                    <td colspan="2" class="vertical-align-top">
-                        <div class="padding02 bg-ccc center margin-bottom05">Coût global</div>
-                        <div class="grid2-pres">
-                            <div>Prix HT</div>
-                            <div class="bold">{{.GlPrix | twoDigits}} &euro;</div>
-                            
-                            <div>TVA</div>
-                            <div class="bold">{{.GlTVA}} %</div>
-                            
-                            <div>Total TTC</div>
-                            <div class="bold"><script>document.write(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2));</script> &euro;</div>
-                            
-                            <div>Paiement</div>
-                            <div class="bold">{{.GlDatePay | dateFr}}</div>
-                        </div>
-                    </td>
+                        <!-- chargement, coût global -->
+                        <td colspan="2" class="vertical-align-top">
+                            <div class="padding02 bg-ccc center margin-bottom05">Coût global</div>
+                            <div class="grid2-pres">
+                                <div>Prix HT</div>
+                                <div class="bold">{{.GlPrix | twoDigits}} &euro;</div>
+                                
+                                <div>TVA</div>
+                                <div class="bold">{{.GlTVA}} %</div>
+                                
+                                <div>Total TTC</div>
+                                <div class="bold"><script>document.write(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2));</script> &euro;</div>
+                                
+                                <div>Paiement</div>
+                                <div class="bold">{{.GlDatePay | dateFr}}</div>
+                            </div>
+                        </td>
                     {{else}}
-                    <!-- chargement, coût détaillé -->
-                    <td class="vertical-align-top">
-                        <div class="padding02 bg-ccc center margin-bottom05">Coût M.O.</div>
-                        <div class="grid2-pres">
-                            <div>Nb heures</div>
-                            <div class="bold">{{.MoNHeure}}</div>
-                            
-                            <div>Prix HT / h</div>
-                            <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
-                            
-                            <div>Total HT</div>
-                            <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
-                            
-                            <div>TVA</div>
-                            <div class="bold">{{.MoTVA}} %</div>
-                            
-                            <div>Total TTC</div>
-                            <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
-                            
-                            <div>Paiement</div>
-                            <div class="bold">{{.MoDatePay | dateFr}}</div>
-                        </div>
-                    </td>
-                    <td class="vertical-align-top">
-                        <div class="padding02 bg-ccc center margin-bottom05">Coût Outil</div>
-                        <div class="grid2-pres">
-                            <!-- 2 lignes blanches pour alignement coûts outil / m.o. -->
-                            <div>&nbsp;</div><div>&nbsp;</div>
-                            <div>&nbsp;</div><div>&nbsp;</div>
-                            <div>Prix HT</div>
-                            <div class="bold">{{.OuPrix | twoDigits}} &euro;</div>
-                            
-                            <div>TVA</div>
-                            <div class="bold">{{.OuTVA}} %</div>
-                            
-                            <div>Total TTC</div>
-                            <div class="bold"><script>document.write(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2));</script> &euro;</div>
-                            
-                            <div>Paiement</div>
-                            <div class="bold">{{.OuDatePay | dateFr}}</div>
-                        </div>
-                    </td>
+                        <!-- chargement, coût détaillé -->
+                        <td class="vertical-align-top">
+                            <div class="padding02 bg-ccc center margin-bottom05">Coût M.O.</div>
+                            <div class="grid2-pres">
+                                <div>Nb heures</div>
+                                <div class="bold">{{.MoNHeure}}</div>
+                                
+                                <div>Prix HT / h</div>
+                                <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
+                                
+                                <div>Total HT</div>
+                                <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
+                                
+                                <div>TVA</div>
+                                <div class="bold">{{.MoTVA}} %</div>
+                                
+                                <div>Total TTC</div>
+                                <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
+                                
+                                <div>Paiement</div>
+                                <div class="bold">{{.MoDatePay | dateFr}}</div>
+                            </div>
+                        </td>
+                        <td class="vertical-align-top">
+                            <div class="padding02 bg-ccc center margin-bottom05">Coût Outil</div>
+                            <div class="grid2-pres">
+                                <!-- 2 lignes blanches pour alignement coûts outil / m.o. -->
+                                <div>&nbsp;</div><div>&nbsp;</div>
+                                <div>&nbsp;</div><div>&nbsp;</div>
+                                <div>Prix HT</div>
+                                <div class="bold">{{.OuPrix | twoDigits}} &euro;</div>
+                                
+                                <div>TVA</div>
+                                <div class="bold">{{.OuTVA}} %</div>
+                                
+                                <div>Total TTC</div>
+                                <div class="bold"><script>document.write(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2));</script> &euro;</div>
+                                
+                                <div>Paiement</div>
+                                <div class="bold">{{.OuDatePay | dateFr}}</div>
+                            </div>
+                        </td>
                     {{end}}
                 </tr>
             {{end}}
@@ -296,7 +297,9 @@ Livraisons
 </div><!-- end class="page-content" -->
 
 <script>
-// Pour VentePlaq Voir scripts dans static/js/venteplaq.js
+
+// Voir aussi scripts dans static/js/venteplaq.js
+// (scripts communs entre venteplaq-form et venteplaq-list)
 
 // *****************************************
 function deleteLivraison(idLivraison, idVente, nomLivreur, dateLivraison){
