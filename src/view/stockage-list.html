@@ -38,7 +38,17 @@
                     <a class="padding-right" href="#" onclick="signalerTasVide({{.Id}}, {{.Nom}});" title="Signaler que ce tas est vide">
                         <span class="bold big3 border2 padding-left02 padding-right02">&empty;</span>
                     </a>
+                    
                     <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = {{.Stock}} maps
+                    {{if .MesuresHumidite}}
+                        <div class="margin-left2">
+                        <ul>
+                    {{end}}
+                    {{range .MesuresHumidite}}
+                        <li><a href="/humidite/liste/{{.DateMesure | year}}">Mesure d' humidité {{.DateMesure | dateFr}}</a></li>
+                    {{end}}
+                    {{if .MesuresHumidite}}</ul></div>{{end}}
+                    
                 </li>
             {{end}}
             {{if .TasActifs}}</ul>{{end}}

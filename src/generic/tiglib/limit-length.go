@@ -21,33 +21,33 @@
 package tiglib
 
 import (
-    "strings"
-    //"fmt"
+	"strings"
+	//"fmt"
 )
 
 func LimitLength(str string, limit int) []string {
-    str = strings.TrimSpace(str)
-    var res []string
-    var curRes string
-    splits := strings.Split(str, "\n")
-    for _, elt := range(splits){
-        if len(elt) <= limit {
-            res = append(res, strings.TrimSpace(elt))
-            continue
-        }  
-        words := strings.Split(elt, " ")
-        curRes = "";
-        for _, word := range(words){
-            if len(curRes) + len(word) + 1 <= limit {
-                curRes = curRes + " " + word
-            } else {
-                res = append(res, strings.TrimSpace(curRes))
-                curRes = word
-            }
-        }
-        if curRes != "" {
-            res = append(res, strings.TrimSpace(curRes))
-        }
-    }
-    return res
+	str = strings.TrimSpace(str)
+	var res []string
+	var curRes string
+	splits := strings.Split(str, "\n")
+	for _, elt := range splits {
+		if len(elt) <= limit {
+			res = append(res, strings.TrimSpace(elt))
+			continue
+		}
+		words := strings.Split(elt, " ")
+		curRes = ""
+		for _, word := range words {
+			if len(curRes)+len(word)+1 <= limit {
+				curRes = curRes + " " + word
+			} else {
+				res = append(res, strings.TrimSpace(curRes))
+				curRes = word
+			}
+		}
+		if curRes != "" {
+			res = append(res, strings.TrimSpace(curRes))
+		}
+	}
+	return res
 }

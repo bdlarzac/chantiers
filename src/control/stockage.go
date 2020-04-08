@@ -19,6 +19,15 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	if err != nil {
 		return err
 	}
+	for _, s := range stockages {
+		for _, t := range s.TasActifs {
+			err = t.ComputeMesuresHumidite(ctx.DB)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Stockage plaquettes",

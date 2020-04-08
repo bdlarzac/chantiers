@@ -18,12 +18,12 @@ import (
 )
 
 type VentePlaq struct {
-	Id                   int
-	IdClient             int `db:"id_client"`
-	IdFournisseur        int `db:"id_fournisseur"`
-	PUHT                 float64
-	TVA                  float64
-	DateVente            time.Time
+	Id            int
+	IdClient      int `db:"id_client"`
+	IdFournisseur int `db:"id_fournisseur"`
+	PUHT          float64
+	TVA           float64
+	DateVente     time.Time
 	// Facture
 	NumFacture           string
 	DateFacture          time.Time
@@ -32,13 +32,13 @@ type VentePlaq struct {
 	FactureLivraisonTVA  float64
 	FactureNotes         bool
 	//
-	Notes                string
+	Notes string
 	// Pas stocké en base
-	Qte                  float64 // maps
-	Client               *Acteur
-	Fournisseur          *Acteur
-	Livraisons           []*VenteLivre
-	Chantiers            []*Plaq
+	Qte         float64 // maps
+	Client      *Acteur
+	Fournisseur *Acteur
+	Livraisons  []*VenteLivre
+	Chantiers   []*Plaq
 }
 
 // ************************** Manipulation Quantité *******************************

@@ -8,20 +8,31 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
-	"fmt"
 
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
 	"bdl.local/bdl/ctxt"
-	"github.com/gorilla/mux"
 	"bdl.local/bdl/generic/wilk/werr"
+	"github.com/gorilla/mux"
 )
 
 // *********************************************************
 func main() {
+
+	/*
+	   defer func(){
+	       if p := recover(); p != nil{
+	           err := fmt.Errorf("%w", p)
+	           ctx := ctxt.NewContext()
+	           showErrorPage(err, ctx, w, r)
+	       }
+	   }
+	*/
+
 	r := mux.NewRouter()
 
 	// ajax acteurs
@@ -135,7 +146,7 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
-	
+
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         "127.0.0.1:8000",
@@ -154,9 +165,8 @@ func main() {
 func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-
 		ctx := ctxt.NewContext()
-
+		//
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		if err != nil {
 			showErrorPage(err, ctx, w, r)
@@ -166,28 +176,25 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 			http.Redirect(w, r, ctx.Redirect, http.StatusSeeOther)
 			return
 		}
-
+		//
 		tmpl := ctx.Template
-
+		//
 		err = tmpl.ExecuteTemplate(w, "header.html", ctx.Page)
 		if err != nil {
 			ctxt.LogError(err)
 			return
 		}
-
 		err = tmpl.ExecuteTemplate(w, "menu.html", ctx.Page)
 		if err != nil {
 			ctxt.LogError(err)
 			return
 		}
-
 		// Execute template computed by h
 		err = tmpl.ExecuteTemplate(w, ctx.TemplateName, ctx.Page)
 		if err != nil {
 			ctxt.LogError(err)
 			return
 		}
-
 		err = tmpl.ExecuteTemplate(w, "footer.html", ctx.Page)
 		if err != nil {
 			ctxt.LogError(err)
@@ -203,9 +210,7 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 func Hajax(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-
 		ctx := ctxt.NewContext()
-
 		err = h(ctx, w, r) // Calls controller h
 		if err != nil {
 			ctxt.LogError(err)
@@ -220,9 +225,7 @@ func Hajax(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func
 func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-
 		ctx := ctxt.NewContext()
-
 		err = h(ctx, w, r) // Calls controller h
 		if err != nil {
 			ctxt.LogError(err)
@@ -230,53 +233,50 @@ func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(
 	}
 }
 
-
 // *********************** Gestion d'erreur **********************************
 // A mettre ailleurs, mais où ?
 
 func notFound(w http.ResponseWriter, r *http.Request) {
-    ctx := ctxt.NewContext()
-    err := fmt.Errorf("Page inexistante : %s", r.URL)
-    showErrorPage(err, ctx, w, r)
+	ctx := ctxt.NewContext()
+	err := fmt.Errorf("Page inexistante : %s", r.URL)
+	showErrorPage(err, ctx, w, r)
 }
 
-
-
-func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *http.Request){
-    type detailsErrorPage struct {
-        URL             string
-        Trace           string
-    }
-    var err error
+func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) {
+	type detailsErrorPage struct {
+		URL   string
+		Trace string
+	}
+	var err error
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "ERREUR",
 		},
-		Menu:    "accueil",
+		Menu: "accueil",
 		Details: detailsErrorPage{
-		    URL: r.URL.String(),
-		    Trace: werr.Sprint(theErr),
+			URL:   r.URL.String(),
+			Trace: werr.Sprint(theErr),
 		},
 	}
-    tmpl := ctx.Template
-    err = tmpl.ExecuteTemplate(w, "header.html", ctx.Page)
-    if err != nil {
-        ctxt.LogError(err)
-        return
-    }
-    err = tmpl.ExecuteTemplate(w, "menu.html", ctx.Page)
-    if err != nil {
-        ctxt.LogError(err)
-        return
-    }
-    err = tmpl.ExecuteTemplate(w, "error.html", ctx.Page)
-    if err != nil {
-        ctxt.LogError(err)
-        return
-    }
-    err = tmpl.ExecuteTemplate(w, "footer.html", ctx.Page)
-    if err != nil {
-        ctxt.LogError(err)
-        return
-    }
+	tmpl := ctx.Template
+	err = tmpl.ExecuteTemplate(w, "header.html", ctx.Page)
+	if err != nil {
+		ctxt.LogError(err)
+		return
+	}
+	err = tmpl.ExecuteTemplate(w, "menu.html", ctx.Page)
+	if err != nil {
+		ctxt.LogError(err)
+		return
+	}
+	err = tmpl.ExecuteTemplate(w, "error.html", ctx.Page)
+	if err != nil {
+		ctxt.LogError(err)
+		return
+	}
+	err = tmpl.ExecuteTemplate(w, "footer.html", ctx.Page)
+	if err != nil {
+		ctxt.LogError(err)
+		return
+	}
 }

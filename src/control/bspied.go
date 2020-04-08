@@ -180,7 +180,7 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			},
 			Details: detailsBSPiedForm{
 				Chantier:            chantier,
-				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-" + chantier.Essence),
+				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				UrlAction:           "/chantier/bois-sur-pied/update/" + vars["id"],
 			},

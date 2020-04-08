@@ -14,7 +14,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-//"fmt"
+	//"fmt"
 )
 
 type VenteCharge struct {
@@ -24,7 +24,7 @@ type VenteCharge struct {
 	IdTas       int `db:"id_tas"`
 	Qte         float64
 	DateCharge  time.Time
-	TypeCout    string    // G (global) ou D (détail)
+	TypeCout    string // G (global) ou D (détail)
 	// coût global
 	GlPrix    float64
 	GlTVA     float64

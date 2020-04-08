@@ -10,17 +10,16 @@
 ********************************************************************************/
 package model
 
-
 // ************************** Opérations simples *******************************
 // cf type postgres typeop pour opérations simples des chantiers plaquettes
 
 // Labels du type d'opération simple pour PlaqOp
 // @param abbrev : type d'opération tel que stocké en base
 func LabelActivite(abbrev string) string {
-	switch abbrev {       
-    //
-    // opérations simples des chantiers plaquettes
-    //
+	switch abbrev {
+	//
+	// opérations simples des chantiers plaquettes
+	//
 	case "AB":
 		return "Abattage"
 	case "DB":
@@ -29,16 +28,16 @@ func LabelActivite(abbrev string) string {
 		return "Déchiquetage"
 	case "BR":
 		return "Broyage"
-    //
-    // Autres activités
-    //
-    case "TR":
+	//
+	// Autres activités
+	//
+	case "TR":
 		return "Transport"
-    case "RG":
+	case "RG":
 		return "Rangement"
-    case "LV":
+	case "LV":
 		return "Livraison"
-    case "CG":
+	case "CG":
 		return "Chargement"
 	}
 	return "??? BUG LabelActivite ???"
@@ -94,13 +93,11 @@ func LabelUnite(abbrev string) string {
 // Labels des unités manipulées par l'appli
 // @param abbrev : unité telle que stockée en base
 func LabelUniteHTML(abbrev string) string {
-    if abbrev == "M3" {
+	if abbrev == "M3" {
 		return "m<sup>3</sup>"
-    }
-    return LabelUnite(abbrev)
+	}
+	return LabelUnite(abbrev)
 }
-
-
 
 // ************************** Type de valorisation *******************************
 // cf type postgres typevalo

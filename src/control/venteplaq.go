@@ -11,9 +11,9 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
-"fmt"
 )
 
 type detailsVentePlaqForm struct {
@@ -407,50 +407,50 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	//
 	var prixHTLivraison float64
 	if vente.FactureLivraison {
-        pdf.SetFont("Arial", "B", 10)
-        x = x0
-        y += he
-        pdf.SetXY(x, y)
-        wi = w1
-        pdf.MultiCell(wi, he, tr("Livraison"), "LRB", "L", false)
-        pdf.SetFont("Arial", "", 10)
-        x += wi
-        pdf.SetXY(x, y)
-        wi = w2
-        pdf.MultiCell(wi, he, strconv.FormatFloat(vente.Qte, 'f', 2, 64), "RB", "C", false)
-        x += wi
-        pdf.SetXY(x, y)
-        wi = w3
-        pdf.MultiCell(wi, he, "MAP", "RB", "C", false)
-        x += wi
-        pdf.SetXY(x, y)
-        wi = w4
-        pdf.MultiCell(wi, he, strconv.FormatFloat(vente.FactureLivraisonPUHT, 'f', 2, 64), "RB", "C", false)
-        x += wi
-        pdf.SetXY(x, y)
-        wi = w5
-        prixHTLivraison = vente.Qte * vente.FactureLivraisonPUHT
-        pdf.MultiCell(wi, he, strconv.FormatFloat(prixHTLivraison, 'f', 2, 64), "RB", "C", false)
-        prixHT += prixHTLivraison
+		pdf.SetFont("Arial", "B", 10)
+		x = x0
+		y += he
+		pdf.SetXY(x, y)
+		wi = w1
+		pdf.MultiCell(wi, he, tr("Livraison"), "LRB", "L", false)
+		pdf.SetFont("Arial", "", 10)
+		x += wi
+		pdf.SetXY(x, y)
+		wi = w2
+		pdf.MultiCell(wi, he, strconv.FormatFloat(vente.Qte, 'f', 2, 64), "RB", "C", false)
+		x += wi
+		pdf.SetXY(x, y)
+		wi = w3
+		pdf.MultiCell(wi, he, "MAP", "RB", "C", false)
+		x += wi
+		pdf.SetXY(x, y)
+		wi = w4
+		pdf.MultiCell(wi, he, strconv.FormatFloat(vente.FactureLivraisonPUHT, 'f', 2, 64), "RB", "C", false)
+		x += wi
+		pdf.SetXY(x, y)
+		wi = w5
+		prixHTLivraison = vente.Qte * vente.FactureLivraisonPUHT
+		pdf.MultiCell(wi, he, strconv.FormatFloat(prixHTLivraison, 'f', 2, 64), "RB", "C", false)
+		prixHT += prixHTLivraison
 	}
 	//
 	// ligne avec les notes
 	//
 	if vente.FactureNotes {
-        pdf.SetFont("Arial", "", 10)
-        x = x0
-        y += he
-        pdf.SetXY(x, y)
-        wi = w1 + w2 + w3 + w4 + w5
-        // @todo debugger tiglib.LimitLength pour gérer les notes très longues
-        lines := tiglib.LimitLength(tr(vente.Notes), 108) // 108 mesuré empiriquement
-fmt.Printf("line: %d\n", len(lines))
-fmt.Println(strings.Join(lines, "\n"))
-        pdf.MultiCell(wi, he, strings.Join(lines, "\n"), "LRB", "L", false)
-        //pdf.MultiCell(wi, he, tr(vente.Notes), "LRB", "L", false)
-        y += he * float64(len(lines))
+		pdf.SetFont("Arial", "", 10)
+		x = x0
+		y += he
+		pdf.SetXY(x, y)
+		wi = w1 + w2 + w3 + w4 + w5
+		// @todo debugger tiglib.LimitLength pour gérer les notes très longues
+		lines := tiglib.LimitLength(tr(vente.Notes), 108) // 108 mesuré empiriquement
+		fmt.Printf("line: %d\n", len(lines))
+		fmt.Println(strings.Join(lines, "\n"))
+		pdf.MultiCell(wi, he, strings.Join(lines, "\n"), "LRB", "L", false)
+		//pdf.MultiCell(wi, he, tr(vente.Notes), "LRB", "L", false)
+		y += he * float64(len(lines))
 	} else {
-        y += he
+		y += he
 	}
 	//
 	// ligne montant total HT
@@ -489,22 +489,22 @@ fmt.Println(strings.Join(lines, "\n"))
 	//
 	var prixTVALivraison float64
 	if vente.FactureLivraison {
-        pdf.SetFont("Arial", "", 10)
-        x = x0 + w1
-        y += he
-        pdf.SetXY(x, y)
-        wi = w2 + w3
-        pdf.MultiCell(wi, he, "Montant TVA livraison", "RBL", "L", false)
-        x += wi
-        wi = w4
-        pdf.SetXY(x, y)
-        pdf.MultiCell(wi, he, strconv.FormatFloat(vente.FactureLivraisonTVA, 'f', 2, 64)+" %", "RB", "C", false)
-        x += wi
-        wi = w5
-        pdf.SetXY(x, y)
-        prixTVALivraison = prixHTLivraison * vente.FactureLivraisonTVA / 100
-        pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVALivraison, 'f', 2, 64), "RB", "C", false)
-    }
+		pdf.SetFont("Arial", "", 10)
+		x = x0 + w1
+		y += he
+		pdf.SetXY(x, y)
+		wi = w2 + w3
+		pdf.MultiCell(wi, he, "Montant TVA livraison", "RBL", "L", false)
+		x += wi
+		wi = w4
+		pdf.SetXY(x, y)
+		pdf.MultiCell(wi, he, strconv.FormatFloat(vente.FactureLivraisonTVA, 'f', 2, 64)+" %", "RB", "C", false)
+		x += wi
+		wi = w5
+		pdf.SetXY(x, y)
+		prixTVALivraison = prixHTLivraison * vente.FactureLivraisonTVA / 100
+		pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVALivraison, 'f', 2, 64), "RB", "C", false)
+	}
 	//
 	// 2 lignes pour montant total TTC
 	//

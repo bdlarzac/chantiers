@@ -24,24 +24,24 @@ type PlaqRange struct {
 	DateRange    time.Time
 	TypeCout     string // G (global) ou D (détail)
 	// coût global
-	GlPrix       float64 // HT
-	GlTVA        float64
-	GlDatePay    time.Time
+	GlPrix    float64 // HT
+	GlTVA     float64
+	GlDatePay time.Time
 	// coût détail - conducteur
-	CoPrixH      float64 // HT
-	CoNheure     float64
-	CoTVA        float64
-	CoDatePay    time.Time
+	CoPrixH   float64 // HT
+	CoNheure  float64
+	CoTVA     float64
+	CoDatePay time.Time
 	// coût détail - outil
-	OuPrix       float64 // HT
-	OuTVA        float64
-	OuDatePay    time.Time
+	OuPrix    float64 // HT
+	OuTVA     float64
+	OuDatePay time.Time
 	//
-	Notes        string
+	Notes string
 	// Pas stocké en base
-	Chantier     *Plaq
-	Tas          *Tas
-	Conducteur   *Acteur
+	Chantier   *Plaq
+	Tas        *Tas
+	Conducteur *Acteur
 }
 
 // ************************** Get *******************************

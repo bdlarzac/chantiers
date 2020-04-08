@@ -20,9 +20,10 @@ type Tas struct {
 	Stock      float64
 	Actif      bool
 	// pas stocké en base
-	Nom      string
-	Chantier *Plaq
-	Stockage *Stockage
+	Nom             string
+	Chantier        *Plaq
+	Stockage        *Stockage
+	MesuresHumidite []*Humid
 }
 
 func NewTas(idStockage, idChantier int, stock float64, actif bool) *Tas {
@@ -131,6 +132,19 @@ func (t *Tas) ComputeStockage(db *sqlx.DB) error {
 func (t *Tas) ComputeChantier(db *sqlx.DB) error {
 	var err error
 	t.Chantier, err = GetPlaq(db, t.IdChantier)
+	return err
+}
+
+// pas inclus par défaut dans GetTasFull()
+func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
+	var err error
+	mesures := []*Humid{}
+	query := "select * from humid where id_tas=$1"
+	err = db.Select(&mesures, query, t.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	t.MesuresHumidite = mesures
 	return err
 }
 

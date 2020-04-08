@@ -3,7 +3,7 @@ package control
 import (
 	"net/http"
 	"strconv"
-//	"strings"
+	//	"strings"
 	"time"
 
 	"bdl.local/bdl/ctxt"
@@ -11,7 +11,7 @@ import (
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
-//"fmt"
+	//"fmt"
 )
 
 type detailsAffactureForm struct {
@@ -134,50 +134,50 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	// items
 	//
 	var x, x0, colW, colH float64
-    x0 = 10 // démarrage de l'affichage à gauche
+	x0 = 10 // démarrage de l'affichage à gauche
 	_, fontSize := pdf.GetFontSize()
-    colW = 28 // largeur de toutes les colonnes - devrait en fait être calculé col par col
-    colH = fontSize+2
-    //_, topMarg,_,bottomMarg := pdf.GetMargins()
-    maxY := 274 // mesuré empiriquement
-    //maxY := 297 - topMarg - bottomMarg
-    //
-    pdf.Ln(4*colH)
+	colW = 28 // largeur de toutes les colonnes - devrait en fait être calculé col par col
+	colH = fontSize + 2
+	//_, topMarg,_,bottomMarg := pdf.GetMargins()
+	maxY := 274 // mesuré empiriquement
+	//maxY := 297 - topMarg - bottomMarg
+	//
+	pdf.Ln(4 * colH)
 	for _, item := range aff.Items {
-	    heightNeeded := float64(colH * float64(4 + 2 * len(item.Lignes)))
-	    if heightNeeded + pdf.GetY() > float64(maxY) {
-	        pdf.AddPage()
-	    }
-	    // titre item
-	    pdf.SetX(x0)
-		pdf.SetFont("Arial", "B", 10)
-		pdf.Cell(50, colH*2, tr(item.Titre + " " + tiglib.DateFrText(item.Date)))
-		//pdf.Cell(50, colH*2, tr(item.Titre + " " + tiglib.DateFrText(item.Date)))
-        pdf.Ln(2*colH)
-		for _, ligne := range(item.Lignes){
-            // titre colonnes                                                                                                              
-            x = x0 + colW // Une cell vide (décalage pour les titres des lignes)
-            pdf.SetX(x)
-            pdf.SetFont("Arial", "B", 10)
-            for _, col := range(ligne.Colonnes){
-                pdf.CellFormat(colW, colH, tr(col.Titre), "1", 0, "CM", false, 0, "")
-            }
-            pdf.Ln(colH)
-            // titre ligne
-            pdf.SetX(x0)
-            pdf.CellFormat(colW, colH, tr(ligne.Titre), "1", 0, "CM", false, 0, "")
-            // valeurs colonnes
-            pdf.SetFont("Arial", "", 10)
-            for _, col := range(ligne.Colonnes){
-                pdf.CellFormat(colW, colH, tr(col.Valeur), "1", 0, "CM", false, 0, "")
-            }
-            pdf.Ln(colH*1.5)
+		heightNeeded := float64(colH * float64(4+2*len(item.Lignes)))
+		if heightNeeded+pdf.GetY() > float64(maxY) {
+			pdf.AddPage()
 		}
-        pdf.Ln(2*colH)
+		// titre item
+		pdf.SetX(x0)
+		pdf.SetFont("Arial", "B", 10)
+		pdf.Cell(50, colH*2, tr(item.Titre+" "+tiglib.DateFrText(item.Date)))
+		//pdf.Cell(50, colH*2, tr(item.Titre + " " + tiglib.DateFrText(item.Date)))
+		pdf.Ln(2 * colH)
+		for _, ligne := range item.Lignes {
+			// titre colonnes
+			x = x0 + colW // Une cell vide (décalage pour les titres des lignes)
+			pdf.SetX(x)
+			pdf.SetFont("Arial", "B", 10)
+			for _, col := range ligne.Colonnes {
+				pdf.CellFormat(colW, colH, tr(col.Titre), "1", 0, "CM", false, 0, "")
+			}
+			pdf.Ln(colH)
+			// titre ligne
+			pdf.SetX(x0)
+			pdf.CellFormat(colW, colH, tr(ligne.Titre), "1", 0, "CM", false, 0, "")
+			// valeurs colonnes
+			pdf.SetFont("Arial", "", 10)
+			for _, col := range ligne.Colonnes {
+				pdf.CellFormat(colW, colH, tr(col.Valeur), "1", 0, "CM", false, 0, "")
+			}
+			pdf.Ln(colH * 1.5)
+		}
+		pdf.Ln(2 * colH)
 	}
 	pdf.SetX(130)
 	pdf.SetFont("Arial", "B", 12)
-	pdf.Cell(50, colH, tr("TOTAL GENERAL : " + strconv.FormatFloat(aff.TotalTTC, 'f', 2, 64) + " TTC"))
+	pdf.Cell(50, colH, tr("TOTAL GENERAL : "+strconv.FormatFloat(aff.TotalTTC, 'f', 2, 64)+" TTC"))
 	//
 	return pdf.Output(w)
 }

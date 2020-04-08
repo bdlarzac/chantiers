@@ -50,37 +50,38 @@ func GetStockageFull(db *sqlx.DB, id int) (*Stockage, error) {
 	if err != nil {
 		return s, werr.Wrapf(err, "Erreur appel GetStockage()")
 	}
-	// Loyers
-	query := "select * from stockloyer where id_stockage=$1 order by datedeb desc"
-	loyers := []StockLoyer{}
-	err = db.Select(&loyers, query, s.Id)
+	err = s.ComputeLoyers(db)
 	if err != nil {
-		return s, werr.Wrapf(err, "Erreur query DB : "+query)
+		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeLoyers()")
 	}
-	s.Loyers = loyers
-	// Tas courants
 	err = s.ComputeTasActifs(db)
 	if err != nil {
 		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeTasActifs()")
 	}
-	// Stock
 	err = s.ComputeStock(db)
 	if err != nil {
 		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeStock()")
 	}
-	// Deletable
-	var count int
-	query = "select count(*) from tas where actif and id_stockage=$1"
-	err = db.QueryRow(query, s.Id).Scan(&count)
+	err = s.ComputeDeletable(db)
 	if err != nil {
-		return s, werr.Wrapf(err, "Erreur query DB : "+query)
+		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeDeletable()")
 	}
-	s.Deletable = (count == 0)
 	//
 	return s, nil
 }
 
 // ************************** Compute *******************************
+
+func (s *Stockage) ComputeLoyers(db *sqlx.DB) error {
+	query := "select * from stockloyer where id_stockage=$1 order by datedeb desc"
+	loyers := []StockLoyer{}
+	err := db.Select(&loyers, query, s.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	s.Loyers = loyers
+	return nil
+}
 
 func (s *Stockage) ComputeTasActifs(db *sqlx.DB) error {
 	query := "select * from tas where actif and id_stockage=$1"
@@ -113,6 +114,17 @@ func (s *Stockage) ComputeStock(db *sqlx.DB) error {
 	for _, stock := range stocks {
 		s.Stock += stock
 	}
+	return nil
+}
+
+func (s *Stockage) ComputeDeletable(db *sqlx.DB) error {
+	var count int
+	query := "select count(*) from tas where actif and id_stockage=$1"
+	err := db.QueryRow(query, s.Id).Scan(&count)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	s.Deletable = (count == 0)
 	return nil
 }
 

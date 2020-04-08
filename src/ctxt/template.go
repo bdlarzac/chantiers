@@ -34,11 +34,11 @@ func init() {
 		"labelActivite":     labelActivite,
 		"twoDigits":         twoDigits,
 		"ucFirst":           ucFirst,
+		"year":              year,
 		"zero2empty":        zero2empty,
 	}
 	tmplDir := "view"
 	tmpl = template.Must(template.New("").Funcs(fmap).ParseGlob(filepath.Join(tmplDir, "*.html"))).Option("missingkey=error")
-	//template.Must(tmpl.ParseGlob(filepath.Join(tmplDir, "stockage", "*.html")))
 }
 
 // ************************* pipelines ********************************
@@ -55,6 +55,11 @@ func dateFr(t time.Time) template.HTML {
 // Affiche une date YYYY-MM-DD
 func dateIso(t time.Time) template.HTML {
 	return template.HTML(tiglib.DateIso(t))
+}
+
+// Affiche l'année YYYY d'une date
+func year(t time.Time) template.HTML {
+	return template.HTML(strconv.Itoa(t.Year()))
 }
 
 func labelEssence(str string) template.HTML {

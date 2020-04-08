@@ -54,9 +54,9 @@ func HeaderFacture(pdf *gofpdf.Fpdf, tr func(string) string, conf *model.Config)
 func FooterFacture(pdf *gofpdf.Fpdf, tr func(string) string, conf *model.Config) {
 	pdf.SetFont("Arial", "", 10)
 	pdf.SetXY(80, 284)
-	pdf.MultiCell(50, 5, "Site internet : " + tr(conf.Facture.SiteWeb), "", "C", false)
+	pdf.MultiCell(50, 5, "Site internet : "+tr(conf.Facture.SiteWeb), "", "C", false)
 	pdf.SetXY(50, 290)
-	pdf.MultiCell(100, 3, tr("N° SIRET : " + tr(conf.Facture.Siret) + " - N° TVA : " + tr(conf.Facture.TVA)), "", "C", false)
+	pdf.MultiCell(100, 3, tr("N° SIRET : "+tr(conf.Facture.Siret)+" - N° TVA : "+tr(conf.Facture.TVA)), "", "C", false)
 }
 
 // Renvoie une string permettant d'afficher un acteur avec son adresse dans une facture
