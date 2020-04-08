@@ -73,7 +73,7 @@ type CoutPlaq struct {
 
 // Coût exploitation
 // Doit être effectué sur un chantier obtenu par GetPlaqFull() - pas de vérification d'erreur
-func (ch *Plaq) ComputeCout(db *sqlx.DB, config Config) error {
+func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 	ch.Cout = &CoutPlaq{}
 	nMapSec := ch.Volume * (1 - config.PourcentagePerte/100)
 	var cout float64

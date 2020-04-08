@@ -86,6 +86,10 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	err = chantier.ComputeCout(ctx.DB, ctx.Config)
+	if err != nil {
+		return err
+	}
 	ctx.TemplateName = "plaq-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{

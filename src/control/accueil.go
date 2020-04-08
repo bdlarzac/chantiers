@@ -22,17 +22,6 @@ func Accueil(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func Recap(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	ctx.TemplateName = "recap.html"
-	ctx.Page = &ctxt.Page{
-		Header: ctxt.Header{
-			Title: "Récapitulatif",
-		},
-		Menu: "accueil",
-	}
-	return nil
-}
-
 func MajFoncier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.TemplateName = "maj-foncier.html"
 	ctx.Page = &ctxt.Page{
