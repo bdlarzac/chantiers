@@ -361,7 +361,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w3
-	pdf.MultiCell(wi, he, tr(model.LabelUniteSelect(chantier.Unite)), "RB", "C", false)
+	pdf.MultiCell(wi, he, tr(model.LabelUnite(chantier.Unite)), "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w4

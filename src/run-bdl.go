@@ -11,11 +11,13 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"fmt"
 
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
 	"bdl.local/bdl/ctxt"
 	"github.com/gorilla/mux"
+	"bdl.local/bdl/generic/wilk/werr"
 )
 
 // *********************************************************
@@ -38,7 +40,6 @@ func main() {
 	r.HandleFunc("/ajax/get/parcelles-from-ug/{id}", Hajax(ajax.GetParcellesFromUG))
 
 	r.HandleFunc("/", H(control.Accueil))
-	r.HandleFunc("/config", H(control.ShowConfig))
 	r.HandleFunc("/recap", H(control.Recap))
 	r.HandleFunc("/admin/maj-foncier", H(control.MajFoncier))
 	r.HandleFunc("/admin/maj-psg", H(control.MajPSG))
@@ -133,6 +134,8 @@ func main() {
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	r.NotFoundHandler = http.HandlerFunc(notFound)
+	
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         "127.0.0.1:8000",
@@ -144,12 +147,10 @@ func main() {
 }
 
 // *********************************************************
-/**
-    H = Handler
-    Returns a function with same signature as http.Handler.ServeHTTP() usable by r.HandleFunc()
-    Adapter between ServeHTTP() and controller function
-    @param  h Controller function
-**/
+// H = Handler
+// Returns a function with same signature as http.Handler.ServeHTTP() usable by r.HandleFunc()
+// Adapter between ServeHTTP() and controller function
+// @param  h Controller function
 func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -158,7 +159,7 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		if err != nil {
-			ctxt.LogError(err)
+			showErrorPage(err, ctx, w, r)
 			return
 		}
 		if ctx.Redirect != "" {
@@ -196,11 +197,9 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 }
 
 // *********************************************************
-/**
-    Hajax = Handler ajax
-    Same as H, but for ajax (does not execute templates)
-    @param  h Controller function
-**/
+// Hajax = Handler ajax
+// Same as H, but for ajax (does not execute templates)
+// @param  h Controller function
 func Hajax(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -215,11 +214,9 @@ func Hajax(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func
 }
 
 // *********************************************************
-/**
-    HPDF = Handler PDF
-    Same as H, but for pdf (does not execute templates)
-    @param  h Controller function
-**/
+// HPDF = Handler PDF
+// Same as H, but for pdf (does not execute templates)
+// @param  h Controller function
 func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -231,4 +228,55 @@ func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(
 			ctxt.LogError(err)
 		}
 	}
+}
+
+
+// *********************** Gestion d'erreur **********************************
+// A mettre ailleurs, mais où ?
+
+func notFound(w http.ResponseWriter, r *http.Request) {
+    ctx := ctxt.NewContext()
+    err := fmt.Errorf("Page inexistante : %s", r.URL)
+    showErrorPage(err, ctx, w, r)
+}
+
+
+
+func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *http.Request){
+    type detailsErrorPage struct {
+        URL             string
+        Trace           string
+    }
+    var err error
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title: "ERREUR",
+		},
+		Menu:    "accueil",
+		Details: detailsErrorPage{
+		    URL: r.URL.String(),
+		    Trace: werr.Sprint(theErr),
+		},
+	}
+    tmpl := ctx.Template
+    err = tmpl.ExecuteTemplate(w, "header.html", ctx.Page)
+    if err != nil {
+        ctxt.LogError(err)
+        return
+    }
+    err = tmpl.ExecuteTemplate(w, "menu.html", ctx.Page)
+    if err != nil {
+        ctxt.LogError(err)
+        return
+    }
+    err = tmpl.ExecuteTemplate(w, "error.html", ctx.Page)
+    if err != nil {
+        ctxt.LogError(err)
+        return
+    }
+    err = tmpl.ExecuteTemplate(w, "footer.html", ctx.Page)
+    if err != nil {
+        ctxt.LogError(err)
+        return
+    }
 }

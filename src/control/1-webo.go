@@ -32,9 +32,9 @@ func WeboEssence() []webo.OptionString {
 func WeboChautreUnite() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_UNITE", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.LabelUniteSelect("ST")},
-		webo.OptionString{OptionValue: "unite-TO", OptionLabel: model.LabelUniteSelect("TO")},
-		webo.OptionString{OptionValue: "unite-M3", OptionLabel: model.LabelUniteSelect("M3")},
+		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.LabelUnite("ST")},
+		webo.OptionString{OptionValue: "unite-TO", OptionLabel: model.LabelUnite("TO")},
+		webo.OptionString{OptionValue: "unite-M3", OptionLabel: model.LabelUnite("M3")},
 	}
 }
 

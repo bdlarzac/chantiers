@@ -63,7 +63,7 @@ func labelEssence(str string) template.HTML {
 
 // Nom des unités utilisées dans cette appli
 func labelUnite(str string) template.HTML {
-	return template.HTML(model.LabelUnite(str))
+	return template.HTML(model.LabelUniteHTML(str))
 }
 
 // Type d'exploitation (1 - 5)

@@ -149,6 +149,7 @@ table.entities tr.total{
 .error{
     display:inline-block;
     border:1px solid grey;
+    border-radius:3px;
     padding:1em;
     margin:1em;
     background:lightsalmon;
@@ -182,6 +183,7 @@ table.th-left th{text-align:left; padding-right:1em;}
 }
 
 .whitespace-nowrap{white-space:nowrap;}
+.whitespace-pre{white-space:pre;}
 
 .clear-left{clear:left;}
 .float-left{float:left;}

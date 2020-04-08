@@ -55,7 +55,7 @@
         </select>
         
         <label for="essence">Essence</label>
-        <select name="essence" id="essence" class="width">
+        <select name="essence" id="essence" class="width10">
             {{$.Details.EssenceOptions}}
         </select>
         
@@ -134,8 +134,6 @@ function initialize() {
     }
     // form update
     else{
-        // essence
-        document.getElementById("essence-" + "{{.Essence}}").setAttribute("selected", "selected");
         // fermier
         var option1 = document.createElement('option');
         option1.value = {{.IdFermier}};

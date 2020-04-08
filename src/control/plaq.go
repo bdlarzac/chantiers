@@ -240,7 +240,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			},
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
-				EssenceOptions:      webo.FmtOptions(WeboEssence(), chantier.Essence),
+				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-" + chantier.Essence),
 				StockageOptions:     webo.FmtOptions(weboStockages, "CHOOSE_STOCKAGE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"), // @todo
 				UrlAction:           "/chantier/plaquette/update/" + vars["id"],

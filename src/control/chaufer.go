@@ -171,7 +171,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			},
 			Details: detailsChauferForm{
 				Chantier:            chantier,
-				EssenceOptions:      webo.FmtOptions(WeboEssence(), chantier.Essence),
+				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				UniteOptions:        webo.FmtOptions(WeboChauferUnite(), "unite-"+chantier.Unite),
 				UrlAction:           "/chantier/chauffage-fermier/update/" + vars["id"],

@@ -180,7 +180,7 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			},
 			Details: detailsBSPiedForm{
 				Chantier:            chantier,
-				EssenceOptions:      webo.FmtOptions(WeboEssence(), chantier.Essence),
+				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-" + chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				UrlAction:           "/chantier/bois-sur-pied/update/" + vars["id"],
 			},
@@ -304,25 +304,13 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	HeaderFacture(pdf, tr, ctx.Config)
 	FooterFacture(pdf, tr, ctx.Config)
 	//
+	var str string
+	//
 	// Acheteur
 	//
-	str := tr(bsp.Acheteur.String())
-	if bsp.Acheteur.Adresse1 != "" {
-		str += "\n" + tr(bsp.Acheteur.Adresse1)
-	}
-	if bsp.Acheteur.Adresse2 != "" {
-		str += "\n" + tr(bsp.Acheteur.Adresse2)
-	}
-	if bsp.Acheteur.Cp != "" && bsp.Acheteur.Ville != "" {
-		str += "\n" + bsp.Acheteur.Cp + " " + tr(bsp.Acheteur.Ville)
-	} else if bsp.Acheteur.Cp != "" {
-		str += "\n" + tr(bsp.Acheteur.Cp)
-	} else if bsp.Acheteur.Ville != "" {
-		str += "\n" + tr(bsp.Acheteur.Ville)
-	}
 	pdf.SetXY(60, 70)
 	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(100, 7, str, "1", "C", false)
+	pdf.MultiCell(100, 7, tr(StringActeurFacture(bsp.Acheteur)), "1", "C", false)
 	//
 	// Date  + n° facture
 	//
