@@ -9,7 +9,7 @@
         <input type="text" value="{{.Chantier.String}}" readonly>
         
         <label for="type-op">Type d'opération</label>
-        <select name="type-op" id="type-op" class="width10" required>
+        <select name="type-op" id="type-op" class="width10"  onchange="typeOperationChanges();" required>
             {{$.Details.TypeOpOptions}}
         </select>
 
@@ -125,38 +125,52 @@ function getActeursPossibles(inputField){
 }
 
 // ***************************************
+/** Déclenché lorsqu'on change le choix du type d'opération **/
+function typeOperationChanges(){
+    if(document.getElementById("typeop-DC").selected){
+        document.getElementById("unite-MA").selected = true;
+    }
+    
+}
+
+// ***************************************
 function validateForm(){
+    msg = "";
     if(document.getElementById("type-op").value == "CHOOSE_TYPEOP"){
-        alert("Vous devez renseigner un type d'opération.");
-        return false;
+        msg += "\n- Vous devez renseigner un type d'opération.";
     }
     if(document.getElementById("unite").value == "CHOOSE_UNITE"){
-        alert("Vous devez renseigner une unité.");
-        return false;
+        msg += "\n- Vous devez renseigner une unité.";
     }
     if(document.getElementById("tva").value == "CHOOSE_TVA"){
-        alert("Vous devez renseigner un taux de TVA.");
-        return false;
+        msg += "\n- Vous devez renseigner un taux de TVA.";
+    }
+    if(document.getElementById("typeop-DC").selected && !document.getElementById("unite-MA").selected){
+        msg += "\n- Pour le déchiquetage, vous devez obligatoirement utiliser des maps.";
     }
     // calcule id-acteur
     var personName = document.getElementById("acteur").value.trim();
     if(personName == ""){
-        alert("Vous devez renseigner un acteur.");
-        return false;
-    }
-    var ok = false;
-    for(var idActeur in window.globalPersons){
-        if(window.globalPersons[idActeur] == personName){
-            ok = true;
-            break;
-        }
-    }
-    if(!ok){
-        alert("Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.");
-        return false;
+        msg += "\n- Vous devez renseigner un acteur.";
     }
     else{
-        document.getElementById("id-acteur").value = idActeur;
+        var ok = false;
+        for(var idActeur in window.globalPersons){
+            if(window.globalPersons[idActeur] == personName){
+                ok = true;
+                break;
+            }
+        }
+        if(!ok){
+            msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+        }
+        else{
+            document.getElementById("id-acteur").value = idActeur;
+        }
+    }
+    if(msg != ""){
+        alert("Impossible de valider ce formulaire : " + msg);
+        return false;
     }
     return true;
 }

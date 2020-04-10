@@ -29,15 +29,27 @@
         
     </div>
     
-    <div class="float-right margin-top">
-        <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
-        <input type="submit" class="margin-left" value="Valider">
+    <div class="margin-top">
+        <div class="float-left">
+            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
+        </div>
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Valider">
+        </div>
     </div>
     
     <input type="hidden" name="id-acteur" id="id-acteur" value="{{.Details.Acteur.Id}}">
                                                                       
 </form>
 
+<a name="help"></a>
+<div id="help" class="margin display-none">
+    <div class="help-content">
+        <div class="help-title">Aide</div>
+        Une affacture est une "facture à l'envers" : facture devant être payée par BDL à des intervenants extérieurs.
+    </div>
+</div>
 
 <script>                                                                                                         
 
