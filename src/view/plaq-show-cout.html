@@ -1,4 +1,10 @@
 
+{{if eq .Details.Chantier.Volume 0.0}}
+
+Le coût d'exploitation d'un chantier ne peut être calculé que si le volume de plaquettes est différent de 0.
+
+{{else}}
+
 {{with .Details.Chantier.Cout}}
 <table class="bordered">
     <tr><th>Poste</th><th>Coût / MAP sèche</th></tr>
@@ -18,13 +24,40 @@
         <td>Broyage parcelle</td>
         <td><script>document.write(round({{.Broyage}}, 2));</script> &euro;</td>
     </tr>
+    <tr>
+        <td>Repas + réparation</td>
+        <td><script>document.write(round({{.FauxFrais}}, 2));</script> &euro;</td>
+    </tr>
+    <tr>
+        <td>Transport</td>
+        <td><script>document.write(round({{.Transport}}, 2));</script> &euro;</td>
+    </tr>
+    <tr>
+        <td>Rangement</td>
+        <td><script>document.write(round({{.Rangement}}, 2));</script> &euro;</td>
+    </tr>
+    <tr>
+        <td>Stockage</td>
+        <td>todo</td>
+    </tr>
+    <tr>
+        <td>Chargement</td>
+        <td><script>document.write(round({{.Chargement}}, 2));</script> &euro;</td>
+    </tr>
+    <tr>
+        <td>Livraison</td>
+        <td><script>document.write(round({{.Livraison}}, 2));</script> &euro;</td>
+    </tr>
 </table>
 {{end}}
 
+{{end}}{{/* else de if eq .Details.Chantier.Volume 0 */}}
+
+
 
 <!-- ********************************************************************************* -->
-<hr class="margin-top2">
-<h2>A compléter, spécification pas claire</h2>
+<hr class="margin-top3">
+<h2>A compléter, spécifications pas claires</h2>
 <hr>
 <h2>PROTOTYPE, données ne correspondant pas au chantier</h2>
 <div style="float:left;">

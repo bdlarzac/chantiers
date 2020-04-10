@@ -14,7 +14,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+//"fmt"
 )
 
 type Plaq struct {
@@ -49,9 +49,12 @@ type CoutPlaq struct {
 	Debardage    float64
 	Dechiquetage float64
 	Broyage      float64
+	FauxFrais    float64 // repas et réparation
 	Transport    float64
-	Livraison    float64
+	Rangement    float64
 	Stockage     float64
+	Chargement   float64
+	Livraison    float64
 	// récap compta
 	/*
 	   Travaux bois déchiqueté
@@ -74,9 +77,15 @@ type CoutPlaq struct {
 // Coût exploitation
 // Doit être effectué sur un chantier obtenu par GetPlaqFull() - pas de vérification d'erreur
 func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
+    if ch.Volume == 0 {
+        // valeurs par défaut, tous les coûts restent à 0
+        return nil
+    }
 	ch.Cout = &CoutPlaq{}
 	nMapSec := ch.Volume * (1 - config.PourcentagePerte/100)
 	var cout float64
+	//
+	// Opérations simples
 	//
 	for _, op := range ch.Operations {
 		cout = op.PUHT * op.Qte / nMapSec
@@ -92,19 +101,64 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 		}
 	}
 	//
+	// Faux frais
+	//
+	ch.Cout.FauxFrais = (ch.FraisReparation + ch.FraisRepas) / nMapSec
+	//
+	// Transport
+	//
 	cout = 0
-	for _, tr := range ch.Transports {
-		if tr.TypeCout == "G" {
-			cout += tr.GlPrix
-		} else if tr.TypeCout == "C" {
-			cout += tr.CaNkm * tr.CaPrixKm
-		} else if tr.TypeCout == "T" {
-			cout += float64(tr.TbNbenne) * tr.TbDuree * tr.TbPrixH
+	for _, t := range ch.Transports {
+		if t.TypeCout == "G" {
+			cout += t.GlPrix
+		} else if t.TypeCout == "C" {
+			cout += t.CaNkm * t.CaPrixKm
+		} else if t.TypeCout == "T" {
+			cout += float64(t.TbNbenne) * t.TbDuree * t.TbPrixH
 		}
 	}
 	ch.Cout.Transport = cout / nMapSec
 	//
-	// A finir - spec pas claire
+	// Rangement
+	//
+	cout = 0
+	for _, r := range ch.Rangements {
+		if r.TypeCout == "G" {
+			cout += r.GlPrix
+		} else {
+			cout += r.CoPrixH * r.CoNheure // conducteur
+			cout += r.OuPrix // outil
+		}
+	}
+	ch.Cout.Rangement = cout / nMapSec
+	//
+	// Stockage
+	//
+	// todo
+	//
+	// Chargement et livraisons
+	//
+	var coutC, coutL float64    
+	for _, v := range(ch.Ventes) {
+	    for _, l := range(v.Livraisons) {
+            if l.TypeCout == "G" {
+                coutL += l.GlPrix
+            } else {
+                coutL += l.MoNHeure * l.MoPrixH
+            }
+            for _, c := range(l.Chargements){
+                if c.TypeCout == "G" {
+                    coutC += c.GlPrix
+                } else {
+                    coutC += c.OuPrix   // outil
+                    coutC += c.MoNHeure * c.MoPrixH // main d'oeuvre
+                }
+            }
+	    }
+	}
+	ch.Cout.Chargement = coutC / nMapSec
+	ch.Cout.Livraison = coutL / nMapSec	
+	//
 	return nil
 }
 
