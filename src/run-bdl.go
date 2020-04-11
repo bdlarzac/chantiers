@@ -11,9 +11,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	"strings"
-	"html/template"
+	"time"
 
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
@@ -25,12 +24,12 @@ import (
 // *********************************************************
 func main() {
 
-    defer func(){
-        if p := recover(); p != nil{
-            err := fmt.Errorf("%w", p)
-            ctxt.LogError(err)
-        }
-    }()
+	defer func() {
+		if p := recover(); p != nil {
+			err := fmt.Errorf("%w", p)
+			ctxt.LogError(err)
+		}
+	}()
 
 	r := mux.NewRouter()
 
@@ -137,6 +136,7 @@ func main() {
 
 	// *** geo ***
 	r.HandleFunc("/unite-gestion/{id:[0-9]+}", H(control.ShowUG))
+	r.HandleFunc("/unite-gestion/{id:[0-9]+}/{tab}", H(control.ShowUG))
 	r.HandleFunc("/geo/commune/liste", H(control.ListCommunes))
 	r.HandleFunc("/geo/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
 	r.HandleFunc("/geo/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
@@ -236,25 +236,25 @@ func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(
 
 func notFound(w http.ResponseWriter, r *http.Request) {
 	ctx := ctxt.NewContext()
-	err := fmt.Errorf("Page inexistante<br><code>%s</code>", r.URL)
+	err := fmt.Errorf("Page inexistante :<br><code><b>%s</b></code>", r.URL)
 	showErrorPage(err, ctx, w, r)
 }
 
 func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) {
 	type detailsErrorPage struct {
-		URL   string
-		Details template.HTML
+		URL     string
+		Details string
 	}
 	var err error
-	
+
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "ERREUR",
 		},
 		Menu: "accueil",
 		Details: detailsErrorPage{
-			URL:   r.URL.String(),
-			Details: template.HTML(strings.Replace(template.HTMLEscapeString(werr.Sprint(theErr)), "\n", "<br>", -1)),
+			URL:     r.URL.String(),
+			Details: strings.Replace(werr.Sprint(theErr), "\n", "<br>", -1),
 		},
 	}
 	tmpl := ctx.Template

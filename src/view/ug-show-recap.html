@@ -1,182 +1,69 @@
-<h2>Total : 2015 -2019</h2>
 
-<table class="liste-carac bordered">
-    <tr>
-        <th>Produit</th>
-        <th>Quantité</th>
-        <th>Superficie</th>
-        <th>Coût exploitation</th>
-        <th>Bénéfice</th>
-    </tr>
+
+{{if not .Details.UG.SortedRecapYears}}
+    <div class="big3">Aucune activité pour cette UG</div>
+{{end}}
+
+{{range .Details.UG.SortedRecapYears}}
+    <!-- ********************************************************************************* -->
+    <h2>Total {{.}}</h2>
     
-    <tr>
-        <td class="key">Plaquettes</td>
-        <td>184 map</td>
-        <td>8 ha</td>
-        <td>300 &euro;</td>
-        <td>100 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois de chauffage</td>
-        <td>50 stères</td>
-        <td>0.5 ha</td>
-        <td>0</td>
-        <td>0</td>
-    </tr>
-
-    <tr>
-        <td class="key">Pâte à papier</td>
-        <td>200 stères</td>
-        <td>12 ha</td>
-        <td>300 &euro;</td>
-        <td>150 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois palette</td>
-        <td>0</td>
-        <td>0</td>
-        <td>0</td>
-        <td>0</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois d'oeuvre</td>
-        <td>20 stères</td>
-        <td>1.2 ha</td>
-        <td>300 &euro;</td>
-        <td>200 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Plaquettes + Bois d'oeuvre (?)</td>
-        <td>?</td>
-        <td>9.2 ha</td>
-        <td>600 &euro;</td>
-        <td>300 &euro;</td>
-    </tr>
-
-</table>
-
-<h2>2018</h2>
-
-<table class="liste-carac bordered">
-    <tr>
-        <th>Produit</th>
-        <th>Quantité</th>
-        <th>Superficie</th>
-        <th>Coût exploitation</th>
-        <th>Bénéfice</th>
-    </tr>
+    {{$recap := index $.Details.UG.Recaps .}}
+    <table class="liste-carac bordered">
+        <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Superficie</th>
+            <th>Coût exploitation</th>
+            <th>Bénéfice</th>
+        </tr>
+        
+        <tr>
+            <td class="key">Plaquettes</td>
+            <td>{{$recap.Plaquettes.Quantite}} maps</td>
+            <td>{{$recap.Plaquettes.Superficie}} ha</td>
+            <td>???</td>
+            <td>???</td>
+        </tr>
     
-    <tr>
-        <td class="key">Plaquettes</td>
-        <td>184 map</td>
-        <td>8 ha</td>
-        <td>300 &euro;</td>
-        <td>100 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois de chauffage</td>
-        <td>50 stères</td>
-        <td>0.5 ha</td>
-        <td>0</td>
-        <td>0</td>
-    </tr>
-
-    <tr>
-        <td class="key">Pâte à papier</td>
-        <td>200 stères</td>
-        <td>12 ha</td>
-        <td>300 &euro;</td>
-        <td>150 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois palette</td>
-        <td>0</td>
-        <td>0</td>
-        <td>0</td>
-        <td>0</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois d'oeuvre</td>
-        <td>20 stères</td>
-        <td>1.2 ha</td>
-        <td>300 &euro;</td>
-        <td>200 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Plaquettes + Bois d'oeuvre (?)</td>
-        <td>?</td>
-        <td>9.2 ha</td>
-        <td>600 &euro;</td>
-        <td>300 &euro;</td>
-    </tr>
-
-</table>
-
-<h2>2017</h2>
-
-<table class="liste-carac bordered">
-    <tr>
-        <th>Produit</th>
-        <th>Quantité</th>
-        <th>Superficie</th>
-        <th>Coût exploitation</th>
-        <th>Bénéfice</th>
-    </tr>
+        <tr>                                          
+            <td class="key">Bois de chauffage</td>
+            <td>{{$recap.Chauffage.Quantite}} maps</td>
+            <td>???</td>
+            <td>???</td>
+            <td>???</td>
+        </tr>
     
-    <tr>
-        <td class="key">Plaquettes</td>
-        <td>184 map</td>
-        <td>8 ha</td>
-        <td>300 &euro;</td>
-        <td>100 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois de chauffage</td>
-        <td>50 stères</td>
-        <td>0.5 ha</td>
-        <td>0</td>
-        <td>0</td>
-    </tr>
-
-    <tr>
-        <td class="key">Pâte à papier</td>
-        <td>200 stères</td>
-        <td>12 ha</td>
-        <td>300 &euro;</td>
-        <td>150 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois palette</td>
-        <td>0</td>
-        <td>0</td>
-        <td>0</td>
-        <td>0</td>
-    </tr>
-
-    <tr>
-        <td class="key">Bois d'oeuvre</td>
-        <td>20 stères</td>
-        <td>1.2 ha</td>
-        <td>300 &euro;</td>
-        <td>200 &euro;</td>
-    </tr>
-
-    <tr>
-        <td class="key">Plaquettes + Bois d'oeuvre (?)</td>
-        <td>?</td>
-        <td>9.2 ha</td>
-        <td>600 &euro;</td>
-        <td>300 &euro;</td>
-    </tr>
-
-</table>
+        <tr>
+            <td class="key">Pâte à papier</td>
+            <td>{{$recap.PateAPapier.Quantite}} maps</td>
+            <td>???</td>
+            <td>???</td>
+            <td>???</td>
+        </tr>
+    
+        <tr>
+            <td class="key">Bois palette</td>
+            <td>{{$recap.Palette.Quantite}} maps</td>
+            <td>???</td>
+            <td>???</td>
+            <td>???</td>
+        </tr>
+    
+        <tr>
+            <td class="key">Bois d'oeuvre</td>
+            <td>{{$recap.BoisOeuvre.Quantite}} maps</td>
+            <td>???</td>
+            <td>???</td>
+            <td>???</td>
+        </tr>
+    
+        <tr>
+            <td class="key">Plaquettes + Bois d'oeuvre</td>
+            <td>{{$recap.PlaquettesEtBoisOeuvre.Quantite}} maps</td>
+            <td>???</td>
+            <td>???</td>
+            <td>???</td>
+        </tr>
+    </table>
+{{end}}

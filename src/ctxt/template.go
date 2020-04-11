@@ -32,6 +32,7 @@ func init() {
 		"labelExploitation": labelExploitation,
 		"labelValorisation": labelValorisation,
 		"labelActivite":     labelActivite,
+		"safeHTML":          safeHTML,
 		"twoDigits":         twoDigits,
 		"ucFirst":           ucFirst,
 		"year":              year,
@@ -121,4 +122,8 @@ func zero2empty(val interface{}) template.HTML {
 // Des zéros sont rajoutés si besoin - par ex renvoie 12.50 au lieu de 12.5
 func twoDigits(f float64) template.HTML {
 	return template.HTML(fmt.Sprintf("%.2f", f))
+}
+
+func safeHTML(str string) template.HTML {
+	return template.HTML(str)
 }

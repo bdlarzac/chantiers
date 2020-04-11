@@ -33,12 +33,12 @@ func FormAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	ctx.TemplateName = "affacture-form.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title: "Affacture pour " + acteur.String(),
+			Title:    "Affacture pour " + acteur.String(),
 			CSSFiles: []string{"/static/css/form.css"},
 		},
-        Footer: ctxt.Footer{
-            JSFiles: []string{"/static/js/toogle.js"},
-        },
+		Footer: ctxt.Footer{
+			JSFiles: []string{"/static/js/toogle.js"},
+		},
 		Details: detailsAffactureForm{
 			Acteur:    acteur,
 			UrlAction: "/affacture/show",

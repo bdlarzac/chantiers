@@ -74,13 +74,13 @@ func ListPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 // *********************************************************
 func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
-	idChantier, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		return err
-	}
 	tab := vars["tab"]
 	if tab == "" {
 		tab = "general"
+	}
+	idChantier, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return err
 	}
 	chantier, err := model.GetPlaqFull(ctx.DB, idChantier)
 	if err != nil {

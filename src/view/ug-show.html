@@ -3,8 +3,8 @@ Unité de gestion {{.Details.UG.Code}}
 </h1>
 
 <div class="tab">
-  <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-general')">GENERAL</button>
-  <button class="tablinks" onclick="openTab(event, 'tab-recap')">Récapitulatif</button>
+  <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-general')" id="general">GENERAL</button>
+  <button class="tablinks" onclick="openTab(event, 'tab-recap')" id="recap">Récapitulatif</button>
 </div>
 
 <div id="tab-general" class="tabcontent">
@@ -14,8 +14,14 @@ Unité de gestion {{.Details.UG.Code}}
 </div>
 
 <div id="tab-recap" class="tabcontent">
-    <h2>PROTO</h2>
     <p>
         {{ template "ug-show-recap.html" . }}
     </p>
 </div>
+
+<script>
+// ***************************************
+window.addEventListener("load", function(){
+    document.getElementById("{{.Details.Tab}}").click();
+});
+</script>
