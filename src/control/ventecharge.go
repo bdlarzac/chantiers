@@ -39,6 +39,16 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		if err != nil {
 			return err
 		}
+		// Mise à jour du stock du tas
+		err = vc.ComputeTas(ctx.DB)
+		if err != nil {
+			return err
+		}
+		err = vc.Tas.ModifierStock(ctx.DB, -vc.Qte) // Retire plaquettes au tas
+		if err != nil {
+			return err
+		}
+		//
 		ctx.Redirect = "/vente/" + r.PostFormValue("id-vente")
 		return nil
 	default:
@@ -107,6 +117,33 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		if err != nil {
 			return err
 		}
+		// Mise à jour du stock du tas
+		// Ajoute la qté du chargement avant update chargement
+		// puis enlève la qté après update chargement
+		// Attention, le tas avant update n'est pas forcément le même que le tas après update
+		// (cas où changement de tas lors de update chargement)
+		vcAvant, err := model.GetVenteCharge(ctx.DB, vc.Id)
+		if err != nil {
+			return err
+		}
+		err = vcAvant.ComputeTas(ctx.DB)
+		if err != nil {
+			return err
+		}
+		err = vcAvant.Tas.ModifierStock(ctx.DB, vcAvant.Qte) // Ajoute des plaquettes au tas
+		if err != nil {
+			return err
+		}
+		// 
+		err = vc.ComputeTas(ctx.DB)
+		if err != nil {
+			return err
+		}
+		err = vc.Tas.ModifierStock(ctx.DB, -vc.Qte) // Retire des plaquettes au tas
+		if err != nil {
+			return err
+		}
+		//
 		err = model.UpdateVenteCharge(ctx.DB, vc)
 		if err != nil {
 			return err

@@ -394,7 +394,7 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 	//
 	// Stockage
 	//
-	// todo
+	// todo calcul coût stockage
 	//
 	// Chargement et livraisons
 	//

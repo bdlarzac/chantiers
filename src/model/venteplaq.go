@@ -182,12 +182,12 @@ func (vp *VentePlaq) ComputeFournisseur(db *sqlx.DB) error {
 
 func (vp *VentePlaq) ComputeLivraisons(db *sqlx.DB) error {
 	query := "select id from ventelivre where id_vente=$1 order by datelivre desc"
-	idsLivre := []int{}
-	err := db.Select(&idsLivre, query, &vp.Id)
+	idsLivraison := []int{}
+	err := db.Select(&idsLivraison, query, &vp.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
-	for _, idL := range idsLivre {
+	for _, idL := range idsLivraison {
 		vl, err := GetVenteLivreFull(db, idL)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel GetVenteLivreFull()")
@@ -297,9 +297,22 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 }
 
 func DeleteVentePlaq(db *sqlx.DB, id int) error {
-	// @todo DeleteVenteLivre(db *sqlx.DB, id int)
-	query := "delete from venteplaq where id=$1"
-	_, err := db.Exec(query, id)
+    // delete les livraisons dépendant de cette vente
+	idsLivraison := []int{}
+	query := "select id from ventelivre where id_vente=$1"
+	err := db.Select(&idsLivraison, query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, idL := range idsLivraison {
+		err := DeleteVenteLivre(db, idL) // va aussi effacer les chargements
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel DeleteVenteLivre()")
+		}
+	}
+	// delete la vente
+	query = "delete from venteplaq where id=$1"
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

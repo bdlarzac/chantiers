@@ -39,9 +39,11 @@ func NewTas(idStockage, idChantier int, stock float64, actif bool) *Tas {
 
 // Si qte > 0, ajoute des plaquettes au tas
 // Si qte < 0, retire des plaquettes au tas
+// Fait la maj en BDD
 // @param   qte en maps
-func (t *Tas) ModifierStock(db *sqlx.DB, qte float64) {
+func (t *Tas) ModifierStock(db *sqlx.DB, qte float64) error {
 	t.Stock += qte
+	return UpdateTas(db, t)
 }
 
 // Pour indiquer qu'un tas est vide

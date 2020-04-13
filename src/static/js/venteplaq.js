@@ -9,10 +9,12 @@
 
 // *****************************************
 function deleteVentePlaquette(idVente, nomClient, dateVente){
-    let msg = "ATTENTION, en cliquant sur OK,\n"
-            + "la vente \"" + nomClient + " " + dateVente + "\" sera définitivement supprimée.\n"
-            + "\nAttention car les livraisons et chargements"
-            + "\nassociés à cette vente seront aussi supprimés.\n";
+    let msg = "En cliquant sur OK,"
+            + "\nla vente \"" + nomClient + " " + dateVente + "\" sera définitivement supprimée."
+            + "\n\nATTENTION, cette action a les conséquences suivantes :"
+            + "\n- Supprime toutes les livraisons associées à cette vente."
+            + "\n- Supprime tous les chargements associés à ces livraisons."
+            + "\n- Rétablit les stocks des tas associés à ces chargements.\n";
     let r = confirm(msg);
     if (r == true) {
         window.location = "/vente/delete/" + idVente;

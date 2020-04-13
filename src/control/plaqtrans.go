@@ -45,8 +45,7 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		pt.Tas.ModifierStock(ctx.DB, pt.Qte) // Ajoute plaquettes au tas
-		err = model.UpdateTas(ctx.DB, pt.Tas)
+		err = pt.Tas.ModifierStock(ctx.DB, pt.Qte) // Ajoute plaquettes au tas
 		if err != nil {
 			return err
 		}
@@ -133,8 +132,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-		ptAvant.Tas.ModifierStock(ctx.DB, -ptAvant.Qte) // Retire des plaquettes au tas
-		err = model.UpdateTas(ctx.DB, ptAvant.Tas)
+		err = ptAvant.Tas.ModifierStock(ctx.DB, -ptAvant.Qte) // Retire des plaquettes au tas
 		if err != nil {
 			return err
 		}
@@ -143,8 +141,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-		pt.Tas.ModifierStock(ctx.DB, pt.Qte) // Ajoute des plaquettes au tas
-		err = model.UpdateTas(ctx.DB, pt.Tas)
+		err = pt.Tas.ModifierStock(ctx.DB, pt.Qte) // Ajoute des plaquettes au tas
 		if err != nil {
 			return err
 		}
@@ -227,8 +224,7 @@ func DeletePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		return err
 	}
-	pt.Tas.ModifierStock(ctx.DB, -pt.Qte) // Retire des plaquettes au tas
-	err = model.UpdateTas(ctx.DB, pt.Tas)
+	err = pt.Tas.ModifierStock(ctx.DB, -pt.Qte) // Retire des plaquettes au tas
 	if err != nil {
 		return err
 	}

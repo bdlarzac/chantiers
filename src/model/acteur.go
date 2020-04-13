@@ -374,8 +374,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		new := &ActeurActivite{
 			Date:        elt.DateMesure,
 			Role:        "mesureur",
-			URL:         "/stockage/liste",
-			NomActivite: "Mesure humidité"} // @todo nom mesure, avec nom du tas ?
+			URL:         "/humidite/liste/" + strconv.Itoa(elt.DateMesure.Year()),
+			NomActivite: "Mesure humidité",
+		}
 		res = append(res, new)
 	}
 	// tri par date

@@ -1,10 +1,13 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
 
-- delete venteplaq => delete livraisons et chargements aussi
+
+- Tas.ModifierStock : faire UpdateTas() en même temps 
+- VenteCharge devrait faire modifierStock
+
 
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure
-  dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité déabord ; modifier VenteCharge
+  dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité d'abord ; modifier VenteCharge
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
   vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps (toutes les tables)
 
@@ -39,25 +42,12 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
 - Autocomplete LD : bug lorsqu'il y a une apostrophe
 - trier alpha autocomplete sur nom acteur
 
-- Dans toutes les fonctions Get*Full(), sortir les calculs dans des fonctions Compute()
-    Vérifier dans les classes extérieures que les fonctions Compute() sont utilisées à la place de GetXXX()
-    (en particulier GetActeur() pour VentePlaq ou Plaq)
-    => faire dans Plaq
-    => OK pour VentePlaq
-
 - Supprimer gestion d'erreur inutile, car filtrée par html5 ; par ex
 	bsp.PrixStere, err = strconv.ParseFloat(r.PostFormValue("prixstere"), 32)
 
 - utiliser tiglib.Round partout ou ParseFloat est utilisé dans l'analyse des forms (fait dans plaqtrans et dans plaqop).
 
-- 404 : Gérer les cas où on veut accéder à une entité n'existant pas
-(par ex en mettant un faux id dans l'url)
-=> le model renvoie une error, pas géré pour l'instant au niveau du controleur.
-- 404 : route catch-all dans run-bdl.go
-
 - voir bug DEVEZ GRAN / DEVEZ GRAND
-
-- mettre tous les ids en int au lieu de int64 dans les structs de model ?
 
 - html : remplacer scripts dans footer par scripts dans header avec attribut defer
 - html : remplacer dans les tmpl "liste-carac" par "th-left"

@@ -174,9 +174,22 @@ func UpdateVenteLivre(db *sqlx.DB, vl *VenteLivre) error {
 }
 
 func DeleteVenteLivre(db *sqlx.DB, id int) error {
-	// @todo delete VenteCharge
-	query := "delete from ventelivre where id=$1"
-	_, err := db.Exec(query, id)
+	// delete les chargements dépendant de cette livraison
+	idsCharge := []int{}
+	query := "select id from ventecharge where id_livraison=$1"
+	err := db.Select(&idsCharge, query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, idC := range idsCharge {
+		err := DeleteVenteCharge(db, idC)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel DeleteVenteCharge()")
+		}
+	}
+	// delete la livraison
+	query = "delete from ventelivre where id=$1"
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

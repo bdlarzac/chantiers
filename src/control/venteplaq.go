@@ -216,7 +216,10 @@ func DeleteVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		return err
 	}
-	vente, err := model.GetVentePlaq(ctx.DB, id)
+	vente, err := model.GetVentePlaq(ctx.DB, id) // pour retenir l'année dans le redirect
+	if err != nil {
+		return err
+	}
 	err = model.DeleteVentePlaq(ctx.DB, id)
 	if err != nil {
 		return err
