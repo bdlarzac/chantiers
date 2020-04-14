@@ -11,6 +11,7 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"errors"
 	"github.com/jmoiron/sqlx"
+"fmt"
 )
 
 type Tas struct {
@@ -48,10 +49,14 @@ func (t *Tas) ModifierStock(db *sqlx.DB, qte float64) error {
 
 // Pour indiquer qu'un tas est vide
 func DesactiverTas(db *sqlx.DB, id int) error {
-	query := `update tas set actif=false where id=$1`
-	_, err := db.Exec(query, id)
+    tas, err := GetTas(db, id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel GetTas()")
+	}
+	tas.Actif = false
+	err = UpdateTas(db, tas)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel UpdateTas()")
 	}
 	return nil
 }
@@ -91,7 +96,7 @@ func GetTasFull(db *sqlx.DB, idTas int) (*Tas, error) {
 
 // ************************** Get many *******************************
 
-// Utilisé pour faire un select html
+// Utilisé pour select html
 // Obligé d'avoir tas full, car besoin du nom du tas, qui a besoin de chantier et stockage
 func GetAllTasActifsFull(db *sqlx.DB) ([]*Tas, error) {
 	tas := []*Tas{}
@@ -193,6 +198,8 @@ func UpdateTas(db *sqlx.DB, tas *Tas) error {
 }
 
 func DeleteTas(db *sqlx.DB, id int) error {
+    // @todo supprimer les activités liées à ce tas (transport, chargement)
+fmt.Printf("delete tas %d\n",id)
 	query := "delete from tas where id=$1"
 	_, err := db.Exec(query, id)
 	if err != nil {

@@ -33,17 +33,12 @@
         
         <label for="stockage">Lieu de stockage (tas)</label>
         <div>
-            <div>
-                <select name="stockage" id="stockage" class="width15 margin-bottom">
-                    {{$.Details.StockageOptions}}
-                </select>
-                <a id="ajout-stockage" href="#" onclick="ajouterStockage();">
-                    <img class="inline bigicon vertical-align-middle" src="/static/img/validate.png" title="Ajouter un tas dans ce hangar" />
-                </a>
-            </div>
-            
-            <ul id="stockages-choisis" class="naked margin0 padding0">
-            </ul>
+            {{range $.Details.AllStockages}}
+                <div>
+                    <input type="checkbox" name="stockage-{{.Id}}" id="stockage-{{.Id}}">
+                    <label for="stockage-{{.Id}}"><span class="normal">{{.Nom}}</span></label>
+                </div>
+            {{end}}
         </div>
         
         <label for="surface">Surface concernée (ha)</label>
@@ -94,9 +89,8 @@
         <div class="section">
             <b>Lieu de stockage (tas)</b> : permet de spécifier les hangars contenant les tas associés au chantier.
             <br>Un chantier peut être associé à plusieurs tas mais ne peut être associé qu'à un seul tas par hangar.
-            <br>Pour associer un hangar au chantier, choisissez un hangar dans la liste puis validez en cliquant sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" alt="Valider">
             <br>A la création d'un chantier, un tas va être créé pour chaque hangar sélectionné.
-            <br>A la modification d'un chantier, ATTENTION car modifier les hangars associés au chantier a des conséquences :
+            <br>Lors de la modification d'un chantier, ATTENTION car modifier les hangars associés au chantier a des conséquences.
             <br>Toute supression d'une association chantier - tas entraîne :
             <ul class="margin-top0">
                 <li>La supression du tas concerné.</li>
@@ -146,13 +140,10 @@ function initialize() {
         document.getElementById("ug").appendChild(option2);
         // exploitation
         document.getElementById("exploitation-" + "{{.Exploitation}}").setAttribute("selected", "selected")
-        // tas
+        // lieux de stockage
         {{range .Tas}}
-            doAjouterStockage("added-stockage-" + "{{.Id}}", {{.Nom}});
+            document.getElementById("stockage-" + "{{.Stockage.Id}}").setAttribute("checked", "checked")
         {{end}}
-        // @todo Gérer dans le contrôleur la modification d'un tas
-        // en attendant, 
-        document.getElementById("stockage").setAttribute("disabled", true);
     }
 }
 
@@ -291,104 +282,31 @@ function actionAfterChangeLieudit_suite(idLD){
 }
 
 // ***************************************
-function ajouterStockage(){
-    var sel = document.getElementById("stockage"); // select contenant les stockages
-    var newName = sel.options[sel.selectedIndex].text;
-    var newId = "added-stockage-" + sel.options[sel.selectedIndex].value;
-    if(newId == "added-stockage-CHOOSE_STOCKAGE"){
-        alert("Sélectionnez un stockage avant de l'ajouter");
-        return;
-    }
-    // teste si le stockage est déjà dans la liste
-    var stockagesChoisis = document.getElementById("stockages-choisis");
-    for(var li=stockagesChoisis.firstChild; li!==null; li=li.nextSibling){
-        if(li.id == newId){
-            alert("Impossible d'ajouter deux fois le même stockage");
-            return;
-        }
-    }
-    //
-    doAjouterStockage(newId, newName);
-    sel.selected = document.getElementById("CHOOSE_STOCKAGE");
-}
-
-// ***************************************
-/** 
-    Ajoute un stockage dans la liste "stockages-choisis"
-    Séparé de ajouterStockage() car appelé par initialize() et par ajouterStockage()
-**/
-function doAjouterStockage(id, name){
-    var img = document.createElement("img");
-    img.setAttribute("class", "inline vertical-align-middle bigicon");
-    img.setAttribute("src", "/static/img/delete.png");
-    img.setAttribute("title", "Retirer ce stockage");
-    var a = document.createElement("a");
-    a.setAttribute("href", "#");
-    a.setAttribute("onclick", "retirerStockage('" + id + "');");
-    a.setAttribute("class", "padding-right05");
-    var li = document.createElement("li");
-    li.setAttribute("id", id);
-    li.setAttribute("class", "margin-bottom05");
-    var text = document.createTextNode(name);
-    a.appendChild(img);
-    li.appendChild(a);
-    li.appendChild(text);
-    document.getElementById("stockages-choisis").appendChild(li);
-}
-
-// ***************************************
-function retirerStockage(id){
-    const stockagesChoisis = document.getElementById("stockages-choisis");
-    const elt = document.getElementById(id);
-    if({{.Id}} != 0){ // Si on est dans form update
-        const msg = "ATTENTION\n"
-            + "Supprimer une association entre un chantier et un tas\n"
-            + "a pour effet de supprimer toutes les activités liées à ce tas :\n"
-            + "- transports\n"
-            + "- rangements\n"
-            + "- ventes (donc chargements et livraisons)\n"
-            + "\nEtes-vous bien sûr(e) de vouloir faire ça ?";
-        const r = confirm(msg);
-        if (r == false) {
-            return;
-        }
-    }
-    stockagesChoisis.removeChild(elt);
-}
-
-
-// ***************************************
 function validateForm(){
-    var deb = document.getElementsByName("date-debut")[0].value;
-    var fin = document.getElementsByName("date-fin")[0].value;
+    let msg = "";
+    const deb = document.getElementsByName("date-debut")[0].value;
+    const fin = document.getElementsByName("date-fin")[0].value;
     if(fin <= deb){
-        alert("La date de fin doit se situer après la date de début");
-        return false;
+        msg += "\n- La date de fin doit se situer après la date de début";
     }
     // check stockages
-    var stockagesChoisis = document.getElementById("stockages-choisis");
-    var n = 0;
-    var ids = [];
-    for(var li=stockagesChoisis.firstChild; li!==null; li=li.nextSibling){
-        if(li.id == null){
-            continue;
+    let ok = false;
+    {{range $.Details.AllStockages}}
+        if(document.getElementById("stockage-{{.Id}}").checked){
+            ok = true;
         }
-        if(li.id.startsWith("added-stockage-")){
-            n++;
-            ids.push(li.id.replace("added-stockage-", ""));
-        }
-    }
-    if(n == 0){
-        alert("Vous devez au moins choisir un lieu de stockage");
-        return false;
+    {{end}}
+    if(!ok){
+        msg += "\n- Vous devez au moins choisir un lieu de stockage";
     }
     // exploitation
     if(document.getElementById("exploitation").value == "CHOOSE_EXPLOITATION"){
-        alert("Vous devez renseigner un type d'exploitation.");
+        msg += "\n- Vous devez renseigner un type d'exploitation.";
+    }
+    if(msg != ""){
+        alert("Impossible de valider ce formulaire : \n" + msg);
         return false;
     }
-    // remplit le champ hidden
-    document.getElementById("ids-stockages").value = ids.join("-");
     return true;
 }
 </script>   

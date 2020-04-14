@@ -12,14 +12,14 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
+//"fmt"
 )
 
 type detailsPlaqForm struct {
 	UrlAction           string
 	EssenceOptions      template.HTML
-	StockageOptions     template.HTML
 	ExploitationOptions template.HTML
+	AllStockages        []*model.Stockage
 	Chantier            *model.Plaq
 }
 
@@ -126,19 +126,21 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		id, err := model.InsertPlaq(ctx.DB, chantier)
+		// calcul des ids stockage, pour transmettre à InsertPlaq(), qui va créer le(s) tas
+        allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
-		// tas
-		idsStockagesStr := strings.Split(r.PostFormValue("ids-stockages"), "-")
-		for _, idStockageStr := range idsStockagesStr {
-			idStockage, err := strconv.Atoi(idStockageStr)
-			tas := model.NewTas(idStockage, id, 0, true)
-			_, err = model.InsertTas(ctx.DB, tas)
-			if err != nil {
-				return err
-			}
+		idsStockages := []int{}
+        for _, stockage := range(allStockages){
+            if r.PostFormValue("stockage-" + strconv.Itoa(stockage.Id)) == "on" {
+                idsStockages = append(idsStockages, stockage.Id)
+            }
+        }
+		//
+		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages)
+		if err != nil {
+			return err
 		}
 		//
 		ctx.Redirect = "/chantier/plaquette/" + strconv.Itoa(id)
@@ -151,7 +153,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		chantier.Lieudit = &model.Lieudit{}
 		chantier.Fermier = &model.Acteur{}
 		chantier.UG = &model.UG{}
-		weboStockages, err := WeboStockage(ctx)
+        allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
@@ -172,8 +174,8 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
-				StockageOptions:     webo.FmtOptions(weboStockages, "CHOOSE_STOCKAGE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
+				AllStockages:     	 allStockages,
 				UrlAction:           "/chantier/plaquette/new",
 			},
 		}
@@ -197,18 +199,22 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		err = model.UpdatePlaq(ctx.DB, chantier)
+		// calcul des ids stockage, pour transmettre à InsertPlaq(), qui va créer le(s) tas
+        allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
-		// tas
-		/*
-		   @todo Gérer le cas où le tas a été modifié
-		   - calculer la diff
-		   - supprimer de la base les tas supprimés
-		   - supprimer les opérations associées aux tax supprimés
-		   - créer les nouveaux tas
-		*/
+		idsStockages := []int{}
+        for _, stockage := range(allStockages){
+            if r.PostFormValue("stockage-" + strconv.Itoa(stockage.Id)) == "on" {
+                idsStockages = append(idsStockages, stockage.Id)
+            }
+        }
+		//
+		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages)
+		if err != nil {
+			return err
+		}
 		ctx.Redirect = "/chantier/plaquette/" + r.PostFormValue("id")
 		return nil
 	default:
@@ -224,7 +230,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		weboStockages, err := WeboStockage(ctx)
+        allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
@@ -245,8 +251,8 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
-				StockageOptions:     webo.FmtOptions(weboStockages, "CHOOSE_STOCKAGE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"), // @todo
+				AllStockages:     	 allStockages,
 				UrlAction:           "/chantier/plaquette/update/" + vars["id"],
 			},
 		}

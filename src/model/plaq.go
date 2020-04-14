@@ -14,7 +14,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+//"fmt"
 )
 
 type Plaq struct {
@@ -159,7 +159,7 @@ func GetPlaqDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	}
 	for _, d := range list {
 		y := strconv.Itoa(d.Year())
-		if !tiglib.InArray(y, res) && y != exclude {
+		if !tiglib.InArrayString(y, res) && y != exclude {
 			res = append(res, y)
 		}
 	}
@@ -424,7 +424,10 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 
 // ************************** CRUD *******************************
 
-func InsertPlaq(db *sqlx.DB, chantier *Plaq) (int, error) {
+// Insère un chantier plaquette en base
+// + crée et insère en base le(s) tas 
+func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
+    var err error
 	query := `insert into plaq(
         id_lieudit,
         id_fermier,
@@ -438,7 +441,7 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq) (int, error) {
         fraisreparation
         ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning id`
 	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		chantier.IdLieudit,
 		chantier.IdFermier,
@@ -450,13 +453,23 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq) (int, error) {
 		chantier.Essence,
 		chantier.FraisRepas,
 		chantier.FraisReparation).Scan(&id)
-	if err != nil {
-		return id, werr.Wrapf(err, "Erreur query : "+query)
-	}
+    if err != nil {
+        return id, werr.Wrapf(err, "Erreur query : "+query)
+    }
+	// tas
+    for _, idStockage := range(idsStockages){
+        tas := NewTas(idStockage, id, 0, true)
+        _, err = InsertTas(db, tas)
+        if err != nil {
+            return id, werr.Wrapf(err, "Erreur appel InsertTas()")
+        }
+    }
 	return id, nil
 }
 
-func UpdatePlaq(db *sqlx.DB, chantier *Plaq) error {
+// Gère aussi les tas
+// @param idsStockages ids tas après update
+func UpdatePlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) error {
 	query := `update plaq set(
         id_lieudit,
         id_fermier, 
@@ -485,17 +498,54 @@ func UpdatePlaq(db *sqlx.DB, chantier *Plaq) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+	// tas
+	// on note AV les stockages associés au chantier avant update
+	// on note AP les stockages associés au chantier après update
+	// si AV et pas AP => supprimer tas AV
+	// si AP et pas AV => créer tas AP
+	// si AP et AV => ne rien faire
+	idsStockageAP := idsStockages
+	// calculer idsStockageAV à partir de la base
+	idsStockageAV := []int{}
+	query = "select id_stockage from tas where id_chantier=$1"
+	err = db.Select(&idsStockageAV, query, chantier.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	// si AV et pas AP => supprimer tas AV
+	for _, av := range(idsStockageAV){
+	    if !tiglib.InArrayInt(av, idsStockageAP){
+	        // Attention, ne pas faire un DeleteTas() directement avec une query
+	        // car DeleteTas() a pour effet de supprimer les activités qui lui sont reliées.
+            var idTasToDelete int
+            query = "select id from tas where id_chantier=$1 and id_stockage=$2"
+            err = db.Get(&idTasToDelete, query, chantier.Id, av)
+            if err != nil {
+                return werr.Wrapf(err, "Erreur appel Get(), query = " + query)
+            }
+            err = DeleteTas(db, idTasToDelete)
+            if err != nil {
+                return werr.Wrapf(err, "Erreur appel DeleteTas()")
+            }
+	    }
+	}
+	// si AP et pas AV => créer tas AP
+	for _, ap := range(idsStockageAP){
+	    if !tiglib.InArrayInt(ap, idsStockageAV){
+	        tas := NewTas(ap, chantier.Id, 0, true)
+            _, err = InsertTas(db, tas)
+            if err != nil {
+                return werr.Wrapf(err, "Erreur appel InsertTas()")
+            }
+	    }
+	}
 	return nil
 }
 
 func DeletePlaq(db *sqlx.DB, id int) error {
 	var query string
 	var err error
-	query = "delete from plaqop where id_chantier=$1"
-	_, err = db.Exec(query, id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
+// ICI todo, appeler à la place DeletePlaqTrans, pour gestion stock
 	query = "delete from plaqtrans where id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
@@ -507,6 +557,12 @@ func DeletePlaq(db *sqlx.DB, id int) error {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	query = "delete from plaq where id=$1"
+	_, err = db.Exec(query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	// delete le tas, fait à la fin pour respecter clés étrangères
+	query = "delete from plaqop where id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

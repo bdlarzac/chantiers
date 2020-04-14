@@ -136,7 +136,7 @@ func WeboStockage(ctx *ctxt.Context) ([]webo.OptionString, error) {
 		return res, err
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_STOCKAGE", OptionLabel: "--- Choisir ---"})
-	for _, s := range *stockages {
+	for _, s := range stockages {
 		res = append(res, webo.OptionString{OptionValue: strconv.Itoa(s.Id), OptionLabel: s.Nom})
 	}
 	return res, nil

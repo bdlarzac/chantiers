@@ -36,20 +36,10 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		_, err = model.InsertPlaqTrans(ctx.DB, pt)
+		_, err = model.InsertPlaqTrans(ctx.DB, pt) // gère la modif du stock du tas
 		if err != nil {
 			return err
 		}
-		// Mise à jour du stock du tas
-		err = pt.ComputeTas(ctx.DB)
-		if err != nil {
-			return err
-		}
-		err = pt.Tas.ModifierStock(ctx.DB, pt.Qte) // Ajoute plaquettes au tas
-		if err != nil {
-			return err
-		}
-		//
 		ctx.Redirect = "/chantier/plaquette/" + strconv.Itoa(pt.IdChantier) + "/chantiers"
 		return nil
 	default:
@@ -119,34 +109,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-		// Mise à jour du stock du tas
-		// Enlève la qté du transport avant update transport
-		// puis ajoute qté après update transport
-		// Attention, le tas avant update n'est pas forcément le même que le tas après update
-		// (cas où plusieurs tas pour un chantier plaquette et changement de tas lors de update transport)
-		ptAvant, err := model.GetPlaqTrans(ctx.DB, pt.Id)
-		if err != nil {
-			return err
-		}
-		err = ptAvant.ComputeTas(ctx.DB)
-		if err != nil {
-			return err
-		}
-		err = ptAvant.Tas.ModifierStock(ctx.DB, -ptAvant.Qte) // Retire des plaquettes au tas
-		if err != nil {
-			return err
-		}
-		//
-		err = pt.ComputeTas(ctx.DB)
-		if err != nil {
-			return err
-		}
-		err = pt.Tas.ModifierStock(ctx.DB, pt.Qte) // Ajoute des plaquettes au tas
-		if err != nil {
-			return err
-		}
-		//
-		err = model.UpdatePlaqTrans(ctx.DB, pt)
+		err = model.UpdatePlaqTrans(ctx.DB, pt) // gère la modif du stock du tas
 		if err != nil {
 			return err
 		}
@@ -214,22 +177,7 @@ func DeletePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		return err
 	}
-	// Enlève le stock du tas concerné par le transport
-	// avant de supprimer le transport
-	pt, err := model.GetPlaqTrans(ctx.DB, idPt)
-	if err != nil {
-		return err
-	}
-	err = pt.ComputeTas(ctx.DB)
-	if err != nil {
-		return err
-	}
-	err = pt.Tas.ModifierStock(ctx.DB, -pt.Qte) // Retire des plaquettes au tas
-	if err != nil {
-		return err
-	}
-	//
-	err = model.DeletePlaqTrans(ctx.DB, idPt)
+	err = model.DeletePlaqTrans(ctx.DB, idPt) // gère la modif du stock du tas
 	if err != nil {
 		return err
 	}

@@ -11,6 +11,7 @@ package fixture
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
+	"time"
 	"fmt"
 )
 
@@ -18,12 +19,83 @@ import (
 func FillStockage() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-	table := "stockage"
-	fmt.Println("Remplit " + table + " avec des données de test")
-	stockage := &model.Stockage{Nom: "Hangar de test"}
-	id, err := model.InsertStockage(db, stockage)
+	fmt.Println("Remplit table stockage avec des données de test")
+	//
+	var err error
+	var idStock, idLoyer int
+	var nom string
+	var montant float64
+	var datedeb, datefin time.Time
+	//
+	nom = "Hangar des liquisses"
+	idStock, err = model.InsertStockage(db, &model.Stockage{Nom: nom})
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Insertion stockage %d ok\n", id)
+	fmt.Printf("Insertion stockage %d : %s\n", idStock, nom)
+	//
+	montant = 6000
+	datedeb, _ = time.Parse("2006-01-02", "2020-01-01")
+	datefin, _ = time.Parse("2006-01-02", "2050-01-01")
+	idLoyer, err = model.InsertStockLoyer(db, &model.StockLoyer{
+	    IdStockage: idStock,
+	    Montant: montant,
+	    DateDebut: datedeb,
+	    DateFin: datefin,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Insertion loyer %d : %d %.2f %s %s\n", idLoyer, idStock, montant, datedeb.Format("2006-01-02"), datefin.Format("2006-01-02"))
+	//
+	//
+	//
+	nom = "Hangar de test"
+	idStock, err = model.InsertStockage(db, &model.Stockage{Nom: nom})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Insertion stockage %d : %s\n", idStock, nom)
+	//
+	montant = 2000
+	datedeb, _ = time.Parse("2006-01-02", "2020-01-01")
+	datefin, _ = time.Parse("2006-01-02", "2020-05-01")
+	idLoyer, err = model.InsertStockLoyer(db, &model.StockLoyer{
+	    IdStockage: idStock,
+	    Montant: montant,
+	    DateDebut: datedeb,
+	    DateFin: datefin,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Insertion loyer %d : %d %.2f %s %s\n", idLoyer, idStock, montant, datedeb.Format("2006-01-02"), datefin.Format("2006-01-02"))
+	//
+	montant = 3000
+	datedeb, _ = time.Parse("2006-01-02", "2020-05-02")
+	datefin, _ = time.Parse("2006-01-02", "2020-12-05")
+	idLoyer, err = model.InsertStockLoyer(db, &model.StockLoyer{
+	    IdStockage: idStock,
+	    Montant: montant,
+	    DateDebut: datedeb,
+	    DateFin: datefin,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Insertion loyer %d : %d %.2f %s %s\n", idLoyer, idStock, montant, datedeb.Format("2006-01-02"), datefin.Format("2006-01-02"))
+	//
+	montant = 4000
+	datedeb, _ = time.Parse("2006-01-02", "2020-12-05")
+	datefin, _ = time.Parse("2006-01-02", "2050-01-01")
+	idLoyer, err = model.InsertStockLoyer(db, &model.StockLoyer{
+	    IdStockage: idStock,
+	    Montant: montant,
+	    DateDebut: datedeb,
+	    DateFin: datefin,
+	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Insertion loyer %d : %d %.2f %s %s\n", idLoyer, idStock, montant, datedeb.Format("2006-01-02"), datefin.Format("2006-01-02"))
 }

@@ -130,7 +130,7 @@ func FillLieuditMot() {
 		}
 		parts := strings.Split(name, " ")
 		for _, part := range parts {
-			if tiglib.InArray(part, ignore) {
+			if tiglib.InArrayString(part, ignore) {
 				continue
 			}
 			corres[part] = append(corres[part], ld{id, name})

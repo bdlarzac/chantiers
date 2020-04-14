@@ -79,6 +79,15 @@ func (pt *PlaqTrans) ComputeTransporteur(db *sqlx.DB) error {
 // ************************** CRUD *******************************
 
 func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
+    // Mise à jour du stock du tas
+    err := pt.ComputeTas(db)
+    if err != nil {
+        return 0, err
+    }
+    err = pt.Tas.ModifierStock(db, pt.Qte) // Ajoute plaquettes au tas
+    if err != nil {
+        return 0, err
+    }
 	query := `insert into plaqtrans(
         id_chantier,
         id_tas,
@@ -105,7 +114,7 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
         notes)
         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) returning id`
 	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		pt.IdChantier,
 		pt.IdTas,
@@ -134,6 +143,33 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
 }
 
 func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
+    // Mise à jour du stock du tas
+    // Enlève la qté du transport avant update transport
+    // puis ajoute qté après update transport
+    // Attention, le tas avant update n'est pas forcément le même que le tas après update
+    // (cas où plusieurs tas pour un chantier plaquette et changement de tas lors de update transport)
+    ptAvant, err := GetPlaqTrans(db, pt.Id)
+    if err != nil {
+        return err
+    }
+    err = ptAvant.ComputeTas(db)
+    if err != nil {
+        return err
+    }
+    err = ptAvant.Tas.ModifierStock(db, -ptAvant.Qte) // Retire des plaquettes au tas
+    if err != nil {
+        return err
+    }
+    //
+    err = pt.ComputeTas(db)
+    if err != nil {
+        return err
+    }
+    err = pt.Tas.ModifierStock(db, pt.Qte) // Ajoute des plaquettes au tas
+    if err != nil {
+        return err
+    }
+    //
 	query := `update plaqtrans set(
         id_chantier,
         id_tas,
@@ -159,7 +195,7 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
         tbdatepay,
         notes
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) where id=$24`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		pt.IdChantier,
 		pt.IdTas,
@@ -192,8 +228,23 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 }
 
 func DeletePlaqTrans(db *sqlx.DB, id int) error {
+	// Enlève le stock du tas concerné par le transport
+	// avant de supprimer le transport
+    pt, err := GetPlaqTrans(db, id)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel GetPlaqTrans()")
+    }
+    err = pt.ComputeTas(db)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel ComputeTas()")
+    }
+    err = pt.Tas.ModifierStock(db, -pt.Qte) // Retire des plaquettes au tas
+    if err != nil {
+        return err
+    }
+    // delete le transport
 	query := "delete from plaqtrans where id=$1"
-	_, err := db.Exec(query, id)
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

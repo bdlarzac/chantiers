@@ -70,6 +70,52 @@ func GetStockageFull(db *sqlx.DB, id int) (*Stockage, error) {
 	return s, nil
 }
 
+// ************************** Get many *******************************
+
+// Renvoie la liste de tous les lieux de stockage
+// avec uniquement les champs stockés en base
+func GetStockages(db *sqlx.DB) ([]*Stockage, error) {
+	stockages := []*Stockage{}
+	query := "select * from stockage order by nom"
+	err := db.Select(&stockages, query)
+	if err != nil {
+		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	return stockages, nil
+}
+
+// Renvoie la liste de tous les lieux de stockage actifs (= pas archivés)
+// avec uniquement les champs stockés en base
+func GetStockagesActifs(db *sqlx.DB) ([]*Stockage, error) {
+	stockages := []*Stockage{}
+	query := "select * from stockage where archived=FALSE order by nom"
+	err := db.Select(&stockages, query)
+	if err != nil {
+		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	return stockages, nil
+}
+
+// Renvoie la liste de tous les lieux de stockage contenant
+// les mêmes données que celles renvoyées par GetStockageFull()
+func GetStockagesFull(db *sqlx.DB) ([]*Stockage, error) {
+	stockages := []*Stockage{}
+	query := "select id from stockage order by nom"
+	ids := []int{}
+	err := db.Select(&ids, query)
+	if err != nil {
+		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, id := range ids {
+		s, err := GetStockageFull(db, id)
+		if err != nil {
+			return stockages, werr.Wrapf(err, "Erreur appel GetStockageFull()")
+		}
+		stockages = append(stockages, s)
+	}
+	return stockages, nil
+}
+
 // ************************** Compute *******************************
 
 func (s *Stockage) ComputeLoyers(db *sqlx.DB) error {
@@ -126,52 +172,6 @@ func (s *Stockage) ComputeDeletable(db *sqlx.DB) error {
 	}
 	s.Deletable = (count == 0)
 	return nil
-}
-
-// ************************** Get many *******************************
-
-// Renvoie la liste de tous les lieux de stockage
-// avec uniquement les champs stockés en base
-func GetStockages(db *sqlx.DB) (*[]Stockage, error) {
-	stockages := []Stockage{}
-	query := "select * from stockage order by nom"
-	err := db.Select(&stockages, query)
-	if err != nil {
-		return &stockages, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	return &stockages, nil
-}
-
-// Renvoie la liste de tous les lieux de stockage actifs (= pas archivés)
-// avec uniquement les champs stockés en base
-func GetStockagesActifs(db *sqlx.DB) (*[]Stockage, error) {
-	stockages := []Stockage{}
-	query := "select * from stockage where archived=FALSE order by nom"
-	err := db.Select(&stockages, query)
-	if err != nil {
-		return &stockages, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	return &stockages, nil
-}
-
-// Renvoie la liste de tous les lieux de stockage contenant
-// les mêmes données que celles renvoyées par GetStockageFull()
-func GetStockagesFull(db *sqlx.DB) ([]*Stockage, error) {
-	stockages := []*Stockage{}
-	query := "select id from stockage order by nom"
-	ids := []int{}
-	err := db.Select(&ids, query)
-	if err != nil {
-		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, id := range ids {
-		s, err := GetStockageFull(db, id)
-		if err != nil {
-			return stockages, werr.Wrapf(err, "Erreur appel GetStockageFull()")
-		}
-		stockages = append(stockages, s)
-	}
-	return stockages, nil
 }
 
 // ************************** CRUD *******************************
