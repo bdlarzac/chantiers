@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"sort"
 	//"fmt"
 )
 
@@ -86,8 +87,28 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
 			}
 		}
 	}
-	// @todo sort by date
+	// tri par date          
+	sortedItems := make(affactureItemSlice, 0, len(aff.Items))
+	for _, elt := range aff.Items {
+		sortedItems = append(sortedItems, elt)
+	}
+	sort.Sort(sortedItems)
+	aff.Items = sortedItems
+	//
 	return nil
+}
+
+// Auxiliaires de Affacture.ComputeItems() pour trier par date
+type affactureItemSlice []AffactureItem
+
+func (p affactureItemSlice) Len() int {
+	return len(p)
+}
+func (p affactureItemSlice) Less(i, j int) bool {
+	return p[i].Date.Before(p[j].Date)
+}
+func (p affactureItemSlice) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
 }
 
 func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite string) error {

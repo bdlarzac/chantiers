@@ -545,24 +545,46 @@ func UpdatePlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) error {
 func DeletePlaq(db *sqlx.DB, id int) error {
 	var query string
 	var err error
-// ICI todo, appeler à la place DeletePlaqTrans, pour gestion stock
-	query = "delete from plaqtrans where id_chantier=$1"
-	_, err = db.Exec(query, id)
+	var ids []int
+	var deletedId int
+    // delete transports associés à ce chantier
+    query = "select id from plaqtrans where id_chantier=$1"
+	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	query = "delete from plaqrange where id_chantier=$1"
-	_, err = db.Exec(query, id)
+	for _, deletedId = range(ids){
+	    err = DeletePlaqTrans(db, deletedId)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur DeletePlaqTrans()")
+        }
+	}
+    // delete rangements associés à ce chantier
+    query = "select id from plaqrange where id_chantier=$1"
+	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+	for _, deletedId = range(ids){
+	    err = DeletePlaqRange(db, deletedId)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur DeletePlaqRange()")
+        }
+	}
+    // delete opérations simples associées à ce chantier
+    query = "select id from plaqop where id_chantier=$1"
+	err = db.Select(&ids, query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, deletedId = range(ids){
+	    err = DeletePlaqOp(db, deletedId)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur DeletePlaqOp()")
+        }
+	}
+	// delete le chantier, fait à la fin pour respecter clés étrangères
 	query = "delete from plaq where id=$1"
-	_, err = db.Exec(query, id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	// delete le tas, fait à la fin pour respecter clés étrangères
-	query = "delete from plaqop where id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
