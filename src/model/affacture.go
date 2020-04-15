@@ -27,7 +27,7 @@ type Affacture struct {
 	DateFin        time.Time
 	TypesActivites []string
 	// Calculé à partir de la BDD
-	Items    []AffactureItem
+	Items    []*AffactureItem
 	TotalHT  float64
 	TotalTTC float64
 }
@@ -99,7 +99,7 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
 }
 
 // Auxiliaires de Affacture.ComputeItems() pour trier par date
-type affactureItemSlice []AffactureItem
+type affactureItemSlice []*AffactureItem
 
 func (p affactureItemSlice) Len() int {
 	return len(p)
@@ -158,7 +158,7 @@ func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite stri
 		aff.TotalTTC += montantTTC
 		item.TotalHT += montantHT
 		item.TotalTTC += montantTTC
-		aff.Items = append(aff.Items, item)
+		aff.Items = append(aff.Items, &item)
 	}
 	return nil
 }
@@ -326,7 +326,7 @@ func (aff *Affacture) computeItemsTransport(db *sqlx.DB) error {
 				item.TotalTTC += montantTTC
 			}
 		}
-		aff.Items = append(aff.Items, item)
+		aff.Items = append(aff.Items, &item)
 	}
 	return nil
 }
@@ -443,7 +443,7 @@ func (aff *Affacture) computeItemsRangement(db *sqlx.DB) error {
 			item.TotalHT += montantHT
 			item.TotalTTC += montantTTC
 		}
-		aff.Items = append(aff.Items, item)
+		aff.Items = append(aff.Items, &item)
 	}
 	return nil
 }
@@ -560,7 +560,7 @@ func (aff *Affacture) computeItemsChargement(db *sqlx.DB) error {
 			item.TotalHT += montantHT
 			item.TotalTTC += montantTTC
 		}
-		aff.Items = append(aff.Items, item)
+		aff.Items = append(aff.Items, &item)
 	}
 	return nil
 }
@@ -646,7 +646,7 @@ func (aff *Affacture) computeItemsLivraison(db *sqlx.DB) error {
 			item.TotalHT += montantHT
 			item.TotalTTC += montantTTC
 		}
-		aff.Items = append(aff.Items, item)
+		aff.Items = append(aff.Items, &item)
 	}
 	return nil
 }

@@ -128,18 +128,7 @@ function initialize() {
     }
     // form update
     else{
-        // fermier
-        var option1 = document.createElement('option');
-        option1.value = {{.IdFermier}};
-        option1.text = {{.Fermier.Nom}};
-        document.getElementById("fermier").appendChild(option1);
-        // ug
-        var option2 = document.createElement('option');
-        option2.value = {{.IdUG}};
-        option2.text = {{.UG.String}};
-        document.getElementById("ug").appendChild(option2);
-        // exploitation
-        document.getElementById("exploitation-" + "{{.Exploitation}}").setAttribute("selected", "selected")
+        actionAfterChangeLieudit(); // pour rétablir options fermier et ug
         // lieux de stockage
         {{range .Tas}}
             document.getElementById("stockage-" + "{{.Stockage.Id}}").setAttribute("checked", "checked")

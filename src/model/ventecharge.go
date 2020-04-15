@@ -82,7 +82,6 @@ func GetVenteChargeFull(db *sqlx.DB, id int) (*VenteCharge, error) {
 	if err != nil {
 		return vc, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeTas()")
 	}
-	// @todo  aussi Livraison et IdVente ???
 	return vc, err
 }
 

@@ -43,3 +43,14 @@ func MajPSG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	}
 	return nil
 }
+
+func ShowDoc(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx.TemplateName = "doc.html"
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title: "Documentation",
+		},
+		Menu: "accueil",
+	}
+	return nil
+}

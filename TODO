@@ -1,6 +1,5 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
-grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
-
+grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
 - Tas.ModifierStock : faire UpdateTas() en même temps 
 - VenteCharge devrait faire modifierStock
@@ -11,9 +10,7 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string'
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
   vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps (toutes les tables)
 
-- finir affacture
 - signe euro sur les factures
-- GetAffactureActivitesByDate - trouver un moyen de renvoyer []*interface{} au lieu de []interface{}
 
 - WeboTVAExt : remplacer param chooseId par suffix, pour avoir des ids html uniques
 

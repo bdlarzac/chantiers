@@ -154,7 +154,6 @@ func GetFournisseurs(db *sqlx.DB) ([]*Acteur, error) {
 // Renvoie les activités auxquelles un acteur a participé.
 // Ordre chronologique inverse
 // Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
-// Voir GetAffactureActivitesByDate(), qui renvoie les activités.
 func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 	res := []*ActeurActivite{}
 	var err error

@@ -11,7 +11,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
-	"fmt"
+//	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
 )
@@ -445,10 +445,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 		y += he
 		pdf.SetXY(x, y)
 		wi = w1 + w2 + w3 + w4 + w5
-		// @todo debugger tiglib.LimitLength pour gérer les notes très longues
 		lines := tiglib.LimitLength(tr(vente.Notes), 108) // 108 mesuré empiriquement
-		fmt.Printf("line: %d\n", len(lines))
-		fmt.Println(strings.Join(lines, "\n"))
 		pdf.MultiCell(wi, he, strings.Join(lines, "\n"), "LRB", "L", false)
 		//pdf.MultiCell(wi, he, tr(vente.Notes), "LRB", "L", false)
 		y += he * float64(len(lines))

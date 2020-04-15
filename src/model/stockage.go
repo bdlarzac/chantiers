@@ -22,7 +22,7 @@ type Stockage struct {
 	Stock     float64
 	Deletable bool
 	TasActifs []*Tas
-	Loyers    []StockLoyer // @todo utiliser pointeur
+	Loyers    []*StockLoyer
 }
 
 // ************************** Get one *******************************
@@ -120,7 +120,7 @@ func GetStockagesFull(db *sqlx.DB) ([]*Stockage, error) {
 
 func (s *Stockage) ComputeLoyers(db *sqlx.DB) error {
 	query := "select * from stockloyer where id_stockage=$1 order by datedeb desc"
-	loyers := []StockLoyer{}
+	loyers := []*StockLoyer{}
 	err := db.Select(&loyers, query, s.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)

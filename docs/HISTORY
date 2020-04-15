@@ -1,8 +1,8 @@
 
 # 2e dépôt, réinitialisé pour supprimer le csv des exploitants agricoles des archives
-# ajouté par erreur dans le dernier commit - bordel, ça fait 2 fois la même connerie.
+# ajouté par erreur dans le dernier commit
 
-* 690ede5 - (2020-04-06 10:04:12 +0200) Refactor partie install - Thierry (HEAD -> master, origin/master)
+* 690ede5 - (2020-04-06 10:04:12 +0200) Refactor partie install - Thierry
 * 8e4afb9 - (2020-04-05 00:18:49 +0200) Fin premier jet affacture - Thierry
 * 34db717 - (2020-04-04 03:32:16 +0200) Continue affacture - Thierry
 * 387a436 - (2020-04-03 20:06:44 +0200) Début affactures avec struct Items - Thierry
@@ -100,7 +100,7 @@
 
 # 1er dépôt, réinitialisé pour supprimer le csv des exploitants agricoles des archives
 
-* a911c31 - (2019-12-20 19:07:09 +0100) Prépare mesure humidité - Thierry (HEAD -> master, origin/master)
+* a911c31 - (2019-12-20 19:07:09 +0100) Prépare mesure humidité - Thierry
 * e8c9fc0 - (2019-12-20 16:26:06 +0100) Loyer stockage : CRUD mais manque vérif overlap dates - Thierry
 * 9fc053d - (2019-12-19 22:48:26 +0100) Remplace package context par ctxt - Thierry
 * eda25d3 - (2019-12-19 00:19:13 +0100) Ajout redirect après form, fix stockage - Thierry

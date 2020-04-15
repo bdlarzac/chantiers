@@ -49,6 +49,7 @@ func main() {
 	r.HandleFunc("/ajax/get/parcelles-from-ug/{id}", Hajax(ajax.GetParcellesFromUG))
 
 	r.HandleFunc("/", H(control.Accueil))
+	r.HandleFunc("/doc", H(control.ShowDoc))
 	r.HandleFunc("/admin/maj-foncier", H(control.MajFoncier))
 	r.HandleFunc("/admin/maj-psg", H(control.MajPSG))
 
@@ -141,6 +142,7 @@ func main() {
 	r.HandleFunc("/geo/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
 	r.HandleFunc("/geo/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
 
+	r.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir("../docs"))))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
