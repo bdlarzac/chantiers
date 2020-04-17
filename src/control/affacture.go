@@ -179,7 +179,7 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	}
 	pdf.SetX(130)
 	pdf.SetFont("Arial", "B", 12)
-	pdf.Cell(50, colH, tr("TOTAL GENERAL : "+strconv.FormatFloat(aff.TotalTTC, 'f', 2, 64)+" TTC"))
+	pdf.Cell(50, colH, tr("TOTAL GENERAL : "+strconv.FormatFloat(aff.TotalTTC, 'f', 2, 64)+ " € TTC"))
 	//
 	return pdf.Output(w)
 }

@@ -9,7 +9,7 @@
     
     <tr>
         <th>Lieu-dit</th>
-        <td><a href="/geo/lieudit/{{.IdLieudit}}">{{.Lieudit.Nom}}</a></td>
+        <td><a href="/lieudit/{{.IdLieudit}}">{{.Lieudit.Nom}}</a></td>
     </tr>
     
     <tr>
@@ -41,7 +41,11 @@
         <th class="vertical-align-top">Stockage (tas)</th>
         <td>
             {{range .Tas}}
+                {{if .Stockage.Archived}}
+                <div>{{.Nom}}</div>
+                {{else}}
                 <div><a href="/stockage/liste">{{.Nom}}</a> : {{.Stock}} maps</div>
+                {{end}}
             {{end}}
         </td>
     </tr>

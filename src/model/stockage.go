@@ -186,8 +186,15 @@ func InsertStockage(db *sqlx.DB, s *Stockage) (int, error) {
 }
 
 func UpdateStockage(db *sqlx.DB, s *Stockage) error {
-	query := "update stockage set nom=$1 where id=$2"
-	_, err := db.Exec(query, s.Nom, s.Id)
+	query := `update stockage set(
+	    nom,
+	    archived
+	    ) = ($1,$2) where id=$3`
+	_, err := db.Exec(
+	    query,
+	    s.Nom,
+	    s.Archived,
+	    s.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

@@ -141,15 +141,29 @@ func UpdateStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 }
 
 // *********************************************************
+// Delete ou archive
 func DeleteStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		return err
 	}
-	err = model.DeleteStockage(ctx.DB, id)
+	stockage, err := model.GetStockage(ctx.DB, id)
 	if err != nil {
 		return err
+	}
+	err = stockage.ComputeDeletable(ctx.DB)
+	if err != nil {
+		return err
+	}
+	if stockage.Deletable {
+        err = model.DeleteStockage(ctx.DB, id)
+        if err != nil {
+            return err
+        }
+	} else {
+	    stockage.Archived = true
+	    err = model.UpdateStockage(ctx.DB, stockage)
 	}
 	ctx.Redirect = "/stockage/liste"
 	return nil

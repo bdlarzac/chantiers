@@ -6,7 +6,7 @@
 
     {{range .Details.Parcelles}}
     <tr>
-        <td><a href="/geo/parcelle/{{.Id}}">{{.Code}}</a></td>
+        <td><a href="/parcelle/{{.Id}}">{{.Code}}</a></td>
         <td>
             {{range .Exploitants}}
                 <a href="/acteur/{{.Id}}">{{.Prenom}} {{.Nom}}</a>

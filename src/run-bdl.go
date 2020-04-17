@@ -138,9 +138,9 @@ func main() {
 	// *** geo ***
 	r.HandleFunc("/unite-gestion/{id:[0-9]+}", H(control.ShowUG))
 	r.HandleFunc("/unite-gestion/{id:[0-9]+}/{tab}", H(control.ShowUG))
-	r.HandleFunc("/geo/commune/liste", H(control.ListCommunes))
-	r.HandleFunc("/geo/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
-	r.HandleFunc("/geo/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
+	r.HandleFunc("/commune/liste", H(control.ListCommunes))
+	r.HandleFunc("/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
+	r.HandleFunc("/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
 
 	r.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir("../docs"))))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

@@ -7,69 +7,60 @@
 
 
 {{range .Details}}
+    {{if not .Archived}}
     <hr>
     {{$idStockage := .Id}}
-    {{$archived := .Archived}}
     <h2>
         {{.Nom}}
-        {{if not $archived}}
-            <a class="padding-left" href="/stockage/update/{{.Id}}">
-                <img class="bigicon inline" src="/static/img/update.png" title="Modifier ce lieu de stockage" />
-            </a>
-            <a href="#" onclick="deleteStockage({{.Id}}, {{.Nom}}, {{.Deletable}})">
-                <img class="bigicon inline" src="/static/img/delete.png" title="Supprimer ce lieu de stockage" />
-            </a>
-        {{end}}
+        <a class="padding-left" href="/stockage/update/{{.Id}}">
+            <img class="bigicon inline" src="/static/img/update.png" title="Modifier ce lieu de stockage" />
+        </a>
+        <a href="#" onclick="deleteStockage({{.Id}}, {{.Nom}}, {{.Deletable}})">
+            <img class="bigicon inline" src="/static/img/delete.png" title="Supprimer ce lieu de stockage" />
+        </a>
     </h2>
     
     <div class="margin-left2 margin-bottom2">
     
         <!-- ************************************* -->
-        {{if not $archived}}
-            <div class="big2 bold margin-top margin-bottom">Stock : {{.Stock}} maps</div>
-        {{end}}
+        <div class="big2 bold margin-top margin-bottom">Stock : {{.Stock}} maps</div>
         
         <!-- ************************************* -->
-        {{if not $archived}}
-            <div class="big2 bold margin-top margin-bottom">Tas courants</div>
-            {{if .TasActifs}}<ul class="naked">{{end}}
-            {{range .TasActifs}}
-                <li class="padding-bottom">
-                    <a class="padding-right" href="#" onclick="signalerTasVide({{.Id}}, {{.Nom}});" title="Signaler que ce tas est vide">
-                        <span class="bold big3 border2 padding-left02 padding-right02">&empty;</span>
-                    </a>
-                    
-                    <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = {{.Stock}} maps
-                    {{if .MesuresHumidite}}
-                        <div class="margin-left2">
-                        <ul>
-                    {{end}}
-                    {{range .MesuresHumidite}}
-                        <li><a href="/humidite/liste/{{.DateMesure | year}}">Mesure d' humidité {{.DateMesure | dateFr}}</a></li>
-                    {{end}}
-                    {{if .MesuresHumidite}}</ul></div>{{end}}
-                    
-                </li>
-            {{end}}
-            {{if .TasActifs}}</ul>{{end}}
+        <div class="big2 bold margin-top margin-bottom">Tas courants</div>
+        {{if .TasActifs}}<ul class="naked">{{end}}
+        {{range .TasActifs}}
+            <li class="padding-bottom">
+                <a class="padding-right" href="#" onclick="signalerTasVide({{.Id}}, {{.Nom}});" title="Signaler que ce tas est vide">
+                    <span class="bold big3 border2 padding-left02 padding-right02">&empty;</span>
+                </a>
+                
+                <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = {{.Stock}} maps
+                {{if .MesuresHumidite}}
+                    <div class="margin-left2">
+                    <ul>
+                {{end}}
+                {{range .MesuresHumidite}}
+                    <li><a href="/humidite/liste/{{.DateMesure | year}}">Mesure d' humidité {{.DateMesure | dateFr}}</a></li>
+                {{end}}
+                {{if .MesuresHumidite}}</ul></div>{{end}}
+                
+            </li>
         {{end}}
+        {{if .TasActifs}}</ul>{{end}}
         
         <!-- ************************************* -->
         <div class="big2 bold margin-top margin-bottom">
             Loyers
-            {{if not $archived}}
             <a class="padding-left" href="/loyer-stockage/new/{{.Id}}">
                 <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau loyer pour {{.Nom}}"/>
             </a>
-            {{end}}
         </div>
         {{if .Loyers}}
         <table class="bordered margin-left">
-            <tr>{{if not $archived}}<th></th>{{end}}<th>Début</th><th>Fin</th><th>Montant</th></tr>
+            <tr><th></th><th>Début</th><th>Fin</th><th>Montant</th></tr>
         {{end}}
         {{range .Loyers}}                                         
             <tr>
-                {{if not $archived}}
                 <td>
                     <a href="#" onclick="deleteLoyer({{.Id}}, {{.DateDebut | dateFr}}, {{.DateFin | dateFr}}, {{.Montant}})">
                         <img class="inline" src="/static/img/delete.png" title="Supprimer ce loyer" />
@@ -78,7 +69,6 @@
                         <img src="/static/img/update.png" title="Modifier ce loyer" />
                     </a>
                 </td>
-                {{end}}
                 <td>{{.DateDebut | dateFr}}</td>
                 <td>{{.DateFin | dateFr}}</td>
                 <td><b><script>document.write(round({{.Montant}}, 2));</script> &euro; / an</b></td>
@@ -89,6 +79,7 @@
         {{end}}
         
     </div>
+    {{end}}
 {{end}}
 
 

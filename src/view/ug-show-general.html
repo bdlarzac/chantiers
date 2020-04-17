@@ -14,9 +14,9 @@
         <ul>
         {{range .Parcelles}}
             <li>
-                <a href="/geo/parcelle/{{.Id}}">{{.Code}}</a>
+                <a href="/parcelle/{{.Id}}">{{.Code}}</a>
                     {{range .Lieudits}}
-                        <div class="padding-left"><a href="/geo/lieudit/{{.Id}}">{{.Nom}}</a></div>
+                        <div class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></div>
                     {{end}}
             </li>
         {{end}}

@@ -46,7 +46,7 @@
                 <div>{{.DateContrat | dateFr}}</div>
                 
                 <div>Lieu-dit</div>
-                <div><a href="/geo/lieudit/{{.IdLieudit}}">{{.Lieudit.Nom}}</a></div>
+                <div><a href="/lieudit/{{.IdLieudit}}">{{.Lieudit.Nom}}</a></div>
                 
                 <div>Essence</div>
                 <div>{{.Essence | labelEssence}}</div>
@@ -64,7 +64,7 @@
                 var len = {{len .Parcelles}}
             </script>
             {{range .Parcelles}}
-            <a href="/geo/parcelle/{{.Id}}">{{.Code}}</a>
+            <a href="/parcelle/{{.Id}}">{{.Code}}</a>
             <script>
                 if(i % 3 ==0 && i < len){
                     document.write("<br>");
