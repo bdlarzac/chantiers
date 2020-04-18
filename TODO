@@ -1,7 +1,6 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- Tas.ModifierStock : faire UpdateTas() en même temps 
 - VenteCharge devrait faire modifierStock
 
 
@@ -10,13 +9,10 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
   vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps (toutes les tables)
 
-- signe euro sur les factures
-
 - WeboTVAExt : remplacer param chooseId par suffix, pour avoir des ids html uniques
 
 - model : remplacer Scan par sqlx
 
-- tester deletable pour stockage
 - Tester évolution du stock sur les hangars à plaquette
 - tester delete ou update tas dans un Plaq
 - Création loyer stockage : vérifier par ajax cohérence avec les loyers déjà existant (?)
@@ -25,8 +21,8 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - BDD : voir not null ou pas
 
-- Voir si possible de supprimer Acteur.Propriétaire
 - Acteurs : créer champ "propriétaire" et "fournisseur" - ajouter acteur BDL
+- Voir si possible de supprimer Acteur.Propriétaire
 - tester deletable pour acteur ; bug
 - Faire en sorte que les acteurs BDL et GFA ne soient pas supprimables ?
 - (a *Acteur) GetActivitesByDate et GetAffactureActivitesByDate() : trier par date

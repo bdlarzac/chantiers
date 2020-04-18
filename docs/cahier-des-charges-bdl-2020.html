@@ -228,11 +228,6 @@ Relation entre un tas et les autres entités :
     <li>Plusieurs chantiers ne peuvent pas utiliser le même tas.</li>
 </ul>
 
-Un lieu de stockage associé à aucun chantier plaquettes peut être supprimé.
-<br>Un lieu de stockage associé à un ou plusieurs chantier(s) plaquettes ne peut PAS être supprimé, mais il peut être <b>archivé</b>.
-Un lieu de stockage archivé n'est plus affiché dans la liste des lieux de stockage.
-
-
 <!-- ************************************* -->
 <h4>Stock</h4>
 <ul>
@@ -249,6 +244,13 @@ Deux opérations affectent le stock d'un tas :
 
 Note : Il est impossible de suivre de manière précise le stock de plaquettes présentes dans un tas. Le problème vient du pourcentage de perte : différence entre le volume de bois vert broyé et la quantité de plaquettes sèches vendues. Ce pourcentage étant arbitraire et ne correspondant pas à une réalité mesurable, l'état des stocks ne peut être qu'indicatif.
 <br>Conséquence : on ne peut pas calculer par programme si un tas est vide ou pas ; <i>c'est donc à l'utilisateur de signaler qu'un tas est épuisé</i>.
+
+<h4>Supression, archivage</h4>
+Un lieu de stockage associé à aucun chantier plaquettes peut être supprimé.
+<br>Un lieu de stockage associé à un ou plusieurs chantier(s) plaquettes ne peut PAS être supprimé, mais il peut être <b>archivé</b>.
+<br>Un lieu de stockage archivé n'est plus affiché dans la liste des lieux de stockage.
+<br>Note : l'archivage d'un lieu de stockage peut générer une incohérence dans les données, si l'utilisateur archive un hangar contenant encore des tas actifs. Le programme n'effectue pas cette vérification, c'est à l'utilisateur de rester cohérent dans son usage.
+
 
 <!-- *********************************************************** -->
 <h3><a name="2-4-loyers">Loyers</a></h3>

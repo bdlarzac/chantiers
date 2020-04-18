@@ -371,11 +371,11 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w4
-	pdf.MultiCell(wi, he, "P.U. H.T", "TRB", "C", false)
+	pdf.MultiCell(wi, he, tr("P.U. € H.T"), "TRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w5
-	pdf.MultiCell(wi, he, "Montant H.T", "TRB", "C", false)
+	pdf.MultiCell(wi, he, tr("Montant € H.T"), "TRB", "C", false)
 	//
 	// ligne avec valeurs de la vente
 	//
@@ -447,7 +447,6 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 		wi = w1 + w2 + w3 + w4 + w5
 		lines := tiglib.LimitLength(tr(vente.Notes), 108) // 108 mesuré empiriquement
 		pdf.MultiCell(wi, he, strings.Join(lines, "\n"), "LRB", "L", false)
-		//pdf.MultiCell(wi, he, tr(vente.Notes), "LRB", "L", false)
 		y += he * float64(len(lines))
 	} else {
 		y += he
@@ -459,7 +458,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x = x0 + w1
 	pdf.SetXY(x, y)
 	wi = w2 + w3 + w4
-	pdf.MultiCell(wi, he, "Montant total E HT", "RBL", "C", false)
+	pdf.MultiCell(wi, he, tr("Montant total € HT"), "RBL", "C", false)
 	pdf.SetFont("Arial", "", 10)
 	x = x0 + w1 + w2 + w3 + w4
 	wi = w5

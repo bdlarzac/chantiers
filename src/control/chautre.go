@@ -342,11 +342,11 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w4
-	pdf.MultiCell(wi, he, "P.U. H.T", "TRB", "C", false)
+	pdf.MultiCell(wi, he, tr("P.U. € H.T"), "TRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w5
-	pdf.MultiCell(wi, he, "Montant H.T", "TRB", "C", false)
+	pdf.MultiCell(wi, he, tr("Montant € H.T"), "TRB", "C", false)
 	//
 	x = x0
 	y += he
@@ -378,7 +378,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	pdf.SetXY(x, y)
 	wi = w2 + w3 + w4 + w5
 	// @todo arriver à dire euro : € \u20AC
-	pdf.MultiCell(wi, he, "Montant total E HT", "RBL", "C", false)
+	pdf.MultiCell(wi, he, tr("Montant total € HT"), "RBL", "C", false)
 	//
 	pdf.SetFont("Arial", "", 10)
 	x = x0 + w1
