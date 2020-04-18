@@ -38,7 +38,11 @@
         <td>{{.DateMesure | dateFr}}</td>
         <td>{{.Valeur}} %</td>
         <td>
-            <a href="/stockage/liste">{{.Tas.Nom}}</a>
+            {{if .Tas.Stockage.Archived}}
+                <div>{{.Tas.Nom}}</div>
+            {{else}}
+                <a href="/stockage/liste">{{.Tas.Nom}}</a>
+            {{end}}
         </td>
         <td>
             {{range .Mesureurs}}

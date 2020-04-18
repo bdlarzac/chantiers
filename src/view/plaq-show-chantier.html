@@ -92,7 +92,13 @@
         </td>
         
         <td class="vertical-align-top">
-            <div class="padding-bottom05"><a href="/stockage/liste">{{.Tas.Nom}}</a></div>
+            <div class="padding-bottom05">
+                {{if .Tas.Stockage.Archived}}
+                    <div>{{.Tas.Nom}}</div>
+                {{else}}
+                    <a href="/stockage/liste">{{.Tas.Nom}}</a>
+                {{end}}
+            </div>
             <div class="grid2-pres">
                 <div>Transporteur</div>
                 <div><a href="/acteur/{{.IdTransporteur}}">{{.Transporteur.String}}</a></div>
@@ -284,7 +290,13 @@
         </td>
         
         <td class="vertical-align-top">
-            <div><a href="/stockage/liste">{{.Tas.Nom}}</a></div>
+            <div>
+                {{if .Tas.Stockage.Archived}}
+                    <div>{{.Tas.Nom}}</div>
+                {{else}}
+                    <a href="/stockage/liste">{{.Tas.Nom}}</a>
+                {{end}}
+            </div>
             <div class="grid2-pres">
                 <div>Date</div>
                 <div class="bold">{{.DateRange | dateFr}}</div>

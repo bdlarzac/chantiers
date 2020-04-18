@@ -42,9 +42,9 @@
         <td>
             {{range .Tas}}
                 {{if .Stockage.Archived}}
-                <div>{{.Nom}}</div>
+                    <div>{{.Nom}}</div>
                 {{else}}
-                <div><a href="/stockage/liste">{{.Nom}}</a> : {{.Stock}} maps</div>
+                    <div><a href="/stockage/liste">{{.Nom}}</a> : {{.Stock}} maps</div>
                 {{end}}
             {{end}}
         </td>
