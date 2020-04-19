@@ -48,14 +48,13 @@ func FillActeur() {
 	for _, v := range records {
 		if v["Agricole"] != "1" {
 			// Importer que les agricoles
+			// continue
 			// @todo - fait planter FillLiensParcelleExploitant
 			// Pour ça, vérifier sur une carte
-			//            continue
 		}
 		cp := v["CPExp"]
 		if len(cp) > 5 {
-			// fix une typo dans la base SCTL
-			cp = cp[:5]
+			cp = cp[:5] // fix une typo dans la base SCTL
 		}
 		query := `insert into %s(
             id_sctl,

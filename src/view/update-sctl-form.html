@@ -1,0 +1,24 @@
+<h1>{{.Header.Title}}</h1>
+
+Prendre en compte des modifications dans le logiciel foncier (SCTL).
+<br>
+<br>Les données BDL suivantes vont être mises à jour :
+<br>
+<br>
+{{if not .Details.Items}}
+    <div class="big3 bold">Aucune donnée à mettre à jour</div>
+{{else}}
+    <table class="entities">
+    {{range .Details.Items}}
+        <tr>
+            <td>{{.Type}}</td>
+            <td>{{.Action}}</td>
+        </tr>
+    {{end}}
+    </table>
+
+    <form>
+        <input type="submit" value="Mettre à jour les données foncières">
+    </form>
+    
+{{end}}

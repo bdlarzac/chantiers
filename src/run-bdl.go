@@ -50,8 +50,8 @@ func main() {
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))
-	r.HandleFunc("/admin/maj-foncier", H(control.MajFoncier))
-	r.HandleFunc("/admin/maj-psg", H(control.MajPSG))
+	r.HandleFunc("/update-sctl", H(control.UpdateSCTL))
+	r.HandleFunc("/update-psg", H(control.UpdatePSG))
 
 	r.HandleFunc("/facture/vente-plaquette/{id:[0-9]+}", HPDF(control.ShowFactureVentePlaq))
 	r.HandleFunc("/facture/bois-sur-pied/{id:[0-9]+}", HPDF(control.ShowFactureBSPied))

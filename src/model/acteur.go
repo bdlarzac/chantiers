@@ -79,8 +79,7 @@ func (a *Acteur) String() string {
 	return a.Prenom + " " + a.Nom
 }
 
-// Comme autocomplete se fait par ne Nom, besoin de cet affichage
-// particulier dans les input avec autocomplete sur le nom
+// Renvoie Nom + Prenom, adapté aux besoins de autocomplete
 func (a *Acteur) NomAutocomplete() string {
 	if a.Prenom == "" {
 		return a.Nom

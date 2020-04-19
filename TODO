@@ -43,7 +43,9 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 - voir bug DEVEZ GRAN / DEVEZ GRAND
 
 - html : remplacer scripts dans footer par scripts dans header avec attribut defer
-- html : remplacer dans les tmpl "liste-carac" par "th-left"
+
+- css : unifier "entities" "liste-carac" par "th-left"
+- css : nottoyer table border et table bordered
 
 - read mdb / windows
 
