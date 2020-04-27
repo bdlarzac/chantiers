@@ -22,7 +22,7 @@ import (
 type UpdatedItem struct{
     Type string // "acteur"
     Action string // "insert" "update" "delete"
-    NewValue interface{} // contient les nouvelles valeurs de l'entité
+    Value interface{} // contient les nouvelles valeurs de l'entité
 }
 
 // Calcule les entités qui seront mises à jour si l'utilisateur effectue la maj.
@@ -36,17 +36,54 @@ func ComputeUpdateSCTL(db *sqlx.DB, conf *Config) ([]*UpdatedItem, error) {
     if err !=nil{
         return res, werr.Wrapf(err, "Erreur appel loadNewActeurs()")
     }
+/* 
+fmt.Println("========= old ==========")
+    for idOld, a := range(oldActeurs){
+fmt.Println(idOld, a.Nom, a.Prenom)
+    }
+fmt.Println("========= new ==========")
+    for idNew, a := range(newActeurs){
+fmt.Println(idNew, a.Nom, a.Prenom)
+    }
+*/
+    // ids sctl des acteurs présents dans new et old,
+    // donc possiblement modifiés
+    toCheckUpdate := []int{}
     //
     // Acteurs ayant été supprimés
     //
-    for idOld, _ := range(oldActeurs){
+    for idOld, a := range(oldActeurs){
         if _,ok := newActeurs[idOld]; !ok {
             res = append(res, &UpdatedItem{
                 Type: "acteur",
                 Action: "delete",
+                Value: a,
             })
+        } else {
+            toCheckUpdate = append(toCheckUpdate, idOld)
         }
     }
+    //
+    // Acteurs ayant été ajoutés
+    //
+    for idNew, a := range(newActeurs){
+        if _,ok := oldActeurs[idNew]; !ok {
+            res = append(res, &UpdatedItem{
+                Type: "acteur",
+                Action: "add",
+                Value: a,
+            })
+        } else {
+            toCheckUpdate = append(toCheckUpdate, idNew)
+        }
+    }
+fmt.Println(toCheckUpdate)
+    toCheckUpdate = tiglib.ArrayUniqueInt(toCheckUpdate)
+fmt.Println(toCheckUpdate)
+    //
+    // Acteurs ayant été modifiés
+    //
+    // @todo Acteurs ayant été modifiés
 	return res, nil
 }
 
@@ -55,7 +92,7 @@ func ComputeUpdateSCTL(db *sqlx.DB, conf *Config) ([]*UpdatedItem, error) {
 func loadOldActeurs(db *sqlx.DB) (map[int]Acteur, error) {
     res := map[int]Acteur{}
 	acteurs := []*Acteur{}
-	query := "select * from acteur where id_sctl<>0"
+	query := "select * from acteur where id_sctl<>0 order by id_sctl"
 	err := db.Select(&acteurs, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query : "+query)
@@ -96,8 +133,6 @@ func loadNewActeurs(conf *Config) (map[int]Acteur, error) {
 	        Tel: record["Telephone"],    
 	        Email: record["Mail"],
 	    }
-	    break
 	}
-fmt.Printf("%+v\n\n",res)
     return res, nil
 }
