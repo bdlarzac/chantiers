@@ -456,7 +456,7 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
     if err != nil {
         return id, werr.Wrapf(err, "Erreur query : "+query)
     }
-	// tas
+	// tas - crée un tas par liu de stockage sélectionné
     for _, idStockage := range(idsStockages){
         tas := NewTas(idStockage, id, 0, true)
         _, err = InsertTas(db, tas)

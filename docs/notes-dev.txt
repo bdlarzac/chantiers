@@ -1,0 +1,39 @@
+Notes de développement en vrac
+
+Incohérences de la base SCTL
+-------------------------------------
+Des associations manifestement incorrectes peuvent être détectées dans la base SCTL (lieu-dit - commune ; liaisons parcelle - exploitant présentes dans plusieurs tables et contradictoires).
+Pas géré par l'application.
+Peut générer des bugs (par ex impossibilité d'associer le bon fermier à une UG dans la création d'un chantier plaquettes).
+
+
+Importer mise à jour de la base SCTL
+-------------------------------------
+Problème : dans la base SCTL, des acteurs peuvent être créés, supprimés, modifiés.
+Création ne pose pas de problème
+Modification ne pose pas de problème (pas de changement d'id, acteur.id_sctl reste inchangé dans la base BDL)
+Suppression pose un problème
+- si un acteur n'a participé à aucune activité BDL (chantiers, ventes, mesure humidité), peut être supprimé de la base BDL.
+- si un acteur a participé à des activités BDL, il ne peut pas être supprimé car empêcherait de visualiser / modifier ces activités.
+Dans ce cas, son champ "actif" est mis à false.
+Implications :
+Dans les formulaires de création impliquant un choix d'acteur, proposer uniquement les acteurs avec actif=true.
+Dans les formulaires de modification impliquant un choix d'acteur, proposer tous les acteurs, avec actif=true ou false.
+
+Les liens parcelle - fermiers peuvent aussi être modifiés ; impacte 2 endroits de l'application :
+- chantier plaquette : l'utilisateur choisit un lieu-dit - /ajax/get/fermiers-from-lieudit => choix acteur
+model.GetFermiersFromLieudit()
+- chantier chauffage fermier :
+
+
+Suivi stock hangar à plauettes
+-------------------------------------
+Il est impossible de suivre de manière précise le stock de plaquettes présentes dans un hangar. Le problème vient du pourcentage de perte : différence entre le volume de bois vert broyé et la quantité de plaquettes sèches vendues. Ce pourcentage étant arbitraire et ne correspondant pas à une réalité mesurable, l'état des stocks ne peut être calculé.
+
+Imaginez par ex un chantier plaquette avec 10 transports de 5 maps - ça fait un tas de 50 maps ; moins 10% de perte, il restera 45 maps ; si je me base sur ces 45 maps pour contrôler que le tas est encore fourni et qu'il est possible de faire des ventes venant de ce tas, ça va planter puisque ces 45 maps ne correspondent pas à une quantité véritablement présente.
+
+J'ai donc adopté les conventions suivantes :
+- quantité de plaquettes présente dans un tas = somme des quantités transportées vers ce tas, moins le pourcentage de perte, moins la somme des quantités chargées depuis ce tas (pour des ventes). Ce chiffre est indicatif et ne correspond pas à une réalité précise, le programme ne fait que l'afficher sans se soucier de savoir s'il est cohérent. Le stock peut devenir négatif.
+- Les utilisateurs devront donc indiquer au programme lorsqu'un tas est devenu vide.
+
+Le stock présent dans un hangar à un moment donné (= somme des stocks des tas du hangar) pourra être affiché, correspondra sans doute à peu près au stock présent, mais sera seulement indicatif.

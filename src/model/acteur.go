@@ -11,8 +11,6 @@ import (
 	"sort"
 	"strconv"
 	"time"
-
-	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	//"fmt"
@@ -95,7 +93,7 @@ func CountActeurs(db *sqlx.DB) int {
 	return count
 }
 
-// ************************** Get généraux *******************************
+// ************************** Get one *******************************
 
 // Renvoie un Acteur à partir de son id.
 // Ne contient que les champs de la table acteur.
@@ -109,18 +107,6 @@ func GetActeur(db *sqlx.DB, id int) (*Acteur, error) {
 		return a, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return a, err
-}
-
-// Renvoie une liste d'Acteurs triés en utilisant un champ de la table
-// @param field    Champ de la table acteur utilisé pour le tri
-func SortedActeurs(db *sqlx.DB, field string) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	query := "select * from acteur order by " + field
-	err := db.Select(&acteurs, query)
-	if err != nil {
-		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return acteurs, err
 }
 
 // Renvoie un Acteur à partir de son id sctl.
@@ -137,7 +123,35 @@ func GetActeurByIdSctl(db *sqlx.DB, id int) (*Acteur, error) {
 	return a, nil
 }
 
-// ************************** Get liés à l'activité *******************************
+// Renvoie un Acteur à partir de son nom et de son prénom.
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
+// Utilisé par ajax
+// @param  str Chaîne composée de nom + " " + prénom
+func GetActeurByNomAutocomplete(db *sqlx.DB, str string) (*Acteur, error) {
+	a := &Acteur{}
+	query := "select * from acteur where nom || ' ' || prenom=$1"
+	row := db.QueryRowx(query, str)
+	err := row.StructScan(a)
+	if err != nil {
+		return a, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return a, nil
+}
+
+// ************************** Get many *******************************
+
+// Renvoie une liste d'Acteurs triés en utilisant un champ de la table
+// @param field    Champ de la table acteur utilisé pour le tri
+func SortedActeurs(db *sqlx.DB, field string) ([]*Acteur, error) {
+	acteurs := []*Acteur{}
+	query := "select * from acteur order by " + field
+	err := db.Select(&acteurs, query)
+	if err != nil {
+		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return acteurs, err
+}
 
 // Renvoie les Acteurs dont le champ Fournisseur = true
 // ( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
@@ -149,6 +163,57 @@ func GetFournisseurs(db *sqlx.DB) ([]*Acteur, error) {
 	err := db.Select(&acteurs, query)
 	return acteurs, err
 }
+
+// Renvoie des Acteurs (exploitants ou fermiers) à partir d'un lieu-dit.
+// Utilise les parcelles pour faire le lien
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
+// Utilisé par ajax
+func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Acteur, error) {
+	acteurs := []*Acteur{}
+	query := `
+	    select * from acteur where id_sctl in(
+            select distinct id_sctl_exploitant from parcelle_exploitant where id_parcelle in(
+                select id_parcelle from parcelle_lieudit where id_lieudit=$1
+            )
+        ) order by nom`
+	err := db.Select(&acteurs, query, idLieudit)
+	return acteurs, err
+}
+
+// Renvoie des Acteurs à partir du début de leurs noms.
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
+// Utilisé par ajax
+func GetActeursAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
+	acteurs := []*Acteur{}
+	query := "select * from acteur where nom ilike '" + str + "%'"
+	err := db.Select(&acteurs, query)
+	if err != nil {
+		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return acteurs, nil
+}
+
+// Renvoie des fermiers à partir du début de leurs noms.
+// fermier = acteur associé à une ou plusieurs parcelles
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
+// Utilisé par ajax
+func GetFermiersAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
+	acteurs := []*Acteur{}
+	query := `select * from acteur where nom ilike '` + str + `%' and id in(
+        select id_sctl_exploitant from parcelle_exploitant
+    )`
+	err := db.Select(&acteurs, query)
+	if err != nil {
+		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return acteurs, nil
+}
+
+
+// ************************** Get activité *******************************
 
 // Renvoie les activités auxquelles un acteur a participé.
 // Ordre chronologique inverse
@@ -398,88 +463,6 @@ func (p acteurActiviteSlice) Less(i, j int) bool {
 }
 func (p acteurActiviteSlice) Swap(i, j int) {
 	p[i], p[j] = p[j], p[i]
-}
-
-// ************************** Get utilisés par ajax *******************************
-
-// Renvoie des Acteurs (exploitants ou fermiers) à partir d'un lieu-dit.
-// Utilise les parcelles pour faire le lien
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-//
-// ATTENTION les cas idsExploitants et idsParcelles vides doivent être traités
-func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	// parcelles
-	idsParcelles := []int{}
-	query := "select id_parcelle from parcelle_lieudit where id_lieudit=$1"
-	err := db.Select(&idsParcelles, query, idLieudit)
-	if err != nil {
-		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	if len(idsParcelles) == 0 {
-		return acteurs, nil // empty res
-	}
-	// ids exploitants
-	strIdsParcelles := tiglib.JoinInt(idsParcelles, ",")
-	idsExploitants := []int{}
-	query = "select distinct id_sctl_exploitant from parcelle_exploitant where id_parcelle in(" + strIdsParcelles + ")"
-	err = db.Select(&idsExploitants, query)
-	if err != nil {
-		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	if len(idsExploitants) == 0 {
-		return acteurs, nil // empty res
-	}
-	// exploitants
-	strIdsExploitants := tiglib.JoinInt(idsExploitants, ",")
-	query = "select * from acteur where id_sctl in(" + strIdsExploitants + ") order by nom"
-	err = db.Select(&acteurs, query)
-	return acteurs, err
-}
-
-// Renvoie des Acteurs à partir du début de leurs noms.
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-func GetActeursAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	query := "select * from acteur where nom ilike '" + str + "%'"
-	err := db.Select(&acteurs, query)
-	if err != nil {
-		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return acteurs, nil
-}
-
-// Renvoie des fermiers à partir du début de leurs noms.
-// fermier = acteur associé à une ou plusieurs parcelles
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-func GetFermiersAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	query := `select * from acteur where nom ilike '` + str + `%' and id in(
-        select id_sctl_exploitant from parcelle_exploitant
-    )`
-	err := db.Select(&acteurs, query)
-	if err != nil {
-		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return acteurs, nil
-}
-
-// Renvoie un Acteur à partir de son nom et de son prénom.
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-// @param  str Chaîne composée de nom + " " + prénom
-func GetActeurByNomAutocomplete(db *sqlx.DB, str string) (*Acteur, error) {
-	a := &Acteur{}
-	query := "select * from acteur where nom || ' ' || prenom=$1"
-	row := db.QueryRowx(query, str)
-	err := row.StructScan(a)
-	if err != nil {
-		return a, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return a, nil
 }
 
 // ************************** CRUD *******************************

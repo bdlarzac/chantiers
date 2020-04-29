@@ -1,6 +1,6 @@
 
 
-### Obslolete, refaire avec go.mod ###
+###### Obslolete, refaire avec go.mod ######
 
 go get github.com/lib/pq
 go get gopkg.in/yaml.v3
@@ -10,7 +10,22 @@ https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC
 https://github.com/alexbrainman/odbc/wiki/InstallingFreeTDS
 
 
-###### Install sur le server ######
+###### Déploiement sur machine windows ######
+
+# todo install go
+# todo install postgres
+# todo install driver access
+
+# Initialisation de la base
+# faire une seule fois, car écrase tout
+cd install
+go run install-bdl.go -i all
+
+
+
+
+
+###### Install version de test sur le server ######
 
 sudo -H certbot-auto --rsa-key-size 4096 --apache -d bdl.larzac.info
 

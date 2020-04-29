@@ -128,10 +128,15 @@ function initialize() {
     }
     // form update
     else{
-        actionAfterChangeLieudit(); // pour rétablir options fermier et ug
+        actionAfterChangeLieudit();
+        // todo remplacer setTimeout par promesse
+        setTimeout(function(){
+            document.getElementById("fermier").value = "{{.IdFermier}}";
+            document.getElementById("ug").value = "{{.IdUG}}";
+        }, 1000);
         // lieux de stockage
         {{range .Tas}}
-            document.getElementById("stockage-" + "{{.Stockage.Id}}").setAttribute("checked", "checked")
+            document.getElementById("stockage-{{.Stockage.Id}}").setAttribute("checked", "checked")
         {{end}}
     }
 }
@@ -168,7 +173,7 @@ function getLDPossibles(inputField){
     Si oui,
         - remplit le champ hidden id-lieudit
         - remplit le select fermier avec la liste des fermiers possibles
-        - remplit le ug fermier avec la liste des ugs possibles
+        - remplit le selct ug avec la liste des ugs possibles
 **/
 function checkLD(){
     var nomLD = document.getElementById("lieudit").value;

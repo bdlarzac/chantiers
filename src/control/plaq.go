@@ -199,7 +199,8 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		// calcul des ids stockage, pour transmettre à InsertPlaq(), qui va créer le(s) tas
+		// calcul des ids stockage, pour transmettre à UpdatePlaq(),
+		// qui va créer ou supprimer ou ne pas changer le(s) tas
         allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
