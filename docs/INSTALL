@@ -1,40 +1,13 @@
 
 
-###### Obslolete, refaire avec go.mod ######
+###### postgresql ######
+# dev version :
+# psql --version
+# psql (PostgreSQL) 10.12 (Ubuntu 10.12-0ubuntu0.18.04.1)
 
-go get github.com/lib/pq
-go get gopkg.in/yaml.v3
-
-Unix ODBC, pour lire les bases access
-https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC
-https://github.com/alexbrainman/odbc/wiki/InstallingFreeTDS
-
-
-###### Déploiement sur machine windows ######
-
-# todo install go
-# todo install postgres
-# todo install driver access
-
-# Initialisation de la base
-# faire une seule fois, car écrase tout
-cd install
-go run install-bdl.go -i all
-
-
-
-
-
-###### Install version de test sur le server ######
-
-sudo -H certbot-auto --rsa-key-size 4096 --apache -d bdl.larzac.info
-
-Dans ~/go/src/larzac.info/bdl
-gin -i --all -a 8000 -p 3012 run main.go
-
-###### Install postgresql ######
 # cf config.yml pour le mot de passe
 
+sudo apt install postgres
 sudo -s -u postgres
 psql
 
@@ -51,6 +24,42 @@ sudo /etc/init.d/postgresql restart
 # Pour se connecter à la base :
 psql -U bdl -W -h localhost --cluster 10/main -d bdlbois
 
+###### go ######
+# dev version :
+# go version
+# go version go1.14.1 linux/amd64
 
-###### Initialisatipon des tables ######
+# todo install go
 
+###### Initialisation des tables ######
+cd /path/to/bdl/
+cd install/
+go run install-bdl.go -i all
+
+
+###### Lancement du programme ######
+cd /path/to/bdl/
+cd src/
+gin -i --all -a 8000 -p 3012 run main.go
+
+# dans un navigateur web
+http://localhost:3000/
+
+
+###### Compilation version de prod ######
+todo
+
+###### Déploiement sur machine windows ######
+todo
+
+###### Install version de test sur le server ######
+sudo -H certbot-auto --rsa-key-size 4096 --apache -d bdl.larzac.info
+
+
+###### Obslolete, refaire avec go.mod ######
+go get github.com/lib/pq
+go get gopkg.in/yaml.v3
+
+Unix ODBC, pour lire les bases access
+https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC
+https://github.com/alexbrainman/odbc/wiki/InstallingFreeTDS
