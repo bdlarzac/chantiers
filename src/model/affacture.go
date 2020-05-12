@@ -269,7 +269,7 @@ func (aff *Affacture) computeItemsTransport(db *sqlx.DB) error {
 							Valeur: strconv.FormatFloat(montantHT, 'f', 2, 64),
 						},
 						{
-							Titre:  "TVA " + strconv.FormatFloat(elt.TrTVA, 'f', -1, 64) + "%",
+							Titre:  "TVA " + strconv.FormatFloat(elt.CaTVA, 'f', -1, 64) + "%",
 							Valeur: strconv.FormatFloat(montantTVA, 'f', 2, 64),
 						},
 						{

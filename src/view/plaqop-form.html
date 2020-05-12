@@ -24,7 +24,7 @@
         <label for="qte">Quantité</label>
         <div>
             <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5" required>
-            <select name="unite" id="unite" class="width8" required>
+            <select name="unite" id="unite" class="width8" onchange="uniteChanges();" required>
                 {{$.Details.UniteOptions}}
             </select>
         </div>
@@ -32,7 +32,7 @@
         <label for="puht">PU HT</label>
         <div>
             <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5" required>
-            &euro;
+            &euro; <span id="labelPourUnite"></span>
         </div>
         
         <label for="tva">Taux TVA</label>
@@ -130,7 +130,18 @@ function typeOperationChanges(){
     if(document.getElementById("typeop-DC").selected){
         document.getElementById("unite-MA").selected = true;
     }
-    
+}
+
+// ***************************************
+/** Déclenché lorsqu'on change l'unité **/
+function uniteChanges(){
+    if(document.getElementById("unite").value == "CHOOSE_UNITE"){
+        document.getElementById("labelPourUnite").innerHTML = "";
+    }
+    else{
+        let sel = document.getElementById("unite")
+        document.getElementById("labelPourUnite").innerHTML = " / " + sel.options[sel.selectedIndex].text.slice(0, -1);
+    }
 }
 
 // ***************************************
