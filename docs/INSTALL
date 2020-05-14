@@ -46,6 +46,13 @@ gin -i --all -a 8000 -p 3012 run main.go
 http://localhost:3000/
 
 
+###### Install version de test sur serveur ######
+go run install-bdl.go -i all
+go run install-bdl.go -f acteur
+go run install-bdl.go -f stockage
+(-f acteur sert à anonymiser)
+
+
 ###### Compilation version de prod ######
 todo
 

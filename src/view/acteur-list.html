@@ -15,10 +15,10 @@
     <th>CP</th>          
     <th>Ville</th>       
     <th>Tel</th>         
-    <th>Tel portable</th>
+    <th>Mobile</th>
     <th>Email</th>       
     <th>Actif</th>       
-    <th>Commentaires</th>
+    <th>Notes</th>
 </tr>
 
 {{range .Details.List}}
@@ -37,8 +37,8 @@
     <td>{{.Adresse1}}</td>
     <td>{{.Cp}}</td>
     <td>{{.Ville}}</td>
-    <td>{{.Tel}}</td>
-    <td>{{.TelPortable}}</td>
+    <td class="whitespace-nowrap">{{.Tel}}</td>
+    <td class="whitespace-nowrap">{{.Mobile}}</td>
     <td>{{.Email}}</td>
     <td>{{.Actif}}</td>
     <td>{{.Notes}}</td>

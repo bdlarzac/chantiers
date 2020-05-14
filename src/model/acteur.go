@@ -26,7 +26,7 @@ type Acteur struct {
 	Cp           string
 	Ville        string
 	Tel          string
-	TelPortable  string
+	Mobile       string
 	Email        string
 	Bic          string
 	Iban         string
@@ -476,7 +476,7 @@ func InsertActeur(db *sqlx.DB, acteur *Acteur) (int, error) {
         cp,
         ville,
         tel,
-        telportable,
+        mobile,
         email,
         bic,
         iban,
@@ -496,7 +496,7 @@ func InsertActeur(db *sqlx.DB, acteur *Acteur) (int, error) {
 		acteur.Cp,
 		acteur.Ville,
 		acteur.Tel,
-		acteur.TelPortable,
+		acteur.Mobile,
 		acteur.Email,
 		acteur.Bic,
 		acteur.Iban,
@@ -520,7 +520,7 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) error {
         cp,
         ville,
         tel,
-        telportable,
+        mobile,
         email,
         bic,
         iban,
@@ -539,7 +539,7 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) error {
 		acteur.Cp,
 		acteur.Ville,
 		acteur.Tel,
-		acteur.TelPortable,
+		acteur.Mobile,
 		acteur.Email,
 		acteur.Bic,
 		acteur.Iban,

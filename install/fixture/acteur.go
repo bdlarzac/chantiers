@@ -62,7 +62,7 @@ func AnonymizeActeurs() {
 		Adresse1:    "Le bourg",
 		Adresse2:    "",
 		Tel:         "01 02 03 04 05",
-		TelPortable: "06 07 08 09 10",
+		Mobile: "06 07 08 09 10",
 		Email:       "test@mail.org",
 		Bic:         "",
 		Iban:        "",
@@ -82,7 +82,7 @@ func AnonymizeActeurs() {
 		a.Prenom = prenoms[idxPrenom]
 		a.Adresse1 = autres.Adresse1
 		a.Tel = autres.Tel
-		a.TelPortable = autres.TelPortable
+		a.Mobile = autres.Mobile
 		a.Email = autres.Email
 		a.Notes = autres.Notes
 		fmt.Printf("Anonymise %+v\n", a)

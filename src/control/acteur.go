@@ -222,7 +222,7 @@ func acteurForm2var(r *http.Request) (*model.Acteur, error) {
 	acteur.Cp = r.PostFormValue("cp")
 	acteur.Ville = r.PostFormValue("ville")
 	acteur.Tel = r.PostFormValue("tel")
-	acteur.TelPortable = r.PostFormValue("telportable")
+	acteur.Mobile = r.PostFormValue("mobile")
 	acteur.Email = r.PostFormValue("email")
 	acteur.Bic = r.PostFormValue("bic")
 	acteur.Iban = r.PostFormValue("iban")

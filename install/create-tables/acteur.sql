@@ -16,7 +16,7 @@ create table acteur (
     cp                      char(5) not null default '',
     ville                   varchar(255) not null default '',
     tel                     varchar(15) not null default '',
-    telportable             varchar(15) not null default '',
+    mobile                  varchar(15) not null default '',
     email                   varchar(255) not null default '',
     bic                     char(11) not null default '',
     iban                    char(27) not null default '',
