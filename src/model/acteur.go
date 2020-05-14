@@ -241,7 +241,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
 		}
 		new := &ActeurActivite{
-			Date:        elt.DateOp,
+			Date:        elt.DateDebut,
 			Role:        elt.RoleName(),
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: "Chantier plaquettes " + plaq.String()}

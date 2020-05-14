@@ -18,8 +18,17 @@
             <input type="text" name="acteur" id="acteur" value="{{.Acteur.NomAutocomplete}}" autocomplete="off" class="width20" required>
         </div>
 
-        <label for="date-op">Date</label>
-        <input type="date" name="date-op" id="date-op" value="{{.DateOp | dateIso}}" class="width15" required>
+        <label>Dates :</label>
+        <div>                                                                                                                              
+            <div class="inline-block">
+                <div class="center"><label for="date-debut">Début</label></div>
+                <input type="date" name="date-debut" id="date-debut" value="{{.DateDebut | dateIso}}" required>
+            </div>
+            <div class="inline-block">
+                <div class="center"><label for="date-fin">Fin</label></div>
+                <input type="date" name="date-fin" id="date-fin" value="{{.DateFin | dateIso}}" required>
+            </div>
+        </div>
         
         <label for="qte">Quantité</label>
         <div>
@@ -147,6 +156,11 @@ function uniteChanges(){
 // ***************************************
 function validateForm(){
     msg = "";
+    const deb = document.getElementsByName("date-debut")[0].value;
+    const fin = document.getElementsByName("date-fin")[0].value;
+    if(fin <= deb){
+        msg += "\n- La date de fin doit se situer après la date de début";
+    }
     if(document.getElementById("type-op").value == "CHOOSE_TYPEOP"){
         msg += "\n- Vous devez renseigner un type d'opération.";
     }

@@ -21,7 +21,8 @@
         <th></th>
         <th>Opération</th>
         <th>Personne</th>
-        <th>Date</th>
+        <th>Début</th>
+        <th>Fin</th>
         <th>Qté</th>
         <th>PU HT</th>
         <th>Prix HT</th>
@@ -66,7 +67,8 @@
         </td>
         <td>{{.TypOp | labelActivite}}</td>
         <td><a href="/acteur/{{.Acteur.Id}}">{{.Acteur.String}}</a></td>
-        <td class="center">{{.DateOp | dateFr}}</td>
+        <td class="center">{{.DateDebut | dateFr}}</td>
+        <td class="center">{{.DateFin | dateFr}}</td>
         <td><script>document.write(round({{.Qte}}, 2));</script> {{.Unite | labelUnite}}</td>
         <td><script>document.write(round({{.PUHT}}, 2));</script> &euro;</td>
         <td><script>document.write(round(prixHT({{.PUHT}}, {{.Qte}}), 2));</script> &euro;</td>

@@ -17,10 +17,11 @@ import (
 
 type PlaqOp struct {
 	Id         int
-	TypOp      string // faire un type ?
-	IdChantier int    `db:"id_chantier"`
-	IdActeur   int    `db:"id_acteur"`
-	DateOp     time.Time
+	TypOp      string
+	IdChantier int        `db:"id_chantier"`
+	IdActeur   int        `db:"id_acteur"`
+	DateDebut  time.Time  `db:"datedeb"`
+	DateFin    time.Time
 	Qte        float64
 	Unite      string // j, h ou m
 	PUHT       float64
@@ -80,21 +81,23 @@ func InsertPlaqOp(db *sqlx.DB, op *PlaqOp) (int, error) {
 	    typop,
 	    id_chantier,
 	    id_acteur,
-	    dateop,
+	    datedeb,
+	    datefin,
 	    qte,
 	    unite,
 	    puht,
 	    tva,                                                              
 	    datepay,
 	    notes
-	    ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning id`
+	    ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
 		op.TypOp,
 		op.IdChantier,
 		op.IdActeur,
-		op.DateOp,
+		op.DateDebut,
+		op.DateFin,
 		op.Qte,
 		op.Unite,
 		op.PUHT,
@@ -112,20 +115,22 @@ func UpdatePlaqOp(db *sqlx.DB, op *PlaqOp) error {
         typop,
         id_chantier,
         id_acteur,
-        dateop,
+        datedeb,
+        datefin,
         qte,
         unite,
         puht,
         tva,
         datepay,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) where id=$11`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) where id=$12`
 	_, err := db.Exec(
 		query,
 		op.TypOp,
 		op.IdChantier,
 		op.IdActeur,
-		op.DateOp,
+		op.DateDebut,
+		op.DateFin,
 		op.Qte,
 		op.Unite,
 		op.PUHT,

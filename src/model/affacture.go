@@ -113,7 +113,7 @@ func (p affactureItemSlice) Swap(i, j int) {
 
 func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite string) error {
 	list := []PlaqOp{}
-	query := "select * from plaqop where id_acteur=$1 and typop=$2 and dateop>=$3 and dateop<=$4"
+	query := "select * from plaqop where id_acteur=$1 and typop=$2 and datedeb>=$3 and datedeb<=$4"
 	err := db.Select(&list, query, aff.IdActeur, typeActivite, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
@@ -126,7 +126,7 @@ func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite stri
 		montantTTC = montantHT + montantTVA
 		item := AffactureItem{
 			Titre: LabelActivite(typeActivite),
-			Date:  elt.DateOp,
+			Date:  elt.DateDebut,
 		}
 		ligne = AffactureLigne{
 			Titre: "Main d'oeuvre",

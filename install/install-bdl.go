@@ -157,7 +157,6 @@ func installStockage() {
 	initialize.CreateTable("humid_acteur")
 }
 func installPlaquette() {
-	initialize.CreateTable("typeop")
 	initialize.CreateTable("plaqop")
 	initialize.CreateTable("plaqtrans")
 	initialize.CreateTable("plaqrange")

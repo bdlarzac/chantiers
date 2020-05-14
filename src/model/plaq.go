@@ -248,7 +248,7 @@ func (chantier *Plaq) ComputeOperations(db *sqlx.DB) error {
 	if len(chantier.Operations) != 0 {
 		return nil
 	}
-	query := "select * from plaqop where id_chantier=$1 order by dateop desc"
+	query := "select * from plaqop where id_chantier=$1 order by datedeb desc"
 	err := db.Select(&chantier.Operations, query, &chantier.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

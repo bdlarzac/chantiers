@@ -202,7 +202,11 @@ func plaqOpForm2var(r *http.Request) (*model.PlaqOp, error) {
 		return op, err
 	}
 	//
-	op.DateOp, err = time.Parse("2006-01-02", r.PostFormValue("date-op"))
+	op.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
+	if err != nil {
+		return op, err
+	}
+	op.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
 		return op, err
 	}

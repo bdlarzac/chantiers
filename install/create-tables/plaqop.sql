@@ -4,7 +4,8 @@ create table plaqop (
     id_chantier             int not null references plaq(id),
     id_acteur               int not null references acteur(id),
     typop                   typeop not null,
-    dateop                  date not null,
+    datedeb                 date not null,
+    datefin                 date not null,
     qte                     numeric not null,
     unite                   typeunite not null, -- JO, HE ou MA
     puht                    numeric not null,
