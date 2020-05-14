@@ -47,6 +47,7 @@ func main() {
 	r.HandleFunc("/ajax/get/parcelles-from-lieudit/{id}", Hajax(ajax.GetParcellesFromLieudit))
 	// ajax ug
 	r.HandleFunc("/ajax/get/parcelles-from-ug/{id}", Hajax(ajax.GetParcellesFromUG))
+	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))
@@ -136,8 +137,9 @@ func main() {
 	r.HandleFunc("/humidite/delete/{id:[0-9]+}", H(control.DeleteHumid))
 
 	// *** geo ***
-	r.HandleFunc("/unite-gestion/{id:[0-9]+}", H(control.ShowUG))
-	r.HandleFunc("/unite-gestion/{id:[0-9]+}/{tab}", H(control.ShowUG))
+	r.HandleFunc("/ug/search", H(control.SearchUG))
+	r.HandleFunc("/ug/{id:[0-9]+}", H(control.ShowUG))
+	r.HandleFunc("/ug/{id:[0-9]+}/{tab}", H(control.ShowUG))
 	r.HandleFunc("/commune/liste", H(control.ListCommunes))
 	r.HandleFunc("/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
 	r.HandleFunc("/parcelle/{id:[0-9]+}", H(control.ShowParcelle))

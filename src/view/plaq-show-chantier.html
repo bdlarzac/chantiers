@@ -132,6 +132,7 @@
     <tr>
         <th colspan="2">Transport</th>
         <th colspan="2">Coût</th>
+        <th>Coût / map</th>
         <th>Total HT</th>
     </tr>
 {{end}}
@@ -291,6 +292,10 @@
         {{end}} {{/* end cout != G */}}
 
         <td class="bold center">
+            <script>document.write(round(totalLigne / {{.Qte}}, 2));</script> &euro;
+        </td>
+        
+        <td class="bold center">
             <script>document.write(round(totalLigne, 2));</script> &euro;
         </td>
         
@@ -298,11 +303,11 @@
     <script>
         totalTransport += totalLigne;
     </script>
-    {{end}}
+    {{end}} {{/* end range .Transports */}}
     
     {{if .Transports}}
     <tr>
-        <td colspan="4" class="bold right">Total transport HT</td>
+        <td colspan="5" class="bold right">Total transport HT</td>
         <td class="bold center">
             <script>document.write(round(totalTransport, 2));</script> &euro;
         </td>

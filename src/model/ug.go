@@ -14,7 +14,6 @@ import (
 
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -120,7 +119,6 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		ug.SortedRecapYears = append(ug.SortedRecapYears, k)
 	}
 	sort.Sort(sort.Reverse(sort.StringSlice(ug.SortedRecapYears)))
-	fmt.Printf("%+v\n", ug.Recaps)
 	return nil
 }
 
@@ -201,6 +199,19 @@ func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) ([]*UG, error) {
 		return ugs, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return ugs, nil
+}
+
+// Renvoie une UG à partir de son code, ou nil si aucune UG ne correspond au code
+// Ne contient que les champs de la table ug.
+// Les autres champs ne sont pas remplis.
+func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
+	ug := UG{}
+	query := "select * from ug where code=$1"
+	err := db.Get(&ug, query, code)
+	if err != nil {
+		return nil, nil
+	}
+	return &ug, nil
 }
 
 // Renvoie des UGs à partir d'un fermier.

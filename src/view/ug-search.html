@@ -1,0 +1,65 @@
+<h1>
+Recherche UG par code
+</h1>
+
+<form class="form" onsubmit="return submitForm();">
+
+    <label for="code">Code</label>
+    <input type="text" name="code" id="code" required onfocus="focusCode();">
+
+    <div class="margin-top">
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Rechercher">
+        </div>
+    </div>
+
+</form>
+
+<div>
+<div id="results" class="error display-none">
+</div>
+</div>
+
+<script>
+
+function focusCode(){
+    document.getElementById("results").style.display = "none";
+}
+
+function submitForm(){
+    let idUg = getIdUG();
+    if(idUg == 0){
+        document.getElementById("results").style.display = "inline-block";
+        document.getElementById("results").innerHTML
+            = "Aucune UG correspondant au code <i><b>" + document.getElementById("code").value + "</b></i>";
+        return false;
+    }
+    document.location = "/ug/" + idUg;
+    return false;
+}
+
+// ***************************************
+/** 
+    Récupère en ajax l'id ug dont le code correspond à la valeur saisie
+    Si le code ne correspond pas à une UG, renvoie 0
+**/
+// @todo remplacer async = false par await et Promise
+function getIdUG(){
+    let result = 0;
+    let xhr = new XMLHttpRequest();
+    let code = document.getElementById("code").value;
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let response = JSON.parse(this.responseText);
+            if(response != null){
+                result = response;
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/get/ug-from-code/" + code, false);
+    xhr.send();
+    return result;
+}
+
+</script>

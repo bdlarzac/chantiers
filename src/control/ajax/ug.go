@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
-	//"fmt"
 )
 
 func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -36,3 +35,45 @@ func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	w.Write(json)
 	return nil
 }
+
+// Renvoie l'id de l'UG correspondant au code,
+// ou 0 si aucune UG ne correspond
+func GetUGFromCode(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	var resp int
+	ug, err := model.GetUGFromCode(ctx.DB, vars["code"])
+	if err != nil {
+		return err
+	}
+	if ug != nil {
+        resp = ug.Id
+    }
+	json, err := json.Marshal(resp)      
+	if err != nil {
+		return err
+	}
+	w.Write(json)
+	return nil
+}
+
+func GetUGFromCode1(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	type respElement struct {
+		Id   int    `json:"id"`
+	}
+	var resp []respElement
+	ug, err := model.GetUGFromCode(ctx.DB, vars["code"])
+	if err != nil {
+		return err
+	}
+	if ug != nil {
+        resp = append(resp, respElement{ug.Id})
+    }
+	json, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	w.Write(json)
+	return nil
+}
+

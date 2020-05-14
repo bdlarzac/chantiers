@@ -45,7 +45,7 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Title:    "Unité de gestion " + vars["id"],
 			CSSFiles: []string{"/static/css/tabstrip.css"},
 		},
-		Menu: "unites-gestion",
+		Menu: "accueil",
 		Details: detailsUGShow{
 			UG:        ug,
 			Activites: activites,
@@ -54,6 +54,18 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Footer: ctxt.Footer{
 			JSFiles: []string{"/static/js/tabstrip.js"},
 		},
+	}
+	return nil
+}
+
+func SearchUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+	ctx.TemplateName = "ug-search.html"
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title:    "Recherche UG",
+            CSSFiles: []string{"/static/css/form.css"},
+		},
+		Menu: "accueil",
 	}
 	return nil
 }
