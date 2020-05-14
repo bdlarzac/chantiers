@@ -50,7 +50,13 @@ http://localhost:3000/
 go run install-bdl.go -i all
 go run install-bdl.go -f acteur
 go run install-bdl.go -f stockage
-(-f acteur sert à anonymiser)
+
+Notes :
+- besoin d'avoir private/Exploita.csv sur le serveur
+pour remplir acteurs
+- go run install-bdl.go -f acteur
+sert à anonymiser les acteurs
+- une fois l'install terminée, supprimer private/Exploita.csv
 
 
 ###### Compilation version de prod ######

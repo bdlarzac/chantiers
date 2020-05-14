@@ -116,6 +116,7 @@ func installTypes() {
 	initialize.CreateTable("typeop")
 	initialize.CreateTable("typeunite")
 	initialize.CreateTable("typevalorisation")
+	initialize.CreateTable("typegranulo")
 }
 func installCommune() {
 	initialize.CreateTable("commune")

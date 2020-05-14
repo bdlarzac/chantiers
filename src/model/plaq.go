@@ -25,6 +25,7 @@ type Plaq struct {
 	DateDebut       time.Time `db:"datedeb"`
 	DateFin         time.Time
 	Surface         float64
+	Granulo         string
 	Exploitation    string
 	Essence         string
 	FraisRepas      float64
@@ -435,11 +436,12 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
         datedeb,
         datefin,
         surface,
+        granulo,
         exploitation,
         essence,
         fraisrepas,
         fraisreparation
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`
 	id := int(0)
 	err = db.QueryRow(
 		query,
@@ -449,6 +451,7 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
 		chantier.DateDebut,
 		chantier.DateFin,
 		chantier.Surface,
+		chantier.Granulo,
 		chantier.Exploitation,
 		chantier.Essence,
 		chantier.FraisRepas,
@@ -477,11 +480,12 @@ func UpdatePlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) error {
         datedeb,
         datefin,
         surface,
+        granulo,
         exploitation,
         essence,
         fraisrepas, 
         fraisreparation
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) where id=$11`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) where id=$12`
 	_, err := db.Exec(
 		query,
 		chantier.IdLieudit,
@@ -490,6 +494,7 @@ func UpdatePlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) error {
 		chantier.DateDebut,
 		chantier.DateFin,
 		chantier.Surface,
+		chantier.Granulo,
 		chantier.Exploitation,
 		chantier.Essence,
 		chantier.FraisRepas,

@@ -19,6 +19,7 @@ type detailsPlaqForm struct {
 	UrlAction           string
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
+	GranuloOptions      template.HTML
 	AllStockages        []*model.Stockage
 	Chantier            *model.Plaq
 }
@@ -175,6 +176,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				Chantier:            chantier,
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
+				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "CHOOSE_GRANULO"),
 				AllStockages:     	 allStockages,
 				UrlAction:           "/chantier/plaquette/new",
 			},
@@ -253,6 +255,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				Chantier:            chantier,
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-" + chantier.Exploitation),
+				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "granulo-" + chantier.Granulo),
 				AllStockages:     	 allStockages,
 				UrlAction:           "/chantier/plaquette/update/" + vars["id"],
 			},
@@ -321,6 +324,8 @@ func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 		}
 		chantier.Surface = tiglib.Round(chantier.Surface, 2)
 	}
+	//
+	chantier.Granulo = strings.ReplaceAll(r.PostFormValue("granulo"), "granulo-", "")
 	//
 	chantier.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//

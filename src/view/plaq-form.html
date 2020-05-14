@@ -44,6 +44,11 @@
         <label for="surface">Surface concernée (ha)</label>
         <input type="number" name="surface" id="surface" step="0.1" value="{{.Surface | zero2empty}}" class="width5">
         
+        <label for="granulo">Granulométrie</label>
+        <select name="granulo" id="granulo" class="width8">
+            {{$.Details.GranuloOptions}}
+        </select>
+        
         <label for="exploitation">Exploitation</label>
         <select name="exploitation" id="exploitation" class="width8">
             {{$.Details.ExploitationOptions}}
@@ -293,10 +298,15 @@ function validateForm(){
     if(!ok){
         msg += "\n- Vous devez au moins choisir un lieu de stockage";
     }
+    // granulométrie
+    if(document.getElementById("granulo").value == "CHOOSE_GRANULO"){
+        msg += "\n- Vous devez renseigner une granulométrie.";
+    }
     // exploitation
     if(document.getElementById("exploitation").value == "CHOOSE_EXPLOITATION"){
         msg += "\n- Vous devez renseigner un type d'exploitation.";
     }
+    //
     if(msg != ""){
         alert("Impossible de valider ce formulaire : \n" + msg);
         return false;

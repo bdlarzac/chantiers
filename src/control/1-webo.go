@@ -98,6 +98,16 @@ func WeboChautreValo() []webo.OptionString {
 	}
 }
 
+// Renvoie la liste des granulométries possibles
+// dans un format utilisable par webo
+func WeboGranulo() []webo.OptionString {
+	return []webo.OptionString{
+		webo.OptionString{OptionValue: "CHOOSE_GRANULO", OptionLabel: "--- Choisir ---"},
+		webo.OptionString{OptionValue: "granulo-P16", OptionLabel: model.LabelGranulo("P16")},
+		webo.OptionString{OptionValue: "granulo-P45", OptionLabel: model.LabelGranulo("P45")},
+	}
+}
+
 // Renvoie la liste des taux de TVA utilisés pour payer un intervenant extérieur
 // dans un format utilisable par webo
 // @param  chooseId     Chaîne utilisée pour désigner l'id et la value de l'option "---Choisir ---"

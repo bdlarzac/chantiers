@@ -138,3 +138,12 @@ func LabelExploitation(abbrev string) string {
 	}
 	return "??? BUG LabelExploitation ???"
 }
+
+// ************************** Granulométrie *******************************
+// cf type postgres typegranulo
+
+// Labels du type de granulométrie
+// @param abbrev : type de granulométrie
+func LabelGranulo(abbrev string) string {
+	return abbrev // le type stocké en base correspond au label
+}
