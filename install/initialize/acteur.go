@@ -25,7 +25,7 @@ const SCTL_ID_SCTL = 28
 func FillActeur() {
 	table := "acteur"
 	fmt.Println("Remplit " + table + " acteur à partir de Exploita.csv")
-	dirCsv := getDataDir()
+	dirCsv := getPrivateDir()
 	filename := path.Join(dirCsv, "Exploita.csv")
 
 	records, err := tiglib.CsvMap(filename, ';')

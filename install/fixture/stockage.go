@@ -35,7 +35,7 @@ func FillStockage() {
 	fmt.Printf("Insertion stockage %d : %s\n", idStock, nom)
 	//
 	montant = 6000
-	datedeb, _ = time.Parse("2006-01-02", "2020-01-01")
+	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2050-01-01")
 	idLoyer, err = model.InsertStockLoyer(db, &model.StockLoyer{
 	    IdStockage: idStock,
@@ -50,16 +50,16 @@ func FillStockage() {
 	//
 	//
 	//
-	nom = "Hangar de test"
+	nom = "Hangar des Baumes"
 	idStock, err = model.InsertStockage(db, &model.Stockage{Nom: nom})
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("Insertion stockage %d : %s\n", idStock, nom)
 	//
-	montant = 2000
-	datedeb, _ = time.Parse("2006-01-02", "2020-01-01")
-	datefin, _ = time.Parse("2006-01-02", "2020-05-01")
+	montant = 0
+	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
+	datefin, _ = time.Parse("2006-01-02", "2050-01-01")
 	idLoyer, err = model.InsertStockLoyer(db, &model.StockLoyer{
 	    IdStockage: idStock,
 	    Montant: montant,
@@ -70,6 +70,7 @@ func FillStockage() {
 		panic(err)
 	}
 	fmt.Printf("Insertion loyer %d : %d %.2f %s %s\n", idLoyer, idStock, montant, datedeb.Format("2006-01-02"), datefin.Format("2006-01-02"))
+	/* 
 	//
 	montant = 3000
 	datedeb, _ = time.Parse("2006-01-02", "2020-05-02")
@@ -98,4 +99,5 @@ func FillStockage() {
 		panic(err)
 	}
 	fmt.Printf("Insertion loyer %d : %d %.2f %s %s\n", idLoyer, idStock, montant, datedeb.Format("2006-01-02"), datefin.Format("2006-01-02"))
+	*/	
 }

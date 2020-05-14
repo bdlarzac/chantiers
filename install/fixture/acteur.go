@@ -73,7 +73,7 @@ func AnonymizeActeurs() {
 	acteurs, _ := model.SortedActeurs(ctx.DB, "id")
 
 	for _, a := range acteurs {
-		if a.Nom == "BDL" {
+		if a.Nom == "BDL" || a.Nom == "SCTL"  || a.Nom == "GFA" {
 			continue
 		}
 		idxNom := rand.Intn(len(noms) - 1)

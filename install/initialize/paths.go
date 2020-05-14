@@ -26,3 +26,10 @@ func getDataDir() string {
 	_, filename, _, _ := runtime.Caller(0) // path to current go file
 	return path.Join(path.Dir(path.Dir(filename)), "data")
 }
+
+// getPrivateDir renvoie le chemin absolu vers le répertoire contenant
+// des fichiers contenant des données personnelles
+func getPrivateDir() string {
+	_, filename, _, _ := runtime.Caller(0) // path to current go file
+	return path.Join(path.Dir(path.Dir(path.Dir(filename))), "private")
+}
