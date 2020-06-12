@@ -1,6 +1,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- Ajouter fonction FullString() à tous les chantiers et utiliser
+
 - VenteCharge devrait faire modifierStock
 
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure

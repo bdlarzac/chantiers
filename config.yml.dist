@@ -57,3 +57,5 @@ facture:
   siret: 792 959 892 00011
   tva: FR 84792959892
   
+# Nombre de chantiers affichés dans la partie "activités récentes"
+nb-recent: 5

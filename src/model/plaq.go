@@ -76,6 +76,10 @@ func (ch *Plaq) String() string {
 	return ch.Lieudit.Nom + " " + tiglib.DateFr(ch.DateDebut)
 }
 
+func (ch *Plaq) FullString() string {
+	return "Chantier plaquettes " + ch.String()
+}
+
 // ************************** Get *******************************
 
 // Renvoie un chantier plaquette
@@ -584,6 +588,18 @@ func DeletePlaq(db *sqlx.DB, id int) error {
 	}
 	for _, deletedId = range(ids){
 	    err = DeletePlaqOp(db, deletedId)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur DeletePlaqOp()")
+        }
+	}
+    // delete tas associés à ce chantier
+    query = "select id from tas where id_chantier=$1"
+	err = db.Select(&ids, query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, deletedId = range(ids){
+	    err = DeleteTas(db, deletedId)
         if err != nil {
             return werr.Wrapf(err, "Erreur DeletePlaqOp()")
         }

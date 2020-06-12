@@ -3,15 +3,27 @@ package control
 import (
 	"net/http"
 	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/model"
 )
+
+type detailsAccueil struct {
+	Recents    []*model.Recent
+}
 
 func Accueil(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.TemplateName = "accueil.html"
+	recents, err := model.GetRecents(ctx.DB)
+	if(err != nil){
+	    return err
+	}
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "Accueil",
 		},
 		Menu: "accueil",
+		Details: detailsAccueil{
+			Recents: recents,
+		},
 	}
 	return nil
 }

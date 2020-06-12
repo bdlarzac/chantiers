@@ -557,7 +557,7 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) error {
 
 /*
 func DeleteActeur(db *sqlx.DB, id int) error {
-    // peut-être ici protection pour davoir si Deletable = true
+    // peut-être ici protection pour savoir si Deletable = true
     // (la situation actuelle fait confiance à l'UI pour ne pas proposer delete sur acteur non deletable)
     query := "delete from acteur where id=$1"
     _, err := db.Exec(query, id)

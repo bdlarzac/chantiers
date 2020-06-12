@@ -35,6 +35,7 @@ func init() {
 		"commune",
 		"plaquette",
 		"parcelle",
+		"recent",
 		"stockage",
 		"type",
 		"vente",
@@ -84,6 +85,7 @@ func handleInstall() {
 		installChaufer()
 		installBSPied()
 		installChautre()
+		installRecent()
 	} else if *flagInstall == "type" {
 		installTypes()
 	} else if *flagInstall == "commune" {
@@ -106,6 +108,8 @@ func handleInstall() {
 		installBSPied()
 	} else if *flagInstall == "chautre" {
 		installChautre()
+	} else if *flagInstall == "recent" {
+		installRecent()
 	} else {
 		fmt.Println("COMMANDE INVALIDE - Valeurs possibles pour -i : " + msgInstall)
 	}
@@ -177,6 +181,9 @@ func installBSPied() {
 }
 func installChautre() {
 	initialize.CreateTable("chautre")
+}
+func installRecent() {
+	initialize.CreateTable("recent")
 }
 
 // *********************************************************

@@ -1,6 +1,17 @@
-<div style="padding:1em 0 0 5em;">
+<div style="padding:.5rem 0 0 5rem;">
     <h1>Logiciel de gestion forestière</h1>
 </div>
+
+
+{{if .Details.Recents}}
+    <h2>Activité récente</h2>
+    <ul class="naked">
+    {{range .Details.Recents}}
+        <li><a href="{{.URL}}">{{.Label}}</a></li>
+    {{end}}
+    </ul>
+{{end}}
+
 
 <h2>Version de test</h2>
 

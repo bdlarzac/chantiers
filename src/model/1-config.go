@@ -42,4 +42,5 @@ type Config struct {
 		Siret   string `yaml:"siret"`
 		TVA     string `yaml:"tva"`
 	} `yaml:"facture"`
+	NbRecent int `yaml:"nb-recent"`
 }
