@@ -2,3 +2,6 @@
 Code servant à mettre en base des valeurs de test.
 
 Pas utilisé en fonctionnemnt normal
+
+TODO déplacer stockage dans initialize/
+car utilisé pour initialiser la base, pas pour des valeurs de test
