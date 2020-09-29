@@ -15,6 +15,9 @@ CREATE USER bdl;
 ALTER ROLE bdl WITH CREATEDB;
 ALTER USER bdl WITH ENCRYPTED PASSWORD 'mon_mot_de_passe' ;
 CREATE DATABASE bdlbois OWNER bdl;
+-- si besoin de créer un schéma différent de public :
+CREATE SCHEMA myschema;
+
 \q
 
 exit
@@ -38,12 +41,15 @@ go run install-bdl.go -i all
 
 
 ###### Lancement du programme ######
+En mode dev, utilise github.com/codegangsta/gin
+
 cd /path/to/bdl/
 cd src/
-gin -i --all -a 8000 -p 3012 run main.go
+gin -i --all -a 8000 -p 3012 run run-bdl.go
 
+# 8000 défini dans config.yml, dans Run / Port
 # dans un navigateur web
-http://localhost:3000/
+http://localhost:3012/
 
 
 ###### Install version de test sur serveur ######

@@ -1,6 +1,6 @@
 /******************************************************************************
     Initialisation parcelle.
-    Code pas utilisé en fonctionnement normal.
+    Code servant à initialiser la base, pas utilisé en fonctionnement normal.
 
     @copyright  BDL, Bois du Larzac
     @license    GPL

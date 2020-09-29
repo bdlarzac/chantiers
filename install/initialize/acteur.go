@@ -1,8 +1,8 @@
 /******************************************************************************
     Initialisation acteurs et rôles
-    Code pas utilisé en fonctionnement normal.
+    Code servant à initialiser la base, pas utilisé en fonctionnement normal.
 
-    @copyright  BDL, Bois du
+    @copyright  BDL, Bois du Larzac
     @license    GPL
     @history    2019-11-08 08:45:03+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
@@ -12,9 +12,13 @@ import (
 	"fmt"
 	"path"
 	"strings"
-
+    "bufio"
+    "os"
+	
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
+    "golang.org/x/text/encoding/charmap"
+    "golang.org/x/text/transform"
 )
 
 // Valeur du champ id_sctl pour l'acteur SCTL
@@ -213,5 +217,86 @@ func FillLiensParcelleExploitant() {
 		}
 	}
 	//fmt.Printf("%d associations pas enregistrées (non-agricoles)\n", n)
-
 }
+
+
+// *********************************************************
+// Ajoute les acteurs saisis dans un fichier csv pour importer 
+// l'activité passée de BDL au moment du démarrage de la base
+func AddActeurs2020() {
+	table := "acteur"
+	csvfile := "acteurs-bdl-bastien.csv"
+	fmt.Println("Remplit", table, "acteur à partir de", csvfile)
+	dirCsv := getPrivateDir()
+	filename := path.Join(dirCsv, csvfile)
+	// conversion utf8
+    file, err := os.Open(filename)
+    if err != nil {
+        panic(err)
+    }
+    defer file.Close()
+    decodingReader := transform.NewReader(file, charmap.Windows1252.NewDecoder())	
+    scanner := bufio.NewScanner(decodingReader)
+    lines := []string{}
+    for scanner.Scan() {
+        lines = append(lines, strings.TrimSpace(scanner.Text()))
+    }
+    // lecture csv
+    sep := ";"
+    fields := strings.Split(lines[0], sep)
+    nfields := len(fields)
+    var csv []map[string]string
+    for i, line := range(lines){
+        if i == 0 {
+            continue
+        }
+        tmp := strings.Split(line, sep)
+        if tmp[0] == ""{
+            continue
+        }
+        current := make(map[string]string, nfields)
+        for j, field := range(tmp) {
+            current[fields[j]] = field
+        }
+        csv = append(csv, current)
+    }
+    
+	ctx := ctxt.NewContext()
+	db := ctx.DB
+	id := int(0)
+	n := int(0)
+	query := `insert into acteur(
+        nom,
+        prenom,
+        adresse1,
+        adresse2,
+        cp,
+        ville,
+        actif,
+        notes
+        )values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
+    actif := true
+    for _, line := range(csv){
+        if line["actif"] == "oui" {
+            actif = true
+        } else {
+            actif = false
+        }
+        err := db.QueryRow(
+            query,
+            line["nom"],
+            line["prenom"],
+            line["adresse1"],
+            line["adresse2"],
+            line["cp"],
+            line["ville"],
+            actif,
+            line["notes"]).Scan(&id)
+        if err != nil {
+            panic(err)
+        }
+        n++
+    }
+	fmt.Println(n, "lignes insérées")
+}
+

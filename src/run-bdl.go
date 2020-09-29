@@ -148,10 +148,11 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
-
+	
+	ctx := ctxt.NewContext()
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         "127.0.0.1:8000",
+		Addr:         ctx.Config.Run.URL + ":" + ctx.Config.Run.Port,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

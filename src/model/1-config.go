@@ -11,6 +11,10 @@
 package model
 
 type Config struct {
+    Run struct {
+		URL      string `yaml:"url"`
+		Port     string `yaml:"port"`
+    }
 	Database struct {
 		Host     string `yaml:"host"`
 		Port     string `yaml:"port"`

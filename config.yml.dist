@@ -7,6 +7,11 @@
 #     
 # ********************************************************************************
 
+# Paramètres du web server go
+run:
+  url: 127.0.0.1
+  port: 8000
+
 # Paramètres BDD postgresql
 # psql -U bdl -W -h localhost --cluster 10/main -d bdlbois
 database:

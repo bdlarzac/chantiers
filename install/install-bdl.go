@@ -138,6 +138,7 @@ func installActeur() {
 	initialize.AddActeurBDL()
 	initialize.AddActeurGFA()
 	initialize.FillProprietaire()
+	initialize.AddActeurs2020()
 }
 func installParcelle() {
 	initialize.CreateTable("parcelle")
@@ -165,7 +166,7 @@ func installPlaquette() {
 	// initialize.CreateTable("plaqop")
 	// initialize.CreateTable("plaqtrans")
 	// initialize.CreateTable("plaqrange")
-	initialize.FillChantier()
+	initialize.FillChantierPlaquette()
 }
 func installVente() {
 	initialize.CreateTable("venteplaq")
