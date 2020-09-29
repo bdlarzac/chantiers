@@ -226,13 +226,14 @@ func FillLiensParcelleExploitant() {
 func AddActeurs2020() {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"
-	fmt.Println("Remplit", table, "acteur à partir de", csvfile)
+	fmt.Println("Remplit", table, " à partir de", csvfile)
 	dirCsv := getPrivateDir()
 	filename := path.Join(dirCsv, csvfile)
 	// conversion utf8
     file, err := os.Open(filename)
     if err != nil {
-        panic(err)
+        fmt.Println(csvfile, "inexistant - ne remplit pas les acteurs")
+        return
     }
     defer file.Close()
     decodingReader := transform.NewReader(file, charmap.Windows1252.NewDecoder())	
