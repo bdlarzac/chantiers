@@ -26,7 +26,7 @@ var pDate = regexp.MustCompile(`\d{2}-\d{2}-\d{2}`)
 var pDate2 = regexp.MustCompile(`(\d{2}/\d{2}/\d{4})\D+(\d{2}/\d{2}/\d{4})`) // "09/08/2013 - 10/08/2013"
 
 // *********************************************************
-func FillChantierPlaquette() {
+func FillChantiersPlaquettesFromXls() {
     
     wb, err := xlsx.OpenFile(path.Join(getPrivateDir(), "Chantiers plaquettes.xlsx"))
     if err != nil {

@@ -110,6 +110,8 @@ func LabelValorisation(abbrev string) string {
 		return "Bois d'oeuvre"
 	case "CH":
 		return "Chauffage"
+	case "PI":
+		return "Piquets"
 	case "PL":
 		return "Palette"
 	case "PP":

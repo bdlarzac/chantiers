@@ -78,11 +78,14 @@
         </td>
         <td>
             <div class="grid2-pres">
+                {{if not .DateFacture.IsZero}}
                 <div>Date</div>
                 <div>{{.DateFacture | dateFr}}</div>
-                
+                {{end}}
+                {{if .NumFacture}}
                 <div>Numéro</div>
                 <div>{{.NumFacture}}</div>
+                {{end}}
             </div>
         </td>
         <td>{{.Notes | nl2br}}</td>

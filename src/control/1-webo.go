@@ -95,6 +95,7 @@ func WeboChautreValo() []webo.OptionString {
 		webo.OptionString{OptionValue: "valorisation-CH", OptionLabel: model.LabelValorisation("CH")},
 		webo.OptionString{OptionValue: "valorisation-PL", OptionLabel: model.LabelValorisation("PL")},
 		webo.OptionString{OptionValue: "valorisation-PP", OptionLabel: model.LabelValorisation("PP")},
+		webo.OptionString{OptionValue: "valorisation-PI", OptionLabel: model.LabelValorisation("PI")},
 	}
 }
 

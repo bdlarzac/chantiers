@@ -24,7 +24,6 @@ var tmpl *template.Template
 
 func init() {
 	var fmap = template.FuncMap{
-		"nl2br":             nl2br,
 		"dateFr":            dateFr,
 		"dateIso":           dateIso,
 		"labelEssence":      labelEssence,
@@ -32,6 +31,7 @@ func init() {
 		"labelExploitation": labelExploitation,
 		"labelValorisation": labelValorisation,
 		"labelActivite":     labelActivite,
+		"nl2br":             nl2br,
 		"safeHTML":          safeHTML,
 		"twoDigits":         twoDigits,
 		"ucFirst":           ucFirst,
