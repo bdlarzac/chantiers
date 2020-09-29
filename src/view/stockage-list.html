@@ -50,31 +50,32 @@
         
         <!-- ************************************* -->
         <div class="big2 bold margin-top margin-bottom">
-            Loyers
-            <a class="padding-left" href="/loyer-stockage/new/{{.Id}}">
-                <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau loyer pour {{.Nom}}"/>
+            Frais
+            <a class="padding-left" href="/frais-stockage/new/{{.Id}}">
+                <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau frais pour {{.Nom}}"/>
             </a>
         </div>
-        {{if .Loyers}}
+        {{if .Frais}}
         <table class="bordered margin-left">
-            <tr><th></th><th>Début</th><th>Fin</th><th>Montant</th></tr>
+            <tr><th></th><th>Type</th><th>Début</th><th>Fin</th><th>Montant</th></tr>
         {{end}}
-        {{range .Loyers}}                                         
+        {{range .Frais}}                                         
             <tr>
                 <td>
-                    <a href="#" onclick="deleteLoyer({{.Id}}, {{.DateDebut | dateFr}}, {{.DateFin | dateFr}}, {{.Montant}})">
-                        <img class="inline" src="/static/img/delete.png" title="Supprimer ce loyer" />
+                    <a href="#" onclick="deleteFrais({{.Id}}, {{.DateDebut | dateFr}}, {{.DateFin | dateFr}}, {{.Montant}})">
+                        <img class="inline" src="/static/img/delete.png" title="Supprimer ce frais" />
                     </a>
-                    <a class="inline" href="/loyer-stockage/update/{{.Id}}">
+                    <a class="inline" href="/frais-stockage/update/{{.Id}}">
                         <img src="/static/img/update.png" title="Modifier ce loyer" />
                     </a>
                 </td>
+                <td>{{.TypeFrais | labelStockFrais}}</td>
                 <td>{{.DateDebut | dateFr}}</td>
                 <td>{{.DateFin | dateFr}}</td>
-                <td><b><script>document.write(round({{.Montant}}, 2));</script> &euro; / an</b></td>
+                <td><b><script>document.write(round({{.Montant}}, 2));</script> &euro;</b></td>
             </tr>
         {{end}}
-        {{if .Loyers}}
+        {{if .Frais}}
         </table>
         {{end}}
         
@@ -106,13 +107,13 @@ function deleteStockage(id, nom, deletable){
 }
 
 // *****************************************
-function deleteLoyer(id, deb, fin, montant){
+function deleteFrais(id, deb, fin, montant){
     var msg = "Attention, en cliquant sur OK,\n"
             + "ce loyer sera définitivement supprimé :\n"
             + montant + " euros (du " + deb + " au " + fin + ")";
     var r = confirm(msg);
     if (r == true) {
-        window.location = "/loyer-stockage/delete/" + id;
+        window.location = "/frais-stockage/delete/" + id;
     }
 }
 

@@ -55,6 +55,20 @@
         </td>
     </tr>
     
+    {{if .FraisRepas}}
+    <tr>
+        <th class="vertical-align-top">Frais repas</th>
+        <td>{{.FraisRepas}} &euro;</td>
+    </tr>
+    {{end}}
+
+    {{if .FraisReparation}}
+    <tr>
+        <th class="vertical-align-top">Frais réparation</th>
+        <td>{{.FraisReparation}} &euro;</td>
+    </tr>
+    {{end}}
+
     {{if .Ventes}}
     <tr>
         <th class="vertical-align-top">Ventes</th>
@@ -65,7 +79,7 @@
         </td>
     </tr>
     {{end}}
-    
+
 </table>
 
 <table class="bordered" style="margin-top:1em;">

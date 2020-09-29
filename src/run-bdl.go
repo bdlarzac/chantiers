@@ -126,9 +126,9 @@ func main() {
 
 	r.HandleFunc("/tas/empty/{id:[0-9]+}", H(control.SignalerTasVide))
 
-	r.HandleFunc("/loyer-stockage/new/{id-stockage:[0-9]+}", H(control.NewStockLoyer))
-	r.HandleFunc("/loyer-stockage/update/{id:[0-9]+}", H(control.UpdateStockLoyer))
-	r.HandleFunc("/loyer-stockage/delete/{id:[0-9]+}", H(control.DeleteStockLoyer))
+	r.HandleFunc("/frais-stockage/new/{id-stockage:[0-9]+}", H(control.NewStockFrais))
+	r.HandleFunc("/frais-stockage/update/{id:[0-9]+}", H(control.UpdateStockFrais))
+	r.HandleFunc("/frais-stockage/delete/{id:[0-9]+}", H(control.DeleteStockFrais))
 
 	r.HandleFunc("/humidite/liste", H(control.ListHumid))
 	r.HandleFunc("/humidite/liste/{annee:[0-9]+}", H(control.ListHumid))

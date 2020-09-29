@@ -7,16 +7,21 @@
         <label>Lieu de stockage</label>
         <input type="text" value="{{.Stockage.Nom}}" class="width20" readonly>
     
+        <label for="typefrais">Type de frais</label>
+        <select name="typefrais" id="typefrais" class="width10">
+            {{$.Details.TypeFraisOptions}}
+        </select>
+        
         <label for="date-debut">Date début : </label>
-        <input type="date" id="date-debut" name="date-debut" value="{{.Loyer.DateDebut | dateIso}}" required>
+        <input type="date" id="date-debut" name="date-debut" value="{{.Frais.DateDebut | dateIso}}" required>
         
         <label for="date-fin">Date fin : </label>
-        <input type="date" id="date-fin" name="date-fin" value="{{.Loyer.DateFin | dateIso}}" required>
+        <input type="date" id="date-fin" name="date-fin" value="{{.Frais.DateFin | dateIso}}" required>
         
-        <label for="montant">Montant annuel (&euro;) : </label>
-        <input type="number" id="montant" name="montant" step="0.01" min="0" min="0" value="{{.Loyer.Montant}}" class="width5" required>
+        <label for="montant">Montant (&euro;) : </label>
+        <input type="number" id="montant" name="montant" step="0.01" min="0" min="0" value="{{.Frais.Montant | zero2empty}}" class="width5" required>
         
-        <input type="hidden" name="id-loyer" value="{{.Loyer.Id}}">
+        <input type="hidden" name="id-frais" value="{{.Frais.Id}}">
         <input type="hidden" name="id-stockage" value="{{.Stockage.Id}}">
     </div>
     <br>
@@ -35,18 +40,23 @@ window.addEventListener("load", function(){
 
 // ***************************************
 function initialize(){
-    var inp = document.getElementById("montant");
-    if(inp.value == 0){
-        inp.value = "";
-    }
 }
 
 // ***************************************
 function validateForm(){
+    let msg = "";
     var deb = document.getElementById("date-debut").value;
     var fin = document.getElementById("date-fin").value;
     if(fin <= deb){
-        alert("La date de fin doit se situer après la date de début");
+        msg += "La date de fin doit se situer après la date de début";
+    }
+    if(document.getElementById("CHOOSE_TYPEFRAIS").selected == true){
+        msg += "\n- Vous devez choisir un type de frais";                                           
+    }
+    //
+    if(msg != ""){
+        msg = "Impossible de valider ce formulaire :" + msg;
+        alert(msg);
         return false;
     }
     return true;

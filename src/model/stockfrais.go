@@ -1,5 +1,5 @@
 /******************************************************************************
-    Loyers des hangars pour stocker des plaquettes
+    Frais des hangars pour stocker des plaquettes
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -14,63 +14,68 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type StockLoyer struct {
+type StockFrais struct {
 	Id         int
 	IdStockage int `db:"id_stockage"`
+	TypeFrais  string
 	Montant    float64
 	DateDebut  time.Time `db:"datedeb"`
 	DateFin    time.Time `db:"datefin"`
 }
 
 // *********************************************************
-func GetStockLoyer(db *sqlx.DB, id int) (*StockLoyer, error) {
-	ls := &StockLoyer{}
-	query := "select * from stockloyer where id=$1"
+func GetStockFrais(db *sqlx.DB, id int) (*StockFrais, error) {
+	sf := &StockFrais{}
+	query := "select * from stockfrais where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(ls)
+	err := row.StructScan(sf)
 	if err != nil {
-		return ls, werr.Wrapf(err, "Erreur query : "+query)
+		return sf, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return ls, nil
+	return sf, nil
 }
 
 // *********************************************************
-func InsertStockLoyer(db *sqlx.DB, sl *StockLoyer) (int, error) {
-	query := `insert into stockloyer(
+func InsertStockFrais(db *sqlx.DB, sf *StockFrais) (int, error) {
+	query := `insert into stockfrais(
 	    id_stockage,
+	    typefrais,
 	    montant,
 	    datedeb,
 	    datefin
-	    ) values($1, $2, $3, $4) returning id`
+	    ) values($1,$2,$3,$4,$5) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
-		sl.IdStockage,
-		sl.Montant,
-		sl.DateDebut,
-		sl.DateFin).Scan(&id)
+		sf.IdStockage,
+		sf.TypeFrais,
+		sf.Montant,
+		sf.DateDebut,
+		sf.DateFin).Scan(&id)
 	return id, err
 }
 
 // *********************************************************
-func UpdateStockLoyer(db *sqlx.DB, sl *StockLoyer) error {
-	query := `update stockloyer set(
+func UpdateStockFrais(db *sqlx.DB, sf *StockFrais) error {
+	query := `update stockfrais set(
+	    typefrais,
         montant,
         datedeb,
         datefin
-        ) = ($1,$2,$3) where id=$4`
+        ) = ($1,$2,$3,$4) where id=$5`
 	_, err := db.Exec(
 		query,
-		sl.Montant,
-		sl.DateDebut,
-		sl.DateFin,
-		sl.Id)
+		sf.TypeFrais,
+		sf.Montant,
+		sf.DateDebut,
+		sf.DateFin,
+		sf.Id)
 	return err
 }
 
 // *********************************************************
-func DeleteStockLoyer(db *sqlx.DB, id int) error {
-	query := "delete from stockloyer where id=$1"
+func DeleteStockFrais(db *sqlx.DB, id int) error {
+	query := "delete from stockfrais where id=$1"
 	_, err := db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

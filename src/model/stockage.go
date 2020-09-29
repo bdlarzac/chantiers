@@ -22,7 +22,7 @@ type Stockage struct {
 	Stock     float64
 	Deletable bool
 	TasActifs []*Tas
-	Loyers    []*StockLoyer
+	Frais    []*StockFrais
 }
 
 // ************************** Get one *******************************
@@ -42,7 +42,7 @@ func GetStockage(db *sqlx.DB, id int) (*Stockage, error) {
 
 // Renvoie un lieu de stockage contenant
 // - les données stockées en base.
-// - les loyers
+// - les frais
 // - le champ Deletable
 // - les tas non vides
 func GetStockageFull(db *sqlx.DB, id int) (*Stockage, error) {
@@ -50,9 +50,9 @@ func GetStockageFull(db *sqlx.DB, id int) (*Stockage, error) {
 	if err != nil {
 		return s, werr.Wrapf(err, "Erreur appel GetStockage()")
 	}
-	err = s.ComputeLoyers(db)
+	err = s.ComputeFrais(db)
 	if err != nil {
-		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeLoyers()")
+		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeFrais()")
 	}
 	err = s.ComputeTasActifs(db)
 	if err != nil {
@@ -118,14 +118,14 @@ func GetStockagesFull(db *sqlx.DB) ([]*Stockage, error) {
 
 // ************************** Compute *******************************
 
-func (s *Stockage) ComputeLoyers(db *sqlx.DB) error {
-	query := "select * from stockloyer where id_stockage=$1 order by datedeb desc"
-	loyers := []*StockLoyer{}
-	err := db.Select(&loyers, query, s.Id)
+func (s *Stockage) ComputeFrais(db *sqlx.DB) error {
+	query := "select * from stockfrais where id_stockage=$1 order by datedeb desc"
+	frais := []*StockFrais{}
+	err := db.Select(&frais, query, s.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
-	s.Loyers = loyers
+	s.Frais = frais
 	return nil
 }
 
@@ -202,7 +202,7 @@ func UpdateStockage(db *sqlx.DB, s *Stockage) error {
 }
 
 func DeleteStockage(db *sqlx.DB, id int) error {
-	query := "delete from stockloyer where id_stockage=$1"
+	query := "delete from stockfrais where id_stockage=$1"
 	_, err := db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

@@ -149,3 +149,21 @@ func LabelExploitation(abbrev string) string {
 func LabelGranulo(abbrev string) string {
 	return abbrev // le type stocké en base correspond au label
 }
+
+// ************************** Frais des lieux de stockage *******************************
+// cf type postgres typestockfrais
+
+// Labels du type de frais (pour lieu de stockage)
+// @param abbrev : type de frais tel que stockée en base
+func LabelStockFrais(abbrev string) string {
+	switch abbrev {
+	case "AS":
+		return "Assurance"
+	case "EL":
+		return "Electricité"
+	case "LO":
+		return "Loyer"
+	}
+	return "??? BUG LabelStockFrais ???"
+}
+

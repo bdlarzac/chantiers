@@ -109,6 +109,17 @@ func WeboGranulo() []webo.OptionString {
 	}
 }
 
+// Renvoie la liste des types de frais possibles (pour lieux de stockage)
+// dans un format utilisable par webo
+func WeboStockFrais() []webo.OptionString {
+	return []webo.OptionString{
+		webo.OptionString{OptionValue: "CHOOSE_STOCKFRAIS", OptionLabel: "--- Choisir ---"},
+		webo.OptionString{OptionValue: "stockfrais-AS", OptionLabel: model.LabelStockFrais("AS")},
+		webo.OptionString{OptionValue: "stockfrais-EL", OptionLabel: model.LabelStockFrais("EL")},
+		webo.OptionString{OptionValue: "stockfrais-LO", OptionLabel: model.LabelStockFrais("LO")},
+	}
+}
+
 // Renvoie la liste des taux de TVA utilisés pour payer un intervenant extérieur
 // dans un format utilisable par webo
 // @param  chooseId     Chaîne utilisée pour désigner l'id et la value de l'option "---Choisir ---"

@@ -121,6 +121,7 @@ func installTypes() {
 	initialize.CreateTable("typeunite")
 	initialize.CreateTable("typevalorisation")
 	initialize.CreateTable("typegranulo")
+	initialize.CreateTable("typestockfrais")
 }
 func installCommune() {
 	initialize.CreateTable("commune")
@@ -156,11 +157,12 @@ func installUG() {
 }
 func installStockage() {
 	initialize.CreateTable("stockage")
-	initialize.CreateTable("stockloyer")
+	initialize.CreateTable("stockfrais")
 	initialize.CreateTable("plaq")
 	initialize.CreateTable("tas")
 	initialize.CreateTable("humid")
 	initialize.CreateTable("humid_acteur")
+//	initialize.FillHangarLiquisses()
 }
 func installPlaquette() {
 	initialize.CreateTable("plaqop")
@@ -191,7 +193,7 @@ func installRecent() {
 // *********************************************************
 func handleFixture() {
 	if *flagFixture == "stockage" {
-		fixture.FillStockage()
+//		fixture.FillStockage()
 	} else if *flagFixture == "acteur" {
 		fixture.AnonymizeActeurs()
 	} else {

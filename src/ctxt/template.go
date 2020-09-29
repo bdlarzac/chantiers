@@ -31,6 +31,7 @@ func init() {
 		"labelExploitation": labelExploitation,
 		"labelValorisation": labelValorisation,
 		"labelActivite":     labelActivite,
+		"labelStockFrais":   labelStockFrais,
 		"nl2br":             nl2br,
 		"safeHTML":          safeHTML,
 		"twoDigits":         twoDigits,
@@ -85,6 +86,11 @@ func labelValorisation(str string) template.HTML {
 // Type d'opération simple (abattage, débardage...)
 func labelActivite(str string) template.HTML {
 	return template.HTML(model.LabelActivite(str))
+}
+
+// Type de frais pour stockage (loyer, assurance, élec)
+func labelStockFrais(str string) template.HTML {
+	return template.HTML(model.LabelStockFrais(str))
 }
 
 // from https://www.php2golang.com/method/function.ucfirst.html
