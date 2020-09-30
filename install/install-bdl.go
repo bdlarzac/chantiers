@@ -1,11 +1,6 @@
 /******************************************************************************
     Initialisation de l'environnement nécessaire au fonctionnement de l'application.
     Code pas utilisé en fonctionnement normal.
-    Option -i pour installer la base de données et mettre les valeurs de départ
-    Option -f pour fabriquer des données de test (fixtures)
-    Exemples d'utilisation :
-    go run install-bdl.go -i commune
-    go run install-bdl.go -f stockage
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -21,11 +16,18 @@ import (
 	"strings"
 )
 
-var msgInstall, msgFixture string
+var errorMsg string
 var flagInstall, flagFixture *string
 
 // *********************************************************
+// toujours appelé par go au chargement du package
 func init() {
+    errorMsg = "COMMANDE INVALIDE\n"
+    errorMsg += "Utiliser avec -i (install) ou -f (fixture)\n"
+    errorMsg += "Exemples :\n"
+    errorMsg += "  go run install-bdl.go -i commune\n"
+    errorMsg += "  go run install-bdl.go -f stockage\n"
+    
 	possibleInstall := []string{
 		"all",
 		"acteur",
@@ -41,15 +43,20 @@ func init() {
 		"vente",
 		"ug",
 	}
-	msgInstall = strings.Join(possibleInstall, ", ")
-	flagInstall = flag.String("i", "", "Install - valeurs possibles : "+msgInstall)
+    errorMsg += "Valeurs possibles pour -i :\n  "
+    strInstall := strings.Join(possibleInstall, ", ")
+	errorMsg += strInstall + "\n"
 
 	possibleFixture := []string{
 		"stockage",
 		"acteur",
 	}
-	msgFixture = strings.Join(possibleFixture, ", ")
-	flagFixture = flag.String("f", "", "Fixture - valeurs possibles : "+msgFixture)
+    errorMsg += "Valeurs possibles pour -f :\n  "
+    strFixture := strings.Join(possibleFixture, ", ")
+	errorMsg += strFixture + "\n"
+	
+	flagInstall = flag.String("i", "", strInstall)
+	flagFixture = flag.String("f", "", strFixture)
 }
 
 // *********************************************************
@@ -58,8 +65,7 @@ func main() {
 	flag.Parse()
 
 	if (*flagInstall == "" && *flagFixture == "") || (*flagInstall != "" && *flagFixture != "") {
-		fmt.Println("Utiliser avec -i (install) ou -f (fixture)")
-		fmt.Println("Exemples :\n  go run install-bdl.go -i commune\n  go run install-bdl.go -f stockage")
+		fmt.Println(errorMsg)
 		return
 	}
 
@@ -111,7 +117,7 @@ func handleInstall() {
 	} else if *flagInstall == "recent" {
 		installRecent()
 	} else {
-		fmt.Println("COMMANDE INVALIDE - Valeurs possibles pour -i : " + msgInstall)
+		fmt.Println(errorMsg)
 	}
 }
 func installTypes() {
@@ -139,7 +145,7 @@ func installActeur() {
 	initialize.AddActeurBDL()
 	initialize.AddActeurGFA()
 	initialize.FillProprietaire()
-	initialize.AddActeurs2020()
+	initialize.AddActeursInitiaux()
 }
 func installParcelle() {
 	initialize.CreateTable("parcelle")
@@ -162,7 +168,7 @@ func installStockage() {
 	initialize.CreateTable("tas")
 	initialize.CreateTable("humid")
 	initialize.CreateTable("humid_acteur")
-//	initialize.FillHangarLiquisses()
+	initialize.FillHangarsInitiaux()
 }
 func installPlaquette() {
 	initialize.CreateTable("plaqop")
@@ -193,10 +199,10 @@ func installRecent() {
 // *********************************************************
 func handleFixture() {
 	if *flagFixture == "stockage" {
-//		fixture.FillStockage()
+		fixture.FillStockage()
 	} else if *flagFixture == "acteur" {
 		fixture.AnonymizeActeurs()
 	} else {
-		fmt.Println("COMMANDE INVALIDE - Valeurs possibles pour -f : " + msgFixture)
+		fmt.Println(errorMsg)
 	}
 }

@@ -26,6 +26,31 @@ h2{
     color:white;
     padding:5px 1em;
 }
+h3{
+    font-size:1.8rem;
+}
+h4{
+    font-size:1.7rem;
+    margin:1rem;
+}
+h5{
+    font-size:1.5rem;
+    margin:1rem;
+}
+h6{
+    font-size:1.4rem;
+    margin:1rem;
+}
+.h7{
+    font-size:1.3rem;
+    margin:1rem;
+    font-weight:bold;
+}
+.h8{
+    font-size:1.2rem;
+    margin:1rem;
+    font-weight:bold;
+}
 .question{
     padding:.2em;
     margin:1em;
@@ -128,10 +153,6 @@ Le logiciel doit pouvoir intégrer des modifications de données effectuées dan
 <br>
 <br>Le logiciel est destiné à être utilisé dans les locaux de BDL, par les personnes de BDL affectées à son utilisation. Le logiciel ne connaît qu'un type d'utilisateur, qui a accès à toutes ses fonctionnalités. Etant utilisé comme une application de bureau, aucune précaution de sécurité n'est demandée (protection de son utilisation par mot de passe, chiffrement des données stockées sur ordinateur).
 
-<br><br>
-<div><b>
-Important : dans la spécification du logiciel, prendre les décisions en fonction de l'activité de BDL sur toute la durée de vie du logiciel ; ne pas se limiter à la situation actuelle ou passée.
-</b></div>
 
 <!-- ********************************************************************************* -->
 <h2><a name="donnees">Données</a></h2>
@@ -139,8 +160,8 @@ Important : dans la spécification du logiciel, prendre les décisions en foncti
 
 Données manipulées par le logiciel :
 <ul>
-    <li><b>Données géographiques</b> : Communes, lieux-dits, parcelles cadastrales.</li>
-    <li><b>Données forestières</b> Unités de gestion (notées UG).</li>
+    <li><b>Données géographiques</b> : communes, lieux-dits, parcelles cadastrales.</li>
+    <li><b>Données forestières</b> : unités de gestion (notées UG).</li>
     <li><b>Acteurs</b> : personnes physiques ou morales intervenant dans l'activité de BDL.</li>
     <li><b>Activités</b> de BDL : chantiers et ventes.</li>
 </ul>
@@ -152,7 +173,7 @@ Communes, lieux-dits et parcelles cadastrales sont à importer du "logiciel SCTL
 <br>Les UGs, leurs caractéristiques et associations avec les parcelles sont à importer de la couche typologie.
 
 <!-- ************************************* -->
-<h4>Communes, lieux-dits</h4>
+<h4>1 - Communes, lieux-dits</h4>
 <ul>
     <li>Une commune est caractérisée par son nom.</li>
     <li>Un lieu-dit est caractérisé par son nom.</li>
@@ -161,7 +182,7 @@ Communes, lieux-dits et parcelles cadastrales sont à importer du "logiciel SCTL
 </ul>
 
 <!-- ************************************* -->
-<h4>Parcelles cadastrales</h4>
+<h4>2 - Parcelles cadastrales</h4>
 <ul>
     <li>
         Une parcelle est caractérisée par :
@@ -180,7 +201,7 @@ Communes, lieux-dits et parcelles cadastrales sont à importer du "logiciel SCTL
 </ul>
 
 <!-- ************************************* -->
-<h4>Unités de gestion</h4>
+<h4>3 - Unités de gestion</h4>
 <ul>
     <li>
         Une UG est caractérisée par :
@@ -202,7 +223,10 @@ Communes, lieux-dits et parcelles cadastrales sont à importer du "logiciel SCTL
 </ul>
 
 <!-- *********************************************************** -->
-<h3><a name="2-2-lieux-de-stockage-hangars-a-plaquettes">Lieux de stockage (= hangars à plaquettes)</a></h3>
+<h3>Activité de BDL</h3>
+
+<!-- ************************************* -->
+<h4><a name="2-2-lieux-de-stockage-hangars-a-plaquettes">1 - Lieux de stockage (= hangars à plaquettes)</a></h4>
 
 Caractéristiques :
 <ul>
@@ -211,8 +235,27 @@ Caractéristiques :
 </ul>
 Note : un lieu de stockage n'est pas associé à un lieu-dit, ce qui permet d'avoir des lieux de stockage hors de la zone géographique d'exploitation.
 
+<!-- *********************************************************** -->
+<h5><a name="2-4-loyers">1.1 - Frais</a></h5>
+Un lieu de stockage est associé à un ou plusieurs frais.
+<br>Les différents types de frais sont :
+<ul>
+    <li>Loyer</li>
+    <li>Assurance</li>
+    <li>Electricité</li>
+</ul>
+
+Chaque frais est constitué par :
+<ul>
+    <li>type de frais</li>
+    <li>date de début</li>
+    <li>date de fin</li>
+    <li>montant</li>
+</ul>
+Les frais sont utilisés pour calculer le coût du stockage.
+
 <!-- ************************************* -->
-<h3><a name="2-3-tas">Tas</a></h3>
+<h5><a name="2-3-tas">1.2 - Tas</a></h5>
 Un tas de plaquette se situe dans un lieu de stockage (hangar), et sert à recueillir les plaquettes générées par un chantier.
 <br>Un tas est caractérisé par :
 <ul>
@@ -228,7 +271,7 @@ Relation entre un tas et les autres entités :
 </ul>
 
 <!-- ************************************* -->
-<h4>Stock</h4>
+<h5>1.3 - Stock</h5>
 <ul>
     <li>Stock d'un lieu de stockage = somme des stocks des tas présents dans ce hangar.</li>
     <li>Stock d'un un tas = somme des quantités transportées vers ce tas, moins le pourcentage de perte, moins la somme des quantités chargées depuis ce tas (pour des ventes).</li>
@@ -242,9 +285,10 @@ Deux opérations affectent le stock d'un tas :
 </ul>                                                                                                                                       
 
 Note : Il est impossible de suivre de manière précise le stock de plaquettes présentes dans un tas. Le problème vient du pourcentage de perte : différence entre le volume de bois vert broyé et la quantité de plaquettes sèches vendues. Ce pourcentage étant arbitraire et ne correspondant pas à une réalité mesurable, l'état des stocks ne peut être qu'indicatif.
-<br>Conséquence : on ne peut pas calculer par programme si un tas est vide ou pas ; <i>c'est donc à l'utilisateur de signaler qu'un tas est épuisé</i>.
+<br>Conséquence : on ne peut pas calculer par programme si un tas est vide ou pas ; <i>c'est donc à l'utilisateur de signaler qu'un tas est épuisé</i>.                                                  
 
-<h4>Supression, archivage</h4>
+<!-- ************************************* -->
+<h5>1.4 - Supression, archivage</h5>
 Un lieu de stockage associé à aucun chantier plaquettes peut être supprimé.
 <br>Un lieu de stockage associé à un ou plusieurs chantier(s) plaquettes ne peut PAS être supprimé, mais il peut être <b>archivé</b>.
 <br>Un lieu de stockage archivé n'est plus affiché dans la liste des lieux de stockage.
@@ -252,17 +296,7 @@ Un lieu de stockage associé à aucun chantier plaquettes peut être supprimé.
 
 
 <!-- *********************************************************** -->
-<h3><a name="2-4-loyers">Loyers</a></h3>
-Un lieu de stockage est associé à un ou plusieurs loyer. Chaque loyer est constitué par :
-<ul>
-    <li>date de début</li>
-    <li>date de fin</li>
-    <li>montant (coût annuel)</li>
-</ul>
-Le loyer est utilisé pour calculer le coût du stockage.
-
-<!-- *********************************************************** -->
-<h3><a name="2-5-mesures-d-humidite">Mesures d'humidité</a></h3>
+<h5><a name="2-5-mesures-d-humidite">1.5 - Mesures d'humidité</a></h5>
 Une mesure d'humidité est :
 <ul>
     <li>liée à un tas.</li>
@@ -273,8 +307,9 @@ Une mesure d'humidité est :
 
 Les mesures d'humidité ne sont impliquées dans aucun calcul.
 
+
 <!-- *********************************************************** -->
-<h3><a name="2-6-chantiers-plaquettes">Chantiers plaquettes</a></h3>
+<h4><a name="2-6-chantiers-plaquettes">2 - Chantiers plaquettes</a></h4>
 Un chantier plaquette est relié à une (et une seule) unité de gestion.
 <br>Il possède des caractéristiques propres, et est associé à plusieurs opérations :
 <ul>
@@ -287,7 +322,7 @@ Un chantier plaquette est relié à une (et une seule) unité de gestion.
 </ul>
 
 <!-- ************************************* -->
-<h4>Caractéristiques propres à un chantier plaquettes</h4>
+<h5>2.1 - Caractéristiques propres à un chantier plaquettes</h5>
 Un chantier plaquettes est caractérisé par :
 <ul>
     <li>Nom = nom du lieu-dit suivi de la date de début</li>
@@ -308,9 +343,8 @@ Un pourcentage de perte arbitraire (10%) est à mettre en configuration.
 <br>Ce volume est défini comme la somme des quantités déchiquetées.
 
 
-
 <!-- ************************************* -->
-<h4>Opérations simples</h4>
+<h5>2.2 - Opérations simples</h5>
 Les opérations d'abattage, de débardage, de déchiquetage et de broyage peuvent être représentées de la même manière et contiennent les caractéristiques suivantes :
 <ul>
     <li>Chantier plaquette identifié par le système</li>
@@ -330,37 +364,71 @@ Unité réfère à Quantité (ex : Quantité = 10 et Unité = heures signifie : 
 <br>Il est possible d'associer 0, 1 ou plusieurs opérations simples de chaque type à un chantier plaquettes (il peut par exemple y avoir plusieurs opérations d'abattage).
 
 <!-- ************************************* -->
-<h4>Transport vers un lieu de stockage</h4>
-Chaque chantier plaquette donne lieu à 0, 1 ou plusieurs opérations de transport vers un lieu de stockage.
+<h5>2.3 - Transport vers un lieu de stockage</h5>
+Chaque chantier plaquette donne lieu à 0, 1 ou plusieurs opérations de transport vers tas (dans un lieu de stockage).
 <br>Le transport vers un lieu de stockage est constitué de deux opérations : le transport et le rangement.
 <br>
 <br>Transport et rangement ne sont pas liés.
 <br>
 <br>Le coût du transport doit pouvoir être précisé de 2 manières :
 <ul>
-    <li>Coût détaillé : <code>coût = coût transport + coût outil</code></li>
+    <li>Coût détaillé : <code>coût = coût conducteur + coût outil</code></li>
     <li>Coût global</li>
 </ul>
 
-
-<h5>Transport</h5>
-Le transport a les caractéristiques suivantes :
+Un transport a les caractéristiques suivantes :
 <ul>
     <li>Chantier plaquette identifié par le système</li>
     <li>Tas identifié par le système</li>
-    <li>Transporteur, acteur identifié par le système</li>
     <li>Date du transport</li>
     <li>Quantité transportée (en maps)</li>
-    <li>Nb d'heures travaillées par le transporteur</li>
-    <li>Prix HT du transporteur par heure</li>
+    <li>Notes : champ texte libre</li>
+</ul>
+
+La quantité transportée est importante, car utilisée dans le calcul du stock du tas.
+
+<!-- ************************************* -->
+<h6>2.3.1 - Coût global</h6>
+Caractérisé par :
+<ul>
+    <li>Transporteur, acteur identifié par le système</li>
+    <li>Prix HT du transport</li>
     <li>Taux de TVA</li>
     <li>Date de paiement du transporteur</li>
-    <li>Notes : champ texte libre</li>
+</ul>
+
+<ul>
+    <li>Transporteur, acteur identifié par le système</li>
+    <li>Nb d'heures travaillées par le transporteur</li>
+    <li>Prix HT du transporteur par heure</li>
+</ul>                                                   
+
+<!-- ************************************* -->
+<h6>2.3.2 - Coût détaillé</h6>
+
+Dans ce cas, <code>coût = coût conducteur + coût outil</code>
+
+<!-- ************************************* -->
+<div class="h7">2.3.2.1 - Coût conducteur</div>
+Caractérisé par :
+<ul>
+    <li>Conducteur, acteur identifié par le système</li>
+    <li>Prix HT / heure</li>
+    <li>Taux de TVA</li>
+    <li>Date de paiement</li>
+</ul>
+
+<!-- ************************************* -->
+<div class="h7">2.3.2.2 - Coût outil</div>
+Caractérisé par :
+<ul>
+    <li>Propriétaire de l'outil, acteur identifié par le système</li>
 </ul>
 
 Le transport peut être effectué soit par camion, soit par tracteur + benne.
 
-<h6>Transport par camion</h6>
+<!-- ************************************* -->
+<div class="h8">2.3.2.2.1 - Transport par camion</div>
 Dans le cas d'un transport par camion, les caractéristiques sont les suivantes : 
 <ul>
     <li>Nb km</li>
@@ -369,7 +437,8 @@ Dans le cas d'un transport par camion, les caractéristiques sont les suivantes 
     <li>Date de paiement</li>
 </ul>
 
-<h6>Transport par tracteur + benne</h6>
+<!-- ************************************* -->
+<div class="h8">2.3.2.2.2 - Transport par tracteur + benne</div>
 Dans le cas d'un transport par tracteur, les caractéristiques sont les suivantes : 
 <ul>
     <li>Nombre de bennes</li>
@@ -379,15 +448,8 @@ Dans le cas d'un transport par tracteur, les caractéristiques sont les suivante
     <li>Date de paiement</li>
 </ul>
 
-<h6>Coût global</h6>
-Caractéristiques :
-<ul>
-    <li>Prix HT</li>
-    <li>Taux de TVA</li>
-    <li>Date de paiement</li>
-</ul>
-
-<h5>Rangement</h5>
+<!-- ************************************* -->
+<h5>2.4 - Rangement</h5>
 Le rangement (déchargement) des plaquettes dans un lieu de stockage ; se fait à l'aide d'un télescopique.
 <br>
 <br>Le coût du chargement doit pouvoir être précisé de 2 manières :
@@ -430,7 +492,7 @@ Unn rangement a les caractéristiques suivantes :
 </ul>
 
 <!-- *********************************************************** -->
-<h3><a name="2-7-ventes-plaquettes">Ventes plaquettes</a></h3>
+<h4><a name="2-7-ventes-plaquettes">3 - Ventes plaquettes</a></h4>
 
 Une vente de plaquettes est caractérisée par 3 opérations :
 <ul>
@@ -442,7 +504,7 @@ Une vente de plaquettes est caractérisée par 3 opérations :
 Une vente fait l'objet d'une facturation ; une vente est liée à une et une seule facture ; une facture ne concerne qu'une seule vente.
 
 <!-- ************************************* -->
-<h4>Relations vente - chargement - livraison</h4>
+<h5>Relations vente - chargement - livraison</h5>
 <ul>
     <li>Une vente peut nécessiter plusieurs livraisons ; une livraison concerne une seule vente.</li>
     <li>Une livraison peut nécessiter plusieurs chargements ; un chargement concerne une seule livraison.</li>
@@ -462,7 +524,7 @@ Noter les limites concernant le chargement, qui peuvent conduire à définir plu
 <br>- Le même chargeur va faire le chargement pour 2 livraisons distinctes => on doit faire 2 opérations de chargement, une pour chaque livraison.
 
 <!-- ************************************* -->
-<h4>Vente - caractéristiques générales</h4>
+<h5>Vente - caractéristiques générales</h5>
 Une vente est caractérisée par :
 <ul>
     <li>Client, acteur identifié par le système</li>
@@ -474,7 +536,7 @@ Une vente est caractérisée par :
 </ul>
 
 <!-- ************************************* -->
-<h4>Facture vente plaquettes</h4>
+<h5>Facture vente plaquettes</h5>
 Une facture reprend les informations liées à la vente, avec en plus :
 <ul>
     <li>Le numéro de facture (saisi par l'utilisateur)</li>
@@ -493,7 +555,7 @@ Une facture reprend les informations liées à la vente, avec en plus :
 </ul>
 
 <!-- ************************************* -->
-<h4>Livraison</h4>
+<h5>3.1 - Livraison</h5>
 Une livraison est caractérisée par :
 <ul>
     <li>Vente concernée par ce chargement</li>
@@ -526,7 +588,7 @@ La quantité livrée (en maps) est la somme des quantités chargées.
                                                               
 
 <!-- ************************************* -->
-<h4>Chargement</h4>
+<h5>3.2 - Chargement</h5>
 Le chargement est caractérisé par :
 <ul>
     <li>Livraison concernée par ce chargement</li>
@@ -574,7 +636,7 @@ Le chargement est caractérisé par :
 
 
 <!-- *********************************************************** -->
-<h3><a name="2-8-chantiers-bois-de-chauffage-fermiers">Chantiers Bois de chauffage fermiers</a></h3>
+<h4><a name="2-8-chantiers-bois-de-chauffage-fermiers">4 - Chantiers Bois de chauffage fermiers</a></h4>
 Il s'agit de coupes effectués par des exploitants, que BDL ne facture pas.
 <br>Caractérisé par :
 <ul>
@@ -595,7 +657,7 @@ Il s'agit de coupes effectués par des exploitants, que BDL ne facture pas.
 <div class="question">A confirmer : un fermier ne peut couper que des parcelles dont il est exploitant</div>
 
 <!-- *********************************************************** -->
-<h3><a name="2-9-chantiers-bois-sur-pied">Chantiers Bois sur pied</a></h3>
+<h4><a name="2-9-chantiers-bois-sur-pied">5 - Chantiers Bois sur pied</a></h4>
 
 Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par BDL.
 <br>Caractéristiques :
@@ -618,13 +680,13 @@ Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par B
 Noter que ce type de chantier est particulier, car il faut spécifier à la fois les parcelles ET l'unité de gestion.
 <br>Spécifier l'UG est nécessaire pour calculer le bilan forestier (qui se fait par UG, et pas par parcelle).
 
-<h4>Facture chantier bois sur pied</h4>
+<h5>Facture chantier bois sur pied</h5>
 Le numéro de facture doit être saisi par l'utilisateur.
 
 <div class="question">A vérifier : toujours en stères ? Eric parle de m<sup>3</sup></div>
 
 <!-- *********************************************************** -->
-<h3><a name="2-10-chantiers-autres-valorisations">Chantiers Autres valorisations</a></h3>
+<h4><a name="2-10-chantiers-autres-valorisations">6 - Chantiers Autres valorisations</a></h4>
 Fait l'objet d'une facturation par BDL.
 <br>Caractéristiques :
 <ul>
@@ -990,7 +1052,7 @@ Page générale affichant la liste des lieux de stockage (pas de page spécifiqu
 <ul>
     <li>Le nom du lieu de stockage</li>
     <li>
-        La liste des loyers associés avec leurs infos (montant, dates de début et de fin) et possibilité de créer / modifier / supprimer des loyers.
+        La liste des frais associés avec leurs infos (type de frais, montant, dates de début et de fin) et possibilité de créer / modifier / supprimer des frais.
     </li>
     <li>
         La liste des tas actifs, avec la possibilité de déclarer qu'un tas est vide.

@@ -222,8 +222,8 @@ func FillLiensParcelleExploitant() {
 
 // *********************************************************
 // Ajoute les acteurs saisis dans un fichier csv pour importer 
-// l'activité passée de BDL au moment du démarrage de la base
-func AddActeurs2020() {
+// les acteurs de BDL au moment du démarrage de la base
+func AddActeursInitiaux() {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"
 	fmt.Println("Remplit", table, " à partir de", csvfile)
