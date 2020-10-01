@@ -166,4 +166,3 @@ func LabelStockFrais(abbrev string) string {
 	}
 	return "??? BUG LabelStockFrais ???"
 }
-

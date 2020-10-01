@@ -12,10 +12,10 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"sort"
 	//"fmt"
 )
 
@@ -87,7 +87,7 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
 			}
 		}
 	}
-	// tri par date          
+	// tri par date
 	sortedItems := make(affactureItemSlice, 0, len(aff.Items))
 	for _, elt := range aff.Items {
 		sortedItems = append(sortedItems, elt)
@@ -213,26 +213,26 @@ func (aff *Affacture) computeItemsTransport(db *sqlx.DB) error {
 			//
 			// Transporteur
 			//
-			montantHT = elt.TrNheure * elt.TrPrixH
-			montantTVA = montantHT * elt.TrTVA / 100
+			montantHT = elt.ConNheure * elt.ConPrixH
+			montantTVA = montantHT * elt.ConTVA / 100
 			montantTTC = montantHT + montantTVA
 			ligne = AffactureLigne{
 				Titre: "Transport",
 				Colonnes: []AffactureColonne{
 					{
 						Titre:  "Nb heures",
-						Valeur: strconv.FormatFloat(elt.TrNheure, 'f', 2, 64),
+						Valeur: strconv.FormatFloat(elt.ConNheure, 'f', 2, 64),
 					},
 					{
 						Titre:  "Prix / h",
-						Valeur: strconv.FormatFloat(elt.TrPrixH, 'f', 2, 64),
+						Valeur: strconv.FormatFloat(elt.ConPrixH, 'f', 2, 64),
 					},
 					{
 						Titre:  "Montant HT",
 						Valeur: strconv.FormatFloat(montantHT, 'f', 2, 64),
 					},
 					{
-						Titre:  "TVA " + strconv.FormatFloat(elt.TrTVA, 'f', -1, 64) + "%",
+						Titre:  "TVA " + strconv.FormatFloat(elt.ConTVA, 'f', -1, 64) + "%",
 						Valeur: strconv.FormatFloat(montantTVA, 'f', 2, 64),
 					},
 					{

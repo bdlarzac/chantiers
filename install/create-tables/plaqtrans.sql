@@ -5,6 +5,8 @@ create table plaqtrans (
     id_chantier             int not null references plaq(id),
     id_tas                  int not null references tas(id),
     id_transporteur         int not null references acteur(id),
+    id_conducteur           int not null references acteur(id),
+    id_proprioutil          int not null references acteur(id),
     datetrans               date not null,
     qte                     numeric not null,
     typecout                char(1) not null, -- G (global) ou C (camion) ou T (tracteur+benne)
@@ -12,11 +14,11 @@ create table plaqtrans (
     glprix                  numeric,
     gltva                   numeric,
     gldatepay               date,
-	-- coût transporteur
-    trnheure                numeric,              
-    trprixh                 numeric,
-    trtva                   numeric,
-    trdatepay               date,
+	-- coût conducteur
+    connheure               numeric,              
+    conprixh                numeric,
+    contva                  numeric,
+    condatepay              date,
 	-- coût transport camion
 	cankm                   numeric,
     caprixkm                numeric,
@@ -33,3 +35,5 @@ create table plaqtrans (
 );
 create index plaqtrans_id_chantier_idx on plaqtrans(id_chantier);
 create index plaqtrans_id_transporteur_idx on plaqtrans(id_transporteur);
+create index plaqtrans_id_conducteur_idx on plaqtrans(id_conducteur);
+create index plaqtrans_id_proprioutil_idx on plaqtrans(id_proprioutil);

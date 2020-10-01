@@ -8,11 +8,11 @@
 package model
 
 import (
+	"bdl.local/bdl/generic/wilk/werr"
+	"github.com/jmoiron/sqlx"
 	"sort"
 	"strconv"
 	"time"
-	"bdl.local/bdl/generic/wilk/werr"
-	"github.com/jmoiron/sqlx"
 	//"fmt"
 )
 
@@ -211,7 +211,6 @@ func GetFermiersAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
 	}
 	return acteurs, nil
 }
-
 
 // ************************** Get activité *******************************
 

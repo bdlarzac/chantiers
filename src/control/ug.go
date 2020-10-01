@@ -63,7 +63,7 @@ func SearchUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Recherche UG",
-            CSSFiles: []string{"/static/css/form.css"},
+			CSSFiles: []string{"/static/css/form.css"},
 		},
 		Menu: "accueil",
 	}

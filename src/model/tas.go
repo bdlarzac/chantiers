@@ -11,7 +11,7 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"errors"
 	"github.com/jmoiron/sqlx"
-//"fmt"
+	//"fmt"
 )
 
 type Tas struct {
@@ -49,7 +49,7 @@ func (t *Tas) ModifierStock(db *sqlx.DB, qte float64) error {
 
 // Pour indiquer qu'un tas est vide
 func DesactiverTas(db *sqlx.DB, id int) error {
-    tas, err := GetTas(db, id)
+	tas, err := GetTas(db, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTas()")
 	}
@@ -198,35 +198,35 @@ func UpdateTas(db *sqlx.DB, tas *Tas) error {
 }
 
 func DeleteTas(db *sqlx.DB, id int) error {
-    var err error
-    var query string
+	var err error
+	var query string
 	var ids []int
 	var deletedId int
-    // delete transports associés à ce tas
-    query = "select id from plaqtrans where id_tas=$1"
+	// delete transports associés à ce tas
+	query = "select id from plaqtrans where id_tas=$1"
 	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, deletedId = range(ids){
-	    err = DeletePlaqTrans(db, deletedId)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur DeletePlaqTrans()")
-        }
+	for _, deletedId = range ids {
+		err = DeletePlaqTrans(db, deletedId)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur DeletePlaqTrans()")
+		}
 	}
-    // delete chargements liés à ce tas
-    query = "select id from ventecharge where id_tas=$1"
+	// delete chargements liés à ce tas
+	query = "select id from ventecharge where id_tas=$1"
 	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, deletedId = range(ids){
-	    err = DeleteVenteCharge(db, deletedId)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur DeleteVenteCharge()")
-        }
+	for _, deletedId = range ids {
+		err = DeleteVenteCharge(db, deletedId)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur DeleteVenteCharge()")
+		}
 	}
-    // delete le tas
+	// delete le tas
 	query = "delete from tas where id=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {

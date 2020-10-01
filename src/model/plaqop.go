@@ -18,9 +18,9 @@ import (
 type PlaqOp struct {
 	Id         int
 	TypOp      string
-	IdChantier int        `db:"id_chantier"`
-	IdActeur   int        `db:"id_acteur"`
-	DateDebut  time.Time  `db:"datedeb"`
+	IdChantier int       `db:"id_chantier"`
+	IdActeur   int       `db:"id_acteur"`
+	DateDebut  time.Time `db:"datedeb"`
 	DateFin    time.Time
 	Qte        float64
 	Unite      string // j, h ou m

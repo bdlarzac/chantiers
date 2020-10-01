@@ -46,9 +46,9 @@ func GetUGFromCode(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		return err
 	}
 	if ug != nil {
-        resp = ug.Id
-    }
-	json, err := json.Marshal(resp)      
+		resp = ug.Id
+	}
+	json, err := json.Marshal(resp)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func GetUGFromCode(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 func GetUGFromCode1(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	type respElement struct {
-		Id   int    `json:"id"`
+		Id int `json:"id"`
 	}
 	var resp []respElement
 	ug, err := model.GetUGFromCode(ctx.DB, vars["code"])
@@ -67,8 +67,8 @@ func GetUGFromCode1(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 	if ug != nil {
-        resp = append(resp, respElement{ug.Id})
-    }
+		resp = append(resp, respElement{ug.Id})
+	}
 	json, err := json.Marshal(resp)
 	if err != nil {
 		return err
@@ -76,4 +76,3 @@ func GetUGFromCode1(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 	w.Write(json)
 	return nil
 }
-

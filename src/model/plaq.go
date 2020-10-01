@@ -14,7 +14,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-//"fmt"
+	//"fmt"
 )
 
 type Plaq struct {
@@ -276,6 +276,8 @@ func (chantier *Plaq) ComputeTransports(db *sqlx.DB) error {
 	for i, _ := range chantier.Transports {
 		chantier.Transports[i].ComputeTas(db)
 		chantier.Transports[i].ComputeTransporteur(db)
+		chantier.Transports[i].ComputeConducteur(db)
+		chantier.Transports[i].ComputeProprioutil(db)
 	}
 	return nil
 }
@@ -430,9 +432,9 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 // ************************** CRUD *******************************
 
 // Insère un chantier plaquette en base
-// + crée et insère en base le(s) tas 
+// + crée et insère en base le(s) tas
 func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
-    var err error
+	var err error
 	query := `insert into plaq(
         id_lieudit,
         id_fermier,
@@ -460,17 +462,17 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
 		chantier.Essence,
 		chantier.FraisRepas,
 		chantier.FraisReparation).Scan(&id)
-    if err != nil {
-        return id, werr.Wrapf(err, "Erreur query : "+query)
-    }
+	if err != nil {
+		return id, werr.Wrapf(err, "Erreur query : "+query)
+	}
 	// tas - crée un tas par liu de stockage sélectionné
-    for _, idStockage := range(idsStockages){
-        tas := NewTas(idStockage, id, 0, true)
-        _, err = InsertTas(db, tas)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur appel InsertTas()")
-        }
-    }
+	for _, idStockage := range idsStockages {
+		tas := NewTas(idStockage, id, 0, true)
+		_, err = InsertTas(db, tas)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur appel InsertTas()")
+		}
+	}
 	return id, nil
 }
 
@@ -522,31 +524,31 @@ func UpdatePlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) error {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	// si AV et pas AP => supprimer tas AV
-	for _, av := range(idsStockageAV){
-	    if !tiglib.InArrayInt(av, idsStockageAP){
-	        // Attention, ne pas faire un DeleteTas() directement avec une query
-	        // car DeleteTas() a pour effet de supprimer les activités qui lui sont reliées.
-            var idTasToDelete int
-            query = "select id from tas where id_chantier=$1 and id_stockage=$2"
-            err = db.Get(&idTasToDelete, query, chantier.Id, av)
-            if err != nil {
-                return werr.Wrapf(err, "Erreur appel Get(), query = " + query)
-            }
-            err = DeleteTas(db, idTasToDelete)
-            if err != nil {
-                return werr.Wrapf(err, "Erreur appel DeleteTas()")
-            }
-	    }
+	for _, av := range idsStockageAV {
+		if !tiglib.InArrayInt(av, idsStockageAP) {
+			// Attention, ne pas faire un DeleteTas() directement avec une query
+			// car DeleteTas() a pour effet de supprimer les activités qui lui sont reliées.
+			var idTasToDelete int
+			query = "select id from tas where id_chantier=$1 and id_stockage=$2"
+			err = db.Get(&idTasToDelete, query, chantier.Id, av)
+			if err != nil {
+				return werr.Wrapf(err, "Erreur appel Get(), query = "+query)
+			}
+			err = DeleteTas(db, idTasToDelete)
+			if err != nil {
+				return werr.Wrapf(err, "Erreur appel DeleteTas()")
+			}
+		}
 	}
 	// si AP et pas AV => créer tas AP
-	for _, ap := range(idsStockageAP){
-	    if !tiglib.InArrayInt(ap, idsStockageAV){
-	        tas := NewTas(ap, chantier.Id, 0, true)
-            _, err = InsertTas(db, tas)
-            if err != nil {
-                return werr.Wrapf(err, "Erreur appel InsertTas()")
-            }
-	    }
+	for _, ap := range idsStockageAP {
+		if !tiglib.InArrayInt(ap, idsStockageAV) {
+			tas := NewTas(ap, chantier.Id, 0, true)
+			_, err = InsertTas(db, tas)
+			if err != nil {
+				return werr.Wrapf(err, "Erreur appel InsertTas()")
+			}
+		}
 	}
 	return nil
 }
@@ -556,53 +558,53 @@ func DeletePlaq(db *sqlx.DB, id int) error {
 	var err error
 	var ids []int
 	var deletedId int
-    // delete transports associés à ce chantier
-    query = "select id from plaqtrans where id_chantier=$1"
+	// delete transports associés à ce chantier
+	query = "select id from plaqtrans where id_chantier=$1"
 	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, deletedId = range(ids){
-	    err = DeletePlaqTrans(db, deletedId)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur DeletePlaqTrans()")
-        }
+	for _, deletedId = range ids {
+		err = DeletePlaqTrans(db, deletedId)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur DeletePlaqTrans()")
+		}
 	}
-    // delete rangements associés à ce chantier
-    query = "select id from plaqrange where id_chantier=$1"
+	// delete rangements associés à ce chantier
+	query = "select id from plaqrange where id_chantier=$1"
 	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, deletedId = range(ids){
-	    err = DeletePlaqRange(db, deletedId)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur DeletePlaqRange()")
-        }
+	for _, deletedId = range ids {
+		err = DeletePlaqRange(db, deletedId)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur DeletePlaqRange()")
+		}
 	}
-    // delete opérations simples associées à ce chantier
-    query = "select id from plaqop where id_chantier=$1"
+	// delete opérations simples associées à ce chantier
+	query = "select id from plaqop where id_chantier=$1"
 	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, deletedId = range(ids){
-	    err = DeletePlaqOp(db, deletedId)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur DeletePlaqOp()")
-        }
+	for _, deletedId = range ids {
+		err = DeletePlaqOp(db, deletedId)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur DeletePlaqOp()")
+		}
 	}
-    // delete tas associés à ce chantier
-    query = "select id from tas where id_chantier=$1"
+	// delete tas associés à ce chantier
+	query = "select id from tas where id_chantier=$1"
 	err = db.Select(&ids, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, deletedId = range(ids){
-	    err = DeleteTas(db, deletedId)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur DeletePlaqOp()")
-        }
+	for _, deletedId = range ids {
+		err = DeleteTas(db, deletedId)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur DeletePlaqOp()")
+		}
 	}
 	// delete le chantier, fait à la fin pour respecter clés étrangères
 	query = "delete from plaq where id=$1"

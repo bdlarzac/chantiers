@@ -10,7 +10,7 @@ func TestInArray(t *testing.T) {
 	if InArrayString("r", arr) {
 		t.Error("r should not belong to {a, b, brt}")
 	}
-	
+
 	arr2 := []int{1, 4, 8, 12}
 	if !InArrayInt(4, arr2) {
 		t.Error("4 should belong to {1, 4, 8, 12}")

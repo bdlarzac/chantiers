@@ -24,11 +24,6 @@
         <label for="qte">Quantité</label>
         <div><input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5" required> maps</div>
         
-        <label for="transporteur">Transporteur</label>
-        <div class="autocomplete">
-            <input type="text" name="transporteur" id="transporteur" value="" autocomplete="off" class="width20" required>
-        </div>
-
         <!-- ****************** Coût global ******************* -->
         <div class="big5 bold">
             <input type="radio" name="type-cout" id="cout-global" value="cout-global">
@@ -36,6 +31,11 @@
         </div>
         <div></div>
         
+        <label for="transporteur">Transporteur</label>
+        <div class="autocomplete">
+            <input type="text" name="transporteur" id="transporteur" value="" autocomplete="off" class="width20" required>
+        </div>
+
         <label for="glprix">Prix HT</label>
         <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5" required>
         
@@ -44,7 +44,7 @@
             {{$.Details.GlTVAOptions}}
         </select>
         
-        <label for="datepay">Date Paiement</label>
+        <label for="gldatepay">Date Paiement</label>
         <input type="date" name="gldatepay" id="gldatepay" value="{{.GlDatePay | dateIso}}" class="width20">
     
         <!-- ****************** Coût détaillé ******************* -->
@@ -54,25 +54,38 @@
         </div>
         <div></div>
         
-        <!-- ******************* Transporteur ****************** -->
-        <div class="big3 bold">Coût transporteur</div><div></div>
+        <!-- ******************* Conducteur ****************** -->
+        <div class="big3 bold">1 - Coût conducteur</div><div></div>
         
-        <label for="trnheure">Nb heures</label>
-        <input type="number" name="trnheure" id="trnheure" step="0.01" min="0" value="{{.TrNheure | zero2empty}}" class="width5">
+        <label for="conducteur">Conducteur</label>
+        <div class="autocomplete">
+            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20" required>
+        </div>
+
+        <label for="connheure">Nb heures</label>
+        <input type="number" name="connheure" id="connheure" step="0.01" min="0" value="{{.ConNheure | zero2empty}}" class="width5">
         
-        <label for="trprixh">Prix HT / heure</label>
-        <input type="number" name="trprixh" id="trprixh" step="0.01" min="0" value="{{.TrPrixH | zero2empty}}" class="width5">
+        <label for="conprixh">Prix HT / heure</label>
+        <input type="number" name="conprixh" id="conprixh" step="0.01" min="0" value="{{.ConPrixH | zero2empty}}" class="width5">
         
-        <label for="trtva">Taux TVA</label>
-        <select name="trtva" id="trtva" class="width8">
-            {{$.Details.TrTVAOptions}}
+        <label for="contva">Taux TVA</label>
+        <select name="contva" id="contva" class="width8">
+            {{$.Details.ConTVAOptions}}
         </select>
         
-        <label for="trdatepay">Date Paiement</label>
-        <input type="date" name="trdatepay" id="trdatepay" value="{{.TrDatePay | dateIso}}" class="width20">
+        <label for="condatepay">Date Paiement</label>
+        <input type="date" name="condatepay" id="condatepay" value="{{.ConDatePay | dateIso}}" class="width20">
         
+        <!-- ******************* Outil ****************** -->
+        <div class="big3 bold">2 - Coût outil</div><div></div>
+        
+        <label for="proprioutil">Propriétaire outil</label>
+        <div class="autocomplete">
+            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20" required>
+        </div>
+
         <!-- ****************** Camion ******************* -->
-        <div class="big3 bold">
+        <div class="big2 bold">
             <input type="radio" name="type-transport" id="camion" value="camion">
             <label for="camion">Camion</label>
         </div>
@@ -93,7 +106,7 @@
         <input type="date" name="cadatepay" id="cadatepay" value="{{.CaDatePay | dateIso}}" class="width20">
         
         <!-- ****************** Tracteur + benne ******************* -->
-        <div class="big3 bold">
+        <div class="big2 bold">
             <input type="radio" name="type-transport" id="tracteur" value="tracteur">
             <label for="tracteur">Tracteur + benne</label>
         </div>
@@ -132,6 +145,8 @@
     <input type="hidden" name="id-plaqtrans" id="id-plaqtrans" value="{{.Id}}">
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.IdChantier}}">
     <input type="hidden" name="id-transporteur" id="id-transporteur" value="{{.IdTransporteur}}">
+    <input type="hidden" name="id-conducteur" id="id-conducteur" value="{{.IdConducteur}}">
+    <input type="hidden" name="id-proprioutil" id="id-proprioutil" value="{{.IdProprioutil}}">
     
 </form>
 
@@ -139,9 +154,11 @@
 <script>
 window.addEventListener("load", function(){
     autocomplete(document.getElementById("transporteur"), getActeursPossibles);
-    // Pour vérifier que le transporteur affiché correspond à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("id-transporteur")
-    // car l'utilisateur peut modifier le nom
+    autocomplete(document.getElementById("conducteur"), getActeursPossibles);
+    autocomplete(document.getElementById("proprioutil"), getActeursPossibles);
+    // Pour vérifier que le transporteur / conducteur / proprioutil affichés correspondent à une personne existant en base.
+    // on ne peut pas se fier uniquement à getElementById("id-transporteur") ou ("id-conducteur") ou ("id-proprioutil")
+    // car l'utilisateur peut modifier le nom après le retour de l'autocomplete
     window.globalPersons = [];
     initialize();
     
@@ -169,7 +186,8 @@ function initialize(){
         //
         document.getElementById("cout-global").setAttribute("checked", true);
         document.getElementById("camion").setAttribute("checked", true);
-        razTransporteur();
+        razConducteur();
+        razProprioutil();
         razCamion();
         razTracteur();
         enableCoutGlobal();
@@ -177,7 +195,11 @@ function initialize(){
     // form update
     else{
         document.getElementById("transporteur").value = "{{.Transporteur.NomAutocomplete}}";
+        document.getElementById("conducteur").value = "{{.Conducteur.NomAutocomplete}}";
+        document.getElementById("proprioutil").value = "{{.Proprioutil.NomAutocomplete}}";
         window.globalPersons[{{.IdTransporteur}}] = "{{.Transporteur.NomAutocomplete}}";
+        window.globalPersons[{{.IdConducteur}}] = "{{.Conducteur.NomAutocomplete}}";
+        window.globalPersons[{{.IdProprioutil}}] = "{{.Proprioutil.NomAutocomplete}}";
         //
         document.getElementById("tas-{{.IdTas}}").setAttribute("selected", "selected");
         //
@@ -207,7 +229,8 @@ function initialize(){
 // ***************************************
 function changeTypeCout(){
     if(document.getElementById("cout-global").checked){
-        razTransporteur();
+        razConducteur();
+        razProprioutil();
         razCamion();
         razTracteur();
         enableCoutGlobal();
@@ -227,7 +250,7 @@ function changeTypeTransport(){
     }
     else{
         razCamion();
-        enableTracteur(false);
+        enableTracteur();
     }
 }
 
@@ -238,15 +261,20 @@ function changeTypeTransport(){
     (car modif value a parfois besoin que les éléments soient enabled)
 **/
 function razGlobal(){
+    document.getElementById("transporteur").value = "";
     document.getElementById("glprix").value = "";
     document.getElementById("gltva").value = "CHOOSE_TVA_GL";
     document.getElementById("gldatepay").value = "";
 }
-function razTransporteur(){
-    document.getElementById("trnheure").value = "";
-    document.getElementById("trprixh").value = "";
-    document.getElementById("trtva").value = "CHOOSE_TVA_TR";
-    document.getElementById("trdatepay").value = "";
+function razConducteur(){
+    document.getElementById("conducteur").value = "";
+    document.getElementById("connheure").value = "";
+    document.getElementById("conprixh").value = "";
+    document.getElementById("contva").value = "CHOOSE_TVA_CON";
+    document.getElementById("condatepay").value = "";
+}
+function razProprioutil(){
+    document.getElementById("proprioutil").value = "";
 }
 function razCamion(){
     document.getElementById("cankm").value = "";
@@ -268,17 +296,21 @@ function razTracteur(){
 **/
 function enableCoutGlobal(){
     // global
+    document.getElementById("transporteur").readOnly = false;
     document.getElementById("glprix").readOnly = false;
-    document.getElementById("gltva").readOnly = false;
+    document.getElementById("gltva").disabled = false;
     document.getElementById("gldatepay").readOnly = false;
-    // transporteur
-    document.getElementById("trnheure").readOnly = true;
-    document.getElementById("trprixh").readOnly = true;
-    document.getElementById("trtva").disabled = true;
-    document.getElementById("trdatepay").readOnly = true;
+    // conducteur
+    document.getElementById("conducteur").readOnly = true;
+    document.getElementById("connheure").readOnly = true;
+    document.getElementById("conprixh").readOnly = true;
+    document.getElementById("contva").disabled = true;
+    document.getElementById("condatepay").readOnly = true;
     // radios camion / tracteur
     document.getElementById("camion").disabled = true;
     document.getElementById("tracteur").disabled = true;
+    // proprioutil
+    document.getElementById("proprioutil").disabled = true;
     // camion
     document.getElementById("cankm").readOnly = true;
     document.getElementById("caprixkm").readOnly = true;
@@ -299,17 +331,21 @@ function enableCoutGlobal(){
 **/
 function enableCoutDetaille(){
     // global
+    document.getElementById("transporteur").readOnly = true;
     document.getElementById("glprix").readOnly = true;
-    document.getElementById("gltva").readOnly = true;
+    document.getElementById("gltva").disabled = true;
     document.getElementById("gldatepay").readOnly = true;
-    // transporteur
-    document.getElementById("trnheure").readOnly = false;
-    document.getElementById("trprixh").readOnly = false;
-    document.getElementById("trtva").disabled = false;
-    document.getElementById("trdatepay").readOnly = false;
+    // proprioutil
+    document.getElementById("proprioutil").disabled = false;
     // radios camion / tracteur
     document.getElementById("camion").disabled = false;
     document.getElementById("tracteur").disabled = false;
+    // conducteur
+    document.getElementById("conducteur").readOnly = false;
+    document.getElementById("connheure").readOnly = false;
+    document.getElementById("conprixh").readOnly = false;
+    document.getElementById("contva").disabled = false;
+    document.getElementById("condatepay").readOnly = false;
 }
 
 // ***************************************
@@ -379,86 +415,128 @@ function validateForm(){
     // attribut required pas utilisable à cause du choix possible entre cout global / détaillé
     // remplacé par tests et alert
     let msg = "";
+    let personName;
+    let personOk;
+    let idActeur;
     if(document.getElementById("CHOOSE_TAS").selected == true){
         msg += "\n- Vous devez choisir un tas (lieu de stockage)";
     }
     if(document.getElementById("cout-global").checked){
         // Coût global
         if(document.getElementById("CHOOSE_TVA_GL").selected == true){
-            msg += "\nVous devez choisir un taux de TVA pour le coût global";
+            msg += "\n- Vous devez choisir un taux de TVA pour le coût global";
         }
         if(document.getElementById("glprix").value == ""){
-            msg += "\nVous devez choisir un prix global HT";
+            msg += "\n- Vous devez choisir un prix global HT";
         }
-    }
+        // calcul de id-transporteur
+        personName = document.getElementById("transporteur").value.trim();
+        if(personName == ""){
+            msg += "\n- Vous devez renseigner un transporteur";
+        }
+        else {
+            personOk = false;
+            for(idActeur in window.globalPersons){
+                if(window.globalPersons[idActeur] == personName){
+                    personOk = true;
+                    break;
+                }
+            }
+            if(!personOk){
+                msg += "Le nom \"" + personName + "\"n'existe pas en base.";
+            }
+            else{
+                document.getElementById("id-transporteur").value = idActeur;
+            }
+        }
+    } // fin coût global
     else{
         // Coût détaillé
-        // Transporteur
-        if(document.getElementById("CHOOSE_TVA_TR").selected == true){
-            msg += "\nVous devez choisir un taux de TVA (transporteur)";
+        // Conducteur
+        if(document.getElementById("CHOOSE_TVA_CON").selected == true){
+            msg += "\n- Vous devez choisir un taux de TVA (conducteur)";
         }
-        if(document.getElementById("trnheure").value == ""){
-            msg += "\nVous devez choisir un nombre d'heures (transporteur)";
+        if(document.getElementById("connheure").value == ""){
+            msg += "\n- Vous devez choisir un nombre d'heures (conducteur)";
         }
-        if(document.getElementById("trprixh").value == ""){
-            msg += "\nVous devez choisir un prix / heure (transporteur)";
+        if(document.getElementById("conprixh").value == ""){
+            msg += "\n- Vous devez choisir un prix / heure (conducteur)";
         }
         if(document.getElementById("camion").checked){
             // Camion
             if(document.getElementById("CHOOSE_TVA_CA").selected == true){
-                msg += "\nVous devez choisir un taux de TVA (camion)";
+                msg += "\n- Vous devez choisir un taux de TVA (camion)";
             }
             if(document.getElementById("cankm").value == ""){
-                msg += "\nVous devez choisir un nombre de km (camion)";
+                msg += "\n- Vous devez choisir un nombre de km (camion)";
             }
             if(document.getElementById("caprixkm").value == ""){
-                msg += "\nVous devez choisir un prix au km (camion)";
+                msg += "\n- Vous devez choisir un prix au km (camion)";
             }
         }
         else{
             // Tracteur + benne
             if(document.getElementById("CHOOSE_TVA_TB").selected == true){
-                msg += "\nVous devez choisir un taux de TVA (tracteur)";
+                msg += "\n- Vous devez choisir un taux de TVA (tracteur)";
             }
             if(document.getElementById("tbduree").value == ""){
-                msg += "\nVous devez choisir une durée (tracteur)";
+                msg += "\n- Vous devez choisir une durée (tracteur)";
             }
             if(document.getElementById("tbnbenne").value == ""){
-                msg += "\nVous devez choisir un nombre de bennes (tracteur)";
+                msg += "\n- Vous devez choisir un nombre de bennes (tracteur)";
             }
             if(document.getElementById("tbprixh").value == ""){
-                msg += "\nVous devez choisir un prix / heure (tracteur)";
+                msg += "\n- Vous devez choisir un prix / heure (tracteur)";
             }
         }
-    }
+        // calcul de id-conducteur
+        personName = document.getElementById("conducteur").value.trim();
+        if(personName == ""){
+            msg += "\n- Vous devez renseigner un conducteur";
+        }
+        else {
+            personOk = false;
+            for(idActeur in window.globalPersons){
+                if(window.globalPersons[idActeur] == personName){
+                    personOk = true;
+                    break;
+                }
+            }
+            if(!personOk){
+                msg += "Le nom \"" + personName + "\"n'existe pas en base.";
+            }
+            else{
+                document.getElementById("id-conducteur").value = idActeur;
+            }
+        }
+        // calcul de id-proprioutil
+        personName = document.getElementById("proprioutil").value.trim();
+        if(personName == ""){
+            msg += "\n- Vous devez renseigner un propriétaire de l'outil";
+        }
+        else {
+            personOk = false;
+            for(idActeur in window.globalPersons){
+                if(window.globalPersons[idActeur] == personName){
+                    personOk = true;
+                    break;
+                }
+            }
+            if(!personOk){
+                msg += "Le nom \"" + personName + "\"n'existe pas en base.";
+            }
+            else{
+                document.getElementById("id-proprioutil").value = idActeur;
+            }
+        }
+    } // fin coût détaillé
+    //
     if(msg != ""){
-        msg = "Certains champs sont obligatoires :" + msg;
         alert(msg);
         return false;
     }
-    // calcule id-transporteur
-    var personName = document.getElementById("transporteur").value.trim();
-    if(personName == ""){
-        alert("Vous devez renseigner un transporteur.");
-        return false;
-    }
-    var ok = false;
-    for(var idActeur in window.globalPersons){
-        if(window.globalPersons[idActeur] == personName){
-            ok = true;
-            break;
-        }
-    }
-    if(!ok){
-        alert("Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.");
-        return false;
-    }
-    else{
-        document.getElementById("id-transporteur").value = idActeur;
-    }
     return true;
 }
-
 </script>
 
 {{end}}

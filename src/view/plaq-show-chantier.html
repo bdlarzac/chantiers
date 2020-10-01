@@ -160,14 +160,27 @@
                 {{end}}
             </div>
             <div class="grid2-pres">
-                <div>Transporteur</div>
-                <div><a href="/acteur/{{.IdTransporteur}}">{{.Transporteur.String}}</a></div>
-                
                 <div>Date</div>
                 <div class="bold">{{.DateTrans | dateFr}}</div>
                 
                 <div>Qté</div>
                 <div class="bold">{{.Qte}} maps</div>
+                
+                {{if .Transporteur}}
+                <div>Transporteur</div>
+                <div><a href="/acteur/{{.IdTransporteur}}">{{.Transporteur.String}}</a></div>
+                {{end}}
+                
+                {{if .Conducteur}}
+                <div>Conducteur</div>
+                <div><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
+                {{end}}
+                
+                {{if .Proprioutil}}
+                <div>Propriétaire outil</div>
+                <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
+                {{end}}
+                
             </div>
             {{if .Notes}}
                 <div class="bold margin-top">Notes</div>
@@ -202,21 +215,21 @@
         {{else}}
         <!-- Transport, coût détaillé - transporteur -->
         <script>
-            coutHT = prixHT({{.TrNheure}}, {{.TrPrixH}});
-            coutTTC = prixTTC(coutHT, {{.TrTVA}});
+            coutHT = prixHT({{.ConNheure}}, {{.ConPrixH}});
+            coutTTC = prixTTC(coutHT, {{.ConTVA}});
             totalLigne += coutHT;
         </script>
         <td class="vertical-align-top">
             <div class="padding02 bg-ccc center margin-bottom05">Transporteur</div>
             <div class="grid2-pres">
                 <div>Nb heures</div>
-                <div class="bold">{{.TrNheure}}</div>
+                <div class="bold">{{.ConNheure}}</div>
                 
                 <div>Prix HT / h</div>
-                <div class="bold">{{.TrPrixH}} &euro;</div>
+                <div class="bold">{{.ConPrixH}} &euro;</div>
                 
                 <div>TVA</div>
-                <div class="bold">{{.TrTVA}} %</div>
+                <div class="bold">{{.ConTVA}} %</div>
                 
                 <div class="padding-top05">Total HT</div>
                 <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
@@ -225,7 +238,7 @@
                 <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
                 
                 <div>Paiement</div>
-                <div class="bold">{{.TrDatePay | dateFr}}</div>
+                <div class="bold">{{.ConDatePay | dateFr}}</div>
             </div>
         </td>
         

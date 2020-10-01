@@ -228,22 +228,22 @@ func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) error {
 }
 
 func DeleteVenteCharge(db *sqlx.DB, id int) error {
-    // rétablit le stock du tas
-    var result = struct{
-        IdTas int
-        Qte float64
-    }{}
+	// rétablit le stock du tas
+	var result = struct {
+		IdTas int
+		Qte   float64
+	}{}
 	query := "select id_tas,qte from ventecharge where id=$1"
 	err := db.Select(&result, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-    tas, err := GetTas(db, result.IdTas)
-    err = tas.ModifierStock(db, result.Qte)
+	tas, err := GetTas(db, result.IdTas)
+	err = tas.ModifierStock(db, result.Qte)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ModifierStock()")
 	}
-    // delete le chargement
+	// delete le chargement
 	query = "delete from ventecharge where id=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {

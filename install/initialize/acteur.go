@@ -26,6 +26,15 @@ import (
 const SCTL_ID_SCTL = 28
 
 // *********************************************************
+// Acteur 0 sert à autoriser des clés étrangères optionnelles dans les tables plaqtrans et plaqrange
+func FillActeurZero() {
+	ctx := ctxt.NewContext()
+	db := ctx.DB
+	_,_ = db.Exec("insert into acteur values(0,0,'','','','','','','','','','','','',false,false,false,'')")
+	fmt.Println("Créé l'acteur 0")
+}
+
+// *********************************************************
 func FillActeur() {
 	table := "acteur"
 	fmt.Println("Remplit " + table + " acteur à partir de Exploita.csv")
@@ -226,7 +235,7 @@ func FillLiensParcelleExploitant() {
 func AddActeursInitiaux() {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"
-	fmt.Println("Remplit", table, " à partir de", csvfile)
+	fmt.Println("Remplit", table, "à partir de", csvfile)
 	dirCsv := getPrivateDir()
 	filename := path.Join(dirCsv, csvfile)
 	// conversion utf8

@@ -1,4 +1,4 @@
-/** 
+/**
     Note: tests of array-unique.go depend on array-equal.go
 **/
 

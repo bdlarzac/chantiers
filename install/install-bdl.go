@@ -141,6 +141,7 @@ func installCommune() {
 }
 func installActeur() {
 	initialize.CreateTable("acteur")
+    initialize.FillActeurZero()
 	initialize.FillActeur()
 	initialize.AddActeurBDL()
 	initialize.AddActeurGFA()

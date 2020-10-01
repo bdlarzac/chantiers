@@ -7,17 +7,17 @@ import (
 	"strings"
 	"time"
 
-	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 )
 
 type detailsStockFraisForm struct {
-	UrlAction string
-	TypeFraisOptions     template.HTML
-	Stockage  *model.Stockage
-	Frais     *model.StockFrais
+	UrlAction        string
+	TypeFraisOptions template.HTML
+	Stockage         *model.Stockage
+	Frais            *model.StockFrais
 }
 
 // *********************************************************
@@ -59,10 +59,10 @@ func NewStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			},
 			Menu: "accueil",
 			Details: detailsStockFraisForm{
-				UrlAction: "/frais-stockage/new/" + vars["id-stockage"],
-				TypeFraisOptions:      webo.FmtOptions(WeboStockFrais(), "CHOOSE_TYPEFRAIS"),
-				Stockage:  stockage,
-				Frais:     frais,
+				UrlAction:        "/frais-stockage/new/" + vars["id-stockage"],
+				TypeFraisOptions: webo.FmtOptions(WeboStockFrais(), "CHOOSE_TYPEFRAIS"),
+				Stockage:         stockage,
+				Frais:            frais,
 			},
 		}
 		ctx.TemplateName = "stockfrais-form.html"
@@ -115,10 +115,10 @@ func UpdateStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 			},
 			Menu: "accueil",
 			Details: detailsStockFraisForm{
-				UrlAction: "/frais-stockage/update/" + strconv.Itoa(stockage.Id),
-				TypeFraisOptions:      webo.FmtOptions(WeboStockFrais(), "stockfrais-"+frais.TypeFrais),
-				Stockage:  stockage,
-				Frais:     frais,
+				UrlAction:        "/frais-stockage/update/" + strconv.Itoa(stockage.Id),
+				TypeFraisOptions: webo.FmtOptions(WeboStockFrais(), "stockfrais-"+frais.TypeFrais),
+				Stockage:         stockage,
+				Frais:            frais,
 			},
 		}
 		ctx.TemplateName = "stockfrais-form.html"

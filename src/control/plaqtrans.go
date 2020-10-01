@@ -16,12 +16,12 @@ import (
 )
 
 type detailsPlaqTransForm struct {
-	UrlAction    string
-	GlTVAOptions template.HTML
-	TrTVAOptions template.HTML
-	CaTVAOptions template.HTML
-	TbTVAOptions template.HTML
-	Transport    *model.PlaqTrans
+	UrlAction     string
+	GlTVAOptions  template.HTML
+	ConTVAOptions template.HTML
+	CaTVAOptions  template.HTML
+	TbTVAOptions  template.HTML
+	Transport     *model.PlaqTrans
 }
 
 // *********************************************************
@@ -55,6 +55,8 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		pt := &model.PlaqTrans{}
 		pt.TypeCout = "G"
 		pt.Transporteur = &model.Acteur{}
+		pt.Conducteur = &model.Acteur{}
+		pt.Proprioutil = &model.Acteur{}
 		pt.IdChantier = idChantier
 		pt.Chantier, err = model.GetPlaq(ctx.DB, idChantier)
 		if err != nil {
@@ -81,12 +83,12 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
 			},
 			Details: detailsPlaqTransForm{
-				Transport:    pt,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
-				TrTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TR"), "CHOOSE_TVA_TR"),
-				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), "CHOOSE_TVA_CA"),
-				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), "CHOOSE_TVA_TB"),
-				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/transport/new",
+				Transport:     pt,
+				GlTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
+				ConTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CON"), "CHOOSE_TVA_CON"),
+				CaTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), "CHOOSE_TVA_CA"),
+				TbTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), "CHOOSE_TVA_TB"),
+				UrlAction:     "/chantier/plaquette/" + idChantierStr + "/transport/new",
 			},
 		}
 		return nil
@@ -133,6 +135,14 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		pt.Conducteur, err = model.GetActeur(ctx.DB, pt.IdConducteur)
+		if err != nil {
+			return err
+		}
+		pt.Proprioutil, err = model.GetActeur(ctx.DB, pt.IdProprioutil)
+		if err != nil {
+			return err
+		}
 		pt.Chantier, err = model.GetPlaq(ctx.DB, pt.IdChantier)
 		if err != nil {
 			return err
@@ -158,12 +168,12 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
 			},
 			Details: detailsPlaqTransForm{
-				Transport:    pt,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(pt.GlTVA, 'f', 1, 64)),
-				TrTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TR"), strconv.FormatFloat(pt.TrTVA, 'f', 1, 64)),
-				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
-				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
-				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/transport/update/" + vars["id-pt"],
+				Transport:     pt,
+				GlTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(pt.GlTVA, 'f', 1, 64)),
+				ConTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CON"), strconv.FormatFloat(pt.ConTVA, 'f', 1, 64)),
+				CaTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
+				TbTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
+				UrlAction:     "/chantier/plaquette/" + vars["id-chantier"] + "/transport/update/" + vars["id-pt"],
 			},
 		}
 		return nil
@@ -209,11 +219,6 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 		return pt, err
 	}
 	//
-	pt.IdTransporteur, err = strconv.Atoi(r.PostFormValue("id-transporteur"))
-	if err != nil {
-		return pt, err
-	}
-	//
 	pt.DateTrans, err = time.Parse("2006-01-02", r.PostFormValue("datetrans"))
 	if err != nil {
 		return pt, err
@@ -240,6 +245,11 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 	// concerne le coût global
 	//
 	if pt.TypeCout == "G" {
+	//
+        pt.IdTransporteur, err = strconv.Atoi(r.PostFormValue("id-transporteur"))
+        if err != nil {
+            return pt, err
+        }
 		pt.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
 			return pt, err
@@ -260,28 +270,40 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 		}
 	} else {
 		//
-		// concerne le transporteur
+		// concerne le propriétaire outil
 		//
-		pt.TrNheure, err = strconv.ParseFloat(r.PostFormValue("trnheure"), 32)
+        pt.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
+        if err != nil {
+            return pt, err
+        }
+		//
+		// concerne le conducteur
+		//
+        pt.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
+        if err != nil {
+            return pt, err
+        }
+        //
+		pt.ConNheure, err = strconv.ParseFloat(r.PostFormValue("connheure"), 32)
 		if err != nil {
 			return pt, err
 		}
-		pt.TrNheure = tiglib.Round(pt.TrNheure, 2)
+		pt.ConNheure = tiglib.Round(pt.ConNheure, 2)
 		//
-		pt.TrPrixH, err = strconv.ParseFloat(r.PostFormValue("trprixh"), 32)
+		pt.ConPrixH, err = strconv.ParseFloat(r.PostFormValue("conprixh"), 32)
 		if err != nil {
 			return pt, err
 		}
-		pt.TrPrixH = tiglib.Round(pt.TrPrixH, 2)
+		pt.ConPrixH = tiglib.Round(pt.ConPrixH, 2)
 		//
-		pt.TrTVA, err = strconv.ParseFloat(r.PostFormValue("trtva"), 32)
+		pt.ConTVA, err = strconv.ParseFloat(r.PostFormValue("contva"), 32)
 		if err != nil {
 			return pt, err
 		}
-		pt.TrTVA = tiglib.Round(pt.TrTVA, 2)
+		pt.ConTVA = tiglib.Round(pt.ConTVA, 2)
 		//
-		if r.PostFormValue("trdatepay") != "" {
-			pt.TrDatePay, err = time.Parse("2006-01-02", r.PostFormValue("trdatepay"))
+		if r.PostFormValue("condatepay") != "" {
+			pt.ConDatePay, err = time.Parse("2006-01-02", r.PostFormValue("condatepay"))
 			if err != nil {
 				return pt, err
 			}

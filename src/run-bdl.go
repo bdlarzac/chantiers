@@ -148,7 +148,7 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
-	
+
 	ctx := ctxt.NewContext()
 	srv := &http.Server{
 		Handler:      r,

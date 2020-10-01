@@ -297,7 +297,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 }
 
 func DeleteVentePlaq(db *sqlx.DB, id int) error {
-    // delete les livraisons dépendant de cette vente
+	// delete les livraisons dépendant de cette vente
 	idsLivraison := []int{}
 	query := "select id from ventelivre where id_vente=$1"
 	err := db.Select(&idsLivraison, query, id)

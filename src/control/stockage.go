@@ -157,13 +157,13 @@ func DeleteStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 	if stockage.Deletable {
-        err = model.DeleteStockage(ctx.DB, id)
-        if err != nil {
-            return err
-        }
+		err = model.DeleteStockage(ctx.DB, id)
+		if err != nil {
+			return err
+		}
 	} else {
-	    stockage.Archived = true
-	    err = model.UpdateStockage(ctx.DB, stockage)
+		stockage.Archived = true
+		err = model.UpdateStockage(ctx.DB, stockage)
 	}
 	ctx.Redirect = "/stockage/liste"
 	return nil

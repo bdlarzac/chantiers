@@ -134,7 +134,7 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		if err != nil {
 			return err
 		}
-		// 
+		//
 		err = vc.ComputeTas(ctx.DB)
 		if err != nil {
 			return err

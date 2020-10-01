@@ -12,7 +12,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-//"fmt"
+	//"fmt"
 )
 
 type detailsPlaqForm struct {
@@ -128,16 +128,16 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 		// calcul des ids stockage, pour transmettre à InsertPlaq(), qui va créer le(s) tas
-        allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
 		idsStockages := []int{}
-        for _, stockage := range(allStockages){
-            if r.PostFormValue("stockage-" + strconv.Itoa(stockage.Id)) == "on" {
-                idsStockages = append(idsStockages, stockage.Id)
-            }
-        }
+		for _, stockage := range allStockages {
+			if r.PostFormValue("stockage-"+strconv.Itoa(stockage.Id)) == "on" {
+				idsStockages = append(idsStockages, stockage.Id)
+			}
+		}
 		//
 		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages)
 		if err != nil {
@@ -149,7 +149,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL:redirect, Label:chantier.FullString()})
+		err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: redirect, Label: chantier.FullString()})
 		if err != nil {
 			return err
 		}
@@ -163,7 +163,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		chantier.Lieudit = &model.Lieudit{}
 		chantier.Fermier = &model.Acteur{}
 		chantier.UG = &model.UG{}
-        allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
@@ -186,7 +186,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "CHOOSE_GRANULO"),
-				AllStockages:     	 allStockages,
+				AllStockages:        allStockages,
 				UrlAction:           "/chantier/plaquette/new",
 			},
 		}
@@ -212,16 +212,16 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		}
 		// calcul des ids stockage, pour transmettre à UpdatePlaq(),
 		// qui va créer ou supprimer ou ne pas changer le(s) tas
-        allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
 		idsStockages := []int{}
-        for _, stockage := range(allStockages){
-            if r.PostFormValue("stockage-" + strconv.Itoa(stockage.Id)) == "on" {
-                idsStockages = append(idsStockages, stockage.Id)
-            }
-        }
+		for _, stockage := range allStockages {
+			if r.PostFormValue("stockage-"+strconv.Itoa(stockage.Id)) == "on" {
+				idsStockages = append(idsStockages, stockage.Id)
+			}
+		}
 		//
 		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages)
 		if err != nil {
@@ -233,7 +233,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL:redirect, Label:chantier.FullString()})
+		err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: redirect, Label: chantier.FullString()})
 		if err != nil {
 			return err
 		}
@@ -252,7 +252,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-        allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
 		}
@@ -273,9 +273,9 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
-				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-" + chantier.Exploitation),
-				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "granulo-" + chantier.Granulo),
-				AllStockages:     	 allStockages,
+				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
+				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "granulo-"+chantier.Granulo),
+				AllStockages:        allStockages,
 				UrlAction:           "/chantier/plaquette/update/" + vars["id"],
 			},
 		}
