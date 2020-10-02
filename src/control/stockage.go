@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
+//"fmt"
 )
 
 type detailsStockageForm struct {
@@ -26,6 +27,16 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				return err
 			}
 		}
+/* 
+// code de test, à supprimer
+//cout, err := s.ComputeCout(ctx.DB, "2018-01-01", "2019-01-01")
+cout, err := s.ComputeCout(ctx.DB, "2022-10-01", "2022-10-06")
+if err != nil {
+    return err
+}
+fmt.Println("cout =", cout)
+// fin code de test, à supprimer
+*/
 	}
 
 	ctx.Page = &ctxt.Page{

@@ -170,5 +170,6 @@ func stockFraisForm2var(r *http.Request) (*model.StockFrais, error) {
 	if err != nil {
 		return frais, err
 	}
+	frais.Notes = r.PostFormValue("notes")
 	return frais, nil
 }

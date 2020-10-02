@@ -21,6 +21,7 @@ type StockFrais struct {
 	Montant    float64
 	DateDebut  time.Time `db:"datedeb"`
 	DateFin    time.Time `db:"datefin"`
+	Notes string
 }
 
 // *********************************************************
@@ -42,8 +43,9 @@ func InsertStockFrais(db *sqlx.DB, sf *StockFrais) (int, error) {
 	    typefrais,
 	    montant,
 	    datedeb,
-	    datefin
-	    ) values($1,$2,$3,$4,$5) returning id`
+	    datefin,
+	    notes
+	    ) values($1,$2,$3,$4,$5,$6) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
@@ -51,7 +53,8 @@ func InsertStockFrais(db *sqlx.DB, sf *StockFrais) (int, error) {
 		sf.TypeFrais,
 		sf.Montant,
 		sf.DateDebut,
-		sf.DateFin).Scan(&id)
+		sf.DateFin,
+		sf.Notes).Scan(&id)
 	return id, err
 }
 
@@ -61,14 +64,16 @@ func UpdateStockFrais(db *sqlx.DB, sf *StockFrais) error {
 	    typefrais,
         montant,
         datedeb,
-        datefin
-        ) = ($1,$2,$3,$4) where id=$5`
+        datefin,
+        notes
+        ) = ($1,$2,$3,$4,$5) where id=$6`
 	_, err := db.Exec(
 		query,
 		sf.TypeFrais,
 		sf.Montant,
 		sf.DateDebut,
 		sf.DateFin,
+		sf.Notes,
 		sf.Id)
 	return err
 }

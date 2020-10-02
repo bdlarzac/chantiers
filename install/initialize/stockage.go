@@ -25,7 +25,7 @@ func FillHangarsInitiaux() {
 	var err error
 	var idStock int
 	var typefrais string
-	var nom string
+	var nom, notes string
 	var montant float64
 	var datedeb, datefin time.Time
 	//
@@ -38,6 +38,7 @@ func FillHangarsInitiaux() {
 	// Loyer 6000 E / an
 	typefrais = "LO"
 	montant = 6000 * 3
+	notes = "6000 E / an"
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
 	_, err = model.InsertStockFrais(db, &model.StockFrais{
@@ -46,6 +47,7 @@ func FillHangarsInitiaux() {
 	    Montant: montant,
 	    DateDebut: datedeb,
 	    DateFin: datefin,
+	    Notes: notes,
 	})
 	if err != nil {
 		panic(err)
@@ -54,6 +56,7 @@ func FillHangarsInitiaux() {
 	// Assurance 700 E tous les 6 mois
 	typefrais = "AS"
 	montant = 700 * 6
+	notes = "700 E tous les 6 mois"
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
 	_, err = model.InsertStockFrais(db, &model.StockFrais{
@@ -62,6 +65,7 @@ func FillHangarsInitiaux() {
 	    Montant: montant,
 	    DateDebut: datedeb,
 	    DateFin: datefin,
+	    Notes: notes,
 	})
 	if err != nil {
 		panic(err)

@@ -86,6 +86,13 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
+		// Ici, cas particulier, si on arrive par la route "/humidite/new/tas/{id-tas:[0-9]+}"
+		// alors le tas est pré-selectionné
+		optionTas := "CHOOSE_TAS"
+        vars := mux.Vars(r)
+		if vars["id-tas"] != "" {
+            optionTas = vars["id-tas"]
+		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Créer une mesure d'humidité",
@@ -101,7 +108,7 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			},
 			Details: detailsHumidForm{
 				Humid:      humid,
-				TasOptions: webo.FmtOptions(weboTas, "CHOOSE_TAS"),
+				TasOptions: webo.FmtOptions(weboTas, optionTas),
 				UrlAction:  "/humidite/new",
 			},
 		}

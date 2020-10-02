@@ -22,18 +22,23 @@
     
     <div class="margin-left2 margin-bottom2">
     
-        <!-- ************************************* -->
+        <!-- ***************** Stock ******************** -->
         <div class="big2 bold margin-top margin-bottom">Stock : {{.Stock}} maps</div>
         
-        <!-- ************************************* -->
+        <!-- **************** Tas ********************* -->
         <div class="big2 bold margin-top margin-bottom">Tas courants</div>
         {{if .TasActifs}}<ul class="naked">{{end}}
         {{range .TasActifs}}
             <li class="padding-bottom">
-                <a class="padding-right" href="#" onclick="signalerTasVide({{.Id}}, {{.Nom}});" title="Signaler que ce tas est vide">
-                    <span class="bold big3 border2 padding-left02 padding-right02">&empty;</span>
+                <a href="/humidite/new/tas/{{.Id}}">
+                    <img class="bigicon inline vertical-align-bottom"
+                         src="/static/img/humid.png"
+                         title="Faire une mesure d'humidité sur ce tas" />
                 </a>
-                
+                <a class="padding-right" href="#" onclick="signalerTasVide({{.Id}}, {{.Nom}});" title="Signaler que ce tas est vide">
+                    <div class="icon-empty">&empty;</div>
+                </a>
+
                 <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = {{.Stock}} maps
                 {{if .MesuresHumidite}}
                     <div class="margin-left2">
@@ -48,7 +53,7 @@
         {{end}}
         {{if .TasActifs}}</ul>{{end}}
         
-        <!-- ************************************* -->
+        <!-- **************** Frais ********************* -->
         <div class="big2 bold margin-top margin-bottom">
             Frais
             <a class="padding-left" href="/frais-stockage/new/{{.Id}}">
@@ -57,7 +62,7 @@
         </div>
         {{if .Frais}}
         <table class="bordered margin-left">
-            <tr><th></th><th>Type</th><th>Début</th><th>Fin</th><th>Montant</th></tr>
+            <tr><th></th><th>Type</th><th>Début</th><th>Fin</th><th>Montant</th><th>Notes</th></tr>
         {{end}}
         {{range .Frais}}                                         
             <tr>
@@ -73,6 +78,7 @@
                 <td>{{.DateDebut | dateFr}}</td>
                 <td>{{.DateFin | dateFr}}</td>
                 <td><b><script>document.write(round({{.Montant}}, 2));</script> &euro;</b></td>
+                <td>{{.Notes | nl2br}}</td>
             </tr>
         {{end}}
         {{if .Frais}}

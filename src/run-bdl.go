@@ -133,6 +133,7 @@ func main() {
 	r.HandleFunc("/humidite/liste", H(control.ListHumid))
 	r.HandleFunc("/humidite/liste/{annee:[0-9]+}", H(control.ListHumid))
 	r.HandleFunc("/humidite/new", H(control.NewHumid))
+	r.HandleFunc("/humidite/new/tas/{id-tas:[0-9]+}", H(control.NewHumid))
 	r.HandleFunc("/humidite/update/{id:[0-9]+}", H(control.UpdateHumid))
 	r.HandleFunc("/humidite/delete/{id:[0-9]+}", H(control.DeleteHumid))
 
