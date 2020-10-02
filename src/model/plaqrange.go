@@ -17,12 +17,14 @@ import (
 )
 
 type PlaqRange struct {
-	Id           int
-	IdChantier   int `db:"id_chantier"`
-	IdTas        int `db:"id_tas"`
-	IdConducteur int `db:"id_conducteur"`
-	DateRange    time.Time
-	TypeCout     string // G (global) ou D (détail)
+	Id            int
+	IdChantier    int `db:"id_chantier"`
+	IdTas         int `db:"id_tas"`
+	IdRangeur     int `db:"id_rangeur"`
+	IdConducteur  int `db:"id_conducteur"`
+	IdProprioutil int `db:"id_proprioutil"`
+	DateRange     time.Time
+	TypeCout      string // G (global) ou D (détail)
 	// coût global
 	GlPrix    float64 // HT
 	GlTVA     float64
@@ -39,9 +41,11 @@ type PlaqRange struct {
 	//
 	Notes string
 	// Pas stocké en base
-	Chantier   *Plaq
-	Tas        *Tas
-	Conducteur *Acteur
+	Chantier    *Plaq
+	Tas         *Tas
+	Rangeur     *Acteur
+	Conducteur  *Acteur
+	Proprioutil *Acteur
 }
 
 // ************************** Get *******************************
@@ -65,9 +69,27 @@ func (pr *PlaqRange) ComputeTas(db *sqlx.DB) error {
 	return err
 }
 
+func (pr *PlaqRange) ComputeRangeur(db *sqlx.DB) error {
+	if pr.IdRangeur == 0 {
+		return nil
+	}
+	var err error
+	pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
+	return err
+}
+
 func (pr *PlaqRange) ComputeConducteur(db *sqlx.DB) error {
 	var err error
 	pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
+	return err
+}
+
+func (pr *PlaqRange) ComputeProprioutil(db *sqlx.DB) error {
+	if pr.IdProprioutil == 0 {
+		return nil
+	}
+	var err error
+	pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
 	return err
 }
 
@@ -77,7 +99,9 @@ func InsertPlaqRange(db *sqlx.DB, pr *PlaqRange) (int, error) {
 	query := `insert into plaqrange(
         id_chantier,
         id_tas,
+        id_rangeur,
         id_conducteur,
+        id_proprioutil,
         daterange,
         typecout,
         glprix,
@@ -91,13 +115,15 @@ func InsertPlaqRange(db *sqlx.DB, pr *PlaqRange) (int, error) {
         outva,
         oudatepay,
         notes)
-        values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) returning id`
+        values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
 		pr.IdChantier,
 		pr.IdTas,
+		pr.IdRangeur,
 		pr.IdConducteur,
+		pr.IdProprioutil,
 		pr.DateRange,
 		pr.TypeCout,
 		pr.GlPrix,
@@ -118,7 +144,9 @@ func UpdatePlaqRange(db *sqlx.DB, pr *PlaqRange) error {
 	query := `update plaqrange set(
         id_chantier,
         id_tas,
+        id_rangeur,
         id_conducteur,
+        id_proprioutil,
         daterange,
         typecout,
         glprix,
@@ -132,12 +160,14 @@ func UpdatePlaqRange(db *sqlx.DB, pr *PlaqRange) error {
         outva,
         oudatepay,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) where id=$17`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) where id=$19`
 	_, err := db.Exec(
 		query,
 		pr.IdChantier,
 		pr.IdTas,
+		pr.IdRangeur,
 		pr.IdConducteur,
+		pr.IdProprioutil,
 		pr.DateRange,
 		pr.TypeCout,
 		pr.GlPrix,

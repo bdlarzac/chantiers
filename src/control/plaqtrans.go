@@ -16,12 +16,12 @@ import (
 )
 
 type detailsPlaqTransForm struct {
-	UrlAction     string
-	GlTVAOptions  template.HTML
-	ConTVAOptions template.HTML
-	CaTVAOptions  template.HTML
-	TbTVAOptions  template.HTML
-	Transport     *model.PlaqTrans
+	UrlAction    string
+	GlTVAOptions template.HTML
+	CoTVAOptions template.HTML
+	CaTVAOptions template.HTML
+	TbTVAOptions template.HTML
+	Transport    *model.PlaqTrans
 }
 
 // *********************************************************
@@ -83,12 +83,12 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
 			},
 			Details: detailsPlaqTransForm{
-				Transport:     pt,
-				GlTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
-				ConTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CON"), "CHOOSE_TVA_CON"),
-				CaTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), "CHOOSE_TVA_CA"),
-				TbTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), "CHOOSE_TVA_TB"),
-				UrlAction:     "/chantier/plaquette/" + idChantierStr + "/transport/new",
+				Transport:    pt,
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
+				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO"), "CHOOSE_TVA_CO"),
+				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), "CHOOSE_TVA_CA"),
+				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), "CHOOSE_TVA_TB"),
+				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/transport/new",
 			},
 		}
 		return nil
@@ -168,12 +168,12 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
 			},
 			Details: detailsPlaqTransForm{
-				Transport:     pt,
-				GlTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(pt.GlTVA, 'f', 1, 64)),
-				ConTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CON"), strconv.FormatFloat(pt.ConTVA, 'f', 1, 64)),
-				CaTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
-				TbTVAOptions:  webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
-				UrlAction:     "/chantier/plaquette/" + vars["id-chantier"] + "/transport/update/" + vars["id-pt"],
+				Transport:    pt,
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(pt.GlTVA, 'f', 1, 64)),
+				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO"), strconv.FormatFloat(pt.CoTVA, 'f', 1, 64)),
+				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
+				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
+				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/transport/update/" + vars["id-pt"],
 			},
 		}
 		return nil
@@ -245,11 +245,11 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 	// concerne le coût global
 	//
 	if pt.TypeCout == "G" {
-	//
-        pt.IdTransporteur, err = strconv.Atoi(r.PostFormValue("id-transporteur"))
-        if err != nil {
-            return pt, err
-        }
+		//
+		pt.IdTransporteur, err = strconv.Atoi(r.PostFormValue("id-transporteur"))
+		if err != nil {
+			return pt, err
+		}
 		pt.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
 			return pt, err
@@ -272,38 +272,38 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 		//
 		// concerne le propriétaire outil
 		//
-        pt.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
-        if err != nil {
-            return pt, err
-        }
+		pt.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
+		if err != nil {
+			return pt, err
+		}
 		//
 		// concerne le conducteur
 		//
-        pt.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
-        if err != nil {
-            return pt, err
-        }
-        //
-		pt.ConNheure, err = strconv.ParseFloat(r.PostFormValue("connheure"), 32)
+		pt.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
 		if err != nil {
 			return pt, err
 		}
-		pt.ConNheure = tiglib.Round(pt.ConNheure, 2)
 		//
-		pt.ConPrixH, err = strconv.ParseFloat(r.PostFormValue("conprixh"), 32)
+		pt.CoNheure, err = strconv.ParseFloat(r.PostFormValue("conheure"), 32)
 		if err != nil {
 			return pt, err
 		}
-		pt.ConPrixH = tiglib.Round(pt.ConPrixH, 2)
+		pt.CoNheure = tiglib.Round(pt.CoNheure, 2)
 		//
-		pt.ConTVA, err = strconv.ParseFloat(r.PostFormValue("contva"), 32)
+		pt.CoPrixH, err = strconv.ParseFloat(r.PostFormValue("coprixh"), 32)
 		if err != nil {
 			return pt, err
 		}
-		pt.ConTVA = tiglib.Round(pt.ConTVA, 2)
+		pt.CoPrixH = tiglib.Round(pt.CoPrixH, 2)
 		//
-		if r.PostFormValue("condatepay") != "" {
-			pt.ConDatePay, err = time.Parse("2006-01-02", r.PostFormValue("condatepay"))
+		pt.CoTVA, err = strconv.ParseFloat(r.PostFormValue("cotva"), 32)
+		if err != nil {
+			return pt, err
+		}
+		pt.CoTVA = tiglib.Round(pt.CoTVA, 2)
+		//
+		if r.PostFormValue("codatepay") != "" {
+			pt.CoDatePay, err = time.Parse("2006-01-02", r.PostFormValue("codatepay"))
 			if err != nil {
 				return pt, err
 			}

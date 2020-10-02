@@ -62,19 +62,19 @@
             <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20" required>
         </div>
 
-        <label for="connheure">Nb heures</label>
-        <input type="number" name="connheure" id="connheure" step="0.01" min="0" value="{{.ConNheure | zero2empty}}" class="width5">
+        <label for="conheure">Nb heures</label>
+        <input type="number" name="conheure" id="conheure" step="0.01" min="0" value="{{.CoNheure | zero2empty}}" class="width5">
         
-        <label for="conprixh">Prix HT / heure</label>
-        <input type="number" name="conprixh" id="conprixh" step="0.01" min="0" value="{{.ConPrixH | zero2empty}}" class="width5">
+        <label for="coprixh">Prix HT / heure</label>
+        <input type="number" name="coprixh" id="coprixh" step="0.01" min="0" value="{{.CoPrixH | zero2empty}}" class="width5">
         
-        <label for="contva">Taux TVA</label>
-        <select name="contva" id="contva" class="width8">
-            {{$.Details.ConTVAOptions}}
+        <label for="cotva">Taux TVA</label>
+        <select name="cotva" id="cotva" class="width8">
+            {{$.Details.CoTVAOptions}}
         </select>
         
-        <label for="condatepay">Date Paiement</label>
-        <input type="date" name="condatepay" id="condatepay" value="{{.ConDatePay | dateIso}}" class="width20">
+        <label for="codatepay">Date Paiement</label>
+        <input type="date" name="codatepay" id="codatepay" value="{{.CoDatePay | dateIso}}" class="width20">
         
         <!-- ******************* Outil ****************** -->
         <div class="big3 bold">2 - Coût outil</div><div></div>
@@ -175,7 +175,7 @@ window.addEventListener("load", function(){
 // ***************************************
 function initialize(){
     // form new
-    if({{.Transporteur.Id}} == 0){
+    if({{.Transporteur.Id}} == 0 && {{.Conducteur.Id}} == 0 && {{.Proprioutil.Id}} == 0){
         if({{len .Chantier.Tas}} == 1){
             // cas le plus fréquent - sélectionne par défaut le seul tas possible
             document.getElementById("tas-" + {{(index .Chantier.Tas 0).Id}}).setAttribute("selected", "selected");
@@ -268,10 +268,10 @@ function razGlobal(){
 }
 function razConducteur(){
     document.getElementById("conducteur").value = "";
-    document.getElementById("connheure").value = "";
-    document.getElementById("conprixh").value = "";
-    document.getElementById("contva").value = "CHOOSE_TVA_CON";
-    document.getElementById("condatepay").value = "";
+    document.getElementById("conheure").value = "";
+    document.getElementById("coprixh").value = "";
+    document.getElementById("cotva").value = "CHOOSE_TVA_CO";
+    document.getElementById("codatepay").value = "";
 }
 function razProprioutil(){
     document.getElementById("proprioutil").value = "";
@@ -302,10 +302,10 @@ function enableCoutGlobal(){
     document.getElementById("gldatepay").readOnly = false;
     // conducteur
     document.getElementById("conducteur").readOnly = true;
-    document.getElementById("connheure").readOnly = true;
-    document.getElementById("conprixh").readOnly = true;
-    document.getElementById("contva").disabled = true;
-    document.getElementById("condatepay").readOnly = true;
+    document.getElementById("conheure").readOnly = true;
+    document.getElementById("coprixh").readOnly = true;
+    document.getElementById("cotva").disabled = true;
+    document.getElementById("codatepay").readOnly = true;
     // radios camion / tracteur
     document.getElementById("camion").disabled = true;
     document.getElementById("tracteur").disabled = true;
@@ -342,10 +342,10 @@ function enableCoutDetaille(){
     document.getElementById("tracteur").disabled = false;
     // conducteur
     document.getElementById("conducteur").readOnly = false;
-    document.getElementById("connheure").readOnly = false;
-    document.getElementById("conprixh").readOnly = false;
-    document.getElementById("contva").disabled = false;
-    document.getElementById("condatepay").readOnly = false;
+    document.getElementById("conheure").readOnly = false;
+    document.getElementById("coprixh").readOnly = false;
+    document.getElementById("cotva").disabled = false;
+    document.getElementById("codatepay").readOnly = false;
 }
 
 // ***************************************
@@ -453,13 +453,13 @@ function validateForm(){
     else{
         // Coût détaillé
         // Conducteur
-        if(document.getElementById("CHOOSE_TVA_CON").selected == true){
+        if(document.getElementById("CHOOSE_TVA_CO").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (conducteur)";
         }
-        if(document.getElementById("connheure").value == ""){
+        if(document.getElementById("conheure").value == ""){
             msg += "\n- Vous devez choisir un nombre d'heures (conducteur)";
         }
-        if(document.getElementById("conprixh").value == ""){
+        if(document.getElementById("coprixh").value == ""){
             msg += "\n- Vous devez choisir un prix / heure (conducteur)";
         }
         if(document.getElementById("camion").checked){

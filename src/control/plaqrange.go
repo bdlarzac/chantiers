@@ -52,7 +52,9 @@ func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			return err
 		}
 		pr := &model.PlaqRange{}
+		pr.Rangeur = &model.Acteur{}
 		pr.Conducteur = &model.Acteur{}
+		pr.Proprioutil = &model.Acteur{}
 		pr.IdChantier = idChantier
 		pr.Chantier, err = model.GetPlaq(ctx.DB, idChantier)
 		if err != nil {
@@ -125,7 +127,15 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		pr.Rangeur, err = model.GetActeur(ctx.DB, pr.IdRangeur)
+		if err != nil {
+			return err
+		}
 		pr.Conducteur, err = model.GetActeur(ctx.DB, pr.IdConducteur)
+		if err != nil {
+			return err
+		}
+		pr.Proprioutil, err = model.GetActeur(ctx.DB, pr.IdProprioutil)
 		if err != nil {
 			return err
 		}
@@ -202,10 +212,6 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 	if err != nil {
 		return pr, err
 	}
-	pr.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
-	if err != nil {
-		return pr, err
-	}
 	pr.DateRange, err = time.Parse("2006-01-02", r.PostFormValue("daterange"))
 	if err != nil {
 		return pr, err
@@ -221,6 +227,11 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 		//
 		// coût global
 		//
+        pr.IdRangeur, err = strconv.Atoi(r.PostFormValue("id-rangeur"))
+        if err != nil {
+            return pr, err
+        }
+        //
 		pr.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
 			return pr, err
@@ -243,6 +254,11 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 		//
 		// conducteur
 		//
+        pr.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
+        if err != nil {
+            return pr, err
+        }
+        //
 		pr.CoNheure, err = strconv.ParseFloat(r.PostFormValue("conheure"), 32)
 		if err != nil {
 			return pr, err
@@ -269,6 +285,11 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 		//
 		// outil
 		//
+        pr.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
+        if err != nil {
+            return pr, err
+        }
+        //
 		pr.OuPrix, err = strconv.ParseFloat(r.PostFormValue("ouprix"), 32)
 		if err != nil {
 			return pr, err

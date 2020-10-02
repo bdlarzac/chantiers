@@ -15,10 +15,10 @@ create table plaqtrans (
     gltva                   numeric,
     gldatepay               date,
 	-- coût conducteur
-    connheure               numeric,              
-    conprixh                numeric,
-    contva                  numeric,
-    condatepay              date,
+    conheure                numeric,              
+    coprixh                 numeric,
+    cotva                   numeric,
+    codatepay               date,
 	-- coût transport camion
 	cankm                   numeric,
     caprixkm                numeric,

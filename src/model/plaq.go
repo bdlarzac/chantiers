@@ -293,7 +293,9 @@ func (chantier *Plaq) ComputeRangements(db *sqlx.DB) error {
 	}
 	for i, _ := range chantier.Rangements {
 		chantier.Rangements[i].ComputeTas(db)
+		chantier.Rangements[i].ComputeRangeur(db)
 		chantier.Rangements[i].ComputeConducteur(db)
+		chantier.Rangements[i].ComputeProprioutil(db)
 	}
 	return nil
 }

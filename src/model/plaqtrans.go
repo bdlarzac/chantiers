@@ -29,10 +29,10 @@ type PlaqTrans struct {
 	GlTVA     float64
 	GlDatePay time.Time
 	// Concerne le conducteur
-	ConNheure  float64
-	ConPrixH   float64 // prix ht / heure
-	ConTVA     float64
-	ConDatePay time.Time
+	CoNheure  float64
+	CoPrixH   float64 // prix ht / heure
+	CoTVA     float64
+	CoDatePay time.Time
 	// Transport camion
 	CaNkm     float64
 	CaPrixKm  float64 // prix ht / km
@@ -75,27 +75,27 @@ func (pt *PlaqTrans) ComputeTas(db *sqlx.DB) error {
 }
 
 func (pt *PlaqTrans) ComputeTransporteur(db *sqlx.DB) error {
-    if pt.IdTransporteur == 0{
-        return nil
-    }
+	if pt.IdTransporteur == 0 {
+		return nil
+	}
 	var err error
 	pt.Transporteur, err = GetActeur(db, pt.IdTransporteur)
 	return err
 }
 
 func (pt *PlaqTrans) ComputeConducteur(db *sqlx.DB) error {
-    if pt.IdConducteur == 0{
-        return nil
-    }
+	if pt.IdConducteur == 0 {
+		return nil
+	}
 	var err error
 	pt.Conducteur, err = GetActeur(db, pt.IdConducteur)
 	return err
 }
 
 func (pt *PlaqTrans) ComputeProprioutil(db *sqlx.DB) error {
-    if pt.IdProprioutil == 0{
-        return nil
-    }
+	if pt.IdProprioutil == 0 {
+		return nil
+	}
 	var err error
 	pt.Proprioutil, err = GetActeur(db, pt.IdProprioutil)
 	return err
@@ -125,10 +125,10 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
         glprix,
         gltva,
         gldatepay,
-        connheure,
-        conprixh,
-        contva,
-        condatepay,
+        conheure,
+        coprixh,
+        cotva,
+        codatepay,
         cankm,
         caprixkm,
         catva,
@@ -154,10 +154,10 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
 		pt.GlPrix,
 		pt.GlTVA,
 		pt.GlDatePay,
-		pt.ConNheure,
-		pt.ConPrixH,
-		pt.ConTVA,
-		pt.ConDatePay,
+		pt.CoNheure,
+		pt.CoPrixH,
+		pt.CoTVA,
+		pt.CoDatePay,
 		pt.CaNkm,
 		pt.CaPrixKm,
 		pt.CaTVA,
@@ -199,19 +199,19 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 		return err
 	}
 	// clés étrangères pouvant être nulles
-	/* 
-	var idTransporteur interface{}
-	if pt.IdTransporteur != 0{
-	    idTransporteur = pt.IdTransporteur
-	}
-	var idConducteur interface{}
-	if pt.IdConducteur != 0{
-	    idConducteur = pt.IdConducteur
-	}
-	var idProprioutil interface{}
-	if pt.IdProprioutil != 0{
-	    idProprioutil = pt.IdProprioutil
-	}
+	/*
+		var idTransporteur interface{}
+		if pt.IdTransporteur != 0{
+		    idTransporteur = pt.IdTransporteur
+		}
+		var idConducteur interface{}
+		if pt.IdConducteur != 0{
+		    idConducteur = pt.IdConducteur
+		}
+		var idProprioutil interface{}
+		if pt.IdProprioutil != 0{
+		    idProprioutil = pt.IdProprioutil
+		}
 	*/
 	//
 	query := `update plaqtrans set(
@@ -226,10 +226,10 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
         glprix,
         gltva,
         gldatepay,
-        connheure,
-        conprixh,
-        contva,
-        condatepay,
+        conheure,
+        coprixh,
+        cotva,
+        codatepay,
         cankm,
         caprixkm,
         catva,
@@ -254,10 +254,10 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 		pt.GlPrix,
 		pt.GlTVA,
 		pt.GlDatePay,
-		pt.ConNheure,
-		pt.ConPrixH,
-		pt.ConTVA,
-		pt.ConDatePay,
+		pt.CoNheure,
+		pt.CoPrixH,
+		pt.CoTVA,
+		pt.CoDatePay,
 		pt.CaNkm,
 		pt.CaPrixKm,
 		pt.CaTVA,

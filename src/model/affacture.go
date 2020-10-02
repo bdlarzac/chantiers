@@ -213,26 +213,26 @@ func (aff *Affacture) computeItemsTransport(db *sqlx.DB) error {
 			//
 			// Transporteur
 			//
-			montantHT = elt.ConNheure * elt.ConPrixH
-			montantTVA = montantHT * elt.ConTVA / 100
+			montantHT = elt.CoNheure * elt.CoPrixH
+			montantTVA = montantHT * elt.CoTVA / 100
 			montantTTC = montantHT + montantTVA
 			ligne = AffactureLigne{
 				Titre: "Transport",
 				Colonnes: []AffactureColonne{
 					{
 						Titre:  "Nb heures",
-						Valeur: strconv.FormatFloat(elt.ConNheure, 'f', 2, 64),
+						Valeur: strconv.FormatFloat(elt.CoNheure, 'f', 2, 64),
 					},
 					{
 						Titre:  "Prix / h",
-						Valeur: strconv.FormatFloat(elt.ConPrixH, 'f', 2, 64),
+						Valeur: strconv.FormatFloat(elt.CoPrixH, 'f', 2, 64),
 					},
 					{
 						Titre:  "Montant HT",
 						Valeur: strconv.FormatFloat(montantHT, 'f', 2, 64),
 					},
 					{
-						Titre:  "TVA " + strconv.FormatFloat(elt.ConTVA, 'f', -1, 64) + "%",
+						Titre:  "TVA " + strconv.FormatFloat(elt.CoTVA, 'f', -1, 64) + "%",
 						Valeur: strconv.FormatFloat(montantTVA, 'f', 2, 64),
 					},
 					{
