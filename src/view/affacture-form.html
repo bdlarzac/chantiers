@@ -21,8 +21,22 @@
             <div><input type="checkbox" id="DB" name="DB"><label for="DB">Débardage</label></div>
             <div><input type="checkbox" id="BR" name="BR"><label for="BR">Broyage</label></div>
             <div><input type="checkbox" id="DC" name="DC"><label for="DC">Déchiquetage</label></div>
-            <div><input type="checkbox" id="TR" name="TR"><label for="TR">Transport plateforme</label></div>
-            <div><input type="checkbox" id="RG" name="RG"><label for="RG">Rangement</label></div>
+            <div>
+                <b>Transport plateforme</b>
+                <div class="padding-left2">
+                    <div><input type="checkbox" id="TR" name="TR"><label for="TR">Transporteur (coût global)</label></div>
+                    <div><input type="checkbox" id="TR-CO" name="TR-CO"><label for="TR-CO">Conducteur</label></div>
+                    <div><input type="checkbox" id="TR-OU" name="TR-OU"><label for="TR-OU">Propriétaire outil</label></div>
+                </div>
+            </div>
+            <div>
+                <b>Rangement</b>
+                <div class="padding-left2">
+                    <div><input type="checkbox" id="RG" name="RG"><label for="RG">Rangeur (coût global)</label></div>
+                    <div><input type="checkbox" id="RG-CO" name="RG-CO"><label for="RG-CO">Conducteur</label></div>
+                    <div><input type="checkbox" id="RG-OU" name="RG-OU"><label for="RG-OU">Propriétaire outil</label></div>
+                </div>
+            </div>
             <div><input type="checkbox" id="CG" name="CG"><label for="CG">Chargement</label></div>
             <div><input type="checkbox" id="LV" name="LV"><label for="LV">Livraison</label></div>
         </div>
@@ -64,7 +78,11 @@ function changeOpToutRien(){
         document.getElementById("BR").checked = true;
         document.getElementById("DC").checked = true;
         document.getElementById("TR").checked = true;
+        document.getElementById("TR-CO").checked = true;
+        document.getElementById("TR-OU").checked = true;
         document.getElementById("RG").checked = true;
+        document.getElementById("RG-CO").checked = true;
+        document.getElementById("RG-OU").checked = true;
         document.getElementById("CG").checked = true;
         document.getElementById("LV").checked = true;
         document.getElementById("op-tout-rien").innerHTML = "Tout déselectionner";
@@ -76,7 +94,11 @@ function changeOpToutRien(){
         document.getElementById("BR").checked = false;
         document.getElementById("DC").checked = false;
         document.getElementById("TR").checked = false;
+        document.getElementById("TR-CO").checked = false;
+        document.getElementById("TR-OU").checked = false;
         document.getElementById("RG").checked = false;
+        document.getElementById("RG-CO").checked = false;
+        document.getElementById("RG-OU").checked = false;
         document.getElementById("CG").checked = false;
         document.getElementById("LV").checked = false;
         document.getElementById("op-tout-rien").innerHTML = "Tout selectionner";

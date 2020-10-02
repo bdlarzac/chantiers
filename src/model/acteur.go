@@ -247,7 +247,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		res = append(res, new)
 	}
 	//
-	// Transport plateforme de chantier plaquette à lieu de stockage - conducteur
+	// Transport plateforme de chantier plaquette à lieu de stockage - transporteur (coût global)
 	//
 	list2 := []PlaqTrans{}
 	query = "select * from plaqtrans where id_transporteur=$1"
@@ -272,10 +272,60 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		res = append(res, new)
 	}
 	//
-	// Rangement plaquettes suite au transport - conducteur
+	// Transport plateforme de chantier plaquette à lieu de stockage - conducteur
+	//
+	list2a := []PlaqTrans{}
+	query = "select * from plaqtrans where id_conducteur=$1"
+	err = db.Select(&list2a, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list2a {
+		plaq, err := GetPlaq(db, elt.IdChantier)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
+		}
+		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateTrans,
+			Role:        "conducteur (transport)",
+			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
+			NomActivite: "Chantier plaquettes " + plaq.String()}
+		res = append(res, new)
+	}
+	//
+	// Transport plateforme de chantier plaquette à lieu de stockage - propriétaire outil
+	//
+	list2b := []PlaqTrans{}
+	query = "select * from plaqtrans where id_proprioutil=$1"
+	err = db.Select(&list2b, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list2b {
+		plaq, err := GetPlaq(db, elt.IdChantier)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
+		}
+		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateTrans,
+			Role:        "propriétaire outil (transport)",
+			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
+			NomActivite: "Chantier plaquettes " + plaq.String()}
+		res = append(res, new)
+	}
+	//
+	// Rangement plaquettes suite au transport - rangeur (coût global)
 	//
 	list3 := []PlaqRange{}
-	query = "select * from plaqrange where id_conducteur=$1"
+	query = "select * from plaqrange where id_rangeur=$1"
 	err = db.Select(&list3, query, a.Id)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -292,6 +342,56 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		new := &ActeurActivite{
 			Date:        elt.DateRange,
 			Role:        "rangeur",
+			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
+			NomActivite: "Chantier plaquettes " + plaq.String()}
+		res = append(res, new)
+	}
+	//
+	// Rangement plaquettes suite au transport - conducteur
+	//
+	list3a := []PlaqRange{}
+	query = "select * from plaqrange where id_conducteur=$1"
+	err = db.Select(&list3a, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list3a {
+		plaq, err := GetPlaq(db, elt.IdChantier)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
+		}
+		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateRange,
+			Role:        "conducteur (rangement)",
+			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
+			NomActivite: "Chantier plaquettes " + plaq.String()}
+		res = append(res, new)
+	}
+	//
+	// Rangement plaquettes suite au transport - propriétaire outil
+	//
+	list3b := []PlaqRange{}
+	query = "select * from plaqrange where id_proprioutil=$1"
+	err = db.Select(&list3b, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list3b {
+		plaq, err := GetPlaq(db, elt.IdChantier)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
+		}
+		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateRange,
+			Role:        "propriétaire outil (rangement)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: "Chantier plaquettes " + plaq.String()}
 		res = append(res, new)
