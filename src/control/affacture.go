@@ -135,13 +135,13 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	tr := pdf.UnicodeTranslatorFromDescriptor("") // "" defaults to "cp1252"
 	pdf.AddPage()
-	MetaDataFacture(pdf, tr, ctx.Config, "Affacture")
+	MetaDataPDF(pdf, tr, ctx.Config, "Affacture")
 	// Emetteur de la facture
 	str = StringActeurFacture(acteur)
 	pdf.SetXY(10, 10)
 	pdf.SetFont("Arial", "", 12)
 	pdf.MultiCell(100, 7, tr(str), "", "L", false)
-	// Destinataire de la facture (BDL)
+	// Destinataire de l'affacture (BDL)
 	str = tiglib.DateFrText(time.Now())
 	pdf.SetXY(145, 15)
 	pdf.Cell(50, 50, "Le "+tr(str))
@@ -149,10 +149,7 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	pdf.SetXY(145, 25)
 	pdf.SetFont("Arial", "B", 18)
 	pdf.Cell(50, 70, str)
-	str = "à\n" +
-		"Association Bois du Larzac\n" +
-		"Montredon\n" +
-		"12100 La Roque Sainte Marguerite"
+    str = ctx.Config.Affacture.Adresse
 	pdf.SetXY(145, 68)
 	pdf.SetFont("Arial", "", 10)
 	pdf.MultiCell(100, 7, tr(str), "", "L", false)

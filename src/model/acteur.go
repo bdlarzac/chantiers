@@ -397,7 +397,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		res = append(res, new)
 	}
 	//
-	// Livraison pour vente plaquette - livreur
+	// Livraison pour vente plaquette - livreur (coût global)
 	//
 	list4 := []VenteLivre{}
 	query = "select * from ventelivre where id_livreur=$1"
@@ -422,7 +422,57 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		res = append(res, new)
 	}
 	//
-	// Chargement pour livraison plaquette - chargeur
+	// Livraison pour vente plaquette - conducteur
+	//
+	list4a := []VenteLivre{}
+	query = "select * from ventelivre where id_conducteur=$1"
+	err = db.Select(&list4a, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list4a {
+		vp, err := GetVentePlaq(db, elt.IdVente)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetVentePlaq()")
+		}
+		err = vp.ComputeClient(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateLivre,
+			Role:        "conducteur",
+			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
+			NomActivite: "Vente plaquettes " + vp.String()}
+		res = append(res, new)
+	}
+	//
+	// Livraison pour vente plaquette - propriétaire outil
+	//
+	list4b := []VenteLivre{}
+	query = "select * from ventelivre where id_proprioutil=$1"
+	err = db.Select(&list4b, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list4b {
+		vp, err := GetVentePlaq(db, elt.IdVente)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetVentePlaq()")
+		}
+		err = vp.ComputeClient(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateLivre,
+			Role:        "propriétaire outil",
+			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
+			NomActivite: "Vente plaquettes " + vp.String()}
+		res = append(res, new)
+	}
+	//
+	// Chargement pour livraison plaquette - chargeur (coût global)
 	//
 	list5 := []VenteCharge{}
 	query = "select * from ventecharge where id_chargeur=$1"
@@ -439,6 +489,50 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		new := &ActeurActivite{
 			Date:        elt.DateCharge,
 			Role:        "chargeur",
+			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
+			NomActivite: "Chargement plaquettes " + elt.String()}
+		res = append(res, new)
+	}
+	//
+	// Chargement pour livraison plaquette - conducteur
+	//
+	list5a := []VenteCharge{}
+	query = "select * from ventecharge where id_conducteur=$1"
+	err = db.Select(&list5a, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list5a {
+		elt.Chargeur = a
+		err = elt.ComputeIdVente(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeIdVente()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateCharge,
+			Role:        "conducteur",
+			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
+			NomActivite: "Chargement plaquettes " + elt.String()}
+		res = append(res, new)
+	}
+	//
+	// Chargement pour livraison plaquette - propriétaire outil
+	//
+	list5b := []VenteCharge{}
+	query = "select * from ventecharge where id_conducteur=$1"
+	err = db.Select(&list5b, query, a.Id)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, elt := range list5b {
+		elt.Chargeur = a
+		err = elt.ComputeIdVente(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeIdVente()")
+		}
+		new := &ActeurActivite{
+			Date:        elt.DateCharge,
+			Role:        "propriétaire outil",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: "Chargement plaquettes " + elt.String()}
 		res = append(res, new)

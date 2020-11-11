@@ -18,8 +18,8 @@ func InitializeFacture(pdf *gofpdf.Fpdf) {
 	pdf.SetAutoPageBreak(true, 1) // met la marge du bas à 1cm
 }
 
-// Métadonnées du PDF
-func MetaDataFacture(pdf *gofpdf.Fpdf, tr func(string) string, conf *model.Config, titre string) {
+// Métadonnées du PDF (pour factures et affactures)
+func MetaDataPDF(pdf *gofpdf.Fpdf, tr func(string) string, conf *model.Config, titre string) {
 	pdf.SetTitle(tr(titre), true)
 	pdf.SetAuthor(conf.Facture.Auteur, true)
 	pdf.SetCreator(conf.Facture.Createur, true)

@@ -62,5 +62,13 @@ facture:
   siret: 792 959 892 00011
   tva: FR 84792959892
   
+# Infos figurant sur les affactures
+affacture:
+  # A qui est adressé l'affacture
+  adresse: |
+    Association Bois du Larzac
+    Montredon
+    12100 La Roque Ste Marguerite
+
 # Nombre de chantiers affichés dans la partie "activités récentes"
 nb-recent: 5

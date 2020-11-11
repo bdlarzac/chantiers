@@ -311,7 +311,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	tr := pdf.UnicodeTranslatorFromDescriptor("") // "" defaults to "cp1252"
 	pdf.AddPage()
 	//
-	MetaDataFacture(pdf, tr, ctx.Config, "Facture vente plaquettes")
+	MetaDataPDF(pdf, tr, ctx.Config, "Facture vente plaquettes")
 	HeaderFacture(pdf, tr, ctx.Config)
 	FooterFacture(pdf, tr, ctx.Config)
 	//
