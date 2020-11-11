@@ -30,15 +30,15 @@ type VenteCharge struct {
 	GlPrix    float64
 	GlTVA     float64
 	GlDatePay time.Time
-	// coût détaillé, outil
-	OuPrix    float64
-	OuTVA     float64
-	OuDatePay time.Time
 	// coût détaillé, main d'oeuvre
 	MoNHeure  float64
 	MoPrixH   float64
 	MoTVA     float64
 	MoDatePay time.Time
+	// coût détaillé, outil
+	OuPrix    float64
+	OuTVA     float64
+	OuDatePay time.Time
 	//
 	Notes string
 	// Pas stocké en base

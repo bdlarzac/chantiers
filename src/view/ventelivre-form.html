@@ -10,12 +10,7 @@
         
         <label for="datelivre">Date livraison</label>
         <input type="date" name="datelivre" id="datelivre" value="{{.DateLivre | dateIso}}" class="width20" required>
-        
-        <label for="livreur">Livreur</label>
-        <div class="autocomplete">
-            <input type="text" name="livreur" id="livreur" value="" autocomplete="off" class="width20" required>
-        </div>
-
+                                                                                  
     </div>
     
     <!-- ****************** Coût global ******************* -->
@@ -26,6 +21,11 @@
                                       
     <div class="grid2-form margin-top">
         
+        <label for="livreur">Livreur</label>
+        <div class="autocomplete">
+            <input type="text" name="livreur" id="livreur" value="" autocomplete="off" class="width20" required>
+        </div>
+
         <label for="glprix">Prix HT</label>
         <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5">
         
@@ -34,16 +34,27 @@
             {{$.Details.GlTVAOptions}}
         </select>
         
+        <label for="gldatepay">Date Paiement</label>
+        <input type="date" name="gldatepay" id="gldatepay" value="{{.GlDatePay | dateIso}}" class="width20">
+        
     </div>
 
-    <!-- ****************** Coût main d'oeuvre ******************* -->
+    <!-- ****************** Coût détaillé ******************* -->
     <div class="big5 bold margin-top2">
         <input type="radio" name="type-cout" id="cout-detaille" value="cout-detaille">
-        <label for="cout-detaille">COÛT MAIN D'OEUVRE</label>
+        <label for="cout-detaille">COÛT DÉTAILLÉ</label>
     </div>
+    
+    <!-- ****************** Conducteur ******************* -->
+    <div class="big3 bold margin-top">Main d'oeuvre</div>
     
     <div class="grid2-form margin-top">
         
+        <label for="conducteur">Conducteur</label>
+        <div class="autocomplete">
+            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20" required>
+        </div>
+
         <label for="monheure">Nombre d'heures</label>
         <input type="number" name="monheure" id="monheure" step="0.01" min="0" value="{{.MoNHeure| zero2empty}}" class="width5">
         
@@ -55,15 +66,36 @@
             {{$.Details.MoTVAOptions}}
         </select>
         
+        <label for="modatepay">Date Paiement</label>
+        <input type="date" name="modatepay" id="modatepay" value="{{.MoDatePay | dateIso}}" class="width20">
+        
     </div>
     
-    <hr class="margin-top" style="width:80%;">
+    <!-- ****************** Outil ******************* -->
+    <div class="big3 bold margin-top">Outil</div>
+    
+    <div class="grid2-form margin-top">
+        
+        <label for="proprioutil">Propriétaire outil</label>
+        <div class="autocomplete">
+            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20" required>
+        </div>
+
+        <label for="ouprix">Prix HT</label>
+        <input type="number" name="ouprix" id="ouprix" step="0.01" min="0" value="{{.OuPrix | zero2empty}}" class="width5">
+        
+        <label for="outva">Taux TVA</label>
+        <select name="outva" id="outva" class="width8">
+            {{$.Details.OuTVAOptions}}
+        </select>
+        
+        <label for="oudatepay">Date Paiement</label>
+        <input type="date" name="oudatepay" id="oudatepay" value="{{.OuDatePay | dateIso}}" class="width20">
+        
+    </div>
     
     <div class="grid2-form margin-top2">
     
-        <label for="datepay">Date Paiement<br>(global ou m.o.)</label>
-        <input type="date" name="datepay" id="datepay" value="{{.DatePay | dateIso}}" class="width20">
-        
         <label for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
         
@@ -77,6 +109,8 @@
     <input type="hidden" name="id-ventelivre" id="id-ventelivre" value="{{.Id}}">
     <input type="hidden" name="id-vente" id="id-vente" value="{{.IdVente}}">
     <input type="hidden" name="id-livreur" id="id-livreur" value="{{.IdLivreur}}">
+    <input type="hidden" name="id-conducteur" id="id-conducteur" value="{{.IdConducteur}}">
+    <input type="hidden" name="id-proprioutil" id="id-proprioutil" value="{{.IdProprioutil}}">
     
 </form>
 
@@ -84,6 +118,8 @@
 <script>
 window.addEventListener("load", function(){
     autocomplete(document.getElementById("livreur"), getActeursPossibles);
+    autocomplete(document.getElementById("conducteur"), getActeursPossibles);
+    autocomplete(document.getElementById("proprioutil"), getActeursPossibles);
     // Pour vérifier que le livreur affiché correspond à une personne existant en base.
     // on ne peut pas se fier uniquement à getElementById("id-livreur")
     // car l'utilisateur peut modifier le nom
@@ -109,7 +145,11 @@ function initialize(){
     // form update
     else{
         window.globalPersons[{{.IdLivreur}}] = "{{.Livreur.NomAutocomplete}}";
+        window.globalPersons[{{.IdConducteur}}] = "{{.Conducteur.NomAutocomplete}}";
+        window.globalPersons[{{.IdProprioutil}}] = "{{.Proprioutil.NomAutocomplete}}";
         document.getElementById("livreur").value = "{{.Livreur.NomAutocomplete}}";
+        document.getElementById("conducteur").value = "{{.Conducteur.NomAutocomplete}}";
+        document.getElementById("proprioutil").value = "{{.Proprioutil.NomAutocomplete}}";
         //
         if("{{.TypeCout}}" == "G"){
             document.getElementById("cout-global").setAttribute("checked", true);
@@ -133,26 +173,52 @@ function changeTypeCout(){
 }
 // ***************************************
 function setCoutGlobal(){
+    document.getElementById("livreur").readOnly = false;
     document.getElementById("glprix").readOnly = false;
     document.getElementById("gltva").disabled = false;
+    document.getElementById("gldatepay").readOnly = false;
     //
+    document.getElementById("conducteur").value = "";
+    document.getElementById("conducteur").readOnly = true;
+    document.getElementById("ouprix").value = "";
+    document.getElementById("ouprix").readOnly = true;
+    document.getElementById("outva").value = "CHOOSE_TVA_OU";
+    document.getElementById("outva").disabled = true;
+    document.getElementById("oudatepay").value = "";
+    document.getElementById("oudatepay").readOnly = true;
+    //
+    document.getElementById("proprioutil").value = "";
+    document.getElementById("proprioutil").readOnly = true;
     document.getElementById("monheure").value = "";
     document.getElementById("monheure").readOnly = true;
     document.getElementById("moprixh").value = "";
     document.getElementById("moprixh").readOnly = true;
     document.getElementById("motva").value = "CHOOSE_TVA_MO";
     document.getElementById("motva").disabled = true;
+    document.getElementById("modatepay").value = "";
+    document.getElementById("modatepay").readOnly = true;      
 }
 // ***************************************
 function setCoutDetaille(){
+    document.getElementById("livreur").value = "";
+    document.getElementById("livreur").readOnly = true;
     document.getElementById("glprix").value="";
     document.getElementById("glprix").readOnly = true;
     document.getElementById("gltva").value = "CHOOSE_TVA_GL";
     document.getElementById("gltva").disabled = true;
+    document.getElementById("gldatepay").value = "";
+    document.getElementById("gldatepay").readOnly = true;
     //
+    document.getElementById("conducteur").readOnly = false;
+    document.getElementById("ouprix").readOnly = false;
+    document.getElementById("outva").disabled = false;
+    document.getElementById("oudatepay").readOnly = false;
+    //
+    document.getElementById("proprioutil").readOnly = false;
     document.getElementById("monheure").readOnly = false;
     document.getElementById("moprixh").readOnly = false;
     document.getElementById("motva").disabled = false;
+    document.getElementById("modatepay").readOnly = false;                  
 }
 
 // ***************************************
@@ -194,6 +260,26 @@ function validateForm(){
         if(document.getElementById("CHOOSE_TVA_GL").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (coût global)";
         }
+        // calcule id-livreur
+        var personName = document.getElementById("livreur").value.trim();
+        if(personName == ""){
+            msg += "Vous devez renseigner un livreur.";
+        }
+        else {
+            var ok = false;
+            for(var idActeur in window.globalPersons){
+                if(window.globalPersons[idActeur] == personName){
+                    ok = true;
+                    break;
+                }
+            }
+            if(!ok){
+                msg += "Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+            }
+            else{
+                document.getElementById("id-livreur").value = idActeur;
+            }
+        }
     } else {
         // Main oeuvre
         if(document.getElementById("monheure").value == ""){
@@ -205,34 +291,60 @@ function validateForm(){
         if(document.getElementById("CHOOSE_TVA_MO").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (m.o.)";
         }
+        // calcule id-conducteur
+        var personName = document.getElementById("conducteur").value.trim();
+        if(personName == ""){
+            msg += "\n- Vous devez renseigner le conducteur.";
+        }
+        else{
+            var ok = false;
+            for(var idActeur in window.globalPersons){
+                if(window.globalPersons[idActeur] == personName){
+                    ok = true;
+                    break;
+                }
+            }
+            if(!ok){
+                msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+            }
+            else{
+                document.getElementById("id-conducteur").value = idActeur;
+            }
+        }
+        // Outil
+        if(document.getElementById("ouprix").value == ""){                      
+            msg += "\n- Vous devez indiquer un prix HT (outil)";
+        }
+        if(document.getElementById("CHOOSE_TVA_OU").selected == true){
+            msg += "\n- Vous devez choisir un taux de TVA (outil)";
+        }
+        // calcule id-proprioutil
+        var personName = document.getElementById("proprioutil").value.trim();
+        if(personName == ""){
+            msg += "\n- Vous devez renseigner le propriétaire de l'outil.";
+        }
+        else{
+            var ok = false;
+            for(var idActeur in window.globalPersons){
+                if(window.globalPersons[idActeur] == personName){
+                    ok = true;
+                    break;
+                }
+            }
+            if(!ok){
+                msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+            }
+            else{
+                document.getElementById("id-proprioutil").value = idActeur;
+            }
+        }
     }
+    //
     if(msg != ""){
         msg = "Certains champs sont obligatoires :" + msg;
         alert(msg);
         return false;
     }
-    
-    // calcule id-livreur
-    var personName = document.getElementById("livreur").value.trim();
-    if(personName == ""){
-        alert("Vous devez renseigner un livreur.");
-        return false;
-    }
-    var ok = false;
-    for(var idActeur in window.globalPersons){
-        if(window.globalPersons[idActeur] == personName){
-            ok = true;
-            break;
-        }
-    }
-    if(!ok){
-        alert("Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.");
-        return false;
-    }
-    else{
-        document.getElementById("id-livreur").value = idActeur;
-    }
-    return true;
 }
 </script>
 

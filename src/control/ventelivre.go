@@ -18,6 +18,7 @@ type detailsVenteLivreForm struct {
 	VenteLivre   *model.VenteLivre
 	GlTVAOptions template.HTML
 	MoTVAOptions template.HTML
+	OuTVAOptions template.HTML
 	UrlAction    string
 }
 type detailsVenteLivreList struct {
@@ -54,6 +55,8 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		vl := &model.VenteLivre{}
 		vl.IdVente = idVente
 		vl.Livreur = &model.Acteur{}
+		vl.Conducteur = &model.Acteur{}
+		vl.Proprioutil = &model.Acteur{}
 		// pour afficher le nom de la vente => besoin du nom client => besoin de GetVentePlaqFull
 		vl.Vente, err = model.GetVentePlaqFull(ctx.DB, idVente)
 		if err != nil {
@@ -77,6 +80,7 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				VenteLivre:   vl,
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO"), "CHOOSE_TVA_MO"),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), "CHOOSE_TVA_OU"),
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/new",
 			},
 		}
@@ -140,8 +144,9 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 			},
 			Details: detailsVenteLivreForm{
 				VenteLivre:   vl,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(vl.GlTVA, 'f', 1, 64)),
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(vl.GlTVA, 'f', 1, 64)),         
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO"), strconv.FormatFloat(vl.MoTVA, 'f', 1, 64)),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), strconv.FormatFloat(vl.OuTVA, 'f', 1, 64)),
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/update/" + vars["id-livraison"],
 			},
 		}
@@ -186,11 +191,6 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 		return vl, err
 	}
 	//
-	vl.IdLivreur, err = strconv.Atoi(r.PostFormValue("id-livreur"))
-	if err != nil {
-		return vl, err
-	}
-	//
 	vl.DateLivre, err = time.Parse("2006-01-02", r.PostFormValue("datelivre"))
 	if err != nil {
 		return vl, err
@@ -199,6 +199,11 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 		//
 		// coût global
 		//
+        vl.IdLivreur, err = strconv.Atoi(r.PostFormValue("id-livreur"))
+        if err != nil {
+            return vl, err
+        }
+        //
 		vl.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
 			return vl, err
@@ -210,9 +215,21 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 			return vl, err
 		}
 		vl.GlTVA = tiglib.Round(vl.GlTVA, 2)
+		//
+		if r.PostFormValue("gldatepay") != "" {
+			vl.GlDatePay, err = time.Parse("2006-01-02", r.PostFormValue("gldatepay"))
+			if err != nil {
+				return vl, err
+			}
+		}
 	} else {
 		//
-		// coût main d'oeuvre
+		// coût détaillé, conducteur
+		//
+		vl.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
+		if err != nil {
+			return vl, err
+		}
 		//
 		vl.MoNHeure, err = strconv.ParseFloat(r.PostFormValue("monheure"), 32)
 		if err != nil {
@@ -231,12 +248,38 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 			return vl, err
 		}
 		vl.MoTVA = tiglib.Round(vl.MoTVA, 2)
-	}
-	//
-	if r.PostFormValue("datepay") != "" {
-		vl.DatePay, err = time.Parse("2006-01-02", r.PostFormValue("datepay"))
+		//
+		if r.PostFormValue("modatepay") != "" {
+			vl.MoDatePay, err = time.Parse("2006-01-02", r.PostFormValue("modatepay"))
+			if err != nil {
+				return vl, err
+			}
+		}
+		//
+		// coût détaillé, outil
+		//
+		vl.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
 		if err != nil {
 			return vl, err
+		}
+		//
+		vl.OuPrix, err = strconv.ParseFloat(r.PostFormValue("ouprix"), 32)
+		if err != nil {
+			return vl, err
+		}
+		vl.OuPrix = tiglib.Round(vl.OuPrix, 2)
+		//
+		vl.OuTVA, err = strconv.ParseFloat(r.PostFormValue("outva"), 32)
+		if err != nil {
+			return vl, err
+		}
+		vl.OuTVA = tiglib.Round(vl.OuTVA, 2)
+		//
+		if r.PostFormValue("oudatepay") != "" {
+			vl.OuDatePay, err = time.Parse("2006-01-02", r.PostFormValue("oudatepay"))
+			if err != nil {
+				return vl, err
+			}
 		}
 	}
 	//

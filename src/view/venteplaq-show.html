@@ -130,16 +130,25 @@ Livraisons
         </td>
         <td class="vertical-align-top">
             <div class="grid2-pres">
+            
+                {{if .IdLivreur}}
                 <div>Livreur</div>
                 <div class="bold"><a href="/acteur/{{.Livreur.Id}}">{{.Livreur.String}}</a></div>
+                {{end}}
+                
+                {{if .IdConducteur}}
+                <div>Conducteur</div>
+                <div><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
+                {{end}}
+                
+                {{if .IdProprioutil}}
+                <div>Propriétaire outil</div>
+                <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
+                {{end}}
                 
                 <div>Date livraison</div>
                 <div class="bold">{{.DateLivre | dateFr}}</div>
                 
-                {{if .DatePay}}
-                <div>Date paiement</div>
-                <div class="bold">{{.DatePay | dateFr}}</div>
-                {{end}}
             </div>
             {{if .Notes}}
                 <div class="bold margin-top">Notes</div>
@@ -148,6 +157,7 @@ Livraisons
         </td>
         <td class="vertical-align-top">
         {{if eq .TypeCout "G"}}
+            <!-- livraison, coût global -->
             <div class="padding02 bg-ccc center margin-bottom05">Coût global</div>
             <div class="grid2-pres">
                 <div>Prix HT</div>
@@ -158,31 +168,60 @@ Livraisons
                 
                 <div>Total TTC</div>
                 <div class="bold"><script>document.write(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2));</script> &euro;</div>
+                
+                <div>Paiement</div>
+                <div class="bold">{{.GlDatePay | dateFr}}</div>
             </div>
         {{else}}
-            <div class="padding02 bg-ccc center margin-bottom05">Coût M.O.</div>
-            <div class="grid2-pres">
-                <div>Nb heures</div>
-                <div class="bold">{{.MoNHeure}}</div>
-                
-                <div>Prix HT / h</div>
-                <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
-                
-                <div>Total HT</div>
-                <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
-                
-                <div>TVA</div>
-                <div class="bold">{{.MoTVA}} %</div>
-                
-                <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
-            </div>
+            <td class="vertical-align-top">
+                <!-- livraison, coût détaillé -->
+                <div class="padding02 bg-ccc center margin-bottom05">Coût M.O.</div>
+                <div class="grid2-pres">
+                    <div>Nb heures</div>
+                    <div class="bold">{{.MoNHeure}}</div>
+                    
+                    <div>Prix HT / h</div>
+                    <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
+                    
+                    <div>Total HT</div>
+                    <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
+                    
+                    <div>TVA</div>
+                    <div class="bold">{{.MoTVA}} %</div>
+                    
+                    <div>Total TTC</div>
+                    <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
+                                        
+                    <div>Paiement</div>
+                    <div class="bold">{{.MoDatePay | dateFr}}</div>
+                </div>
+            <td class="vertical-align-top">
+            <td>
+                <!-- livraison, coût détaillé, outil -->
+                <div class="padding02 bg-ccc center margin-bottom05">Coût Outil</div>
+                <div class="grid2-pres">
+                    <!-- 2 lignes blanches pour alignement coûts outil / m.o. -->
+                    <div>&nbsp;</div><div>&nbsp;</div>
+                    <div>&nbsp;</div><div>&nbsp;</div>
+                    <div>Prix HT</div>
+                    <div class="bold">{{.OuPrix | twoDigits}} &euro;</div>
+                    
+                    <div>TVA</div>
+                    <div class="bold">{{.OuTVA}} %</div>
+                    
+                    <div>Total TTC</div>
+                    <div class="bold"><script>document.write(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2));</script> &euro;</div>
+                    
+                    <div>Paiement</div>
+                    <div class="bold">{{.OuDatePay | dateFr}}</div>
+                </div>
+            </td>
         {{end}}
         </td>
     </tr>
     <!-- ***************** Chargements ******************** -->
     <tr>
-        <td colspan="2">
+        <td colspan="5">
             <div>
             <b>Chargements</b>
             <a class="padding-left" href="/vente/{{.IdVente}}/livraison/{{.Id}}/chargement/new">
@@ -252,8 +291,8 @@ Livraisons
                             </div>
                         </td>
                     {{else}}
-                        <!-- chargement, coût détaillé -->
                         <td class="vertical-align-top">
+                            <!-- chargement, coût détaillé, conducteur -->
                             <div class="padding02 bg-ccc center margin-bottom05">Coût M.O.</div>
                             <div class="grid2-pres">
                                 <div>Nb heures</div>
@@ -276,6 +315,7 @@ Livraisons
                             </div>
                         </td>
                         <td class="vertical-align-top">
+                            <!-- chargement, coût détaillé, outil -->
                             <div class="padding02 bg-ccc center margin-bottom05">Coût Outil</div>
                             <div class="grid2-pres">
                                 <!-- 2 lignes blanches pour alignement coûts outil / m.o. -->

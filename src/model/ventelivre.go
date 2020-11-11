@@ -21,21 +21,30 @@ type VenteLivre struct {
 	Id        int
 	IdVente   int `db:"id_vente"`
 	IdLivreur int `db:"id_livreur"`
+	IdConducteur  int `db:"id_conducteur"`
+	IdProprioutil int `db:"id_proprioutil"`
 	DateLivre time.Time
 	TypeCout  string // G (global) ou D (détail)
 	// coût global
 	GlPrix float64
 	GlTVA  float64
+	GlDatePay time.Time
 	// coût main d'oeuvre
 	MoNHeure float64
 	MoPrixH  float64
 	MoTVA    float64
+	MoDatePay time.Time
+	// coût détaillé, outil
+	OuPrix    float64
+	OuTVA     float64
+	OuDatePay time.Time
 	//
-	DatePay time.Time
 	Notes   string
 	// Pas stocké en base
 	Quantite    float64
 	Livreur     *Acteur
+	Conducteur  *Acteur
+	Proprioutil *Acteur
 	Vente       *VentePlaq
 	Chargements []*VenteCharge
 }
@@ -71,8 +80,19 @@ func GetVenteLivreFull(db *sqlx.DB, id int) (*VenteLivre, error) {
 	if err != nil {
 		return vl, werr.Wrapf(err, "Erreur appel VenteLivre.ComputeLivreur()")
 	}
+	err = vl.ComputeConducteur(db)
+	if err != nil {
+		return vl, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeConducteur()")
+	}
+	err = vl.ComputeProprioutil(db)
+	if err != nil {
+		return vl, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeProprioutil()")
+	}
 	err = vl.ComputeChargements(db)
-	return vl, err
+	if err != nil {
+		return vl, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeChargements()")
+	}
+	return vl, nil
 }
 
 // ************************** Compute *******************************
@@ -83,6 +103,30 @@ func (vl *VenteLivre) ComputeLivreur(db *sqlx.DB) error {
 	}
 	var err error
 	vl.Livreur, err = GetActeur(db, vl.IdLivreur)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
+}
+
+func (vl *VenteLivre) ComputeConducteur(db *sqlx.DB) error {
+	if vl.Conducteur != nil {
+		return nil
+	}
+	var err error
+	vl.Conducteur, err = GetActeur(db, vl.IdConducteur)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
+}
+
+func (vl *VenteLivre) ComputeProprioutil(db *sqlx.DB) error {
+	if vl.Proprioutil != nil {
+		return nil
+	}
+	var err error
+	vl.Proprioutil, err = GetActeur(db, vl.IdProprioutil)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
@@ -112,29 +156,41 @@ func InsertVenteLivre(db *sqlx.DB, vl *VenteLivre) (int, error) {
 	query := `insert into ventelivre(
         id_vente,
         id_livreur,
+        id_conducteur,
+        id_proprioutil,
         datelivre,
         typecout,
         glprix,
         gltva,
+        gldatepay,
+        ouprix,
+        outva,
+        oudatepay,
         monheure,
         moprixh,
         motva,
-        datepay,
+        modatepay,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, $11) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
 		vl.IdVente,
 		vl.IdLivreur,
+		vl.IdConducteur,
+		vl.IdProprioutil,
 		vl.DateLivre,
 		vl.TypeCout,
 		vl.GlPrix,
-		vl.GlTVA,
+		vl.GlTVA,        
+		vl.GlDatePay,
+		vl.OuPrix,
+		vl.OuTVA,
+		vl.OuDatePay,
 		vl.MoNHeure,
 		vl.MoPrixH,
 		vl.MoTVA,
-		vl.DatePay,
+		vl.MoDatePay,
 		vl.Notes).Scan(&id)
 	return id, err
 }
@@ -143,28 +199,40 @@ func UpdateVenteLivre(db *sqlx.DB, vl *VenteLivre) error {
 	query := `update ventelivre set(
         id_vente,
         id_livreur,
+        id_conducteur,
+        id_proprioutil,
         datelivre,
         typecout,
         glprix,
         gltva,
+        gldatepay,
+        ouprix,
+        outva,
+        oudatepay,
         monheure,
         moprixh,
         motva,
-        datepay,
+        modatepay,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) where id=$12`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) where id=$18`
 	_, err := db.Exec(
 		query,
 		vl.IdVente,
 		vl.IdLivreur,
+		vl.IdConducteur,
+		vl.IdProprioutil,
 		vl.DateLivre,
 		vl.TypeCout,
 		vl.GlPrix,
-		vl.GlTVA,
+		vl.GlTVA,        
+		vl.GlDatePay,
+		vl.OuPrix,
+		vl.OuTVA,
+		vl.OuDatePay,
 		vl.MoNHeure,
 		vl.MoPrixH,
 		vl.MoTVA,
-		vl.DatePay,
+		vl.MoDatePay,
 		vl.Notes,
 		vl.Id)
 	if err != nil {
@@ -182,6 +250,8 @@ func DeleteVenteLivre(db *sqlx.DB, id int) error {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	for _, idC := range idsCharge {
+	    // Attention ici ne pas faire directement delete ventecharge en base
+	    // car DeleteVenteCharge() gère le stock des tas associés
 		err := DeleteVenteCharge(db, idC)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel DeleteVenteCharge()")

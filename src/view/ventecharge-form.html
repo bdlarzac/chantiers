@@ -162,12 +162,12 @@ function initialize(){
         document.getElementById("proprioutil").value = "{{.Proprioutil.NomAutocomplete}}";
         //
         if({{.TypeCout}} == "G"){
-            setCoutGlobal();
             document.getElementById("cout-global").setAttribute("checked", true);
+            setCoutGlobal();
         }
         else{
-            setCoutDetaille();
             document.getElementById("cout-detaille").setAttribute("checked", true);
+            setCoutDetaille();
         }
     }
 }
@@ -229,7 +229,6 @@ function setCoutDetaille(){
     document.getElementById("moprixh").readOnly = false;
     document.getElementById("motva").disabled = false;
     document.getElementById("modatepay").readOnly = false;                  
-    //
 }
 
 // ***************************************
