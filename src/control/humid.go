@@ -89,9 +89,9 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		// Ici, cas particulier, si on arrive par la route "/humidite/new/tas/{id-tas:[0-9]+}"
 		// alors le tas est pré-selectionné
 		optionTas := "CHOOSE_TAS"
-        vars := mux.Vars(r)
+		vars := mux.Vars(r)
 		if vars["id-tas"] != "" {
-            optionTas = vars["id-tas"]
+			optionTas = vars["id-tas"]
 		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{

@@ -251,6 +251,7 @@ Chaque frais est constitué par :
     <li>date de début</li>
     <li>date de fin</li>
     <li>montant</li>
+    <li>notes (champ texte)</li>
 </ul>
 Les frais sont utilisés pour calculer le coût du stockage.
 
@@ -385,7 +386,7 @@ Un transport a les caractéristiques suivantes :
     <li>Notes : champ texte libre</li>
 </ul>
 
-La quantité transportée est importante, car utilisée dans le calcul du stock du tas.
+<b>NOTE</b> : La quantité transportée est importante, car utilisée dans le calcul du stock du tas.
 
 <!-- ************************************* -->
 <h6>2.3.1 - Coût global</h6>
@@ -396,12 +397,6 @@ Caractérisé par :
     <li>Taux de TVA</li>
     <li>Date de paiement du transporteur</li>
 </ul>
-
-<ul>
-    <li>Transporteur, acteur identifié par le système</li>
-    <li>Nb d'heures travaillées par le transporteur</li>
-    <li>Prix HT du transporteur par heure</li>
-</ul>                                                   
 
 <!-- ************************************* -->
 <h6>2.3.2 - Coût détaillé</h6>
@@ -458,37 +453,46 @@ Le rangement (déchargement) des plaquettes dans un lieu de stockage ; se fait �
     <li>Coût global</li>
 </ul>
 
-Unn rangement a les caractéristiques suivantes :
+Un rangement a les caractéristiques suivantes :
 <ul>
     <li>Chantier plaquette identifié par le système</li>
     <li>Tas identifié par le système</li>
-    <li>Conducteur, acteur identifié par le système</li>
     <li>Date du rangement</li>
-    <li>
-        Pour le conducteur :
-        <ul>
-            <li>Nb heures travaillées par le conducteur</li>
-            <li>Prix HT du conducteur par h</li>
-            <li>Taux de TVA pour le conducteur</li>
-            <li>Date de paiement du conducteur</li>
-        </ul>
-    </li>
-    <li>
-        Pour l'outil :
-        <ul>
-            <li>Coût outil HT</li>
-            <li>Taux de TVA pour l'outil</li>
-            <li>Date de paiement de l'outil</li>
-        </ul>
-    </li>
-    <li>
-        Pour le coût global :
-        <ul>
-            <li>Coût global HT</li>
-            <li>Taux de TVA pour paiement global</li>
-            <li>Date de paiement global</li>
-        </ul>
-    </li>
+</ul>
+
+<!-- ************************************* -->
+<h6>2.4.1 - Coût global</h6>
+Caractérisé par :
+<ul>
+    <li>Rangeur, acteur identifié par le système</li>
+    <li>Coût HT</li>
+    <li>Taux de TVA</li>
+    <li>Date de paiement</li>
+</ul>
+    
+<!-- ************************************* -->
+<h6>2.4.2 - Coût détaillé</h6>         
+Dans ce cas, <code>coût = coût conducteur + coût outil</code>
+
+<!-- ************************************* -->
+<div class="h7">2.4.2.1 - Coût conducteur</div>
+Caractérisé par :
+<ul>
+    <li>Conducteur, acteur identifié par le système</li>
+    <li>Nb heures travaillées par le conducteur</li>
+    <li>Prix HT du conducteur par h</li>
+    <li>Taux de TVA pour le conducteur</li>
+    <li>Date de paiement du conducteur</li>
+</ul>
+
+<!-- ************************************* -->
+<div class="h7">2.4.2.2 - Coût outil</div>
+Caractérisé par :
+<ul>
+    <li>Propriétaire de l'outil, acteur identifié par le système</li>
+    <li>Coût outil HT</li>
+    <li>Taux de TVA pour l'outil</li>
+    <li>Date de paiement de l'outil</li>
 </ul>
 
 <!-- *********************************************************** -->
@@ -555,7 +559,7 @@ Une facture reprend les informations liées à la vente, avec en plus :
 </ul>
 
 <!-- ************************************* -->
-<h5>3.1 - Livraison</h5>
+<h5>3.1 - Livraison -- A MODIFIER</h5>
 Une livraison est caractérisée par :
 <ul>
     <li>Vente concernée par ce chargement</li>
@@ -592,52 +596,59 @@ La quantité livrée (en maps) est la somme des quantités chargées.
 Le chargement est caractérisé par :
 <ul>
     <li>Livraison concernée par ce chargement</li>
-    <li>Chargeur, acteur identifié par le système</li>
     <li>Tas où vont être prises les plaquettes</li>
-    <li>Qté chargée (en maps)</li>
+    <li>Quantité chargée (en maps)</li>
     <li>Date chargement</li>
-    <li>
-        Coût, qui peut être :
-        <ul>
-            <li>
-                Coût global, composé de :
-                <ul>
-                    <li>Prix global HT</li>
-                    <li>Taux de TVA pour prix global</li>
-                    <li>Date paiement du prix global</li>
-                </ul>
-            </li>
-            <li>
-                Coût détaillé, composé de :
-                <ul>
-                    <li>
-                        Coût outil :
-                        <ul>
-                            <li>Prix outil HT</li>
-                            <li>Taux de TVA pour l'outil</li>
-                            <li>Date paiement outil</li>
-                        </ul>
-                    </li>
-                    <li>
-                        Coût Main d'oeuvre :
-                        <ul>
-                            <li>Nb heures m.o.</li>
-                            <li>Prix / h HT m.o.</li>
-                            <li>Taux de TVA pour la m.o.</li>
-                            <li>Date paiement m.o.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </li>
     <li>Notes : champ texte libre</li>
+</ul>
+
+<b>NOTE</b> : La quantité chargée est importante, car utilisée dans le calcul du stock du tas.
+
+<br><br>Le coût du chargement doit pouvoir être précisé de 2 manières :
+<ul>
+    <li>Coût global</li>
+    <li>Coût détaillé : coût = coût conducteur + coût outil</li>
+</ul>
+
+<!-- ************************************* -->
+<h6>3.2.1 - Coût global</h6>
+Caractérisé par :
+<ul>
+    <li>Chargeur, acteur identifié par le système</li>
+    <li>Prix global HT</li>
+    <li>Taux de TVA pour prix global</li>
+    <li>Date paiement du prix global</li>
+</ul>
+
+<!-- ************************************* -->
+<h6>3.2.2 - Coût détaillé</h6>
+Dans ce cas, <code>coût = coût conducteur + coût outil</code>
+
+<!-- ************************************* -->
+<div class="h7">3.2.2.1 - Coût conducteur</div>
+Caractérisé par :
+<ul>
+    <li>Conducteur, acteur identifié par le système</li>
+    <li>Nb heures effectuées par le conducteur</li>
+    <li>Prix / h HT du conducteur</li>
+    <li>Taux de TVA pour le conducteur</li>
+    <li>Date de paiement du conducteur</li>
+</ul>
+
+<!-- ************************************* -->
+<div class="h7">3.2.2.2 - Coût outil</div>
+Caractérisé par :
+<ul>
+    <li>Propriétaire de l'outil, acteur identifié par le système</li>
+    <li>Prix outil HT</li>
+    <li>Taux de TVA pour l'outil</li>
+    <li>Date paiement outil</li>
 </ul>
 
 
 <!-- *********************************************************** -->
 <h4><a name="2-8-chantiers-bois-de-chauffage-fermiers">4 - Chantiers Bois de chauffage fermiers</a></h4>
-Il s'agit de coupes effectués par des exploitants, que BDL ne facture pas.
+Il s'agit de coupes effectuées par des exploitants, que BDL ne facture pas.
 <br>Caractérisé par :
 <ul>
     <li>Le fermier effectuant la coupe, acteur identifié par le système.</li>

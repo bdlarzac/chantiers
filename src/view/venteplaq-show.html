@@ -106,7 +106,7 @@ Dans la facture :
 
 </div><!-- end class="flex-wrap" -->
 
-<!-- ************************************* -->
+<!-- ***************** Livraisons ******************** -->
 <div class="big3 bold margin-top margin-bottom">
 Livraisons
 <a class="padding-left" href="/vente/{{.Id}}/livraison/new">
@@ -180,6 +180,7 @@ Livraisons
         {{end}}
         </td>
     </tr>
+    <!-- ***************** Chargements ******************** -->
     <tr>
         <td colspan="2">
             <div>
@@ -203,8 +204,20 @@ Livraisons
                     </td>
                     <td>
                         <div class="grid2-pres">
+                            {{if .IdChargeur}}
                             <div>Chargeur</div>
                             <div class="bold"><a href="/acteur/{{.Chargeur.Id}}">{{.Chargeur.String}}</a></div>
+                            {{end}}
+                
+                            {{if .IdConducteur}}
+                            <div>Conducteur</div>
+                            <div><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
+                            {{end}}
+                            
+                            {{if .IdProprioutil}}
+                            <div>Propriétaire outil</div>
+                            <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
+                            {{end}}
                             
                             <div>Tas</div>
                             <div class="bold">{{.Tas.Nom}}</div>

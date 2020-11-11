@@ -84,14 +84,38 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	if r.PostFormValue("TR") == "on" {
 		aff.TypesActivites = append(aff.TypesActivites, "TR")
 	}
+	if r.PostFormValue("TR-CO") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "TR-CO")
+	}
+	if r.PostFormValue("TR-OU") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "TR-OU")
+	}
 	if r.PostFormValue("RG") == "on" {
 		aff.TypesActivites = append(aff.TypesActivites, "RG")
+	}
+	if r.PostFormValue("RG-CO") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "RG-CO")
+	}
+	if r.PostFormValue("RG-OU") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "RG-OU")
 	}
 	if r.PostFormValue("CG") == "on" {
 		aff.TypesActivites = append(aff.TypesActivites, "CG")
 	}
+	if r.PostFormValue("CG-CO") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "CG-CO")
+	}
+	if r.PostFormValue("CG-OU") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "CG-OU")
+	}
 	if r.PostFormValue("LV") == "on" {
 		aff.TypesActivites = append(aff.TypesActivites, "LV")
+	}
+	if r.PostFormValue("LV-CO") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "LV-CO")
+	}
+	if r.PostFormValue("LV-OU") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "LV-OU")
 	}
 	//
 	// 2- récup info dans model
@@ -140,8 +164,8 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	_, fontSize := pdf.GetFontSize()
 	colW = 28 // largeur de toutes les colonnes - devrait en fait être calculé col par col
 	colH = fontSize + 2
-	//_, topMarg,_,bottomMarg := pdf.GetMargins()
 	maxY := 274 // mesuré empiriquement
+	//_, topMarg,_,bottomMarg := pdf.GetMargins()
 	//maxY := 297 - topMarg - bottomMarg
 	//
 	pdf.Ln(4 * colH)
@@ -154,7 +178,6 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		pdf.SetX(x0)
 		pdf.SetFont("Arial", "B", 10)
 		pdf.Cell(50, colH*2, tr(item.Titre+" "+tiglib.DateFrText(item.Date)))
-		//pdf.Cell(50, colH*2, tr(item.Titre + " " + tiglib.DateFrText(item.Date)))
 		pdf.Ln(2 * colH)
 		for _, ligne := range item.Lignes {
 			// titre colonnes

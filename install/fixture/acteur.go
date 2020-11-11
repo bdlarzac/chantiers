@@ -1,7 +1,6 @@
 /******************************************************************************
     Modifie les acteurs de la base BDL.
 
-
     @copyright  BDL, Bois du Larzac
     @license    GPL
     @history    2020-01-09 11:38:50+01:00, Thierry Graff : Creation

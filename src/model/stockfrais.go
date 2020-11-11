@@ -21,7 +21,7 @@ type StockFrais struct {
 	Montant    float64
 	DateDebut  time.Time `db:"datedeb"`
 	DateFin    time.Time `db:"datefin"`
-	Notes string
+	Notes      string
 }
 
 // *********************************************************

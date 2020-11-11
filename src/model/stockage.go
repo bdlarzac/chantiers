@@ -9,10 +9,10 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"time"
-	"errors"
-//	"fmt"
+	//	"fmt"
 )
 
 type Stockage struct {
@@ -183,21 +183,21 @@ func (s *Stockage) ComputeDeletable(db *sqlx.DB) error {
 // Ex : pour un loyer de 6000 E / an, si j2 - j1 = 6 mois, va compter 3000
 // @param j1, j2 jours de début / fin de la période au format YYYY-MM-DD
 func (s *Stockage) ComputeCout(db *sqlx.DB, jour1, jour2 string) (float64, error) {
-    var err error
-    j1, err := time.Parse("2006-01-02", jour1)
+	var err error
+	j1, err := time.Parse("2006-01-02", jour1)
 	if err != nil {
 		return 0, werr.Wrapf(err, "Format de date incorrect : "+jour1)
 	}
-    j2, err := time.Parse("2006-01-02", jour2)
+	j2, err := time.Parse("2006-01-02", jour2)
 	if err != nil {
 		return 0, werr.Wrapf(err, "Format de date incorrect : "+jour2)
 	}
-    if j2.Before(j1){
-        return 0, errors.New("ComputeCout() a besoin de j1 < j2")
-    }
-    // Récupère les frais
-    // tels que datedeb ou datefin sont dans [j1, j2]
-    var frais []StockFrais
+	if j2.Before(j1) {
+		return 0, errors.New("ComputeCout() a besoin de j1 < j2")
+	}
+	// Récupère les frais
+	// tels que datedeb ou datefin sont dans [j1, j2]
+	var frais []StockFrais
 	query := `select * from stockfrais where id_stockage=$1
 	    and ( (datedeb>=$2 and datedeb<=$3) or (datefin>=$2 and datefin<=$3) )`
 	err = db.Select(&frais, query, s.Id, &jour1, &jour2)
@@ -205,26 +205,26 @@ func (s *Stockage) ComputeCout(db *sqlx.DB, jour1, jour2 string) (float64, error
 		return 0, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	var debFrais, finFrais time.Time
-	var dureeFraisTotale time.Duration // durée totale du frais, peut dépasser [j1, j2]
+	var dureeFraisTotale time.Duration  // durée totale du frais, peut dépasser [j1, j2]
 	var dureeFraisPeriode time.Duration // durée du frais dans [j1, j2]
 	total := float64(0)
 	for _, f := range frais {
-	    dureeFraisTotale = f.DateFin.Sub(f.DateDebut)
-	    if j1.After(f.DateDebut){
-	        debFrais = j1
-	    } else{
-	        debFrais = f.DateDebut
-	    }
-	    if j2.Before(f.DateFin){
-	        finFrais = j2
-	    } else{
-	        finFrais = f.DateFin
-	    }
-	    dureeFraisPeriode = finFrais.Sub(debFrais)
-	    // contribution du frais sur la période [j1, j2]
-	    total += (dureeFraisPeriode.Hours() * f.Montant / dureeFraisTotale.Hours())
+		dureeFraisTotale = f.DateFin.Sub(f.DateDebut)
+		if j1.After(f.DateDebut) {
+			debFrais = j1
+		} else {
+			debFrais = f.DateDebut
+		}
+		if j2.Before(f.DateFin) {
+			finFrais = j2
+		} else {
+			finFrais = f.DateFin
+		}
+		dureeFraisPeriode = finFrais.Sub(debFrais)
+		// contribution du frais sur la période [j1, j2]
+		total += (dureeFraisPeriode.Hours() * f.Montant / dureeFraisTotale.Hours())
 	}
-    return total, nil
+	return total, nil
 }
 
 // ************************** CRUD *******************************

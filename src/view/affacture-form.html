@@ -37,8 +37,22 @@
                     <div><input type="checkbox" id="RG-OU" name="RG-OU"><label for="RG-OU">Propriétaire outil</label></div>
                 </div>
             </div>
-            <div><input type="checkbox" id="CG" name="CG"><label for="CG">Chargement</label></div>
-            <div><input type="checkbox" id="LV" name="LV"><label for="LV">Livraison</label></div>
+            <div>
+                <b>Chargement</b>
+                <div class="padding-left2">
+                    <div><input type="checkbox" id="CG" name="CG"><label for="CG">Chargeur (coût global)</label></div>
+                    <div><input type="checkbox" id="CG-CO" name="CG-CO"><label for="CG-CO">Conducteur</label></div>
+                    <div><input type="checkbox" id="CG-OU" name="CG-OU"><label for="CG-OU">Propriétaire outil</label></div>
+                </div>
+            </div>
+            <div>
+                <b>Livraison</b>
+                <div class="padding-left2">
+                    <div><input type="checkbox" id="LV" name="LV"><label for="LV">Livreur (coût global)</label></div>
+                    <div><input type="checkbox" id="LV-CO" name="LV-CO"><label for="LV-CO">Conducteur</label></div>
+                    <div><input type="checkbox" id="LV-OU" name="LV-OU"><label for="LV-OU">Propriétaire outil</label></div>
+                </div>
+            </div>
         </div>
         
     </div>
@@ -62,6 +76,7 @@
     <div class="help-content">
         <div class="help-title">Aide</div>
         Une affacture est une "facture à l'envers" : facture devant être payée par BDL à des intervenants extérieurs.
+        <br>L'affacture va contenir toutes les activités sélectionnées, ayant eu lieu entre date début de date fin. 
     </div>
 </div>
 
@@ -84,7 +99,11 @@ function changeOpToutRien(){
         document.getElementById("RG-CO").checked = true;
         document.getElementById("RG-OU").checked = true;
         document.getElementById("CG").checked = true;
+        document.getElementById("CG-CO").checked = true;
+        document.getElementById("CG-OU").checked = true;
         document.getElementById("LV").checked = true;
+        document.getElementById("LV-CO").checked = true;
+        document.getElementById("LV-OU").checked = true;
         document.getElementById("op-tout-rien").innerHTML = "Tout déselectionner";
         window.opToutRien = "rien";
     }
@@ -100,7 +119,11 @@ function changeOpToutRien(){
         document.getElementById("RG-CO").checked = false;
         document.getElementById("RG-OU").checked = false;
         document.getElementById("CG").checked = false;
+        document.getElementById("CG-CO").checked = false;
+        document.getElementById("CG-OU").checked = false;
         document.getElementById("LV").checked = false;
+        document.getElementById("LV-CO").checked = false;
+        document.getElementById("LV-OU").checked = false;
         document.getElementById("op-tout-rien").innerHTML = "Tout selectionner";
         window.opToutRien = "tout";
     }

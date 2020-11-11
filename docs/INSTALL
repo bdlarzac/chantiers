@@ -40,7 +40,7 @@ cd install/
 go run install-bdl.go -i all
 
 
-###### Lancement du programme ######
+###### Lancement du programme en local ######
 En mode dev, utilise github.com/codegangsta/gin
 
 cd /path/to/bdl/

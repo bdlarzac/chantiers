@@ -69,6 +69,8 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 			return err
 		}
 		vc.Chargeur = &model.Acteur{}
+		vc.Conducteur = &model.Acteur{}
+		vc.Proprioutil = &model.Acteur{}
 		weboTas, err := WeboTas(ctx)
 		if err != nil {
 			return err
@@ -91,8 +93,8 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 				VenteCharge:  vc,
 				TasOptions:   webo.FmtOptions(weboTas, "CHOOSE_TAS"),
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
-				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), "CHOOSE_TVA_OU"),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO"), "CHOOSE_TVA_MO"),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), "CHOOSE_TVA_OU"),
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/" + vars["id-livraison"] + "/chargement/new",
 			},
 		}
@@ -159,15 +161,18 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		if err != nil {
 			return err
 		}
-		vc, err := model.GetVenteChargeFull(ctx.DB, idChargement) // full pour avoir le nom du chargeur
+		// full pour avoir les noms du chargeur, conducteur et proprioutil
+		vc, err := model.GetVenteChargeFull(ctx.DB, idChargement)
 		if err != nil {
 			return err
 		}
-		vc.Livraison, err = model.GetVenteLivreFull(ctx.DB, vc.IdLivraison) // full pour avoir le nom de la livraison
+		// full pour avoir la vente et le nom de la livraison
+		vc.Livraison, err = model.GetVenteLivreFull(ctx.DB, vc.IdLivraison)
 		if err != nil {
 			return err
 		}
-		vc.Livraison.Vente, err = model.GetVentePlaqFull(ctx.DB, vc.Livraison.IdVente) // full pour avoir le nom de la vente
+		// full pour avoir le nom de la vente
+		vc.Livraison.Vente, err = model.GetVentePlaqFull(ctx.DB, vc.Livraison.IdVente)
 		if err != nil {
 			return err
 		}
@@ -193,8 +198,8 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 				VenteCharge:  vc,
 				TasOptions:   webo.FmtOptions(weboTas, strconv.Itoa(vc.IdTas)),
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(vc.GlTVA, 'f', 1, 64)),
-				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), strconv.FormatFloat(vc.OuTVA, 'f', 1, 64)),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO"), strconv.FormatFloat(vc.MoTVA, 'f', 1, 64)),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), strconv.FormatFloat(vc.OuTVA, 'f', 1, 64)),
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/" + vars["id-livraison"] + "/chargement/update/" + vars["id-chargement"],
 			},
 		}
@@ -239,10 +244,6 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		return vc, err
 	}
 	//
-	vc.IdChargeur, err = strconv.Atoi(r.PostFormValue("id-chargeur"))
-	if err != nil {
-		return vc, err
-	}
 	vc.IdVente, err = strconv.Atoi(r.PostFormValue("id-vente"))
 	if err != nil {
 		return vc, err
@@ -267,6 +268,11 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		//
 		// coût global
 		//
+		vc.IdChargeur, err = strconv.Atoi(r.PostFormValue("id-chargeur"))
+		if err != nil {
+			return vc, err
+		}
+		//
 		vc.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
 			return vc, err
@@ -287,28 +293,12 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		}
 	} else {
 		//
-		// coût détaillé, outil
+		// coût détaillé, conducteur
 		//
-		vc.OuPrix, err = strconv.ParseFloat(r.PostFormValue("ouprix"), 32)
+		vc.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
 		if err != nil {
 			return vc, err
 		}
-		vc.OuPrix = tiglib.Round(vc.OuPrix, 2)
-		//
-		vc.OuTVA, err = strconv.ParseFloat(r.PostFormValue("outva"), 32)
-		if err != nil {
-			return vc, err
-		}
-		vc.OuTVA = tiglib.Round(vc.OuTVA, 2)
-		//
-		if r.PostFormValue("oudatepay") != "" {
-			vc.OuDatePay, err = time.Parse("2006-01-02", r.PostFormValue("oudatepay"))
-			if err != nil {
-				return vc, err
-			}
-		}
-		//
-		// coût détaillé, main d'oeuvre
 		//
 		vc.MoNHeure, err = strconv.ParseFloat(r.PostFormValue("monheure"), 32)
 		if err != nil {
@@ -330,6 +320,32 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		//
 		if r.PostFormValue("modatepay") != "" {
 			vc.MoDatePay, err = time.Parse("2006-01-02", r.PostFormValue("modatepay"))
+			if err != nil {
+				return vc, err
+			}
+		}
+		//
+		// coût détaillé, outil
+		//
+		vc.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
+		if err != nil {
+			return vc, err
+		}
+		//
+		vc.OuPrix, err = strconv.ParseFloat(r.PostFormValue("ouprix"), 32)
+		if err != nil {
+			return vc, err
+		}
+		vc.OuPrix = tiglib.Round(vc.OuPrix, 2)
+		//
+		vc.OuTVA, err = strconv.ParseFloat(r.PostFormValue("outva"), 32)
+		if err != nil {
+			return vc, err
+		}
+		vc.OuTVA = tiglib.Round(vc.OuTVA, 2)
+		//
+		if r.PostFormValue("oudatepay") != "" {
+			vc.OuDatePay, err = time.Parse("2006-01-02", r.PostFormValue("oudatepay"))
 			if err != nil {
 				return vc, err
 			}

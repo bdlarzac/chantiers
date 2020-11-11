@@ -1,10 +1,2 @@
 
-Pur initialiser la base :
-cd install/
-go run install-bdl.go
-
-Pour lancer l'application
-cd src/
-gin -i --all -a 8000 run main.go
-
-
+Voir docs/install pour installer / lancer l'application

@@ -123,6 +123,7 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		// TODO écrire GetPlaqRangeFull pour remplacer le code suivant
 		pr, err := model.GetPlaqRange(ctx.DB, idPr)
 		if err != nil {
 			return err
@@ -227,11 +228,11 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 		//
 		// coût global
 		//
-        pr.IdRangeur, err = strconv.Atoi(r.PostFormValue("id-rangeur"))
-        if err != nil {
-            return pr, err
-        }
-        //
+		pr.IdRangeur, err = strconv.Atoi(r.PostFormValue("id-rangeur"))
+		if err != nil {
+			return pr, err
+		}
+		//
 		pr.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
 			return pr, err
@@ -254,11 +255,11 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 		//
 		// conducteur
 		//
-        pr.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
-        if err != nil {
-            return pr, err
-        }
-        //
+		pr.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
+		if err != nil {
+			return pr, err
+		}
+		//
 		pr.CoNheure, err = strconv.ParseFloat(r.PostFormValue("conheure"), 32)
 		if err != nil {
 			return pr, err
@@ -285,11 +286,11 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 		//
 		// outil
 		//
-        pr.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
-        if err != nil {
-            return pr, err
-        }
-        //
+		pr.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
+		if err != nil {
+			return pr, err
+		}
+		//
 		pr.OuPrix, err = strconv.ParseFloat(r.PostFormValue("ouprix"), 32)
 		if err != nil {
 			return pr, err

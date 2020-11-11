@@ -8,23 +8,24 @@
 package model
 
 import (
-	//"strconv"
 	"time"
 
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+//"fmt"
 )
 
 type VenteCharge struct {
-	Id          int
-	IdLivraison int `db:"id_livraison"`
-	IdChargeur  int `db:"id_chargeur"`
-	IdTas       int `db:"id_tas"`
-	Qte         float64
-	DateCharge  time.Time
-	TypeCout    string // G (global) ou D (détail)
+	Id            int
+	IdLivraison   int `db:"id_livraison"`
+	IdChargeur    int `db:"id_chargeur"`
+	IdConducteur  int `db:"id_conducteur"`
+	IdProprioutil int `db:"id_proprioutil"`
+	IdTas         int `db:"id_tas"`
+	Qte           float64
+	DateCharge    time.Time
+	TypeCout      string // G (global) ou D (détail)
 	// coût global
 	GlPrix    float64
 	GlTVA     float64
@@ -41,10 +42,12 @@ type VenteCharge struct {
 	//
 	Notes string
 	// Pas stocké en base
-	IdVente   int
-	Livraison *VenteLivre
-	Chargeur  *Acteur
-	Tas       *Tas
+	IdVente     int
+	Livraison   *VenteLivre
+	Chargeur    *Acteur
+	Conducteur  *Acteur
+	Proprioutil *Acteur
+	Tas         *Tas
 }
 
 // ************************** Nom *******************************
@@ -78,11 +81,19 @@ func GetVenteChargeFull(db *sqlx.DB, id int) (*VenteCharge, error) {
 	if err != nil {
 		return vc, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeChargeur()")
 	}
+	err = vc.ComputeConducteur(db)
+	if err != nil {
+		return vc, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeConducteur()")
+	}
+	err = vc.ComputeProprioutil(db)
+	if err != nil {
+		return vc, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeProprioutil()")
+	}
 	err = vc.ComputeTas(db)
 	if err != nil {
 		return vc, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeTas()")
 	}
-	return vc, err
+	return vc, nil
 }
 
 // ************************** Compute *******************************
@@ -93,6 +104,30 @@ func (vc *VenteCharge) ComputeChargeur(db *sqlx.DB) error {
 	}
 	var err error
 	vc.Chargeur, err = GetActeur(db, vc.IdChargeur)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
+}
+
+func (vc *VenteCharge) ComputeConducteur(db *sqlx.DB) error {
+	if vc.Conducteur != nil {
+		return nil
+	}
+	var err error
+	vc.Conducteur, err = GetActeur(db, vc.IdConducteur)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
+}
+
+func (vc *VenteCharge) ComputeProprioutil(db *sqlx.DB) error {
+	if vc.Proprioutil != nil {
+		return nil
+	}
+	var err error
+	vc.Proprioutil, err = GetActeur(db, vc.IdProprioutil)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
@@ -142,6 +177,8 @@ func InsertVenteCharge(db *sqlx.DB, vc *VenteCharge) (int, error) {
 	query := `insert into ventecharge(
         id_livraison,
         id_chargeur,
+        id_conducteur,
+        id_proprioutil,
         id_tas,
         qte,
         datecharge,
@@ -157,12 +194,14 @@ func InsertVenteCharge(db *sqlx.DB, vc *VenteCharge) (int, error) {
         motva,
         modatepay,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
 		vc.IdLivraison,
 		vc.IdChargeur,
+		vc.IdConducteur,
+		vc.IdProprioutil,
 		vc.IdTas,
 		vc.Qte,
 		vc.DateCharge,
@@ -185,6 +224,8 @@ func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) error {
 	query := `update ventecharge set(
         id_livraison,
         id_chargeur,
+        id_conducteur,
+        id_proprioutil,
         id_tas,
         qte,
         datecharge,
@@ -200,11 +241,13 @@ func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) error {
         motva,
         modatepay,
         notes                          
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) where id=$18`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) where id=$20`
 	_, err := db.Exec(
 		query,
 		vc.IdLivraison,
 		vc.IdChargeur,
+		vc.IdConducteur,
+		vc.IdProprioutil,
 		vc.IdTas,
 		vc.Qte,
 		vc.DateCharge,
@@ -228,23 +271,22 @@ func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) error {
 }
 
 func DeleteVenteCharge(db *sqlx.DB, id int) error {
-	// rétablit le stock du tas
-	var result = struct {
-		IdTas int
-		Qte   float64
-	}{}
-	query := "select id_tas,qte from ventecharge where id=$1"
-	err := db.Select(&result, query, id)
+	// rétablit le stock du tas concerné par le chargement
+	// avant de supprimer le chargement
+	vc, err := GetVenteCharge(db, id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel GetVenteCharge()")
 	}
-	tas, err := GetTas(db, result.IdTas)
-	err = tas.ModifierStock(db, result.Qte)
+	err = vc.ComputeTas(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel ComputeTas()")
+	}
+	err = vc.Tas.ModifierStock(db, vc.Qte) // Ajoute des plaquettes au tas
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ModifierStock()")
 	}
 	// delete le chargement
-	query = "delete from ventecharge where id=$1"
+	query := "delete from ventecharge where id=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
