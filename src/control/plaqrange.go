@@ -82,9 +82,9 @@ func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			},
 			Details: detailsPlaqRangeForm{
 				Rangement:    pr,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
-				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO"), "CHOOSE_TVA_CO"),
-				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), "CHOOSE_TVA_OU"),
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
+				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), "CHOOSE_TVA_CO"),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), "CHOOSE_TVA_OU"),
 				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/range/new",
 			},
 		}
@@ -169,9 +169,9 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			},
 			Details: detailsPlaqRangeForm{
 				Rangement:    pr,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(pr.GlTVA, 'f', 1, 64)),
-				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO"), strconv.FormatFloat(pr.CoTVA, 'f', 1, 64)),
-				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), strconv.FormatFloat(pr.OuTVA, 'f', 1, 64)),
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(pr.GlTVA, 'f', 1, 64)),
+				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), strconv.FormatFloat(pr.CoTVA, 'f', 1, 64)),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(pr.OuTVA, 'f', 1, 64)),
 				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/range/update/" + vars["id-pr"],
 			},
 		}

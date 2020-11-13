@@ -84,10 +84,10 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			},
 			Details: detailsPlaqTransForm{
 				Transport:    pt,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
-				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO"), "CHOOSE_TVA_CO"),
-				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), "CHOOSE_TVA_CA"),
-				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), "CHOOSE_TVA_TB"),
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
+				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), "CHOOSE_TVA_CO"),
+				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA", "ca-"), "CHOOSE_TVA_CA"),
+				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB", "tb-"), "CHOOSE_TVA_TB"),
 				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/transport/new",
 			},
 		}
@@ -169,10 +169,10 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			},
 			Details: detailsPlaqTransForm{
 				Transport:    pt,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(pt.GlTVA, 'f', 1, 64)),
-				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO"), strconv.FormatFloat(pt.CoTVA, 'f', 1, 64)),
-				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
-				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(pt.GlTVA, 'f', 1, 64)),
+				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), strconv.FormatFloat(pt.CoTVA, 'f', 1, 64)),
+				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA", "ca-"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
+				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB", "tb-"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
 				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/transport/update/" + vars["id-pt"],
 			},
 		}

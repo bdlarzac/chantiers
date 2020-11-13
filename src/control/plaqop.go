@@ -77,7 +77,7 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 					"/static/autocomplete/autocomplete.js"},
 			},
 			Details: detailsPlaqOpForm{
-				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA"), "CHOOSE_TVA"),
+				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA", "tva-"), "CHOOSE_TVA"),
 				UniteOptions:  webo.FmtOptions(WeboPlaqOpUnite(), "CHOOSE_UNITE"),
 				TypeOpOptions: webo.FmtOptions(WeboTypeOp(), "CHOOSE_TYPEOP"),
 				Op:            op,
@@ -150,7 +150,7 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 					"/static/autocomplete/autocomplete.js"},
 			},
 			Details: detailsPlaqOpForm{
-				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA"), strconv.FormatFloat(op.TVA, 'f', 1, 64)),
+				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA", "tva-"), strconv.FormatFloat(op.TVA, 'f', 1, 64)),
 				UniteOptions:  webo.FmtOptions(WeboPlaqOpUnite(), "unite-"+op.Unite),
 				TypeOpOptions: webo.FmtOptions(WeboTypeOp(), "typeop-"+op.TypOp),
 				Op:            op,

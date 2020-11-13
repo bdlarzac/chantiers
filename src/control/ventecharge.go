@@ -92,9 +92,9 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,
 				TasOptions:   webo.FmtOptions(weboTas, "CHOOSE_TAS"),
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), "CHOOSE_TVA_GL"),
-				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO"), "CHOOSE_TVA_MO"),
-				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), "CHOOSE_TVA_OU"),
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
+				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), "CHOOSE_TVA_MO"),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), "CHOOSE_TVA_OU"),
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/" + vars["id-livraison"] + "/chargement/new",
 			},
 		}
@@ -197,9 +197,9 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,
 				TasOptions:   webo.FmtOptions(weboTas, strconv.Itoa(vc.IdTas)),
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL"), strconv.FormatFloat(vc.GlTVA, 'f', 1, 64)),
-				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO"), strconv.FormatFloat(vc.MoTVA, 'f', 1, 64)),
-				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU"), strconv.FormatFloat(vc.OuTVA, 'f', 1, 64)),
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(vc.GlTVA, 'f', 1, 64)),
+				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), strconv.FormatFloat(vc.MoTVA, 'f', 1, 64)),
+				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(vc.OuTVA, 'f', 1, 64)),
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/" + vars["id-livraison"] + "/chargement/update/" + vars["id-chargement"],
 			},
 		}

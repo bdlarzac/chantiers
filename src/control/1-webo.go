@@ -54,9 +54,9 @@ func WeboChauferUnite() []webo.OptionString {
 func WeboPlaqOpUnite() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_UNITE", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "unite-JO", OptionLabel: model.LabelUnite("JO")},
-		webo.OptionString{OptionValue: "unite-HE", OptionLabel: model.LabelUnite("HE")},
-		webo.OptionString{OptionValue: "unite-MA", OptionLabel: model.LabelUnite("MA")},
+		webo.OptionString{OptionValue: "unite-JO", OptionLabel: model.LabelUnite("JO")}, // jour
+		webo.OptionString{OptionValue: "unite-HE", OptionLabel: model.LabelUnite("HE")}, // heure
+		webo.OptionString{OptionValue: "unite-MA", OptionLabel: model.LabelUnite("MA")}, // map
 	}
 }
 
@@ -118,18 +118,20 @@ func WeboStockFrais() []webo.OptionString {
 		webo.OptionString{OptionValue: "stockfrais-EL", OptionLabel: model.LabelStockFrais("EL")},
 		webo.OptionString{OptionValue: "stockfrais-LO", OptionLabel: model.LabelStockFrais("LO")},
 	}
-}
+}                                                                                  
 
 // Renvoie la liste des taux de TVA utilisés pour payer un intervenant extérieur
 // dans un format utilisable par webo
 // @param  chooseId     Chaîne utilisée pour désigner l'id et la value de l'option "---Choisir ---"
 //                      Permet d'avoir plusieurs formulaires de choix de taux de TVA dans un même form
-func WeboTVAExt(ctx *ctxt.Context, chooseId string) []webo.OptionString {
+// @param  idPrefix     l'attribut "id" de chaque option sera = idPrefix suivi de la valeur de l'option
+//                      Permet que chaque option soit unique dans tous les formulaires de TVA
+func WeboTVAExt(ctx *ctxt.Context, chooseId, idPrefix string) []webo.OptionString {
 	res := []webo.OptionString{}
-	res = append(res, webo.OptionString{OptionValue: chooseId, OptionLabel: "--- Choisir ---"})
+	res = append(res, webo.OptionString{ OptionValue: chooseId, OptionId: idPrefix+chooseId, OptionLabel: "--- Choisir ---"})
 	for _, taux := range ctx.Config.TVAExt {
 		tmp := strconv.FormatFloat(taux, 'f', 1, 64)
-		res = append(res, webo.OptionString{OptionValue: tmp, OptionLabel: tmp})
+		res = append(res, webo.OptionString{OptionValue: tmp, OptionId: idPrefix+tmp, OptionLabel: tmp})
 	}
 	return res
 }

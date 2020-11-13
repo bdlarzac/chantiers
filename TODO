@@ -6,16 +6,13 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 Le test sur transporteur / rangeur / chargeur / livreur n'est pas valable
 + spécifier le nom dans le cdc
 
-- Ajouter fonction FullString() à tous les chantiers et utiliser
-
-- VenteCharge devrait faire modifierStock
-
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure
   dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité d'abord ; modifier VenteCharge
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
 - + vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps (toutes les tables)
 
 - WeboTVAExt : remplacer param chooseId par suffix, pour avoir des ids html uniques
+  Embêtant : implique de modifier src/generic/wilk/webo/options.go
 
 - model : remplacer Scan par sqlx
 

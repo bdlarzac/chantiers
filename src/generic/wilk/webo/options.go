@@ -1,11 +1,16 @@
 /**
     Génère une liste d'options html à partir d'un slice
+    Adaptation d'un code de wilk
+    
     Changements par rapport au code de wilk :
     Utilisé que FmtOption
     - déplace l'espace pour afficher selected
     - utilise " au lieu de '
     - supprime des sauts de ligne
-    - ajoute un attribut id (même valeur que value)
+    - Ajoute OptionId dans OptionString et OptionInt
+      (il faudrait faire pareil pour OptionGroupString et OptionGroupInt)
+      Motivé par l'utilisation de plusieurs selects avec les mêmes options dans la même page (taux TVA)
+      => pour que chaque option ait un id unique
 **/
 
 package webo
@@ -15,15 +20,17 @@ import (
 	"html/template"
 )
 
-var tmpOptions = template.Must(template.New("options").Parse(`{{$sel := .Sel}}{{range .Options}}<option id="{{.OptionValue}}" value="{{.OptionValue}}"{{if eq .OptionValue $sel}} selected{{end}}>{{.OptionLabel}}</option>
+var tmpOptions = template.Must(template.New("options").Parse(`{{$sel := .Sel}}{{range .Options}}<option {{if ne .OptionId ""}}id="{{.OptionId}}" {{end}}value="{{.OptionValue}}"{{if eq .OptionValue $sel}} selected{{end}}>{{.OptionLabel}}</option>
 {{end}}`)).Option("missingkey=error")
 
 type OptionString struct {
 	OptionValue string
+	OptionId string
 	OptionLabel string
 }
 type OptionInt struct {
 	OptionValue int
+	OptionId string
 	OptionLabel string
 }
 
