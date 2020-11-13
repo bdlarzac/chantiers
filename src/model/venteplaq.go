@@ -57,6 +57,10 @@ func (vp *VentePlaq) String() string {
 	return vp.Client.String() + " " + tiglib.DateFr(vp.DateVente)
 }
 
+func (vp *VentePlaq) FullString() string {
+	return "Vente " + vp.String()
+}
+
 // ************************** Get *******************************
 
 func GetVentePlaq(db *sqlx.DB, id int) (*VentePlaq, error) {

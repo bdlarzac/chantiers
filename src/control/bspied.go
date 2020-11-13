@@ -58,10 +58,11 @@ func ListBspied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		totalParEssence[ch.Essence] += ch.NStereCoupees
 	}
 	//
+	titrePage := "Chantiers bois sur pied " + annee
 	ctx.TemplateName = "bspied-list.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title: "Chantiers bois sur pied " + annee,
+			Title: titrePage,
 			JSFiles: []string{
 				"/static/js/round.js",
 				"/static/js/prix.js"},
@@ -74,6 +75,10 @@ func ListBspied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			TotalParEssence: totalParEssence,
 		},
 	}
+    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
+    if err != nil {
+        return err
+    }        
 	return nil
 }
 
@@ -94,6 +99,7 @@ func NewBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 			return err
 		}
 		ctx.Redirect = "/chantier/bois-sur-pied/liste/" + strconv.Itoa(chantier.DateContrat.Year())
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	default:
 		//
@@ -124,6 +130,7 @@ func NewBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 					"/static/autocomplete/autocomplete.js"},
 			},
 		}
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	}
 }
@@ -150,6 +157,7 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			return err
 		}
 		ctx.Redirect = "/chantier/bois-sur-pied/liste/" + strconv.Itoa(chantier.DateContrat.Year())
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	default:
 		//
@@ -185,6 +193,7 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				UrlAction:           "/chantier/bois-sur-pied/update/" + vars["id"],
 			},
 		}
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	}
 }

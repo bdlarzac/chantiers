@@ -19,6 +19,8 @@ type Recent struct {
 	DateVisite time.Time
 }
 
+// Renvoie les dernières activités visitées
+// (les plus récentes sont renvoyées en premier)
 func GetRecents(db *sqlx.DB) ([]*Recent, error) {
 	r := []*Recent{}
 	query := "select * from recent order by datevisite desc"
@@ -61,7 +63,7 @@ func AddRecent(db *sqlx.DB, conf *Config, r *Recent) error {
 	}
 	// delete les plus anciens
 	all := []*Recent{}
-	query := "select * from recent order by datevisite"
+	query := "select * from recent order by datevisite desc" // plus récente visite en premier
 	err = db.Select(&all, query)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

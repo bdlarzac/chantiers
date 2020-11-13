@@ -26,7 +26,7 @@ model.GetFermiersFromLieudit()
 - chantier chauffage fermier :
 
 
-Suivi stock hangar à plauettes
+Suivi stock hangar à plaquettes
 -------------------------------------
 Il est impossible de suivre de manière précise le stock de plaquettes présentes dans un hangar. Le problème vient du pourcentage de perte : différence entre le volume de bois vert broyé et la quantité de plaquettes sèches vendues. Ce pourcentage étant arbitraire et ne correspondant pas à une réalité mesurable, l'état des stocks ne peut être calculé.
 

@@ -78,7 +78,7 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	ctx.TemplateName = "venteplaq-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title: "Vente " + vente.String(),
+			Title: vente.FullString(),
 			JSFiles: []string{
 				"/static/js/venteplaq.js",
 				"/static/js/round.js",
@@ -92,6 +92,10 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Vente: vente,
 		},
 	}
+    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: vente.FullString()})
+    if err != nil {
+        return err
+    }        
 	return nil
 }
 
@@ -114,6 +118,7 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			return err
 		}
 		ctx.Redirect = "/vente/" + strconv.Itoa(idVente)
+		// model.AddRecent() inutile puisqu'on est redirigé vers ShowVentePlaq(), où AddRecent() est exécuté
 		return nil
 	default:
 		//
@@ -171,6 +176,7 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			return err
 		}
 		ctx.Redirect = "/vente/" + r.PostFormValue("id-vente")
+		// model.AddRecent() inutile puisqu'on est redirigé vers ShowVentePlaq(), où AddRecent() est exécuté
 		return nil
 	default:
 		//

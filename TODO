@@ -2,8 +2,6 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- tester activité récentes en page d'accueil
-
 - revoir les fonctions String() de transport, rangement, chargement, livraison :
 Le test sur transporteur / rangeur / chargeur / livreur n'est pas valable
 + spécifier le nom dans le cdc
@@ -15,7 +13,7 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est pas valable
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure
   dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité d'abord ; modifier VenteCharge
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
-  vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps (toutes les tables)
+- + vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps (toutes les tables)
 
 - WeboTVAExt : remplacer param chooseId par suffix, pour avoir des ids html uniques
 

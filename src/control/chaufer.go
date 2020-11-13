@@ -56,10 +56,11 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		totalParEssence[ch.Essence] += ch.Volume
 	}
 	//
+	titrePage := "Chantiers chauffage fermier " + annee
 	ctx.TemplateName = "chaufer-list.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title: "Chantiers chauffage fermier " + annee,
+			Title: titrePage,
 			JSFiles: []string{
 				"/static/js/round.js",
 				"/static/js/prix.js"},
@@ -72,6 +73,10 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			TotalParEssence: totalParEssence,
 		},
 	}
+    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
+    if err != nil {
+        return err
+    }        
 	return nil
 }
 
@@ -92,6 +97,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		ctx.Redirect = "/chantier/chauffage-fermier/liste/" + strconv.Itoa(chantier.DateChantier.Year())
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	default:
 		//
@@ -123,6 +129,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 					"/static/autocomplete/autocomplete.js"},
 			},
 		}
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	}
 }
@@ -147,6 +154,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			return err
 		}
 		ctx.Redirect = "/chantier/chauffage-fermier/liste/" + strconv.Itoa(chantier.DateChantier.Year())
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	default:
 		//
@@ -183,6 +191,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 					"/static/autocomplete/autocomplete.js"},
 			},
 		}
+		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	}
 }

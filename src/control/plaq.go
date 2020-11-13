@@ -12,7 +12,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
+//"fmt"
 )
 
 type detailsPlaqForm struct {
@@ -94,7 +94,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.TemplateName = "plaq-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    "Chantier " + chantier.String(),
+			Title:    chantier.FullString(),
 			CSSFiles: []string{"/static/css/tabstrip.css"},
 			JSFiles: []string{
 				"/static/js/round.js",
@@ -112,6 +112,10 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Tab:              tab,
 		},
 	}
+    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: chantier.FullString()})
+    if err != nil {
+        return err
+    }
 	return nil
 }
 
@@ -149,10 +153,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
-		err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: redirect, Label: chantier.FullString()})
-		if err != nil {
-			return err
-		}
+		// model.AddRecent() inutile puisqu'on est redirigé vers ShowPlaq(), où AddRecent() est exécuté
 		ctx.Redirect = redirect
 		return nil
 	default:
@@ -233,10 +234,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: redirect, Label: chantier.FullString()})
-		if err != nil {
-			return err
-		}
+		// model.AddRecent() inutile puisqu'on est redirigé vers ShowPlaq(), où AddRecent() est exécuté
 		ctx.Redirect = redirect
 		return nil
 	default:
