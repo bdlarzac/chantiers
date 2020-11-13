@@ -243,7 +243,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateDebut,
 			Role:        elt.RoleName(),
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: "Chantier plaquettes " + plaq.String()}
+			NomActivite: plaq.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -268,7 +268,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateTrans,
 			Role:        "transporteur",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: "Chantier plaquettes " + plaq.String()}
+			NomActivite: plaq.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -293,7 +293,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateTrans,
 			Role:        "conducteur (transport)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: "Chantier plaquettes " + plaq.String()}
+			NomActivite: plaq.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -318,7 +318,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateTrans,
 			Role:        "propriétaire outil (transport)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: "Chantier plaquettes " + plaq.String()}
+			NomActivite: plaq.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -343,7 +343,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateRange,
 			Role:        "rangeur",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: "Chantier plaquettes " + plaq.String()}
+			NomActivite: plaq.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -368,7 +368,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateRange,
 			Role:        "conducteur (rangement)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: "Chantier plaquettes " + plaq.String()}
+			NomActivite: plaq.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -393,7 +393,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateRange,
 			Role:        "propriétaire outil (rangement)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: "Chantier plaquettes " + plaq.String()}
+			NomActivite: plaq.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -418,7 +418,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateLivre,
 			Role:        "livreur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: "Vente plaquettes " + vp.String()}
+			NomActivite: vp.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -443,10 +443,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateLivre,
 			Role:        "conducteur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: "Vente plaquettes " + vp.String()}
+			NomActivite: vp.FullString()}
 		res = append(res, new)
 	}
-	//
+	//                                                                                                     
 	// Livraison pour vente plaquette - propriétaire outil
 	//
 	list4b := []VenteLivre{}
@@ -468,7 +468,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateLivre,
 			Role:        "propriétaire outil",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: "Vente plaquettes " + vp.String()}
+			NomActivite: vp.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -490,7 +490,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateCharge,
 			Role:        "chargeur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: "Chargement plaquettes " + elt.String()}
+			NomActivite: elt.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -512,7 +512,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateCharge,
 			Role:        "conducteur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: "Chargement plaquettes " + elt.String()}
+			NomActivite: elt.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -534,7 +534,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateCharge,
 			Role:        "propriétaire outil",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: "Chargement plaquettes " + elt.String()}
+			NomActivite: elt.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -555,7 +555,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateVente,
 			Role:        "client plaquettes",
 			URL:         "/vente/" + strconv.Itoa(elt.Id),
-			NomActivite: "Vente plaquettes " + elt.String()}
+			NomActivite: elt.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -577,7 +577,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateContrat,
 			Role:        "client bois sur pied",
 			URL:         "/chantier/bois-sur-pied/" + strconv.Itoa(elt.DateContrat.Year()),
-			NomActivite: "Chantier bois sur pied " + elt.String()}
+			NomActivite: elt.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -599,7 +599,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateContrat,
 			Role:        "client bois sur pied",
 			URL:         "/chantier/autre/liste/" + strconv.Itoa(elt.DateContrat.Year()),
-			NomActivite: "Chantier " + elt.String()}
+			NomActivite: elt.FullString()}
 		res = append(res, new)
 	}
 	//
@@ -617,7 +617,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			Date:        elt.DateChantier,
 			Role:        "fermier",
 			URL:         "/chantier/chauffage-fermier/liste/" + strconv.Itoa(elt.DateChantier.Year()),
-			NomActivite: "Chantier chauffage fermier " + elt.String()}
+			NomActivite: elt.FullString()}
 		res = append(res, new)
 	}
 	//

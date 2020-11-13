@@ -59,6 +59,10 @@ func (vc *VenteCharge) String() string {
 	return vc.Chargeur.String() + " " + tiglib.DateFr(vc.DateCharge)
 }
 
+func (vc *VenteCharge) FullString() string {
+	return "Chargement plaquettes " + vc.String()
+}
+
 // ************************** Get *******************************
 
 func GetVenteCharge(db *sqlx.DB, id int) (*VenteCharge, error) {

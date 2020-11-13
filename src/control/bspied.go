@@ -175,7 +175,7 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		ctx.TemplateName = "bspied-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Modifier un chantier bois sur pied",
+				Title: "Modifier " + chantier.FullString(),
 				CSSFiles: []string{
 					"/static/css/form.css",
 					"/static/autocomplete/autocomplete.css"},

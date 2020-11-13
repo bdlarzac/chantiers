@@ -48,6 +48,10 @@ func (chantier *Chautre) String() string {
 	return LabelValorisation(chantier.TypeValo) + " " + chantier.Client.String() + " " + tiglib.DateFr(chantier.DateContrat)
 }
 
+func (chantier *Chautre) FullString() string {
+	return "Chantier autre valorisation " + chantier.String()
+}
+
 // ************************** Get *******************************
 
 // Renvoie un chantier bois sur pied

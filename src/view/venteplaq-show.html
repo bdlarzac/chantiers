@@ -2,7 +2,7 @@
 {{with .Details.Vente}}
 {{$idVente := .Id}}
 <h1>
-    {{$.Header.Title}}
+    {{.FullString}}
     <a class="padding-left" href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
         <img class="bigicon inline" src="/static/img/facture.png" title="Voir la facture" />
     </a>

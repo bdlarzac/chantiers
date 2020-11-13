@@ -257,7 +257,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		ctx.TemplateName = "plaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Modifier le chantier : " + chantier.String(),
+				Title: "Modifier " + chantier.FullString(),
 				CSSFiles: []string{
 					"/static/css/form.css",
 					"/static/autocomplete/autocomplete.css"},

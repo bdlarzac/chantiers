@@ -1,6 +1,6 @@
-<h1>{{.Header.Title}}</h1>
-
 {{with .Details.Chantier}}
+
+<h1>Modifier chantier bois sur pied :<br>{{.String}}</h1>{{/* .FullString pas utilisé à cause du retour à la ligne */}}
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
 
     <div class="grid2-form">

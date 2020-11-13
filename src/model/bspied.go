@@ -54,6 +54,10 @@ func (bsp *BSPied) String() string {
 	return bsp.Acheteur.String() + " " + bsp.Lieudit.Nom + " " + tiglib.DateFr(bsp.DateContrat)
 }
 
+func (bsp *BSPied) FullString() string {
+	return "Chantier bois sur pied " + bsp.String()
+}
+
 // ************************** Get *******************************
 
 // Renvoie un chantier bois sur pied

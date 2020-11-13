@@ -53,6 +53,10 @@ func (chantier *Chaufer) String() string {
 	return chantier.Fermier.String() + " " + tiglib.DateFr(chantier.DateChantier)
 }
 
+func (chantier *Chaufer) FullString() string {
+	return "Chantier chauffage fermier " + chantier.String()
+}
+
 // ************************** Get *******************************
 
 // Renvoie un chantier chauffage fermier
