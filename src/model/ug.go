@@ -261,7 +261,7 @@ func (ug *UG) ComputeParcelles(db *sqlx.DB) error {
 
 // ************************** Activité *******************************
 
-// Renvoie les activités ayant eu lieu sur une parcelle.
+// Renvoie les activités ayant eu lieu sur une UG.
 // Ordre chronologique inverse
 // Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
 func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {

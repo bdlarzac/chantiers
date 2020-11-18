@@ -66,7 +66,7 @@
 <div id="help" class="margin display-none">
     <div class="help-content">
         <div class="help-title">Aide</div>
-        <div class="section"></div>
+        <div class="section">
     </div>
 </div>
 
@@ -115,21 +115,27 @@ function initialize(){
 
 // ***************************************
 /** 
-    Promesse utilisée par autocomplete() pour s'alimenter en données
+    Fonction utilisée par autocomplete() pour s'alimenter en données
     @param inputField input type=text utilisé
                       pour récupérer des noms de personnes par ajax
 **/
-async function getActeursPossibles(inputField){
-    const url = "/ajax/autocomplete/acteur/" + inputField.value + "/fermiers";
-    let response = await fetch(url);
-    response = await response.json();
-    let result = [];
-    if(response != null){
-        response.forEach(function(item) {
-            result.push(item.name);
-            window.globalPersons[item.id] = item.name;
-        });
-    }
+// @todo remplacer async = false par await et Promise
+function getActeursPossibles(inputField){
+    var result = [];
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response != null){
+                response.forEach(function(item) {
+                    result.push(item.name);
+                    window.globalPersons[item.id] = item.name;
+                });
+            }
+        }
+    };
+    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value + "/fermiers", false);
+    xhr.send();
     return result;                             
 }
 
@@ -166,11 +172,6 @@ function checkFermier(){
 **/
 function actionAfterChangeFermier(){
     var idFermier = document.getElementById("id-fermier").value
-    // Les 2 lignes suivantes sont nécessaires ; sans ça, si on change de fermier,
-    // les parcelles se mettent bien à jour mais des parcelles sélectionnées pécédemment
-    // sont sélectionnées par défaut
-    document.getElementById("ugs").innerHTML = "";
-    document.getElementById("parcelles").innerHTML = "";
     if(idFermier == 0){
         document.getElementById("ugs").innerHTML = "Choisissez d'abord un fermier";
         document.getElementById("parcelles").innerHTML = "Choisissez d'abord une UG";
@@ -276,12 +277,12 @@ function afficheParcelles(idUG){
                         subdiv.appendChild(radio);
                         // entière - label
                         let label = document.createElement("label");
-                        label.setAttribute("for", radioValueId);
+                        label.setAttribute("for", "entiere-" + item.id);
                         label.innerHTML = "Entière";
                         subdiv.appendChild(label);
                         //
                         curdiv.appendChild(subdiv);
-                        // surface - radio
+                        // radio - surface
                         subdiv = document.createElement("div");
                         radio = document.createElement("input");
                         radioValueId = "radio-parcelle-surface-" + item.id;
@@ -293,7 +294,7 @@ function afficheParcelles(idUG){
                         subdiv.appendChild(radio);
                         // surface - label
                         label = document.createElement("label");
-                        label.setAttribute("for", radioValueId);
+                        label.setAttribute("for", surfaceInputNameId);
                         label.setAttribute("class", "padding-right");
                         label.innerHTML = "Surface";
                         subdiv.appendChild(label);
@@ -333,23 +334,18 @@ function validateForm(){
     if(document.getElementById("CHOOSE_EXPLOITATION").selected == true){
         msg += "\n- Vous devez choisir une exploitation";
     }
-    if(document.getElementById("CHOOSE_UNITE").selected == true){
-        msg += "\n- Vous devez choisir une unité pour le volume";
-    }
     // vérifie que une ug est sélectionnée
     // @todo 
     // Vérifie qu'au moins une parcelle est sélectionnée
     // @todo 
     // calcule id-fermier
-    let personName = document.getElementById("fermier").value.trim();
-    let ok = false;
-    let idActeur;
+    var personName = document.getElementById("fermier").value.trim();
     if(personName == ""){
         msg += "\n- Vous devez renseigner un fermier.";
     }
     else{
-        ok = false;
-        for(idActeur in window.globalPersons){
+        var ok = false;
+        for(var idActeur in window.globalPersons){
             if(window.globalPersons[idActeur] == personName){
                 ok = true;
                 break;
@@ -357,7 +353,8 @@ function validateForm(){
         }
     }
     if(!ok){
-        msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+        msg += "Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+        return false;
     }
     else{
         document.getElementById("id-fermier").value = idActeur;

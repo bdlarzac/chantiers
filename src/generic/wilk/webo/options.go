@@ -11,6 +11,8 @@
       (il faudrait faire pareil pour OptionGroupString et OptionGroupInt)
       Motivé par l'utilisation de plusieurs selects avec les mêmes options dans la même page (taux TVA)
       => pour que chaque option ait un id unique
+      Comportement : si OptionId est fourni, l'id de l'option vaut OptionId, sinon vaut OptionValue
+                     Dans tous les cas les options ont un id
 **/
 
 package webo
@@ -20,7 +22,7 @@ import (
 	"html/template"
 )
 
-var tmpOptions = template.Must(template.New("options").Parse(`{{$sel := .Sel}}{{range .Options}}<option {{if ne .OptionId ""}}id="{{.OptionId}}" {{end}}value="{{.OptionValue}}"{{if eq .OptionValue $sel}} selected{{end}}>{{.OptionLabel}}</option>
+var tmpOptions = template.Must(template.New("options").Parse(`{{$sel := .Sel}}{{range .Options}}<option {{if eq .OptionId ""}}id="{{.OptionValue}}"{{else}}id="{{.OptionId}}"{{end}} value="{{.OptionValue}}"{{if eq .OptionValue $sel}} selected{{end}}>{{.OptionLabel}}</option>
 {{end}}`)).Option("missingkey=error")
 
 type OptionString struct {
