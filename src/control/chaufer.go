@@ -188,7 +188,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete2.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
