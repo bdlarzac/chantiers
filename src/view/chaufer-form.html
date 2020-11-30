@@ -228,8 +228,6 @@ async function actionAfterChangeFermier(){
     Récup en ajax les parcelles correspondant à une UG et les affiche.
     Déclenché qd on sélectionne une UG.
     Aucune parcelle n'est sélectionnée.
-    
-    TODO debug affichage sur 2 col
 **/
 async function afficheParcelles(idUG){
     const url = "/ajax/get/parcelles-from-ug/" + idUG;
@@ -269,7 +267,7 @@ async function afficheParcelles(idUG){
     let grid2 = document.createElement("div");
     grid2.setAttribute("class", "grid2-form");
     //
-    let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput;
+    let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
     let i = 1;
     response.forEach(function(item) {
         curdiv = document.createElement("div");
@@ -283,6 +281,8 @@ async function afficheParcelles(idUG){
         curdiv.setAttribute("id", "parcelle-" + item.id);
         surfaceInputNameId = "parcelle-surface-" + item.id; // variable utilisée pour readonly
         radioName = "radio-parcelle-" + item.id;
+        strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
+            + "document.getElementById('"+surfaceInputNameId+"').value = '';"
         // non sélectionnée - radio
         subdiv = document.createElement("div");
         radio = document.createElement("input");
@@ -292,8 +292,8 @@ async function afficheParcelles(idUG){
         radio.setAttribute("value", radioValueId);
         radio.setAttribute("id", radioValueId);
         radio.setAttribute("checked", true);
-        radio.setAttribute("onclick", "document.getElementById('"+surfaceInputNameId+"').readOnly = true;");
-        subdiv.appendChild(radio);                                                                         
+        radio.setAttribute("onclick", strOnclick);
+        subdiv.appendChild(radio);
         // non sélectionnée - label
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
@@ -309,7 +309,7 @@ async function afficheParcelles(idUG){
         radio.setAttribute("name", radioName);
         radio.setAttribute("value", radioValueId);
         radio.setAttribute("id", radioValueId);
-        radio.setAttribute("onclick", "document.getElementById('"+surfaceInputNameId+"').readOnly = true;");
+        radio.setAttribute("onclick", strOnclick);
         subdiv.appendChild(radio);
         // entière - label
         label = document.createElement("label");
