@@ -2,13 +2,14 @@
     Partie de formulaire utilisé par 3 formulaires :
     plaq-form.html, bspied-form.html, chautre-form.html
     
-    Cette template doit être appelée avec 2 paramètres :
-    - l'objet chantier
-    TODO 
-    - le nom du formulaire appelant (pour msg erreur)
+    Cette template doit être appelée avec une struct contenant 2 champs :
+    - Chantier (de type Plaq ou BSPied ou Chautre)
+    - TypeChantier (string pouvant valoir "plaq" ou "bspied" ou "chautre")
     
     Cette partie de formulaire est contenue dans un <div class="grid2-form">
 */}}
+
+{{with .Chantier}}
 
 <div>
     <label class="block margin-bottom">Unités de gestion</label>
@@ -28,7 +29,7 @@ window.lienChantierMsg = "";
 
 // Pour mémoriser les associations code ug => id ug lors de l'exec de checkUGs() 
 window.globalUGs = [];
-
+    
 async function initializeLiensChantier() {
     // form new
     if({{not .Fermiers}}){
@@ -59,7 +60,8 @@ function addUG(){
     const inputElt = document.createElement("input");
     inputElt.setAttribute("type", "text");
     inputElt.setAttribute("id", "ug-" + idxNew);
-inputElt.setAttribute("value", "XVII-15");
+    inputElt.setAttribute("name", "ug-" + idxNew);
+    inputElt.classList.add("input-ug"); // utile seulement dans validateChantierLien()
     //
     const spanElt = document.createElement("span");
     spanElt.innerHTML = " ";
@@ -72,7 +74,7 @@ inputElt.setAttribute("value", "XVII-15");
     const imgElt = document.createElement("img");
     imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
     imgElt.setAttribute("src", "/static/img/delete.png");
-    imgElt.setAttribute("title", "Valider");
+    imgElt.setAttribute("title", "Valider les UGs - Afficher lieux-dits et fermiers");
     aElt.appendChild(imgElt);
     //
     divElt.appendChild(inputElt);
@@ -95,6 +97,7 @@ function removeUG(idx){
         elt = listeUgsElt.childNodes[i];
         elt.setAttribute("id", "ligne-ug-" + i);
         elt.childNodes[0].setAttribute("id", "ug-" + i);                    // input type = text
+        elt.childNodes[0].setAttribute("name", "ug-" + i);                  // input type = text
         elt.childNodes[2].setAttribute("onclick", "removeUG(" + i + ");");  // a href de l'img
     }
 }
@@ -114,7 +117,32 @@ async function validateUGs(){
         return;
     }
     
-    // variables utiisées par lieux-dits et fermiers
+    let i;
+    
+    // Mémorise ce qui est checked (pour réaffichage suite à nouveau clic sur valider UGs)
+    const memoLieudit = [];
+    const memoFermier = [];
+    let elts;
+    elts = document.getElementsByClassName("chk-lieudit");
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            memoLieudit.push(elts[i].getAttribute("id"));
+        }
+    }
+    elts = document.getElementsByClassName("chk-fermier");
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            memoFermier.push(elts[i].getAttribute("id"));
+        }
+    }
+    
+    // Vide la zone
+    document.getElementById("empty-lieudit1").innerHTML = "";
+    document.getElementById("empty-lieudit2").innerHTML = "";
+    document.getElementById("empty-fermier1").innerHTML = "";
+    document.getElementById("empty-fermier2").innerHTML = "";
+    
+    // variables utiisées par affichage lieux-dits et fermiers
     const listeUgsElt = document.getElementById("liste-ugs");
     let div1Elt, div2Elt; // enfants directs de grid2
     let baseURL, url, codeUG;
@@ -129,20 +157,20 @@ async function validateUGs(){
     div1Elt.style.textAlign = "right";
     div2Elt = document.getElementById("empty-lieudit2");
     div1Elt.innerHTML = "Lieux-dits";
-    for(let i=0; i < listeUgsElt.childNodes.length; i++){
+    for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
         codeUG = elt.childNodes[0].value;
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){
             window.lienChantierMsg += "- ERREUR\nTransmettez ce message l'administrateur du site :\n"
-                + "Problème de récupération " + url + " dans TODO-form.html\n";
+                + "Problème de récupération " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         response = await response.json();
         if(response == null){
             window.lienChantierMsg += "- ERREUR\nTransmettez ce message l'administrateur du site :\n"
-                + "Mauvais format de retour de " + url + " dans TODO-form.html\n";
+                + "Mauvais format de retour de " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         if(response.length == 0){
@@ -152,11 +180,15 @@ async function validateUGs(){
         response.forEach(function(item){
             idDB = item.Id;
             nom = item.Nom;
-            idForm = "lieudit-" + id
+            idForm = "lieudit-" + idDB
             checkElt = document.createElement("input");
             checkElt.setAttribute("type", "checkbox");
             checkElt.setAttribute("id", idForm);
-            checkElt.setAttribute("name", idForm);
+            checkElt.setAttribute("name", idForm);                                                                   
+            checkElt.setAttribute("class", "chk-lieudit"); // utile uniquement pour calcul de memoLieudit
+            if(memoLieudit.indexOf(idForm) != -1){
+                checkElt.setAttribute("checked", true);
+            }
             labelElt = document.createElement("label");
             labelElt.setAttribute("for", idForm);
             labelElt.style.fontWeight = "normal";
@@ -181,20 +213,20 @@ async function validateUGs(){
     div1Elt.style.textAlign = "right";
     div2Elt = document.getElementById("empty-fermier2");
     div1Elt.innerHTML = "Fermiers";
-    for(let i=0; i < listeUgsElt.childNodes.length; i++){
+    for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
         codeUG = elt.childNodes[0].value;
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){
             window.lienChantierMsg += "- ERREUR\nTransmettez ce message l'administrateur du site :\n"
-                + "Problème de récupération " + url + " dans TODO-form.html\n";
+                + "Problème de récupération " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         response = await response.json();
         if(response == null){
             window.lienChantierMsg += "- ERREUR\nTransmettez ce message l'administrateur du site :\n"
-                + "Mauvais format de retour de " + url + " dans TODO-form.html\n";
+                + "Mauvais format de retour de " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         if(response.length == 0){
@@ -204,11 +236,15 @@ async function validateUGs(){
         response.forEach(function(item){
             idDB = item.id;
             nom = item.name;
-            idForm = "fermier-" + id
+            idForm = "fermier-" + idDB
             checkElt = document.createElement("input");
             checkElt.setAttribute("type", "checkbox");
             checkElt.setAttribute("id", idForm);
             checkElt.setAttribute("name", idForm);
+            checkElt.setAttribute("class", "chk-fermier"); // utile uniquement pour calcul de memoFermier
+            if(memoFermier.indexOf(idForm) != -1){
+                checkElt.setAttribute("checked", true);
+            }
             labelElt = document.createElement("label");
             labelElt.setAttribute("for", idForm);
             labelElt.style.fontWeight = "normal";
@@ -220,6 +256,7 @@ async function validateUGs(){
         });
     }
 }
+
 /** 
     Vérifie si les UGs saisies existent en base
     Remplit la var globale window.globalUGs
@@ -238,13 +275,13 @@ async function checkUGs(){
         response = await fetch(url);
         if(response == null){
             window.lienChantierMsg += "- ERREUR\nTransmettez ce message l'administrateur du site :\n"
-                + "Problème de récupération " + url + " dans TODO-form.html\n";
+                + "Problème de récupération " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         response = await response.json();
         if(response == null){
             window.lienChantierMsg += "- ERREUR\nTransmettez ce message l'administrateur du site :\n"
-                + "Mauvais format de retour de " + url + " dans TODO-form.html\n";
+                + "Mauvais format de retour de " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         if(response == 0){
@@ -255,4 +292,66 @@ async function checkUGs(){
     }
 }
 
+/** 
+    Valide la partie ugs, lieux-dits et fermiers.
+    @return     Message d'erreur, chaîne vide si ok.
+**/
+function validateFormChantierLien(){
+    let msg = "";
+    let i;
+    // UGs
+    let val;
+    const ugs = document.getElementsByClassName("input-ug");
+    for(i = 0; i < ugs.length; i++) {
+        val = ugs[i].value;
+        if(val == ""){
+            msg += "- Un champ pour saisir une UG ne peut pas être vide\n";
+            continue;
+        }
+        if(!(val in window.globalUGs)){
+            msg += "L'UG \"" + val + "\" n'existe pas en base\n";
+        }
+    }
+    // lieux-dits
+    let elts, nChecked;
+    nChecked = 0;
+    elts = document.getElementsByClassName("chk-lieudit");
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            nChecked++;
+        }
+    }
+    if(nChecked == 0){
+        msg += "- Vous devez choisir au moins un lieu-dit\n";
+    }
+    // fermiers
+    nChecked = 0;
+    elts = document.getElementsByClassName("chk-fermier");
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            nChecked++;
+        }
+    }
+    if(nChecked == 0){
+        msg += "- Vous devez choisir au moins un fermier\n";
+    }
+    return msg;
+}
+
+/** 
+    Fonction à appeler uniquement lorsque le formulaire est valide, juste avant de le poster.
+    Remplace les codes UG par les ids UG dans les inputs
+    Ex : remplace "XIX-11" par 6
+    Ça permet au controller qui traite le formulaire d'avoir directement les ids UG
+**/
+function bidouilleUGChantierLien(){
+    const ugs = document.getElementsByClassName("input-ug");
+    let val;
+    for(i = 0; i < ugs.length; i++) {
+        val = ugs[i].value;
+        ugs[i].value = window.globalUGs[val];
+    }
+}
+
 </script>
+{{end}}

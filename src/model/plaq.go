@@ -448,16 +448,11 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 // ************************** CRUD *******************************
 
 // Insère un chantier plaquette en base
-// + crée et insère en base le(s) tas
-func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
-    // ========= bouchon a virer =========
-    return 0, nil
-    /* 
+// + crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
+func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (int, error) {
 	var err error
-	query := `insert into plaq(
-        id_lieudit,
-        id_fermier,
-        id_ug,
+	var query string
+	query = `insert into plaq(
         datedeb,
         datefin,
         surface,
@@ -466,13 +461,10 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
         essence,
         fraisrepas,
         fraisreparation
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
 	id := int(0)
 	err = db.QueryRow(
 		query,
-		chantier.IdLieudit,
-		chantier.IdFermier,
-		chantier.IdUG,
 		chantier.DateDebut,
 		chantier.DateFin,
 		chantier.Surface,
@@ -484,7 +476,7 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	// tas - crée un tas par liu de stockage sélectionné
+	// tas - crée un tas par lieu de stockage sélectionné
 	for _, idStockage := range idsStockages {
 		tas := NewTas(idStockage, id, 0, true)
 		_, err = InsertTas(db, tas)                                               
@@ -492,8 +484,54 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
 			return id, werr.Wrapf(err, "Erreur appel InsertTas()")
 		}
 	}
+	// idsUG
+	query = `insert into chantier_ug(
+        type_chantier,
+        id_chantier,
+        id_ug) values($1,$2,$3)`
+	for _, idUG := range(idsUG){
+        _, err = db.Exec(
+            query,
+            "plaq",
+            id,
+            idUG)
+        if err != nil {
+            return id, werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+	// idsLieudit
+	query = `insert into chantier_lieudit(
+        type_chantier,
+        id_chantier,
+        id_lieudit) values($1,$2,$3)`
+	for _, idLieudit := range(idsLieudit){
+        _, err = db.Exec(
+            query,
+            "plaq",
+            id,
+            idLieudit)
+        if err != nil {
+            return id, werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+	// idsFermier
+	query = `insert into chantier_fermier(
+        type_chantier,
+        id_chantier,
+        id_fermier) values($1,$2,$3)`
+	for _, idFermier := range(idsFermier){
+        _, err = db.Exec(
+            query,
+            "plaq",
+            id,
+            idFermier)
+        if err != nil {
+            return id, werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+	
+	//
 	return id, nil
-    */
 }
 
 // Gère aussi les tas

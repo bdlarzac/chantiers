@@ -12,16 +12,17 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
+"fmt"
 )
 
 type detailsPlaqForm struct {
 	UrlAction           string
+	Chantier            *model.Plaq
+	TypeChantier        string
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
 	GranuloOptions      template.HTML
 	AllStockages        []*model.Stockage
-	Chantier            *model.Plaq
 }
 
 type detailsPlaqList struct {
@@ -142,8 +143,38 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
+fmt.Printf("%+v\n",r.PostForm)
+        var idsUG, idsLieudit, idsFermier []int
+		var id int
+        for key, val := range(r.PostForm){
+            if strings.Index(key, "ug-") == 0 {
+                // ex : ug-0:[6] (6 est l'id UG)
+                id, err = strconv.Atoi(val[0])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsUG, id)
+            }
+            if strings.Index(key, "lieudit-") == 0 {
+                // ex : lieudit-164:[on] (164 est l'id lieudit)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsLieudit, id)
+            }
+            if strings.Index(key, "lieudit-") == 0 {
+                // ex : fermier-25:[on] (25 est l'id fermier)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsFermier, id)
+            }
+        }
 		//
-		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages)
+		id, err = model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUG, idsLieudit, idsFermier)
 		if err != nil {
 			return err
 		}
@@ -161,12 +192,6 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		// Affiche form
 		//
 		chantier := &model.Plaq{}
-// ========= bouchon a virer =========
-/* 
-		chantier.Lieudit = &model.Lieudit{}
-		chantier.Fermier = &model.Acteur{}
-		chantier.UG = &model.UG{}
-*/
 		allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
@@ -187,6 +212,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			},
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
+				TypeChantier:        "plaq",
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "CHOOSE_GRANULO"),
@@ -214,7 +240,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		// calcul des ids stockage, pour transmettre à UpdatePlaq(),
+		// calcul des ids stockage, pour transmettre à model.UpdatePlaq(),
 		// qui va créer ou supprimer ou ne pas changer le(s) tas
 		allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
@@ -305,30 +331,13 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 // Auxiliaire de NewPlaq() et UpdatePlaq()
 // Ne gère pas le champ Id
 // Ne gère pas les stockages (tas)
+// NE gère pas liens vers UGs, lieux-dits, fermiers
 func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 	chantier := &model.Plaq{}
 	var err error
 	if err = r.ParseForm(); err != nil {
 		return chantier, err
 	}
-	//
-// ========= bouchon a virer =========
-/* 
-	chantier.IdLieudit, err = strconv.Atoi(r.PostFormValue("id-lieudit"))
-	if err != nil {
-		return chantier, err
-	}
-	//
-	chantier.IdFermier, err = strconv.Atoi(r.PostFormValue("fermier"))
-	if err != nil {
-		return chantier, err
-	}
-	//
-	chantier.IdUG, err = strconv.Atoi(r.PostFormValue("ug"))
-	if err != nil {
-		return chantier, err
-	}
-*/
 	//
 	chantier.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
 	if err != nil {
