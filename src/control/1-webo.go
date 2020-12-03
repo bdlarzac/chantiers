@@ -118,7 +118,7 @@ func WeboStockFrais() []webo.OptionString {
 		webo.OptionString{OptionValue: "stockfrais-EL", OptionLabel: model.LabelStockFrais("EL")},
 		webo.OptionString{OptionValue: "stockfrais-LO", OptionLabel: model.LabelStockFrais("LO")},
 	}
-}                                                                                  
+}
 
 // Renvoie la liste des taux de TVA utilisés pour payer un intervenant extérieur
 // dans un format utilisable par webo
@@ -128,10 +128,10 @@ func WeboStockFrais() []webo.OptionString {
 //                      Permet que chaque option soit unique dans tous les formulaires de TVA
 func WeboTVAExt(ctx *ctxt.Context, chooseId, idPrefix string) []webo.OptionString {
 	res := []webo.OptionString{}
-	res = append(res, webo.OptionString{ OptionValue: chooseId, OptionId: idPrefix+chooseId, OptionLabel: "--- Choisir ---"})
+	res = append(res, webo.OptionString{OptionValue: chooseId, OptionId: idPrefix + chooseId, OptionLabel: "--- Choisir ---"})
 	for _, taux := range ctx.Config.TVAExt {
 		tmp := strconv.FormatFloat(taux, 'f', 1, 64)
-		res = append(res, webo.OptionString{OptionValue: tmp, OptionId: idPrefix+tmp, OptionLabel: tmp})
+		res = append(res, webo.OptionString{OptionValue: tmp, OptionId: idPrefix + tmp, OptionLabel: tmp})
 	}
 	return res
 }

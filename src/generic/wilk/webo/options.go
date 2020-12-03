@@ -1,7 +1,7 @@
 /**
     Génère une liste d'options html à partir d'un slice
     Adaptation d'un code de wilk
-    
+
     Changements par rapport au code de wilk :
     Utilisé que FmtOption
     - déplace l'espace pour afficher selected
@@ -27,12 +27,12 @@ var tmpOptions = template.Must(template.New("options").Parse(`{{$sel := .Sel}}{{
 
 type OptionString struct {
 	OptionValue string
-	OptionId string
+	OptionId    string
 	OptionLabel string
 }
 type OptionInt struct {
 	OptionValue int
-	OptionId string
+	OptionId    string
 	OptionLabel string
 }
 

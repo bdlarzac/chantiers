@@ -164,7 +164,7 @@ func GetFournisseurs(db *sqlx.DB) ([]*Acteur, error) {
 	return acteurs, err
 }
 
-// Renvoie des Acteurs (exploitants ou fermiers) à partir d'un lieu-dit.
+// Renvoie des Acteurs (fermiers) à partir d'un lieu-dit.
 // Utilise les parcelles pour faire le lien
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
@@ -178,6 +178,25 @@ func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Acteur, error) {
             )
         ) order by nom`
 	err := db.Select(&acteurs, query, idLieudit)
+	return acteurs, err
+}
+
+// Renvoie des Acteurs (fermiers) à partir d'une UG.
+// Utilise les parcelles pour faire le lien
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
+// Utilisé par ajax
+func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Acteur, error) {
+	acteurs := []*Acteur{}
+	query := `
+	    select * from acteur where id_sctl in(
+            select distinct id_sctl_exploitant from parcelle_exploitant where id_parcelle in(
+                select id_parcelle from parcelle_ug where id_ug in(
+                    select id from ug where code=$1
+                )
+            )
+        ) order by nom`
+	err := db.Select(&acteurs, query, codeUG)
 	return acteurs, err
 }
 
@@ -446,7 +465,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 			NomActivite: vp.FullString()}
 		res = append(res, new)
 	}
-	//                                                                                                     
+	//
 	// Livraison pour vente plaquette - propriétaire outil
 	//
 	list4b := []VenteLivre{}

@@ -65,10 +65,10 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			Annees:    annees,
 		},
 	}
-    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
-    if err != nil {
-        return err
-    }        
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -214,6 +214,8 @@ func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+// ========= bouchon a virer =========
+/* 
 	for _, idChantier := range ids {
 		chantier, err := GetPlaq(db, idChantier)
 		if err != nil {
@@ -226,6 +228,7 @@ func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 		}
 		vp.Chantiers = append(vp.Chantiers, chantier)
 	}
+*/
 	return nil
 }
 

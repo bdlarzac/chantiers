@@ -144,7 +144,7 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 			},
 			Details: detailsVenteLivreForm{
 				VenteLivre:   vl,
-				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(vl.GlTVA, 'f', 1, 64)),         
+				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(vl.GlTVA, 'f', 1, 64)),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), strconv.FormatFloat(vl.MoTVA, 'f', 1, 64)),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(vl.OuTVA, 'f', 1, 64)),
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/update/" + vars["id-livraison"],
@@ -199,11 +199,11 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 		//
 		// coût global
 		//
-        vl.IdLivreur, err = strconv.Atoi(r.PostFormValue("id-livreur"))
-        if err != nil {
-            return vl, err
-        }
-        //
+		vl.IdLivreur, err = strconv.Atoi(r.PostFormValue("id-livreur"))
+		if err != nil {
+			return vl, err
+		}
+		//
 		vl.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
 			return vl, err

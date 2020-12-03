@@ -92,10 +92,10 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Vente: vente,
 		},
 	}
-    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: vente.FullString()})
-    if err != nil {
-        return err
-    }        
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: vente.FullString()})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

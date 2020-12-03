@@ -63,7 +63,9 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 	// chantiers plaquettes
 	//
 	ids := []int{}
-	query = "select id from plaq where id_ug=$1"
+	query = `select id from plaq where id in(
+	    select id_chantier from chantier_ug where type_chantier='plaq' and id_ug =$1
+    )`
 	err = db.Select(&ids, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -80,15 +82,17 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		myrecap.Plaquettes.Superficie += chantier.Surface
 		myrecap.PlaquettesEtBoisOeuvre.Quantite += chantier.Volume
 		myrecap.PlaquettesEtBoisOeuvre.Superficie += chantier.Surface
-		// todo myrecap.Plaquettes.CoutExploitation
-		// todo myrecap.Plaquettes.Benefice
+		// TODO myrecap.Plaquettes.CoutExploitation
+		// TODO myrecap.Plaquettes.Benefice
 		ug.Recaps[y] = myrecap
 	}
 	//
 	// Chantier autres valorisations
 	//
 	ids = []int{}
-	query = "select id from chautre where id_ug=$1"
+	query = `select id from chautre where id in(
+	    select id_chantier from chantier_ug where type_chantier='chautre' and id_ug =$1
+    )`
 	err = db.Select(&ids, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -272,7 +276,9 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 	// Chantiers plaquettes
 	//
 	list1 := []Plaq{}
-	query = "select * from plaq where id_ug =$1"
+	query = `select * from plaq where id in(
+	    select id_chantier from chantier_ug where type_chantier='plaq' and id_ug =$1
+    )`
 	err = db.Select(&list1, query, u.Id)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -292,7 +298,9 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 	// Chantiers bois sur pied
 	//
 	list2 := []BSPied{}
-	query = `select * from bspied where id_ug=$1`
+	query = `select * from bspied where id in(
+	    select id_chantier from chantier_ug where type_chantier='bspied' and id_ug =$1
+    )`
 	err = db.Select(&list2, query, u.Id)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -316,7 +324,9 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 	// Chantiers Autres valorisations
 	//
 	list3 := []Chautre{}
-	query = `select * from chautre where id_ug=$1`
+	query = `select * from chautre where id in(
+	    select id_chantier from chantier_ug where type_chantier='chautre' and id_ug =$1
+    )`
 	err = db.Select(&list3, query, u.Id)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)

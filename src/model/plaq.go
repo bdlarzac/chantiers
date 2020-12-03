@@ -19,9 +19,6 @@ import (
 
 type Plaq struct {
 	Id              int
-	IdLieudit       int       `db:"id_lieudit"`
-	IdFermier       int       `db:"id_fermier"`
-	IdUG            int       `db:"id_ug"`
 	DateDebut       time.Time `db:"datedeb"`
 	DateFin         time.Time
 	Surface         float64
@@ -32,9 +29,9 @@ type Plaq struct {
 	FraisReparation float64
 	// pas stocké en base
 	Volume     float64
-	Lieudit    *Lieudit
-	Fermier    *Acteur
-	UG         *UG
+	UGs        []*UG
+	Lieudits   []*Lieudit
+	Fermiers   []*Acteur
 	Tas        []*Tas
 	Operations []*PlaqOp
 	Transports []*PlaqTrans
@@ -70,10 +67,15 @@ func (ch *Plaq) ModifierVolume(db *sqlx.DB, vol float64) {
 // ************************** Nom *******************************
 
 func (ch *Plaq) String() string {
-	if ch.Lieudit == nil {
-		panic("Erreur dans le code - Le lieu-dit d'un chantier plaquettes doit être calculé avant d'appeler String()")
+	if len(ch.Lieudits) == 0 {
+		panic("Erreur dans le code - Les lieux-dits d'un chantier plaquettes doit être calculé avant d'appeler String()")
 	}
-	return ch.Lieudit.Nom + " " + tiglib.DateFr(ch.DateDebut)
+	res := ""
+    for _, ld := range ch.Lieudits {
+        res += ld.Nom+" "
+    }
+	res += tiglib.DateFr(ch.DateDebut)
+	return res
 }
 
 func (ch *Plaq) FullString() string {
@@ -97,9 +99,9 @@ func GetPlaq(db *sqlx.DB, idChantier int) (*Plaq, error) {
 
 // Renvoie un chantier plaquette contenant
 // - les données stockées dans la table
-// - Lieudit
-// - UG
-// - Fermier
+// - les lieux-dits
+// - les UGs
+// - les fermiers
 // - Tas
 // - les opérations simples (abattage...)
 // - les transports vers le stockage
@@ -114,17 +116,9 @@ func GetPlaqFull(db *sqlx.DB, idChantier int) (*Plaq, error) {
 	if err != nil {
 		return chantier, werr.Wrapf(err, "Erreur appel Plaq.ComputeVolume()")
 	}
-	err = chantier.ComputeLieudit(db)
+	err = chantier.ComputeLiens(db) // ugs, lieux-dits, fermiers
 	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
-	}
-	err = chantier.ComputeUG(db)
-	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur appel Plaq.ComputeUG()")
-	}
-	err = chantier.ComputeFermier(db)
-	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur appel Plaq.ComputeFermier()")
+		return chantier, werr.Wrapf(err, "Erreur appel Plaq.ComputeLiens()")
 	}
 	err = chantier.ComputeOperations(db)
 	if err != nil {
@@ -199,6 +193,62 @@ func GetPlaqsOfYear(db *sqlx.DB, annee string) ([]*Plaq, error) {
 
 // ************************** Compute *******************************
 
+// ========= bouchon a virer =========
+func (chantier *Plaq) ComputeLieudit(db *sqlx.DB) error {
+    return nil
+}
+func (chantier *Plaq) ComputeUG(db *sqlx.DB) error {
+    return nil
+}
+func (chantier *Plaq) ComputeFermier(db *sqlx.DB) error {
+    return nil
+}
+// ========= fin bouchons a virer =========
+
+
+// Renvoie les UGs, lieux-dits, fermiers associés à un chantier
+func (ch *Plaq) ComputeLiens(db *sqlx.DB) error {
+	if len(ch.UGs) != 0 {
+		return nil // déjà calculé
+	}
+	var err error
+	type ligneLien struct {
+		IdChantier  int `db:"id_chantier"`
+		IdUG        int `db:"id_ug"`
+		IdLieudit   int `db:"id_lieudit"`
+		IdFermier   int `db:"id_fermier"`
+	}
+	tmp1 := []*ligneLien{}
+	query := "select * from chantier_lien where type_chantier = 'plaq' and id_chantier=$1"
+	err = db.Select(&tmp1, query, ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	var ug *UG
+	var ld *Lieudit
+	var fermier *Acteur
+	for _, ligne := range tmp1 {
+	    ug, err = GetUG(db, ligne.IdChantier)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel GetUG()")
+        }
+	    ch.UGs = append(ch.UGs, ug)
+	    //
+	    ld, err = GetLieudit(db, ligne.IdLieudit)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel GetLieudit()")
+        }
+	    ch.Lieudits = append(ch.Lieudits, ld)
+	    //
+	    fermier, err = GetActeur(db, ligne.IdFermier)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel GetActeur()")
+        }
+	    ch.Fermiers = append(ch.Fermiers, fermier)
+	}
+	return nil
+}
+
 func (ch *Plaq) ComputeVolume(db *sqlx.DB) error {
 	var volumes []float64
 	query := "select qte from plaqop where id_chantier=$1 and typop='DC'" // déchiquetage
@@ -209,42 +259,6 @@ func (ch *Plaq) ComputeVolume(db *sqlx.DB) error {
 	ch.Volume = 0
 	for _, volume := range volumes {
 		ch.Volume += volume
-	}
-	return nil
-}
-
-func (chantier *Plaq) ComputeLieudit(db *sqlx.DB) error {
-	if chantier.Lieudit != nil {
-		return nil
-	}
-	var err error
-	chantier.Lieudit, err = GetLieudit(db, chantier.IdLieudit)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetLieudit()")
-	}
-	return nil
-}
-
-func (chantier *Plaq) ComputeUG(db *sqlx.DB) error {
-	if chantier.UG != nil {
-		return nil
-	}
-	var err error
-	chantier.UG, err = GetUG(db, chantier.IdUG)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetUG()")
-	}
-	return nil
-}
-
-func (chantier *Plaq) ComputeFermier(db *sqlx.DB) error {
-	if chantier.Fermier != nil {
-		return nil
-	}
-	var err error
-	chantier.Fermier, err = GetActeur(db, chantier.IdFermier)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
 	return nil
 }
@@ -436,6 +450,9 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 // Insère un chantier plaquette en base
 // + crée et insère en base le(s) tas
 func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
+    // ========= bouchon a virer =========
+    return 0, nil
+    /* 
 	var err error
 	query := `insert into plaq(
         id_lieudit,
@@ -470,17 +487,21 @@ func InsertPlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) (int, error) {
 	// tas - crée un tas par liu de stockage sélectionné
 	for _, idStockage := range idsStockages {
 		tas := NewTas(idStockage, id, 0, true)
-		_, err = InsertTas(db, tas)
+		_, err = InsertTas(db, tas)                                               
 		if err != nil {
 			return id, werr.Wrapf(err, "Erreur appel InsertTas()")
 		}
 	}
 	return id, nil
+    */
 }
 
 // Gère aussi les tas
 // @param idsStockages ids tas après update
 func UpdatePlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) error {
+    // ========= bouchon a virer =========
+    return nil
+    /* 
 	query := `update plaq set(
         id_lieudit,
         id_fermier, 
@@ -553,9 +574,13 @@ func UpdatePlaq(db *sqlx.DB, chantier *Plaq, idsStockages []int) error {
 		}
 	}
 	return nil
+    */
 }
 
 func DeletePlaq(db *sqlx.DB, id int) error {
+    // ========= bouchon a virer =========
+    return nil
+    /* 
 	var query string
 	var err error
 	var ids []int
@@ -615,4 +640,5 @@ func DeletePlaq(db *sqlx.DB, id int) error {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return nil
+    */
 }

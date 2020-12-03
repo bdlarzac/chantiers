@@ -19,7 +19,8 @@ type Lieudit struct {
 	Communes  []*Commune
 }
 
-// ************************** Get *******************************
+// ************************** Get one *******************************
+
 // Renvoie un Lieudit à partir de son id.
 // Ne contient que les champs de la table lieudit.
 // Les autres champs ne sont pas remplis.
@@ -48,12 +49,34 @@ func GetLieuditByNom(db *sqlx.DB, nom string) (*Lieudit, error) {
 	return ld, nil
 }
 
+// ************************** Get many *******************************
+
 // Renvoie des Lieudit à partir du début du nom.
 // Les mots comme LE LA LES DE DU D' ne sont pas pris en compte.
-func GetLieuDitAutocomplete(db *sqlx.DB, str string) ([]*Lieudit, error) {
+func GetLieuditsAutocomplete(db *sqlx.DB, str string) ([]*Lieudit, error) {
 	lds := []*Lieudit{}
 	query := "select id,nom from lieudit_mot where mot ilike '" + str + "%'"
 	err := db.Select(&lds, query)
+	if err != nil {
+		return lds, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return lds, nil
+}
+
+// Renvoie des Lieudit à partir d'un code UG.
+// Utilise les parcelles pour faire le lien
+// Ne contient que les champs de la table ug.
+// Les autres champs ne sont pas remplis.
+func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) ([]*Lieudit, error) {
+	lds := []*Lieudit{}
+	query := `select * from lieudit where id in(
+	    select id_lieudit from parcelle_lieudit where id_parcelle in(
+	        select id_parcelle from parcelle_ug where id_ug in(
+	            select id from ug where code=$1
+            )
+	    )
+    )`
+	err := db.Select(&lds, query, codeUG)
 	if err != nil {
 		return lds, werr.Wrapf(err, "Erreur query : "+query)
 	}

@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-	"strconv"
-	//"fmt"
 )
 
 func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -18,7 +16,7 @@ func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reque
 		Name string `json:"name"`
 	}
 	var resp []respElement
-	lds, err := model.GetLieuDitAutocomplete(ctx.DB, str)
+	lds, err := model.GetLieuditsAutocomplete(ctx.DB, str)
 	if err != nil {
 		return err
 	}
@@ -52,79 +50,14 @@ func CheckNomLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-// Renvoie une liste d'acteurs associés à un lieu-dit (ces acteurs sont forcément des fermiers).
-func GetFermiersFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func GetLieuditsFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
-	idLieudit, err := strconv.Atoi(vars["id"])
+	code := vars["code"]
+	lds, err := model.GetLieuditsFromCodeUG(ctx.DB, code)
 	if err != nil {
 		return err
 	}
-	type respElement struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
-	var resp []respElement
-	acteurs, err := model.GetFermiersFromLieudit(ctx.DB, idLieudit)
-	if err != nil {
-		return err
-	}
-	for _, a := range acteurs {
-		// on met bien id, pas id_sctl
-		resp = append(resp, respElement{a.Id, a.String()})
-	}
-	json, err := json.Marshal(resp)
-	if err != nil {
-		return err
-	}
-	w.Write(json)
-	return nil
-}
-
-func GetUGsFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	vars := mux.Vars(r)
-	idLieudit, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		return err
-	}
-	type respElement struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
-	var resp []respElement
-	ugs, err := model.GetUGsFromLieudit(ctx.DB, idLieudit)
-	if err != nil {
-		return err
-	}
-	for _, ug := range ugs {
-		resp = append(resp, respElement{ug.Id, ug.String()})
-	}
-	json, err := json.Marshal(resp)
-	if err != nil {
-		return err
-	}
-	w.Write(json)
-	return nil
-}
-
-func GetParcellesFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	vars := mux.Vars(r)
-	idLieudit, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		return err
-	}
-	type respElement struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
-	var resp []respElement
-	parcelles, err := model.GetParcellesFromLieudit(ctx.DB, idLieudit)
-	if err != nil {
-		return err
-	}
-	for _, parcelle := range parcelles {
-		resp = append(resp, respElement{parcelle.Id, parcelle.Code})
-	}
-	json, err := json.Marshal(resp)
+	json, err := json.Marshal(lds)
 	if err != nil {
 		return err
 	}

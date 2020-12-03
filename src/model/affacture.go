@@ -60,13 +60,13 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
 	var err error
 	for _, typeActivite := range aff.TypesActivites {
 		switch typeActivite {
-        // Opérations simples
+		// Opérations simples
 		case "AB", "DB", "DC", "BR":
 			err = aff.computeItemsOperationSimple(db, typeActivite)
 			if err != nil {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsOperationSimple()")
 			}
-        // Transport 
+			// Transport
 		case "TR":
 			err = aff.computeItemsTransportGlobal(db)
 			if err != nil {
@@ -98,7 +98,7 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
 			if err != nil {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsRangementProprioutil()")
 			}
-        // Chargement
+			// Chargement
 		case "CG":
 			err = aff.computeItemsChargementGlobal(db)
 			if err != nil {
@@ -114,22 +114,22 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
 			if err != nil {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsChargementOutil()")
 			}
-        // Livraison
-        case "LV":
-            err = aff.computeItemsLivraisonGlobal(db)
-            if err != nil {
-                return werr.Wrapf(err, "Erreur appel Affacture.computeItemsLivraisonGlobal()")
-            }
-        case "LV-CO":
-            err = aff.computeItemsLivraisonConducteur(db)
-            if err != nil {
-                return werr.Wrapf(err, "Erreur appel Affacture.computeItemsLivraisonConducteur()")
-            }
-        case "LV-OU":
-            err = aff.computeItemsLivraisonOutil(db)
-            if err != nil {
-                return werr.Wrapf(err, "Erreur appel Affacture.computeItemsLivraisonOutil()")
-            }
+		// Livraison
+		case "LV":
+			err = aff.computeItemsLivraisonGlobal(db)
+			if err != nil {
+				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsLivraisonGlobal()")
+			}
+		case "LV-CO":
+			err = aff.computeItemsLivraisonConducteur(db)
+			if err != nil {
+				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsLivraisonConducteur()")
+			}
+		case "LV-OU":
+			err = aff.computeItemsLivraisonOutil(db)
+			if err != nil {
+				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsLivraisonOutil()")
+			}
 		}
 	}
 	// tri par date
@@ -718,31 +718,31 @@ func (aff *Affacture) computeItemsLivraisonGlobal(db *sqlx.DB) error {
 			Titre: LabelActivite("LV"),
 			Date:  elt.DateLivre,
 		}
-        montantHT = elt.GlPrix
-        montantTVA = montantHT * elt.GlTVA / 100
-        montantTTC = montantHT + montantTVA
-        ligne = AffactureLigne{
-            Titre: "Livraison",
-            Colonnes: []AffactureColonne{
-                {
-                    Titre:  "Montant HT",
-                    Valeur: strconv.FormatFloat(montantHT, 'f', 2, 64),
-                },
-                {
-                    Titre:  "TVA " + strconv.FormatFloat(elt.GlTVA, 'f', -1, 64) + "%",
-                    Valeur: strconv.FormatFloat(montantTVA, 'f', 2, 64),
-                },
-                {
-                    Titre:  "Montant TTC",
-                    Valeur: strconv.FormatFloat(montantTTC, 'f', 2, 64),
-                },
-            },
-        }
-        item.Lignes = append(item.Lignes, ligne)
-        aff.TotalHT += montantHT
-        aff.TotalTTC += montantTTC
-        item.TotalHT += montantHT
-        item.TotalTTC += montantTTC
+		montantHT = elt.GlPrix
+		montantTVA = montantHT * elt.GlTVA / 100
+		montantTTC = montantHT + montantTVA
+		ligne = AffactureLigne{
+			Titre: "Livraison",
+			Colonnes: []AffactureColonne{
+				{
+					Titre:  "Montant HT",
+					Valeur: strconv.FormatFloat(montantHT, 'f', 2, 64),
+				},
+				{
+					Titre:  "TVA " + strconv.FormatFloat(elt.GlTVA, 'f', -1, 64) + "%",
+					Valeur: strconv.FormatFloat(montantTVA, 'f', 2, 64),
+				},
+				{
+					Titre:  "Montant TTC",
+					Valeur: strconv.FormatFloat(montantTTC, 'f', 2, 64),
+				},
+			},
+		}
+		item.Lignes = append(item.Lignes, ligne)
+		aff.TotalHT += montantHT
+		aff.TotalTTC += montantTTC
+		item.TotalHT += montantHT
+		item.TotalTTC += montantTTC
 		//
 		aff.Items = append(aff.Items, &item)
 	}
@@ -763,42 +763,42 @@ func (aff *Affacture) computeItemsLivraisonConducteur(db *sqlx.DB) error {
 			Titre: LabelActivite("LV"),
 			Date:  elt.DateLivre,
 		}
-        //
-        // Detail - Main d'oeuvre (livreur)
-        //
-        montantHT = elt.MoNHeure * elt.MoPrixH
-        montantTVA = montantHT * elt.MoTVA / 100
-        montantTTC = montantHT + montantTVA
-        ligne = AffactureLigne{
-            Titre: "Conducteur",
-            Colonnes: []AffactureColonne{
-                {
-                    Titre:  "Nb heures",
-                    Valeur: strconv.FormatFloat(elt.MoNHeure, 'f', 2, 64),
-                },
-                {
-                    Titre:  "Prix / h",
-                    Valeur: strconv.FormatFloat(elt.MoPrixH, 'f', 2, 64),
-                },
-                {
-                    Titre:  "Montant HT",
-                    Valeur: strconv.FormatFloat(montantHT, 'f', 2, 64),
-                },
-                {
-                    Titre:  "TVA " + strconv.FormatFloat(elt.MoTVA, 'f', -1, 64) + "%",
-                    Valeur: strconv.FormatFloat(montantTVA, 'f', 2, 64),
-                },
-                {
-                    Titre:  "Montant TTC",
-                    Valeur: strconv.FormatFloat(montantTTC, 'f', 2, 64),
-                },
-            },
-        }
-        item.Lignes = append(item.Lignes, ligne)
-        aff.TotalHT += montantHT
-        aff.TotalTTC += montantTTC
-        item.TotalHT += montantHT
-        item.TotalTTC += montantTTC
+		//
+		// Detail - Main d'oeuvre (livreur)
+		//
+		montantHT = elt.MoNHeure * elt.MoPrixH
+		montantTVA = montantHT * elt.MoTVA / 100
+		montantTTC = montantHT + montantTVA
+		ligne = AffactureLigne{
+			Titre: "Conducteur",
+			Colonnes: []AffactureColonne{
+				{
+					Titre:  "Nb heures",
+					Valeur: strconv.FormatFloat(elt.MoNHeure, 'f', 2, 64),
+				},
+				{
+					Titre:  "Prix / h",
+					Valeur: strconv.FormatFloat(elt.MoPrixH, 'f', 2, 64),
+				},
+				{
+					Titre:  "Montant HT",
+					Valeur: strconv.FormatFloat(montantHT, 'f', 2, 64),
+				},
+				{
+					Titre:  "TVA " + strconv.FormatFloat(elt.MoTVA, 'f', -1, 64) + "%",
+					Valeur: strconv.FormatFloat(montantTVA, 'f', 2, 64),
+				},
+				{
+					Titre:  "Montant TTC",
+					Valeur: strconv.FormatFloat(montantTTC, 'f', 2, 64),
+				},
+			},
+		}
+		item.Lignes = append(item.Lignes, ligne)
+		aff.TotalHT += montantHT
+		aff.TotalTTC += montantTTC
+		item.TotalHT += montantHT
+		item.TotalTTC += montantTTC
 		//
 		aff.Items = append(aff.Items, &item)
 	}

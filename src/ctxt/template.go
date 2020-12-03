@@ -1,5 +1,5 @@
 /******************************************************************************
-   Templates
+    Templates
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -40,7 +40,13 @@ func init() {
 		"zero2empty":        zero2empty,
 	}
 	tmplDir := "view"
-	tmpl = template.Must(template.New("").Funcs(fmap).ParseGlob(filepath.Join(tmplDir, "*.html"))).Option("missingkey=error")
+	tmpl = template.
+	    Must(template.
+            New("").
+            Funcs(fmap).
+            ParseGlob(filepath.Join(tmplDir, "*.html"))).
+            Option("missingkey=error")
+    tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("static", "chantier-lien", "chantier-lien.html"))
 }
 
 // ************************* pipelines ********************************
@@ -51,7 +57,7 @@ func nl2br(t string) template.HTML {
 
 // Affiche une date JJ/MM/AAAA
 func dateFr(t time.Time) template.HTML {
-	return template.HTML(tiglib.DateFr(t))
+	return template.HTML(tiglib.DateFr(t))                                                                                
 }
 
 // Affiche une date YYYY-MM-DD
@@ -64,31 +70,32 @@ func year(t time.Time) template.HTML {
 	return template.HTML(strconv.Itoa(t.Year()))
 }
 
+// Nom d'une essence (chêne etc.) à partir de son code
 func labelEssence(str string) template.HTML {
 	return template.HTML(model.LabelEssence(str))
 }
 
-// Nom des unités utilisées dans cette appli
+// Nom d'une unité utilisée dans cette appli, à partir de son code
 func labelUnite(str string) template.HTML {
 	return template.HTML(model.LabelUniteHTML(str))
 }
 
-// Type d'exploitation (1 - 5)
+// Type d'exploitation (1 - 5), à partir de son code
 func labelExploitation(str string) template.HTML {
 	return template.HTML(model.LabelExploitation(str))
 }
 
-// Type de valorisation (palette, pâte à papier...)
+// Type de valorisation (palette, pâte à papier...), à partir de son code
 func labelValorisation(str string) template.HTML {
 	return template.HTML(model.LabelValorisation(str))
 }
 
-// Type d'opération simple (abattage, débardage...)
+// Type d'opération simple (abattage, débardage...) à partir de son code
 func labelActivite(str string) template.HTML {
 	return template.HTML(model.LabelActivite(str))
 }
 
-// Type de frais pour stockage (loyer, assurance, élec)
+// Type de frais pour stockage (loyer, assurance, élec) à partir de son code
 func labelStockFrais(str string) template.HTML {
 	return template.HTML(model.LabelStockFrais(str))
 }

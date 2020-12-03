@@ -149,7 +149,7 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	pdf.SetXY(145, 25)
 	pdf.SetFont("Arial", "B", 18)
 	pdf.Cell(50, 70, str)
-    str = ctx.Config.Affacture.Adresse
+	str = ctx.Config.Affacture.Adresse
 	pdf.SetXY(145, 68)
 	pdf.SetFont("Arial", "", 10)
 	pdf.MultiCell(100, 7, tr(str), "", "L", false)

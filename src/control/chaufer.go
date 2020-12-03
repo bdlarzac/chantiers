@@ -73,10 +73,10 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			TotalParEssence: totalParEssence,
 		},
 	}
-    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
-    if err != nil {
-        return err
-    }        
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -126,7 +126,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete2.js"},
+					"/static/autocomplete/autocomplete.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -188,7 +188,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete2.js"},
+					"/static/autocomplete/autocomplete.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté

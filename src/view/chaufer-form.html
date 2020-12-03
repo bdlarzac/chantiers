@@ -71,7 +71,7 @@
 </div>
 
 <script>
-window.addEventListener("load", function(){                           
+window.addEventListener("load", function(){
     autocomplete(document.getElementById("fermier"), getActeursPossibles);
     // Pour vérifier que le fermier affiché correspond à une personne existant en base.
     // on ne peut pas se fier uniquement à getElementById("fermier")
@@ -194,21 +194,22 @@ async function actionAfterChangeFermier(){
     let td = document.createElement("td");
     tr.appendChild(td);                             
     let i = 1;
+    let name, radio, label, span;
     response.forEach(function(item) {
-        const name = "ug-" + item.id;
-        const checkbox = document.createElement("input");
-        checkbox.setAttribute("type", "radio");
-        checkbox.setAttribute("name", "ug");
-        checkbox.setAttribute("id", name);
-        checkbox.setAttribute("value", name);
-        checkbox.setAttribute("onclick", "afficheParcelles(" + item.id + ");");
-        const label = document.createElement("label");
+        name = "ug-" + item.id;
+        radio = document.createElement("input");
+        radio.setAttribute("type", "radio");
+        radio.setAttribute("name", "ug");
+        radio.setAttribute("id", name);
+        radio.setAttribute("value", name);
+        radio.setAttribute("onclick", "afficheParcelles(" + item.id + ");");
+        label = document.createElement("label");
         label.setAttribute("for", name);
         label.innerHTML = item.name;
         label.style["font-weight"] = "normal";
-        const span = document.createElement("span");
+        span = document.createElement("span");
         span.style["padding-right"] = "1em";
-        span.appendChild(checkbox);
+        span.appendChild(radio);
         span.appendChild(label);
         //
         td.appendChild(span);
@@ -264,16 +265,16 @@ async function afficheParcelles(idUG){
     let td = document.createElement("td");
     td.setAttribute("class", "vertical-align-top padding-right2");
     tr.appendChild(td);
-    let grid2 = document.createElement("div");
-    grid2.setAttribute("class", "grid2-form");
+    let grid2Elt = document.createElement("div");
+    grid2Elt.setAttribute("class", "grid2-form");
     //
     let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
     let i = 1;
-    response.forEach(function(item) {
+    response.forEach(function(item){
         curdiv = document.createElement("div");
         //
         curdiv.innerHTML = "<b>" + item.name + "</b>";
-        grid2.appendChild(curdiv);
+        grid2Elt.appendChild(curdiv);
         //
         curdiv = document.createElement("div");
         // class et id de curdiv servent dans validateForm()
@@ -346,14 +347,14 @@ async function afficheParcelles(idUG){
         subdiv.appendChild(surfaceInput);
         //
         curdiv.appendChild(subdiv);
-        grid2.appendChild(curdiv);
-        td.appendChild(grid2);
+        grid2Elt.appendChild(curdiv);
+        td.appendChild(grid2Elt);
         if(i == limit){
             td = document.createElement("td");
             td.setAttribute("class", "vertical-align-top");
             tr.appendChild(td);
-            grid2 = document.createElement("div");
-            grid2.setAttribute("class", "grid2-form");
+            grid2Elt = document.createElement("div");
+            grid2Elt.setAttribute("class", "grid2-form");
         }
         i++;
     });

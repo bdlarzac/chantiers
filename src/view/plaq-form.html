@@ -4,132 +4,16 @@
 
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
 
-    <!-- ****************************************** proto *************************************** -->
-    <h2><center>Proto choix UGs</center></h2>
-    
-    <!-- ************************************* -->
-    <h3><center>Etape 1</center></h3>
     <div class="grid2-form">
-        <div>
-            <label class="block margin-bottom">Unités de gestion</label>
-            <center>
-            <img class="inline vertical-align-middle bigicon margin-right" src="/static/img/new.png" title="Nouvelle" />
-            <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" title="Valider" />
-            </center>
-        </div>
-        <div>
-            <div>
-                <div>
-                    <input class="margin-bottom margin-right" type="text" value="">
-                    <img class="inline vertical-align-middle bigicon" src="/static/img/delete.png" title="Supprimer" />
-                </div>
-            </div>
-        </div>                                                                            
-    </div>
-    
-    <!-- ************************************* -->
-    <hr>
-    <h3><center>Etape 2</center></h3>
-    <div class="grid2-form">
-        <div>
-            <label class="block margin-bottom">Unités de gestion</label>
-            <center>
-            <img class="inline vertical-align-middle bigicon margin-right" src="/static/img/new.png" title="Nouvelle" />
-            <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" title="Valider" />
-            </center>
-        </div>
-        <div>
-            <div>
-                <div>
-                    <input class="margin-bottom margin-right" type="text" value="XIX-47">
-                    <img class="inline vertical-align-middle bigicon" src="/static/img/delete.png" title="Supprimer" />
-                </div>
-            </div>
-        </div>                                                                            
-    </div>
-    
-    <!-- ************************************* -->
-    <hr>
-    <h3><center>Etape 3</center></h3>
-    <div class="grid2-form">
-        <div>
-            <label class="block margin-bottom">Unités de gestion</label>
-            <center>
-            <img class="inline vertical-align-middle bigicon margin-right" src="/static/img/new.png" title="Nouvelle" />
-            <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" title="Valider" />
-            </center>
-        </div>
-        <div>
-            <div>
-                <div>
-                    <input class="margin-bottom margin-right" type="text" value="XIX-47">
-                    <img class="inline vertical-align-middle bigicon" src="/static/img/delete.png" title="Supprimer" />
-                </div>
-                <div>
-                    <input class="margin-bottom margin-right" type="text" value="XVIII-27">
-                    <img class="inline vertical-align-middle bigicon" src="/static/img/delete.png" title="Supprimer" />
-                </div>
-            </div>
-        </div>                                                                            
-    </div>
-    
-    <!-- ************************************* -->
-    <hr>
-    <h3><center>Etape 4</center></h3>
-    <div class="grid2-form">
-        <div>
-            <label class="block margin-bottom">Unités de gestion</label>
-            <center>
-            <img class="inline vertical-align-middle bigicon margin-right" src="/static/img/new.png" title="Nouvelle" />
-            <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" title="Valider" />
-            </center>
-        </div>
-        <div>
-            <div>
-                <div>
-                    <input class="margin-bottom margin-right" type="text" value="XIX-47">
-                    <img class="inline vertical-align-middle bigicon" src="/static/img/delete.png" title="Supprimer" />
-                </div>
-                <div>
-                    <input class="margin-bottom margin-right" type="text" value="XVIII-27">
-                    <img class="inline vertical-align-middle bigicon" src="/static/img/delete.png" title="Supprimer" />
-                </div>
-            </div>
-        </div>                                                                            
         
-        <label>Lieux-dits</label>
-        <div>
-            <div><input type="checkbox">BESPLOS (Millau Creissels)</div>
-            <div><input type="checkbox">BOUSIGUETTES (Millau)</div>
-        </div>
-        
-        <label>Fermiers</label>
-        <div>
-            <div><input type="checkbox">Philipppe GUIRAUD</div>
-            <div><input type="checkbox"> GAEC NORD LARZAC</div>
-        </div>
-    </div>
     
-    <hr class="margin-bottom2">
-    <!-- ****************************************** fin proto *************************************** -->
     
-    <div class="grid2-form">
-    
-        <label for="lieudit">Lieu-dit</label>
-        <div class="autocomplete">
-            <input type="text" name="lieudit" id="lieudit" autocomplete="off" value="{{.Lieudit.Nom}}" required>
-            <a id="check-ld" href="#" onclick="checkLD();">
-                <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" title="Valider" />
-            </a>
-        </div>
+        {{template "chantier-lien.html" .}}
+        {{/* divs pour contenir lieux-dits et fermiers */}}
+        <div id="empty-lieudit1"></div><div id="empty-lieudit2"></div>
+        <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
         
-        <label for="fermier">Fermier</label>
-        <select name="fermier" id="fermier" required></select>
-        
-        <label for="ug" >Unité de gestion</label>
-        <select name="ug" id="ug" required></select>
-        
-        <label>Dates déchiquetage :</label>
+        <label>Dates déchiquetage</label>
         <div>                                                                                                                              
             <div class="inline-block">
                 <div class="center"><label for="date-debut">Début</label></div>
@@ -188,7 +72,6 @@
     </div>
 
     <input type="hidden" name="id" id="id" value="{{.Id}}">
-    <input type="hidden" name="id-lieudit" id="id-lieudit" value="{{.IdLieudit}}">
     <input type="hidden" name="ids-stockages" id="ids-stockages" value="">
     
 </form>
@@ -220,17 +103,19 @@
 
 // ***************************************
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById('lieudit'), getLDPossibles);
+    //autocomplete(document.getElementById('lieudit'), getLDPossibles);
     initialize();
 });
 
 // ***************************************
 function initialize() {
+    initializeLiensChantier();    
     // form new
     if({{.Id}} == 0){
         // essence initalisée à pin sylvestre car c'est le cas le plus fréquent
         document.getElementById("essence-PS").setAttribute("selected", "selected");
         // fermier
+/* 
         var option1 = document.createElement('option');
         option1.value = 0;
         option1.text = "--- Sélectionnez d'abord un lieu-dit ---";
@@ -240,15 +125,10 @@ function initialize() {
         option2.value = 0;
         option2.text = "--- Sélectionnez d'abord un lieu-dit ---";
         document.getElementById("ug").appendChild(option2);
+*/
     }
     // form update
     else{
-        actionAfterChangeLieudit();
-        // todo remplacer setTimeout par promesse
-        setTimeout(function(){
-            document.getElementById("fermier").value = "{{.IdFermier}}";
-            document.getElementById("ug").value = "{{.IdUG}}";
-        }, 1000);
         // lieux de stockage
         {{range .Tas}}
             document.getElementById("stockage-{{.Stockage.Id}}").setAttribute("checked", "checked")
@@ -256,142 +136,11 @@ function initialize() {
     }
 }
 
-// ***************************************
-/** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
-**/
-// @todo remplacer async = false par await et Promise
-function getLDPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/lieudit/" + inputField.value, false);
-    xhr.send();
-    return result;
-}
-
-// ***************************************
-/** 
-    Vérifie par ajax que le lieu-dit sélectionné correspond à un LD existant.
-    Si non, efface le contenu de id-lieudit et de lieudit
-    Si oui,
-        - remplit le champ hidden id-lieudit
-        - remplit le select fermier avec la liste des fermiers possibles
-        - remplit le selct ug avec la liste des ugs possibles
-**/
-function checkLD(){
-    var nomLD = document.getElementById("lieudit").value;
-    if(nomLD == ""){
-        alert("Lieu-dit invalide");
-        document.getElementById("id-lieudit").value = 0;
-        return;
-    }
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var idLD = JSON.parse(this.responseText);
-            if(idLD != null && idLD != 0){
-                document.getElementById("id-lieudit").value = idLD;
-            }
-            else{
-                alert("Lieu-dit invalide");
-                document.getElementById("id-lieudit").value = 0;
-                return;
-            }
-            actionAfterChangeLieudit();
-        }
-    };
-    xhr.open("GET", "/ajax/check/lieudit/" + nomLD);
-    xhr.send();
-}
-
-// ******************************************************
-/**
-    Lorsqu'un lieu-dit change, mettre à jour les fermiers et les ugs possibles
-**/
-function actionAfterChangeLieudit(){
-    var idLD = document.getElementById("id-lieudit").value
-    if(idLD == 0){
-        var option1 = document.createElement('option');
-        option1.value = 0;
-        option1.text = "--- Sélectionnez d'abord un lieu-dit ---";
-        document.getElementById("fermier").options.length = 0; // supprime toute les options du select
-        document.getElementById("fermier").appendChild(option1);
-        var option2 = document.createElement('option');
-        option2.value = 0;
-        option2.text = "--- Sélectionnez d'abord un lieu-dit ---";
-        document.getElementById("ug").options.length = 0; // supprime toute les options du select
-        document.getElementById("ug").appendChild(option2);
-    }
-    else{
-        // ajax pour récupérer les fermiers possibles
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var response = JSON.parse(this.responseText);
-                if(response != null){
-                    document.getElementById("fermier").options.length = 0; // supprime toute les options du select
-                    response.forEach(function(item) {
-                        var option = document.createElement('option');
-                        option.value = item.id;
-                        option.text = item.name;
-                        document.getElementById("fermier").appendChild(option);
-                    });
-                    // ajax pour récupérer les ugs possibles
-                    actionAfterChangeLieudit_suite(idLD);
-                }
-            }
-        };
-        xhr.open("GET", "/ajax/get/fermiers-from-lieudit/" + idLD);
-        xhr.send();
-    }
-}
-
-// ******************************************************
-/** 
-    Récupère ugs possibles par ajax
-    Mis dans une fonction à part pour que soit exécuté après l'ajax pour récup les fermiers
-**/
-function actionAfterChangeLieudit_suite(idLD){
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                document.getElementById("ug").options.length = 0; // supprime toutes les options du select
-                response.forEach(function(item) {
-                    var option = document.createElement('option');
-                    option.value = item.id;
-                    option.text = item.name;
-                    document.getElementById("ug").appendChild(option);
-                });
-            }
-            else{
-                var option = document.createElement('option');
-                option.value = 0;
-                option.text = "--- Aucune UG pour ce lieu-dit ---";
-                document.getElementById("ug").options.length = 0; // supprime toute les options du select
-                document.getElementById("ug").appendChild(option);
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/get/ugs-from-lieudit/" + idLD);
-    xhr.send();
-}
 
 // ***************************************
 function validateForm(){
+    return false;
+/* 
     let msg = "";
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;
@@ -422,6 +171,7 @@ function validateForm(){
         return false;
     }
     return true;
+*/
 }
 </script>   
 {{end}}

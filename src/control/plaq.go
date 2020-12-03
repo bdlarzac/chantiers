@@ -12,7 +12,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-//"fmt"
+	//"fmt"
 )
 
 type detailsPlaqForm struct {
@@ -112,10 +112,10 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Tab:              tab,
 		},
 	}
-    err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: chantier.FullString()})
-    if err != nil {
-        return err
-    }
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: chantier.FullString()})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -161,9 +161,12 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		// Affiche form
 		//
 		chantier := &model.Plaq{}
+// ========= bouchon a virer =========
+/* 
 		chantier.Lieudit = &model.Lieudit{}
 		chantier.Fermier = &model.Acteur{}
 		chantier.UG = &model.UG{}
+*/
 		allStockages, err := model.GetStockagesActifs(ctx.DB)
 		if err != nil {
 			return err
@@ -309,17 +312,9 @@ func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 		return chantier, err
 	}
 	//
+// ========= bouchon a virer =========
+/* 
 	chantier.IdLieudit, err = strconv.Atoi(r.PostFormValue("id-lieudit"))
-	if err != nil {
-		return chantier, err
-	}
-	//
-	chantier.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
-	if err != nil {
-		return chantier, err
-	}
-	//
-	chantier.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
 		return chantier, err
 	}
@@ -330,6 +325,17 @@ func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 	}
 	//
 	chantier.IdUG, err = strconv.Atoi(r.PostFormValue("ug"))
+	if err != nil {
+		return chantier, err
+	}
+*/
+	//
+	chantier.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
+	if err != nil {
+		return chantier, err
+	}
+	//
+	chantier.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
 		return chantier, err
 	}

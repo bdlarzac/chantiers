@@ -31,11 +31,8 @@ func init() {
 	possibleInstall := []string{
 		"all",
 		"acteur",
-		"bspied",
-		"chaufer",
-		"chautre",
+		"chantier",
 		"commune",
-		"plaquette",
 		"parcelle",
 		"recent",
 		"stockage",
@@ -86,11 +83,8 @@ func handleInstall() {
 		installParcelle()
 		installUG()
 		installStockage()
-		installPlaquette()
+		installChantier()
 		installVente()
-		installChaufer()
-		installBSPied()
-		installChautre()
 		installRecent()
 	} else if *flagInstall == "type" {
 		installTypes()
@@ -104,16 +98,10 @@ func handleInstall() {
 		installUG()
 	} else if *flagInstall == "stockage" {
 		installStockage()
-	} else if *flagInstall == "plaquette" {
-		installPlaquette()
+	} else if *flagInstall == "chantier" {
+		installChantier()
 	} else if *flagInstall == "vente" {
 		installVente()
-	} else if *flagInstall == "chaufer" {
-		installChaufer()
-	} else if *flagInstall == "bspied" {
-		installBSPied()
-	} else if *flagInstall == "chautre" {
-		installChautre()
 	} else if *flagInstall == "recent" {
 		installRecent()
 	} else {
@@ -171,27 +159,27 @@ func installStockage() {
 	initialize.CreateTable("humid_acteur")
 	initialize.FillHangarsInitiaux()
 }
-func installPlaquette() {
+func installChantier() {
+    // liens pour plaq, bspied, chautre
+	initialize.CreateTable("chantier_ug")
+	initialize.CreateTable("chantier_fermier")
+	initialize.CreateTable("chantier_lieudit")
+    // plaquettes
 	initialize.CreateTable("plaqop")
 	initialize.CreateTable("plaqtrans")
 	initialize.CreateTable("plaqrange")
-	//initialize.FillChantiersPlaquettesFromXls()
+	// bois sur pied
+	initialize.CreateTable("bspied")
+	// autres valorisations
+	initialize.CreateTable("chautre")
+	// chauffage fermier
+	initialize.CreateTable("chaufer")
+	initialize.CreateTable("chaufer_parcelle")
 }
 func installVente() {
 	initialize.CreateTable("venteplaq")
 	initialize.CreateTable("ventelivre")
 	initialize.CreateTable("ventecharge")
-}
-func installChaufer() {
-	initialize.CreateTable("chaufer")
-	initialize.CreateTable("chaufer_parcelle")
-}
-func installBSPied() {
-	initialize.CreateTable("bspied")
-	initialize.CreateTable("bspied_parcelle")
-}
-func installChautre() {
-	initialize.CreateTable("chautre")
 }
 func installRecent() {
 	initialize.CreateTable("recent")

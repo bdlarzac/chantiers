@@ -18,28 +18,28 @@ import (
 )
 
 type VenteLivre struct {
-	Id        int
-	IdVente   int `db:"id_vente"`
-	IdLivreur int `db:"id_livreur"`
+	Id            int
+	IdVente       int `db:"id_vente"`
+	IdLivreur     int `db:"id_livreur"`
 	IdConducteur  int `db:"id_conducteur"`
 	IdProprioutil int `db:"id_proprioutil"`
-	DateLivre time.Time
-	TypeCout  string // G (global) ou D (détail)
+	DateLivre     time.Time
+	TypeCout      string // G (global) ou D (détail)
 	// coût global
-	GlPrix float64
-	GlTVA  float64
+	GlPrix    float64
+	GlTVA     float64
 	GlDatePay time.Time
 	// coût main d'oeuvre
-	MoNHeure float64
-	MoPrixH  float64
-	MoTVA    float64
+	MoNHeure  float64
+	MoPrixH   float64
+	MoTVA     float64
 	MoDatePay time.Time
 	// coût détaillé, outil
 	OuPrix    float64
 	OuTVA     float64
 	OuDatePay time.Time
 	//
-	Notes   string
+	Notes string
 	// Pas stocké en base
 	Quantite    float64
 	Livreur     *Acteur
@@ -182,7 +182,7 @@ func InsertVenteLivre(db *sqlx.DB, vl *VenteLivre) (int, error) {
 		vl.DateLivre,
 		vl.TypeCout,
 		vl.GlPrix,
-		vl.GlTVA,        
+		vl.GlTVA,
 		vl.GlDatePay,
 		vl.OuPrix,
 		vl.OuTVA,
@@ -224,7 +224,7 @@ func UpdateVenteLivre(db *sqlx.DB, vl *VenteLivre) error {
 		vl.DateLivre,
 		vl.TypeCout,
 		vl.GlPrix,
-		vl.GlTVA,        
+		vl.GlTVA,
 		vl.GlDatePay,
 		vl.OuPrix,
 		vl.OuTVA,
@@ -250,8 +250,8 @@ func DeleteVenteLivre(db *sqlx.DB, id int) error {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	for _, idC := range idsCharge {
-	    // Attention ici ne pas faire directement delete ventecharge en base
-	    // car DeleteVenteCharge() gère le stock des tas associés
+		// Attention ici ne pas faire directement delete ventecharge en base
+		// car DeleteVenteCharge() gère le stock des tas associés
 		err := DeleteVenteCharge(db, idC)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel DeleteVenteCharge()")

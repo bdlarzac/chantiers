@@ -24,8 +24,8 @@ type Context struct {
 
 func NewContext() *Context {
 	ctx := &Context{}
-	ctx.Template = tmpl
-	ctx.DB = db
-	ctx.Config = config
+	ctx.Template = tmpl // déclaré dans template.go
+	ctx.DB = db         // déclaré dans db.go
+	ctx.Config = config // déclaré dans config.go
 	return ctx
 }

@@ -2,6 +2,10 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- Cnfusion entre exploitant / fermier ?
+=> remplacer table parcelle_exploitant par parcelle_fermier et partout dans le code ?
+grep -rn xploitant
+
 - revoir les fonctions String() de transport, rangement, chargement, livraison :
 Le test sur transporteur / rangeur / chargeur / livreur n'est pas valable
 + spécifier le nom dans le cdc

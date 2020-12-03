@@ -9,33 +9,6 @@ import (
 	"strconv"
 )
 
-func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	vars := mux.Vars(r)
-	idUG, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		return err
-	}
-	type respElement struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
-	var resp []respElement
-	ug, err := model.GetUG(ctx.DB, idUG)
-	if err != nil {
-		return err
-	}
-	err = ug.ComputeParcelles(ctx.DB)
-	for _, p := range ug.Parcelles {
-		resp = append(resp, respElement{p.Id, p.Code})
-	}
-	json, err := json.Marshal(resp)
-	if err != nil {
-		return err
-	}
-	w.Write(json)
-	return nil
-}
-
 // Renvoie l'id de l'UG correspondant au code,
 // ou 0 si aucune UG ne correspond
 func GetUGFromCode(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -56,18 +29,23 @@ func GetUGFromCode(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-func GetUGFromCode1(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func GetUGsFromFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
-	type respElement struct {
-		Id int `json:"id"`
-	}
-	var resp []respElement
-	ug, err := model.GetUGFromCode(ctx.DB, vars["code"])
+	idActeur, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		return err
 	}
-	if ug != nil {
-		resp = append(resp, respElement{ug.Id})
+	type respElement struct {
+		Id   int    `json:"id"`
+		Name string `json:"name"`
+	}
+	var resp []respElement
+	ugs, err := model.GetUGsFromFermier(ctx.DB, idActeur)
+	if err != nil {
+		return err
+	}
+	for _, ug := range ugs {
+		resp = append(resp, respElement{ug.Id, ug.String()})
 	}
 	json, err := json.Marshal(resp)
 	if err != nil {
@@ -76,3 +54,30 @@ func GetUGFromCode1(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 	w.Write(json)
 	return nil
 }
+
+func GetUGsFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	idLieudit, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return err
+	}
+	type respElement struct {
+		Id   int    `json:"id"`
+		Name string `json:"name"`
+	}
+	var resp []respElement
+	ugs, err := model.GetUGsFromLieudit(ctx.DB, idLieudit)
+	if err != nil {
+		return err
+	}
+	for _, ug := range ugs {
+		resp = append(resp, respElement{ug.Id, ug.String()})
+	}
+	json, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	w.Write(json)
+	return nil
+}
+
