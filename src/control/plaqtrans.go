@@ -66,7 +66,7 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		err = pt.Chantier.ComputeLieudit(ctx.DB) // pour le nom du chantier
+		err = pt.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
 		if err != nil {
 			return err
 		}
@@ -151,7 +151,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-		err = pt.Chantier.ComputeLieudit(ctx.DB) // pour le nom du chantier
+		err = pt.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
 		if err != nil {
 			return err
 		}

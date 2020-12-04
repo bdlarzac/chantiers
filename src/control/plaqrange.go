@@ -64,7 +64,7 @@ func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		err = pr.Chantier.ComputeLieudit(ctx.DB) // Pour le nom du chantier
+		err = pr.Chantier.ComputeLieudits(ctx.DB) // Pour le nom du chantier
 		if err != nil {
 			return err
 		}
@@ -148,7 +148,7 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-		err = pr.Chantier.ComputeLieudit(ctx.DB) // pour le nom du chantier
+		err = pr.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
 		if err != nil {
 			return err
 		}

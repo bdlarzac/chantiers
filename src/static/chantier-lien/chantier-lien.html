@@ -14,8 +14,18 @@
 <div>
     <label class="block margin-bottom">Unités de gestion</label>
     <center>
-        <img class="inline vertical-align-middle bigicon margin-right" src="/static/img/new.png" title="Nouvelle" onclick="addUG();" />
-        <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" title="Valider"  onclick="validateUGs();" />
+        <img 
+            class="inline vertical-align-middle bigicon margin-right"
+            src="/static/img/new.png"
+            title="Ajouter une UG"
+            onclick="addUG();"
+        />
+        <img
+            class="inline vertical-align-middle bigicon"
+            src="/static/img/validate.png"
+            title="Valider ces UGs et choisir fermiers et lieux-dits"
+            onclick="validateUGs();"
+        />
     </center>
 </div>
 <div id="liste-ugs"></div>
@@ -37,17 +47,37 @@ async function initializeLiensChantier() {
     }
     // form update
     else{
-console.log("form update");
+        // restore UGs
+        const listeUgsElt = document.getElementById("liste-ugs");
+        let elt, elts, i, id;
+        {{range $i, $ug := .UGs}}
+            addUG();
+            elt = listeUgsElt.childNodes[{{$i}}];
+            elt.childNodes[0].value = "{{$ug.Code}}";
+        {{end}}
+        await validateUGs();
+        // restore lieux-dits
+        {{range .Lieudits}}
+            id = "lieudit-" + "{{.Id}}";
+            document.getElementById(id).setAttribute("checked", true);
+        {{end}}
+        // restore fermiers
+        {{range .Fermiers}}
+            id = "fermier-" + "{{.Id}}";
+            document.getElementById(id).setAttribute("checked", true);
+        {{end}}
     }
-    
 }
+
 
 /**
     Ajoute une ligne dans la div id="liste-ugs"
     Ligne = Champ pour saisir UG + img pour supprimer la ligne
-    ATTENTION : si on modifie la structure d'une ligne,
-                - il faut adapter la re-indexation dans removeUG()
+    ATTENTION : si on modifie la structure d'une ligne, il faut :
+                - adapter la re-indexation dans removeUG()
                 - adapter validateUGs()
+                - adapter initializeLiensChantier(), partie update
+    En effet, ce code utilise elt = listeUgsElt.childNodes[x], qui dépend de la structure de la ligne
 **/
 function addUG(){
     const listeUgsElt = document.getElementById("liste-ugs");
@@ -74,7 +104,7 @@ function addUG(){
     const imgElt = document.createElement("img");
     imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
     imgElt.setAttribute("src", "/static/img/delete.png");
-    imgElt.setAttribute("title", "Valider les UGs - Afficher lieux-dits et fermiers");
+    imgElt.setAttribute("title", "Supprimer cette UG");
     aElt.appendChild(imgElt);
     //
     divElt.appendChild(inputElt);

@@ -8,12 +8,61 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-)
+)                      
 
-/// ajout Thierry
+// ====== ajouts Thierry ======
+// TODO supprimer, plus utile
 func Bidon() error {
 	return errors.New("Erreur bidon")
 }
+
+// SprintHTML returns traceback as string formatted for html display
+func SprintHTML(err error) string {
+    res := ""
+    res += `
+<style>
+    table.werr{
+        border-collapse:collapse;
+        margin:.5rem;
+    }
+    table.werr td{
+        padding:2px 4px;
+        border:1px solid #a2a9b1;
+    }
+    table.werr tr:nth-child(even){
+        background-color:#f2e6d9;
+    }
+    table.werr tr:nth-child(odd){
+        background-color:lightblue;
+    }
+    div.werr{
+        font-weight:bold;
+    }
+</style>
+    `
+	res += "<table class=\"werr\">\n";
+	lines := strings.Split(SprintSkip(err, ""), "\n")
+	// lines contains traceback separated by "|", displayed in a table
+	// and the error message, stored in msg, displayed in a div
+	var tmp []string
+	msg := "<div class=\"werr\">"
+	for _, line := range(lines){
+	    tmp = strings.Split(line, "|")
+	    if len(tmp) == 2 {
+            res += "    <tr>\n"
+            res += "        <td>" + strings.TrimSpace(tmp[0]) + "</td><td>" + strings.TrimSpace(tmp[1]) + "</td>\n"
+            res += "    </tr>\n"
+        } else {
+            msg += tmp[0] + "<br>\n"
+        }
+	}
+	res += "</table>\n";
+	msg += "</div>\n"
+	res += msg
+	return res
+}
+
+// ====== fin ajouts Thierry ======
 
 type Error struct {
 	Err   error

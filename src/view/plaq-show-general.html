@@ -8,18 +8,30 @@
     </tr>
     
     <tr>
-        <th>Lieu-dit</th>
-        <td><a href="/lieudit/{{.IdLieudit}}">{{.Lieudit.Nom}}</a></td>
+        <th>Lieux-dits</th>
+        <td>
+        {{range .Lieudits}}
+            <div><a href="/lieudit/{{.Id}}">{{.Nom}}</a></div>
+        {{end}}
+        </td>
     </tr>
     
     <tr>
-        <th>Unité de gestion</th>
-        <td><a href="/ug/{{.IdUG}}">{{.UG.Code}}</a></td>
+        <th>Unités de gestion</th>
+        <td>
+        {{range .UGs}}
+            <div><a href="/ug/{{.Id}}">{{.Code}}</a></div>
+        {{end}}
+        </td>
     </tr>
     
     <tr>
-        <th>Fermier</th>
-        <td><a href="/acteur/{{.IdFermier}}">{{.Fermier.Prenom}} {{.Fermier.Nom}}</a></td>
+        <th>Fermiers</th>
+        <td>
+        {{range .Fermiers}}
+            <div><a href="/acteur/{{.Id}}">{{.Prenom}} {{.Nom}}</a></div>
+        {{end}}
+        </td>
     </tr>
     
     <tr>

@@ -28,7 +28,7 @@
         <div>
             {{range $.Details.AllStockages}}
                 <div>
-                    <input type="checkbox" name="stockage-{{.Id}}" id="stockage-{{.Id}}">
+                    <input type="checkbox" name="stockage-{{.Id}}" id="stockage-{{.Id}}" class="chk-stockage">
                     <label for="stockage-{{.Id}}"><span class="normal">{{.Nom}}</span></label>
                 </div>
             {{end}}
@@ -113,6 +113,10 @@ function initialize() {
     if({{.Id}} == 0){
         // essence initalisée à pin sylvestre car c'est le cas le plus fréquent
         document.getElementById("essence-PS").setAttribute("selected", "selected");
+        // Si un seul lieu de stockage possible, il est sélectionné par défaut
+        if({{len $.Details.AllStockages}} == 1){
+            document.getElementsByClassName("chk-stockage")[0].setAttribute("checked", true);
+        }
     }
     // form update
     else{

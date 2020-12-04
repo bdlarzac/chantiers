@@ -2,7 +2,7 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- Cnfusion entre exploitant / fermier ?
+- Confusion entre exploitant / fermier ?
 => remplacer table parcelle_exploitant par parcelle_fermier et partout dans le code ?
 grep -rn xploitant
 

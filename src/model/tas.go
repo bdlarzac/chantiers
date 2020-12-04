@@ -122,9 +122,9 @@ func (t *Tas) ComputeNom(db *sqlx.DB) error {
 	if t.Chantier == nil || t.Stockage == nil {
 		return errors.New("Impossible de calculer le nom du tas - appeler d'abord ComputeStockage() et ComputeChantier()")
 	}
-	err := t.Chantier.ComputeLieudit(db) // Pour le nom du chantier
+	err := t.Chantier.ComputeLieudits(db) // Pour le nom du chantier
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel t.Chantier.ComputeLieudit()")
+		return werr.Wrapf(err, "Erreur appel t.Chantier.ComputeLieudits()")
 	}
 	t.Nom = t.Chantier.String() + " - " + t.Stockage.Nom
 	return nil

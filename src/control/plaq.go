@@ -12,7 +12,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-"fmt"
+//"fmt"
 )
 
 type detailsPlaqForm struct {
@@ -144,7 +144,6 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
-fmt.Printf("%+v\n",r.PostForm)
         var idsUG, idsLieudit, idsFermier []int
 		var id int
         for key, val := range(r.PostForm){
@@ -162,15 +161,15 @@ fmt.Printf("%+v\n",r.PostForm)
                 if err != nil {
                     return err
                 }
-                idsUG = append(idsLieudit, id)
+                idsLieudit = append(idsLieudit, id)
             }
-            if strings.Index(key, "lieudit-") == 0 {
+            if strings.Index(key, "fermier-") == 0 {
                 // ex : fermier-25:[on] (25 est l'id fermier)
                 id, err = strconv.Atoi(key[8:])
                 if err != nil {
                     return err
                 }
-                idsUG = append(idsFermier, id)
+                idsFermier = append(idsFermier, id)
             }
         }
 		//
@@ -180,7 +179,7 @@ fmt.Printf("%+v\n",r.PostForm)
 		}
 		//
 		redirect := "/chantier/plaquette/" + strconv.Itoa(id)
-		err = chantier.ComputeLieudit(ctx.DB) // nécessaire pour appeler chantier.FullString()
+		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
 		if err != nil {
 			return err
 		}
@@ -252,14 +251,43 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdatePlaq()
+        var idsUG, idsLieudit, idsFermier []int
+		var id int
+        for key, val := range(r.PostForm){
+            if strings.Index(key, "ug-") == 0 {
+                // ex : ug-0:[6] (6 est l'id UG)
+                id, err = strconv.Atoi(val[0])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsUG, id)
+            }
+            if strings.Index(key, "lieudit-") == 0 {
+                // ex : lieudit-164:[on] (164 est l'id lieudit)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsLieudit = append(idsLieudit, id)
+            }
+            if strings.Index(key, "fermier-") == 0 {
+                // ex : fermier-25:[on] (25 est l'id fermier)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsFermier = append(idsFermier, id)
+            }
+        }
 		//
-		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages)
+		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUG, idsLieudit, idsFermier)
 		if err != nil {
 			return err
 		}
 		//
 		redirect := "/chantier/plaquette/" + r.PostFormValue("id")
-		err = chantier.ComputeLieudit(ctx.DB) // nécessaire pour appeler chantier.FullString()
+		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
 		if err != nil {
 			return err
 		}
@@ -299,6 +327,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			},
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
+				TypeChantier:        "plaq",
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "granulo-"+chantier.Granulo),

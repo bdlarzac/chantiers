@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"bdl.local/bdl/control"
@@ -255,7 +254,7 @@ func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *ht
 		Details string
 	}
 	var err error
-
+	
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "ERREUR",
@@ -263,7 +262,7 @@ func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *ht
 		Menu: "accueil",
 		Details: detailsErrorPage{
 			URL:     r.URL.String(),
-			Details: strings.Replace(werr.Sprint(theErr), "\n", "<br>", -1),
+			Details: werr.SprintHTML(theErr),
 		},
 	}
 	tmpl := ctx.Template

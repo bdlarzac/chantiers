@@ -58,7 +58,7 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		if err != nil {
 			return err
 		}
-		err = op.Chantier.ComputeLieudit(ctx.DB)
+		err = op.Chantier.ComputeLieudits(ctx.DB) // Pour afficher nom chantier
 		if err != nil {
 			return err
 		}
@@ -131,7 +131,7 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		err = op.Chantier.ComputeLieudit(ctx.DB) // Pour affichernom chantier
+		err = op.Chantier.ComputeLieudits(ctx.DB) // Pour afficher nom chantier
 		if err != nil {
 			return err
 		}

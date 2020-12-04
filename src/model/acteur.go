@@ -254,9 +254,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
-		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		err = plaq.ComputeLieudits(db) // pour le nom du chantier
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateDebut,
@@ -279,9 +279,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
-		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		err = plaq.ComputeLieudits(db) // pour le nom du chantier
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateTrans,
@@ -304,9 +304,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
-		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		err = plaq.ComputeLieudits(db) // pour le nom du chantier
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateTrans,
@@ -329,9 +329,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
-		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		err = plaq.ComputeLieudits(db) // pour le nom du chantier
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateTrans,
@@ -354,9 +354,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
-		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		err = plaq.ComputeLieudits(db) // pour le nom du chantier
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateRange,
@@ -379,9 +379,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
-		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		err = plaq.ComputeLieudits(db) // pour le nom du chantier
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateRange,
@@ -404,9 +404,9 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
-		err = plaq.ComputeLieudit(db) // pour le nom du chantier
+		err = plaq.ComputeLieudits(db) // pour le nom du chantier
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateRange,
