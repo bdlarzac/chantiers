@@ -2,7 +2,7 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-
+- js : remplacer var par let ou const
 
 - js : possible de mettre en commun, entre chautre et bspied
     getActeursPossibles() => attention à url, parfois se termine par "fermier"

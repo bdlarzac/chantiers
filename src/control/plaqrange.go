@@ -78,7 +78,9 @@ func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
-				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
+				JSFiles: []string{
+				    "/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqRangeForm{
 				Rangement:    pr,
@@ -165,7 +167,9 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
-				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
+				JSFiles: []string{
+				    "/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqRangeForm{
 				Rangement:    pr,

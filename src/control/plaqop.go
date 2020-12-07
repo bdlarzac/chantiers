@@ -74,7 +74,8 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+				    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqOpForm{
 				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA", "tva-"), "CHOOSE_TVA"),
@@ -147,7 +148,8 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+				    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqOpForm{
 				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA", "tva-"), strconv.FormatFloat(op.TVA, 'f', 1, 64)),

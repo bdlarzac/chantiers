@@ -44,8 +44,10 @@ function autocomplete(inputField, dataProvider) {
                         // version modifiée, qui met en gras le texte saisi ; pas forcément les 2 premiers caractères
                         // Attention, bug si on utilise strong à la place de b :
                         // si val="st" ou "rt" ou "ro" etc. le 2e replace va remplacer à l'intérieur de <strong> 
-                        b.innerHTML = response[i].replace(val.toUpperCase(), "<b>" + val.toUpperCase() + "</b>")
-                               .replace(val.toLowerCase(), "<b>" + val.toLowerCase() + "</b>");
+                        b.innerHTML = response[i]
+                                .replace(val.toUpperCase(), "<b>" + val.toUpperCase() + "</b>")
+                                .replace(val.toLowerCase(), "<b>" + val.toLowerCase() + "</b>");
+                                // TODO Gérer Mairie qd val = ma (1ere lettre uppercase puis lowercase)
                         b.innerHTML += "<input type='hidden' value='" + response[i] + "'>";
                                 b.addEventListener("click", function(e) {
                                 inputField.value = this.getElementsByTagName("input")[0].value;
@@ -56,7 +58,7 @@ function autocomplete(inputField, dataProvider) {
                 }
             }, // end resolve dataProvider promise
             function(error) {
-                alert("Problème autocomplete\nContacter l'administrateur du site");
+                //alert("BB Problème autocomplete\nContacter l'administrateur du site");
             }) // end then
             .catch(
                 () => { alert("Problème autocomplete\nContacter l'administrateur du site"); }

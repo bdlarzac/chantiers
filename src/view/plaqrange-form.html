@@ -180,6 +180,7 @@ function setCoutGlobal(){
     document.getElementById("gltva").disabled = false;
     document.getElementById("gldatepay").readOnly = false;
     //
+    document.getElementById("conducteur").value = "";
     document.getElementById("conducteur").readOnly = true;
     document.getElementById("conheure").value = "";
     document.getElementById("conheure").readOnly = true;
@@ -190,6 +191,7 @@ function setCoutGlobal(){
     document.getElementById("codatepay").value = "";
     document.getElementById("codatepay").readOnly = true;
     //
+    document.getElementById("proprioutil").value = "";
     document.getElementById("proprioutil").readOnly = true;
     document.getElementById("ouprix").value = "";
     document.getElementById("ouprix").readOnly = true;
@@ -200,6 +202,7 @@ function setCoutGlobal(){
 }
 // ***************************************
 function setCoutDetaille(){
+    document.getElementById("rangeur").value = "";
     document.getElementById("rangeur").readOnly = true;
     document.getElementById("glprix").value="";
     document.getElementById("glprix").readOnly = true;
@@ -221,32 +224,6 @@ function setCoutDetaille(){
 }
 
 // ***************************************
-/** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
-**/
-// @todo remplacer async = false par await et Promise
-function getActeursPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                    window.globalPersons[item.id] = item.name;
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
-    xhr.send();
-    return result;
-}
-
-// ***************************************
 function validateForm(){
     // attribut required pas utilisable à cause du choix possible entre cout global / détaillé
     // remplacé par tests et alert
@@ -262,7 +239,7 @@ function validateForm(){
         if(document.getElementById("glprix").value == ""){
             msg += "\n- Vous devez indiquer un prix (coût global)";
         }
-        if(document.getElementById("CHOOSE_TVA_GL").selected == true){
+        if(document.getElementById("gl-CHOOSE_TVA_GL").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (coût global)";
         }
         // calcul de id-rangeur
@@ -295,7 +272,7 @@ function validateForm(){
         if(document.getElementById("coprixh").value == ""){
             msg += "\n- Vous devez indiquer un prix HT / heure (conducteur)";
         }
-        if(document.getElementById("CHOOSE_TVA_CO").selected == true){
+        if(document.getElementById("co-CHOOSE_TVA_CO").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (conducteur)";
         }
         // calcul de id-conducteur
@@ -322,7 +299,7 @@ function validateForm(){
         if(document.getElementById("ouprix").value == ""){
             msg += "\n- Vous devez indiquer un prix HT (outil)";
         }
-        if(document.getElementById("CHOOSE_TVA_OU").selected == true){
+        if(document.getElementById("ou-CHOOSE_TVA_OU").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (outil)";
         }
         // calcul de id-proprioutil

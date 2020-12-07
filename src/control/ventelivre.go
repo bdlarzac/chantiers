@@ -74,7 +74,8 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVenteLivreForm{
 				VenteLivre:   vl,
@@ -140,7 +141,8 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVenteLivreForm{
 				VenteLivre:   vl,
@@ -165,7 +167,7 @@ func DeleteVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		return err
 	}
-	ctx.Redirect = "/vente/" + vars["id-vente"] + "/livraison/update/" + vars["id-livraison"]
+	ctx.Redirect = "/vente/" + vars["id-vente"]
 	return nil
 }
 

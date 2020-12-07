@@ -62,7 +62,7 @@ func ListPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		},
 		Menu: "chantiers",
 		Footer: ctxt.Footer{
-			JSFiles: []string{"/static/js/plaq.js"},
+			JSFiles: []string{"/view/common/plaq.js"},
 		},
 		Details: detailsPlaqList{
 			Chantiers: chantiers,
@@ -99,13 +99,13 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			CSSFiles: []string{"/static/css/tabstrip.css"},
 			JSFiles: []string{
 				"/static/js/round.js",
-				"/static/js/prix.js"},
+				"/view/common/prix.js"},
 		},
 		Menu: "chantiers",
 		Footer: ctxt.Footer{
 			JSFiles: []string{
 				"/static/js/tabstrip.js",
-				"/static/js/plaq.js"},
+				"/view/common/plaq.js"},
 		},
 		Details: detailsPlaqShow{
 			Chantier:         chantier,

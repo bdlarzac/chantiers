@@ -63,7 +63,7 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			Title: titrePage,
 			JSFiles: []string{
 				"/static/js/round.js",
-				"/static/js/prix.js"},
+				"/view/common/prix.js"},
 		},
 		Menu: "chantiers",
 		Details: detailsChauferList{
@@ -126,7 +126,8 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -188,7 +189,8 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté

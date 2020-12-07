@@ -2,10 +2,10 @@
 Recherche UG par code
 </h1>
 
-<form class="form" onsubmit="return submitForm();">
+<form class="form" onsubmit="return validateForm();">
 
     <label for="code">Code</label>
-    <input type="text" name="code" id="code" required onfocus="focusCode();">
+    <input type="text" name="code" id="code" required onfocus="focusOnCodeUG();">
 
     <div class="margin-top">
         <div class="float-right">
@@ -21,21 +21,24 @@ Recherche UG par code
 </div>
 </div>
 
+
 <script>
 
-function focusCode(){
+function focusOnCodeUG(){
     document.getElementById("results").style.display = "none";
 }
 
-function submitForm(){
-    let idUg = getIdUG();
-    if(idUg == 0){
+async function validateForm(){
+    let idUG;
+    idUG = await getIdUG();
+alert("idUG = " + idUG);
+    if(idUG == 0){
         document.getElementById("results").style.display = "inline-block";
         document.getElementById("results").innerHTML
             = "Aucune UG correspondant au code <i><b>" + document.getElementById("code").value + "</b></i>";
         return false;
     }
-    document.location = "/ug/" + idUg;
+//    document.location = "/ug/" + idUG;
     return false;
 }
 
@@ -44,21 +47,21 @@ function submitForm(){
     Récupère en ajax l'id ug dont le code correspond à la valeur saisie
     Si le code ne correspond pas à une UG, renvoie 0
 **/
-// @todo remplacer async = false par await et Promise
-function getIdUG(){
+async function getIdUG(){
     let result = 0;
-    let xhr = new XMLHttpRequest();
-    let code = document.getElementById("code").value;
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            let response = JSON.parse(this.responseText);
-            if(response != null){
-                result = response;
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/get/ug-from-code/" + code, false);
-    xhr.send();
+    const code = document.getElementById("code").value;
+    const url = "/ajax/get/ug-from-code/" + code;
+    let response = await fetch(url);
+alert("response =" + response);
+    if(response == null){
+alert('ici null');
+        window.lienChantierMsg += "- ERREUR\nTransmettez ce message l'administrateur du site :\n"
+            + "Problème de récupération " + url + " dans ug-search.html\n";
+        return result;
+    }
+alert("AVANT result = await response.json();");
+    result = await response.json();
+alert('result =' + result);
     return result;
 }
 

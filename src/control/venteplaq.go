@@ -52,9 +52,9 @@ func ListVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		Header: ctxt.Header{
 			Title: "Ventes plaquettes " + annee,
 			JSFiles: []string{
-				"/static/js/venteplaq.js",
 				"/static/js/round.js",
-				"/static/js/prix.js"},
+				"/view/common/venteplaq.js",
+				"/view/common/prix.js"},
 		},
 		Menu:   "ventes",
 		Footer: ctxt.Footer{},
@@ -80,9 +80,9 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		Header: ctxt.Header{
 			Title: vente.FullString(),
 			JSFiles: []string{
-				"/static/js/venteplaq.js",
 				"/static/js/round.js",
-				"/static/js/prix.js"},
+				"/view/common/venteplaq.js",
+				"/view/common/prix.js"},
 		},
 		Menu: "ventes",
 		Footer: ctxt.Footer{
@@ -141,7 +141,8 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVentePlaqForm{
 				Vente:              vente,
@@ -203,7 +204,8 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVentePlaqForm{
 				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), strconv.Itoa(vente.IdFournisseur)),

@@ -80,7 +80,9 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
-				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
+				JSFiles: []string{
+				    "/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqTransForm{
 				Transport:    pt,
@@ -165,7 +167,9 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
-				JSFiles: []string{"/static/autocomplete/autocomplete.js"},
+				JSFiles: []string{
+				    "/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqTransForm{
 				Transport:    pt,

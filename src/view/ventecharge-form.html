@@ -232,32 +232,6 @@ function setCoutDetaille(){
 }
 
 // ***************************************
-/** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
-**/
-// @todo remplacer async = false par await et Promise
-function getActeursPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                    window.globalPersons[item.id] = item.name;
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
-    xhr.send();
-    return result;
-}
-
-// ***************************************
 function validateForm(){
     let msg = "";
     if(document.getElementById("CHOOSE_TAS").selected == true){
@@ -271,7 +245,7 @@ function validateForm(){
         if(document.getElementById("glprix").value == ""){
             msg += "\n- Vous devez indiquer un prix (coût global)";
         }
-        if(document.getElementById("CHOOSE_TVA_GL").selected == true){
+        if(document.getElementById("gl-CHOOSE_TVA_GL").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (coût global)";
         }
         // calcule id-chargeur
@@ -302,7 +276,7 @@ function validateForm(){
         if(document.getElementById("moprixh").value == ""){                      
             msg += "\n- Vous devez indiquer un prix / h HT (m.o.)";
         }
-        if(document.getElementById("CHOOSE_TVA_MO").selected == true){
+        if(document.getElementById("mo-CHOOSE_TVA_MO").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (m.o.)";
         }
         // calcule id-conducteur
@@ -329,7 +303,7 @@ function validateForm(){
         if(document.getElementById("ouprix").value == ""){                      
             msg += "\n- Vous devez indiquer un prix HT (outil)";
         }
-        if(document.getElementById("CHOOSE_TVA_OU").selected == true){
+        if(document.getElementById("ou-CHOOSE_TVA_OU").selected == true){
             msg += "\n- Vous devez choisir un taux de TVA (outil)";
         }
         // calcule id-proprioutil

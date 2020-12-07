@@ -6,6 +6,6 @@
 ********************************************************************************/
 
 function toogle(id){
-  var elt = document.getElementById(id);
-  elt.style.display == "block" ? elt.style.display = "none" : elt.style.display = "block"; 
+  const elt = document.getElementById(id);
+  elt.style.display = (elt.style.display == "block" ? "none" : "block");
 }

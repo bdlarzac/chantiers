@@ -13,12 +13,12 @@
             {{$.Details.TypeOpOptions}}
         </select>
 
-        <label for="acteur">Acteur</label>
+        <label for="acteur" id ="lbl-acteur">Acteur</label>
         <div class="autocomplete">
             <input type="text" name="acteur" id="acteur" value="{{.Acteur.NomAutocomplete}}" autocomplete="off" class="width20" required>
         </div>
 
-        <label>Dates :</label>
+        <label>Dates opération</label>
         <div>                                                                                                                              
             <div class="inline-block">
                 <div class="center"><label for="date-debut">Début</label></div>
@@ -80,6 +80,8 @@
             <b>Quantité</b> : 
             <br>- Pour le déchiquetage, correspond au nombre de maps.
             <br>- Pour les autres opération, correspond au nombre de jours ou d'heures.
+            
+            <br><br><b>Acteur</b> : Personne effectuant cette opération (abatteur, débardeur, déchiqueteur, broyeur).
     </div>
 </div>
 
@@ -108,36 +110,27 @@ function initialize(){
 }
 
 // ***************************************
-/** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
-**/
-// @todo remplacer async = false par await et Promise
-function getActeursPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                    window.globalPersons[item.id] = item.name;
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
-    xhr.send();
-    return result;
-}
-
-// ***************************************
 /** Déclenché lorsqu'on change le choix du type d'opération **/
 function typeOperationChanges(){
     if(document.getElementById("typeop-DC").selected){
         document.getElementById("unite-MA").selected = true;
+    }
+    // Change le label "acteur"
+    const lbl = document.getElementById("lbl-acteur");
+    if(document.getElementById("CHOOSE_TYPEOP").selected){
+        lbl.innerHTML = "Acteur"
+    }
+    else if(document.getElementById("typeop-AB").selected){
+        lbl.innerHTML = "Abatteur"
+    }
+    else if(document.getElementById("typeop-DB").selected){
+        lbl.innerHTML = "Débardeur"
+    }
+    else if(document.getElementById("typeop-DC").selected){
+        lbl.innerHTML = "Déchiqueteur"
+    }
+    else if(document.getElementById("typeop-BR").selected){
+        lbl.innerHTML = "Broyeur"
     }
 }
 

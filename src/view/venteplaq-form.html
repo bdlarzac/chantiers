@@ -139,33 +139,6 @@ function initialize(){
         }
     }
 }
-                     
-
-// ***************************************
-/** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
-**/
-// @todo remplacer async = false par await et Promise
-function getActeursPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                    window.globalPersons[item.id] = item.name;
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
-    xhr.send();
-    return result;
-}
 
 // ***************************************
 function validateForm(){

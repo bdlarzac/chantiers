@@ -39,14 +39,13 @@ func init() {
 		"year":              year,
 		"zero2empty":        zero2empty,
 	}
-	tmplDir := "view"
 	tmpl = template.
 	    Must(template.
             New("").
             Funcs(fmap).
-            ParseGlob(filepath.Join(tmplDir, "*.html"))).
+            ParseGlob(filepath.Join("view", "*.html"))).
             Option("missingkey=error")
-    tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("static", "chantier-lien", "chantier-lien.html"))
+    tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien.html"))
 }
 
 // ************************* pipelines ********************************

@@ -87,7 +87,8 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,
@@ -192,7 +193,8 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/autocomplete/autocomplete.js",
+                    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,

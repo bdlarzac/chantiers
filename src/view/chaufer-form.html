@@ -108,26 +108,6 @@ async function initialize(){
 
 // ***************************************
 /** 
-    Promesse utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
-**/
-async function getActeursPossibles(inputField){
-    const url = "/ajax/autocomplete/acteur/" + inputField.value + "/fermiers";
-    let response = await fetch(url);
-    response = await response.json();
-    let result = [];
-    if(response != null){
-        response.forEach(function(item) {
-            result.push(item.name);
-            window.globalPersons[item.id] = item.name;
-        });
-    }
-    return result;                             
-}
-
-// ***************************************
-/** 
     Vérifie par ajax que le fermier sélectionné correspond à un fermier existant.
     Si non, efface le contenu de id-fermier et fermier
     Si oui, exécute actionAfterChangeFermier()
