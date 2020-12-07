@@ -2,6 +2,13 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+
+
+- js : possible de mettre en commun, entre chautre et bspied
+    getActeursPossibles() => attention à url, parfois se termine par "fermier"
+    getLDPossibles()
+    checkLD()
+
 - Confusion entre exploitant / fermier ?
 => remplacer table parcelle_exploitant par parcelle_fermier et partout dans le code ?
 grep -rn xploitant

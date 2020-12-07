@@ -102,12 +102,12 @@
     </div>
 </div>
 
+
 <script>
 window.addEventListener("load", function(){
     autocomplete(document.getElementById("acheteur"), getActeursPossibles);
     autocomplete(document.getElementById('lieudit'), getLDPossibles);
-//    document.getElementById("lieudit").addEventListener("blur", checkLD);
-    // Pour vérifier que le transporteur affiché correspond à une personne existant en base.
+    // Pour vérifier que l'acheteur affiché correspond à une personne existant en base.
     // on ne peut pas se fier uniquement à getElementById("acheteur")
     // car l'utilisateur peut modifier le nom
     window.globalPersons = [];
@@ -136,129 +136,106 @@ function initialize(){
 
 // ***************************************
 /** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
+    Promesse utilisée par autocomplete() pour s'alimenter en données
     @param inputField input type=text utilisé
                       pour récupérer des noms de personnes par ajax
 **/
-// @todo remplacer async = false par await et Promise
-function getActeursPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                    window.globalPersons[item.id] = item.name;
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
-    xhr.send();
-    return result;
+async function getActeursPossibles(inputField){
+    const url = "/ajax/autocomplete/acteur/" + inputField.value;
+    let response = await fetch(url);
+    response = await response.json();
+    let result = [];
+    if(response != null){
+        response.forEach(function(item) {
+            result.push(item.name);
+            window.globalPersons[item.id] = item.name;
+        });
+    }
+    return result;                             
 }
 
 // ***************************************
 /** 
     Fonction utilisée par autocomplete() pour s'alimenter en données
     @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
+                      pour récupérer des noms de lieux-dits par ajax
 **/
-// @todo remplacer async = false par await et Promise
-function getLDPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/lieudit/" + inputField.value, false);
-    xhr.send();
-    return result;
+async function getLDPossibles(inputField){
+    const url = "/ajax/autocomplete/lieudit/" + inputField.value;
+    let response = await fetch(url);
+    response = await response.json();
+    let result = [];
+    if(response != null){
+        response.forEach(function(item) {
+            result.push(item.name);
+        });
+    }
+    return result;                             
 }
 
-// ***************************************
+// ******************************************************
 /** 
-    Vérifie par ajax que le lieu-dit sélectionné correspond à un LD existant.
+    Vérifie par ajax que le lieu-dit sélectionné correspond à un lieu-dit existant.
+    Si oui, maj le contenu de id-lieudit
     Si non, efface le contenu de id-lieudit et de lieudit
-    Si oui, exécute actionAfterChangeLieudit()
+    Passe ensuite la main à actionAfterChangeLieudit()
 **/
-function checkLD(){
-    var nomLD = document.getElementById("lieudit").value;
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var idLD = JSON.parse(this.responseText);
-            if(idLD != null && idLD != 0){
-                document.getElementById("id-lieudit").value = idLD;
-            }
-            else{
-                // lieu-dit invalide
-                document.getElementById("id-lieudit").value = 0;
-                document.getElementById("lieudit").value = "";
-            }
-            actionAfterChangeLieudit();
-        }
-    };
-    xhr.open("GET", "/ajax/check/lieudit/" + nomLD);
-    xhr.send();
+async function checkLD(){
+    const nomLD = document.getElementById("lieudit").value;
+    const url = "/ajax/check/lieudit/" + nomLD;
+    const response = await fetch(url);
+    const idLD = await response.json();
+    if(idLD != null && idLD != 0){
+        document.getElementById("id-lieudit").value = idLD;
+    }
+    else{
+        // lieu-dit invalide
+        document.getElementById("id-lieudit").value = 0;
+        document.getElementById("lieudit").value = "";
+    }
+    actionAfterChangeLieudit();
 }
 
 // ******************************************************
 /**
     Lorsqu'un lieu-dit change, mettre à jour les parcelles possibles
 **/
-function actionAfterChangeLieudit(){
-    const idLD = document.getElementById("id-lieudit").value
+async function actionAfterChangeLieudit(){
+    const idLD = document.getElementById("id-lieudit").value;
     if(idLD == 0){
         document.getElementById("parcelles").innerHTML = "Choisissez d'abord un lieu-dit";
         document.getElementById("ugs").innerHTML = "Choisissez d'abord un lieu-dit";
+        return;
     }
-    else{
-        // ajax pour récupérer les parcelles possibles
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                const response = JSON.parse(this.responseText);
-                if(response != null){
-                    document.getElementById("parcelles").innerHTML = "";
-                    let i = 1;
-                    response.forEach(function(item) {
-                        const name = "parcelle-" + item.id;
-                        const checkbox = document.createElement("input");
-                        checkbox.setAttribute("type", "checkbox");
-                        checkbox.setAttribute("name", name);
-                        checkbox.setAttribute("id", name);
-                        const label = document.createElement("label");
-                        label.setAttribute("for", name);
-                        label.innerHTML = item.name;
-                        label.style["font-weight"] = "normal";
-                        const span = document.createElement("span");
-                        span.style["padding-right"] = "1em";
-                        span.appendChild(checkbox);
-                        span.appendChild(label);
-                        document.getElementById("parcelles").appendChild(span);
-                        if(i % 3 == 0){
-                            const br = document.createElement("br");
-                            document.getElementById("parcelles").appendChild(br);
-                        }
-                        i++;
-                    });
-                }
+    const url = "/ajax/get/parcelles-from-lieudit/" + idLD;
+    let response = await fetch(url);
+    response = await response.json();
+    if(response != null){
+        document.getElementById("parcelles").innerHTML = "";
+        let i = 1;
+        response.forEach(function(item) {
+            const name = "parcelle-" + item.id;
+            const checkbox = document.createElement("input");
+            checkbox.setAttribute("type", "checkbox");
+            checkbox.setAttribute("name", name);
+            checkbox.setAttribute("id", name);
+            const label = document.createElement("label");
+            label.setAttribute("for", name);
+            label.innerHTML = item.name;
+            label.style["font-weight"] = "normal";
+            const span = document.createElement("span");
+            span.style["padding-right"] = "1em";
+            span.appendChild(checkbox);
+            span.appendChild(label);
+            document.getElementById("parcelles").appendChild(span);
+            if(i % 3 == 0){
+                const br = document.createElement("br");
+                document.getElementById("parcelles").appendChild(br);
             }
-            actionAfterChangeLieudit2();
-        };
-        xhr.open("GET", "/ajax/get/parcelles-from-lieudit/" + idLD);
-        xhr.send();
+            i++;
+        });
     }
+    await actionAfterChangeLieudit2();
 }
 
 // ***************************************
@@ -266,64 +243,52 @@ function actionAfterChangeLieudit(){
     Lorsqu'un lieu-dit change, mettre à jour les ugs possibles
     Effectué après actionAfterChangeLieudit()
 **/
-function actionAfterChangeLieudit2(){
-    let idLD = document.getElementById("id-lieudit").value
-    // ajax pour récupérer les UGs possibles
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            let response = JSON.parse(this.responseText);
-            if(response != null){
-                if(response.length == 0){
-                    document.getElementById("ugs").innerHTML = "Aucune UG pour ce lieu-dit";
-                }
-                else{
-                    let limit = Math.floor(response.length) / 2;    
-                    if(response.length / 2 != limit){
-                        limit += 1;
-                    }
-                    document.getElementById("ugs").innerHTML = "";
-                    let table = document.createElement("table");
-                    document.getElementById("ugs").appendChild(table);
-                    let tr = document.createElement("tr");
-                    table.appendChild(tr);
-                    let td = document.createElement("td");
-                    tr.appendChild(td);                             
-                    let i = 1;
-                    response.forEach(function(item) {
-                        let name = "ug-" + item.id;
-                        let checkbox = document.createElement("input");
-                        checkbox.setAttribute("type", "radio");
-                        checkbox.setAttribute("name", "ug");
-                        checkbox.setAttribute("id", name);
-                        checkbox.setAttribute("value", name);
-                        let label = document.createElement("label");
-                        label.setAttribute("for", name);
-                        label.innerHTML = item.name;
-                        label.style["font-weight"] = "normal";
-                        let span = document.createElement("span");
-                        span.style["padding-right"] = "1em";
-                        span.appendChild(checkbox);
-                        span.appendChild(label);
-                        td.appendChild(span);
-                        if(i == limit){
-                            td = document.createElement("td");
-                            tr.appendChild(td);
-                        }
-                        else{
-                            td.appendChild(document.createElement("br"));
-                        }
-                        i++;
-                    });
-                }
-            }
-            else{
-                document.getElementById("ugs").innerHTML = "Aucune UG pour ce lieu-dit";
-            }
+async function actionAfterChangeLieudit2(){
+    const idLD = document.getElementById("id-lieudit").value;
+    const url = "/ajax/get/ugs-from-lieudit/" + idLD;
+    let response = await fetch(url);
+    response = await response.json();
+    if(response == null || response.length == 0){
+        document.getElementById("ugs").innerHTML = "Aucune UG pour ce lieu-dit";
+        return;
+    }
+    let limit = Math.floor(response.length) / 2;    
+    if(response.length / 2 != limit){
+        limit += 1;
+    }
+    document.getElementById("ugs").innerHTML = "";
+    const table = document.createElement("table");
+    document.getElementById("ugs").appendChild(table);
+    const tr = document.createElement("tr");
+    table.appendChild(tr);
+    let td = document.createElement("td");
+    tr.appendChild(td);                             
+    let i = 1;
+    response.forEach(function(item) {
+        let name = "ug-" + item.id;
+        let checkbox = document.createElement("input");
+        checkbox.setAttribute("type", "radio");
+        checkbox.setAttribute("name", "ug");
+        checkbox.setAttribute("id", name);
+        checkbox.setAttribute("value", name);
+        let label = document.createElement("label");
+        label.setAttribute("for", name);
+        label.innerHTML = item.name;
+        label.style["font-weight"] = "normal";
+        let span = document.createElement("span");
+        span.style["padding-right"] = "1em";
+        span.appendChild(checkbox);
+        span.appendChild(label);
+        td.appendChild(span);
+        if(i == limit){
+            td = document.createElement("td");
+            tr.appendChild(td);
         }
-    };
-    xhr.open("GET", "/ajax/get/ugs-from-lieudit/" + idLD);
-    xhr.send();
+        else{
+            td.appendChild(document.createElement("br"));
+        }
+        i++;
+    });
 }
 
 // ***************************************

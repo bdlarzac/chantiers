@@ -166,15 +166,16 @@ async function getLDPossibles(inputField){
 
 // ***************************************
 /** 
-    Vérifie par ajax que le lieu-dit sélectionné correspond à un LD existant.
-    Si oui, exécute actionAfterChangeLieudit()
+    Vérifie par ajax que le lieu-dit sélectionné correspond à un lieu-dit existant.
+    Si oui, maj le contenu de id-lieudit
     Si non, efface le contenu de id-lieudit et de lieudit
+    Passe ensuite la main à actionAfterChangeLieudit()
 **/
 async function checkLD(){
     const nomLD = document.getElementById("lieudit").value;
     const url = "/ajax/check/lieudit/" + nomLD;
     let response = await fetch(url);
-    let idLD = response = await response.json();
+    let idLD = await response.json();
     if(idLD != null && idLD != 0){
         document.getElementById("id-lieudit").value = response;
     }
