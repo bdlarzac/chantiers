@@ -194,8 +194,11 @@ Communes, lieux-dits et parcelles cadastrales sont à importer du "logiciel SCTL
     </li>
     <li>Une parcelle est associée à un ou plusieurs lieux-dits.</li>
     <li>Un lieu-dit est associé à zéro ou plusieurs parcelles.</li>
-    <li>Une parcelle est associée à zéro ou plusieurs exploitants.</li>
-    <li>Un exploitant est associé à une ou plusieurs parcelles.</li>
+    <li>Une parcelle est associée à zéro ou plusieurs exploitants (acteurs identifiés par le système).</li>
+    <li>
+        Un exploitant est associé à une ou plusieurs parcelles
+        <br>(mais certains acteurs ne sont pas exploitants).
+    </li>
     <li>Une parcelle est associée à zéro, une ou plusieurs UG.</li>
     <li>Une UG est associée à une ou plusieurs parcelles.</li>
 </ul>
@@ -293,7 +296,9 @@ Note : Il est impossible de suivre de manière précise le stock de plaquettes p
 Un lieu de stockage associé à aucun chantier plaquettes peut être supprimé.
 <br>Un lieu de stockage associé à un ou plusieurs chantier(s) plaquettes ne peut PAS être supprimé, mais il peut être <b>archivé</b>.
 <br>Un lieu de stockage archivé n'est plus affiché dans la liste des lieux de stockage.
-<br>Note : l'archivage d'un lieu de stockage peut générer une incohérence dans les données, si l'utilisateur archive un hangar contenant encore des tas actifs. Le programme n'effectue pas cette vérification, c'est à l'utilisateur de rester cohérent dans son usage.
+
+<br><br>Note : <b>l'archivage d'un lieu de stockage peut générer une incohérence dans les données, si l'utilisateur archive un hangar contenant encore des tas actifs.
+Le programme n'effectue pas cette vérification, c'est à l'utilisateur de rester cohérent dans son usage.</b>
 
 
 <!-- *********************************************************** -->

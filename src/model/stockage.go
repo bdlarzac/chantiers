@@ -166,6 +166,8 @@ func (s *Stockage) ComputeStock(db *sqlx.DB) error {
 	return nil
 }
 
+// Calcule un booléen
+// Un stockage est deletable s'il ne contient plus de tas actif
 func (s *Stockage) ComputeDeletable(db *sqlx.DB) error {
 	var count int
 	query := "select count(*) from tas where actif and id_stockage=$1"

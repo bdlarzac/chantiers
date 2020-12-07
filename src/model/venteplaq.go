@@ -214,21 +214,18 @@ func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-// ========= bouchon a virer =========
-/* 
 	for _, idChantier := range ids {
 		chantier, err := GetPlaq(db, idChantier)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
 		// Ajoute lieu-dit pour avoir le nom du chantier
-		chantier.Lieudit, err = GetLieudit(db, chantier.IdLieudit)
+		err = chantier.ComputeLieudits(db)
 		if err != nil {
-			return werr.Wrapf(err, "Erreur appel GetLieudit()")
+			return werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
 		}
 		vp.Chantiers = append(vp.Chantiers, chantier)
 	}
-*/
 	return nil
 }
 

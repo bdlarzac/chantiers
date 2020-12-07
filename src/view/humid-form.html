@@ -66,9 +66,9 @@
 
 // ***************************************
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById('choix-personne'), getPersonnesPossibles);         
+    autocomplete(document.getElementById('choix-personne'), getActeursPossibles);         
     // Utilisé pour conserver les ids des personnes ajoutées
-    // tableau "added-" + id personne => nom de la personne
+    // tableau id acteur => nom acteur
     window.globalPersons = [];
     initialize();
 });
@@ -80,35 +80,9 @@ function initialize(){
         // initialise les personnes choisies
         {{range .Mesureurs}}
             window.globalPersons[{{.Id}}] = {{.String}};
-            doAjouterPersonne("added-" + {{.Id}}, {{.String}});
+            doAjouterPersonne({{.Id}}, {{.String}});
         {{end}}
     }
-}
-
-// ***************************************
-/** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de personnes par ajax
-**/
-// @todo remplacer async = false par await et Promise
-function getPersonnesPossibles(inputField){
-    var result = [];
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var response = JSON.parse(this.responseText);
-            if(response != null){
-                response.forEach(function(item) {
-                    result.push(item.name);
-                    window.globalPersons["added-" + item.id] = item.name;
-                });
-            }
-        }
-    };
-    xhr.open("GET", "/ajax/autocomplete/acteur/" + inputField.value, false);
-    xhr.send();
-    return result;
 }
 
 // ***************************************
@@ -186,10 +160,8 @@ function validateForm(){
         if(li.id == null){
             continue;
         }
-        if(li.id.startsWith("added-")){
-            n++;
-            ids.push(li.id.replace("added-", ""));
-        }
+        n++;
+        ids.push(li.id);
     }
     if(n == 0){
         msg += "\n- Vous devez au moins choisir une personne\nqui effectue la mesure";

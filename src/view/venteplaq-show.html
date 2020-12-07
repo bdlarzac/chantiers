@@ -57,7 +57,7 @@
 {{if .Chantiers}}
     <div class="big3 bold margin-top margin-bottom">Chantiers</div>
     {{range .Chantiers}}
-        <div class=""><a href="/chantier/plaquette/{{.Id}}">Chantier {{.String}}</a></div>
+        <div class=""><a href="/chantier/plaquette/{{.Id}}">{{.FullString}}</a></div>
         
     {{end}}
     
@@ -259,7 +259,7 @@ Livraisons
                             {{end}}
                             
                             <div>Tas</div>
-                            <div class="bold">{{.Tas.Nom}}</div>
+                            <div class="bold"><a href="/chantier/plaquette/{{.Tas.Chantier.Id}}">{{.Tas.Nom}}</a></div>
                             
                             <div>Quantité</div>
                             <div class="bold">{{.Qte}} maps</div>
