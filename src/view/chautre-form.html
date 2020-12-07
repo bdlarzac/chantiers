@@ -100,8 +100,7 @@
 window.addEventListener("load", function(){
     autocomplete(document.getElementById("client"), getActeursPossibles);
     autocomplete(document.getElementById('lieudit'), getLDPossibles);
-//    document.getElementById("lieudit").addEventListener("blur", checkLD);
-    // Pour vérifier que le transporteur affiché correspond à une personne existant en base.
+    // Pour vérifier que le client affiché correspond à une personne existant en base.
     // on ne peut pas se fier uniquement à getElementById("client")
     // car l'utilisateur peut modifier le nom
     window.globalPersons = [];
