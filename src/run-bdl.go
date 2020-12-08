@@ -125,7 +125,7 @@ func main() {
 	r.HandleFunc("/stockage/liste", H(control.ListStockages))
 	r.HandleFunc("/stockage/new", H(control.NewStockage))
 	r.HandleFunc("/stockage/update/{id:[0-9]+}", H(control.UpdateStockage))
-	r.HandleFunc("/stockage/delete/{id:[0-9]+}", H(control.DeleteStockage))
+	r.HandleFunc("/stockage/delete/{id:[0-9]+}", H(control.DeleteOrArchiveStockage))
 
 	r.HandleFunc("/tas/empty/{id:[0-9]+}", H(control.SignalerTasVide))
 

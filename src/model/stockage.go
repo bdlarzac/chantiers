@@ -24,6 +24,7 @@ type Stockage struct {
 	// pas stocké en base
 	Stock     float64
 	Deletable bool
+	Archivable bool
 	TasActifs []*Tas
 	Frais     []*StockFrais
 }
@@ -46,7 +47,7 @@ func GetStockage(db *sqlx.DB, id int) (*Stockage, error) {
 // Renvoie un lieu de stockage contenant
 // - les données stockées en base.
 // - les frais
-// - le champ Deletable
+// - les champs Deletable et Archivable
 // - les tas non vides
 func GetStockageFull(db *sqlx.DB, id int) (*Stockage, error) {
 	s, err := GetStockage(db, id)
@@ -65,9 +66,9 @@ func GetStockageFull(db *sqlx.DB, id int) (*Stockage, error) {
 	if err != nil {
 		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeStock()")
 	}
-	err = s.ComputeDeletable(db)
+	err = s.ComputeDeletableAndArchivable(db)
 	if err != nil {
-		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeDeletable()")
+		return s, werr.Wrapf(err, "Erreur appel Stockage.ComputeDeletableAndArchivable()")
 	}
 	//
 	return s, nil
@@ -77,21 +78,18 @@ func GetStockageFull(db *sqlx.DB, id int) (*Stockage, error) {
 
 // Renvoie la liste de tous les lieux de stockage
 // avec uniquement les champs stockés en base
-func GetStockages(db *sqlx.DB) ([]*Stockage, error) {
+// @param actifs
+//          true => ne renvoie que les stockages actifs (pas archivés)
+//          false => ne renvoie que les stockages archivés
+func GetStockages(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
 	stockages := []*Stockage{}
-	query := "select * from stockage order by nom"
-	err := db.Select(&stockages, query)
-	if err != nil {
-		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
+	query := "select * from stockage where archived="
+	if actifs {
+	    query += "FALSE"
+	} else {
+	    query += "TRUE"
 	}
-	return stockages, nil
-}
-
-// Renvoie la liste de tous les lieux de stockage actifs (= pas archivés)
-// avec uniquement les champs stockés en base
-func GetStockagesActifs(db *sqlx.DB) ([]*Stockage, error) {
-	stockages := []*Stockage{}
-	query := "select * from stockage where archived=FALSE order by nom"
+	query += " order by nom"
 	err := db.Select(&stockages, query)
 	if err != nil {
 		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -101,9 +99,18 @@ func GetStockagesActifs(db *sqlx.DB) ([]*Stockage, error) {
 
 // Renvoie la liste de tous les lieux de stockage contenant
 // les mêmes données que celles renvoyées par GetStockageFull()
-func GetStockagesFull(db *sqlx.DB) ([]*Stockage, error) {
+// @param actifs
+//          true => ne renvoie que les stockages actifs (pas archivés)
+//          false => ne renvoie que les stockages archivés
+func GetStockagesFull(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
 	stockages := []*Stockage{}
-	query := "select id from stockage order by nom"
+	query := "select id from stockage where archived="
+	if actifs {
+	    query += "FALSE"
+	} else {
+	    query += "TRUE"
+	}
+	query += " order by nom"
 	ids := []int{}
 	err := db.Select(&ids, query)
 	if err != nil {
@@ -166,16 +173,28 @@ func (s *Stockage) ComputeStock(db *sqlx.DB) error {
 	return nil
 }
 
-// Calcule un booléen
-// Un stockage est deletable s'il ne contient plus de tas actif
-func (s *Stockage) ComputeDeletable(db *sqlx.DB) error {
+// Calcule les champs Deletable et Archivable
+// Un stockage est Deletable s'il n'est associé à aucune activité
+// Un stockage est Archivable s'il est associé à des activités mais ne contient pas de tas actif
+func (s *Stockage) ComputeDeletableAndArchivable(db *sqlx.DB) error {
 	var count int
-	query := "select count(*) from tas where actif and id_stockage=$1"
+	// Deletable
+	// il suffit de compter les tas associés au lieu de stockage
+	// pour savoir si des chantiers plaquettes y sont associés
+	// car DeletePlaq() efface tous les tas reliés au chantier
+	query := `select count(*) from tas where id_stockage=$1`
 	err := db.QueryRow(query, s.Id).Scan(&count)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	s.Deletable = (count == 0)
+    // Archivable
+    query = "select count(*) from tas where actif and id_stockage=$1"
+    err = db.QueryRow(query, s.Id).Scan(&count)
+    if err != nil {
+            return werr.Wrapf(err, "Erreur query DB : "+query)
+    }
+    s.Archivable = (count == 0)
 	return nil
 }
 

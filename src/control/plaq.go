@@ -133,7 +133,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 		// calcul des ids stockage, pour transmettre à InsertPlaq(), qui va créer le(s) tas
-		allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
 			return err
 		}
@@ -191,7 +191,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		// Affiche form
 		//
 		chantier := &model.Plaq{}
-		allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
 			return err
 		}
@@ -241,7 +241,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		}
 		// calcul des ids stockage, pour transmettre à model.UpdatePlaq(),
 		// qui va créer ou supprimer ou ne pas changer le(s) tas
-		allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
 			return err
 		}
@@ -307,7 +307,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		allStockages, err := model.GetStockagesActifs(ctx.DB)
+		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
 			return err
 		}

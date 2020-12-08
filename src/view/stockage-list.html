@@ -5,9 +5,8 @@
     </a>
 </h1>
 
-
-{{range .Details}}
-    {{if not .Archived}}
+<!-- ********************************** Stockages actifs ************************************* -->
+{{range .Details.Actifs}}
     <hr>
     {{$idStockage := .Id}}
     <h2>
@@ -15,7 +14,7 @@
         <a class="padding-left" href="/stockage/update/{{.Id}}">
             <img class="bigicon inline" src="/static/img/update.png" title="Modifier ce lieu de stockage" />
         </a>
-        <a href="#" onclick="deleteStockage({{.Id}}, {{.Nom}}, {{.Deletable}})">
+        <a href="#" onclick="deleteOrArchiveStockage({{.Id}}, {{.Nom}}, {{.Archivable}}, {{.Deletable}})">
             <img class="bigicon inline" src="/static/img/delete.png" title="Supprimer ou archiver ce lieu de stockage" />
         </a>
     </h2>
@@ -86,29 +85,76 @@
         {{end}}
         
     </div>
-    {{end}}
 {{end}}
+
+<!-- ********************************** Stockages archives ************************************* -->
+{{/* Même affichage que pour stockages actifs, mais actions possibles */}}
+{{if .Details.Archives}}
+    <hr><hr>
+    <center><h1>Stockages archivés</h1></center>
+{{end}}
+
+{{range .Details.Archives}}
+    <hr>
+    {{$idStockage := .Id}}
+    <h2>
+        {{.Nom}}
+    </h2>
+    
+    <div class="margin-left2 margin-bottom2">
+    
+        <!-- **************** Frais ********************* -->
+        <div class="big2 bold margin-top margin-bottom">
+            Frais
+        </div>
+        {{if .Frais}}
+        <table class="bordered margin-left">
+            <tr><th>Type</th><th>Début</th><th>Fin</th><th>Montant</th><th>Notes</th></tr>
+        {{end}}
+        {{range .Frais}}                                         
+            <tr>
+                <td>{{.TypeFrais | labelStockFrais}}</td>
+                <td>{{.DateDebut | dateFr}}</td>
+                <td>{{.DateFin | dateFr}}</td>
+                <td><b><script>document.write(round({{.Montant}}, 2));</script> &euro;</b></td>
+                <td>{{.Notes | nl2br}}</td>
+            </tr>
+        {{end}}
+        {{if .Frais}}
+        </table>
+        {{end}}
+        
+    </div>
+{{end}}
+
 
 
 <script>
 // *****************************************
-function deleteStockage(id, nom, deletable){
-    var msg;
-    if(deletable){
-        msg = "Attention, en cliquant sur OK,\n"
-            + "le lieu de stockage \"" + nom + "\" sera définitivement supprimé.\n"
-            + "\n"
-            + "En effet, ce lieu de stockage n'est associé à aucun chantier plaquettes.\n"
-            + "Les loyers associés seront aussi définitivement supprimés.";
+function deleteOrArchiveStockage(id, nom, archivable, deletable){
+    let msg;
+    if(deletable || archivable){
+        if(deletable){
+            msg = "Attention, en cliquant sur OK,\n"
+                + "le lieu de stockage \"" + nom + "\" sera définitivement supprimé.\n"
+                + "\n"
+                + "En effet, ce lieu de stockage n'est associé à aucun chantier plaquettes.\n"
+                + "Les loyers associés seront aussi définitivement supprimés.";
+        }
+        else if(archivable) {
+            msg = "Attention, en cliquant sur OK,\n"
+                + "le lieu de stockage \"" + nom + "\" sera archivé mais pas supprimé de la base\n"
+                + "(car il est associé à des chantiers plaquettes).";
+        }
+        const r = confirm(msg);
+        if (r == true) {
+            window.location = "/stockage/delete/" + id;
+        }
     }
     else{
-        msg = "Attention, en cliquant sur OK,\n"
-            + "le lieu de stockage \"" + nom + "\" sera archivé mais pas supprimé de la base\n"
-            + "(car il est associé à des chantiers plaquettes).";
-    }
-    var r = confirm(msg);
-    if (r == true) {
-        window.location = "/stockage/delete/" + id;
+        msg = "Vous ne pouvez pas archiver ou supprimer ce lieu de stockage\n"
+            + "car il contient des tas actifs.";
+        alert(msg);
     }
 }
 
@@ -126,7 +172,7 @@ function deleteFrais(id, deb, fin, montant){
 // *****************************************
 function deleteHumid(id, date, valeur){
     var msg = "Attention, en cliquant sur OK,\n"
-            + "la mesure d'humidité du " + date + "\nsera définitivement supprimée";
+            + "la mesure d'humidité du " + date + "\nsera définitivement supprimée.";
     var r = confirm(msg);
     if (r == true) {
         window.location = "/humidite/delete/" + id;

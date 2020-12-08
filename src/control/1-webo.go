@@ -155,7 +155,7 @@ func WeboFournisseur(ctx *ctxt.Context) []webo.OptionString {
 // dans un format utilisable par webo
 func WeboStockage(ctx *ctxt.Context) ([]webo.OptionString, error) {
 	res := []webo.OptionString{}
-	stockages, err := model.GetStockagesActifs(ctx.DB)
+	stockages, err := model.GetStockages(ctx.DB, true) // true => que les stockages actifs
 	if err != nil {
 		return res, err
 	}

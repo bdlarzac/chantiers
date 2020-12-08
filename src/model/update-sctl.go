@@ -77,9 +77,9 @@ func ComputeUpdateSCTL(db *sqlx.DB, conf *Config) ([]*UpdatedItem, error) {
 			toCheckUpdate = append(toCheckUpdate, idNew)
 		}
 	}
-	fmt.Println(toCheckUpdate)
+fmt.Println(toCheckUpdate)
 	toCheckUpdate = tiglib.ArrayUniqueInt(toCheckUpdate)
-	fmt.Println(toCheckUpdate)
+fmt.Println(toCheckUpdate)
 	//
 	// Acteurs ayant été modifiés
 	//

@@ -14,31 +14,29 @@ type detailsStockageForm struct {
 	Stockage  *model.Stockage
 }
 
+type detailsStockageList struct {
+	Actifs  []*model.Stockage
+	Archives  []*model.Stockage
+}
+
 // *********************************************************
 func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	stockages, err := model.GetStockagesFull(ctx.DB)
+	actifs, err := model.GetStockagesFull(ctx.DB, true)
 	if err != nil {
 		return err
 	}
-	for _, s := range stockages {
+	for _, s := range actifs {
 		for _, t := range s.TasActifs {
 			err = t.ComputeMesuresHumidite(ctx.DB)
 			if err != nil {
 				return err
 			}
 		}
-		/*
-		   // code de test, à supprimer
-		   //cout, err := s.ComputeCout(ctx.DB, "2018-01-01", "2019-01-01")
-		   cout, err := s.ComputeCout(ctx.DB, "2022-10-01", "2022-10-06")
-		   if err != nil {
-		       return err
-		   }
-		   fmt.Println("cout =", cout)
-		   // fin code de test, à supprimer
-		*/
 	}
-
+	archives, err := model.GetStockagesFull(ctx.DB, false)
+	if err != nil {
+		return err
+	}
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Stockage plaquettes",
@@ -46,7 +44,10 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			JSFiles:  []string{"/static/js/round.js"},
 		},
 		Menu:    "accueil",
-		Details: stockages,
+		Details: detailsStockageList{
+			Actifs: actifs,
+			Archives: archives,
+		},
 	}
 	ctx.TemplateName = "stockage-list.html"
 	return nil
@@ -153,7 +154,7 @@ func UpdateStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 
 // *********************************************************
 // Delete ou archive
-func DeleteStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func DeleteOrArchiveStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -163,7 +164,7 @@ func DeleteStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return err
 	}
-	err = stockage.ComputeDeletable(ctx.DB)
+	err = stockage.ComputeDeletableAndArchivable(ctx.DB)
 	if err != nil {
 		return err
 	}
@@ -172,10 +173,14 @@ func DeleteStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		if err != nil {
 			return err
 		}
-	} else {
-		stockage.Archived = true
-		err = model.UpdateStockage(ctx.DB, stockage)
-	}
+	} else if stockage.Archivable {
+        stockage.Archived = true
+        err = model.UpdateStockage(ctx.DB, stockage)
+        if err != nil {
+            return err
+        }
+    }
+    // Si ni Archivable ni Deletable, on ne fait rien
 	ctx.Redirect = "/stockage/liste"
 	return nil
 }

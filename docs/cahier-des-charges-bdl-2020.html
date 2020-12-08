@@ -238,6 +238,18 @@ Caractéristiques :
 </ul>
 Note : un lieu de stockage n'est pas associé à un lieu-dit, ce qui permet d'avoir des lieux de stockage hors de la zone géographique d'exploitation.
 
+<br><br>Pour le système, un lieu de stockage peut être <b>archivé</b> ou <b>actif</b> (= pas archivé).
+<br>Un lieu de stockage <i>actif</i> peut être :
+<ul>
+    <li>
+        <b>Supprimable</b>, s'il n'est relié à aucune activité de BDL. Dans ce cas, il peut être définitivement supprimé de la base de données.
+    </li>
+    <li>
+        <b>Archivable</b>, s'il est relié à des activités de BDL, mais relié à aucun <i>tas actif</i> (voir plus loin).
+        <br>L'utilisateur peut alors l'archiver ; il ne disparaît pas de la base de données, mais ne peut plus être choisi pour un chantier plaquette.
+    </li>
+</ul>
+
 <!-- *********************************************************** -->
 <h5><a name="2-4-loyers">1.1 - Frais</a></h5>
 Un lieu de stockage est associé à un ou plusieurs frais.
@@ -296,10 +308,6 @@ Note : Il est impossible de suivre de manière précise le stock de plaquettes p
 Un lieu de stockage associé à aucun chantier plaquettes peut être supprimé.
 <br>Un lieu de stockage associé à un ou plusieurs chantier(s) plaquettes ne peut PAS être supprimé, mais il peut être <b>archivé</b>.
 <br>Un lieu de stockage archivé n'est plus affiché dans la liste des lieux de stockage.
-
-<br><br>Note : <b>l'archivage d'un lieu de stockage peut générer une incohérence dans les données, si l'utilisateur archive un hangar contenant encore des tas actifs.
-Le programme n'effectue pas cette vérification, c'est à l'utilisateur de rester cohérent dans son usage.</b>
-
 
 <!-- *********************************************************** -->
 <h5><a name="2-5-mesures-d-humidite">1.5 - Mesures d'humidité</a></h5>
