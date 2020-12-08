@@ -18,7 +18,10 @@
 
 <div>
     <label class="block margin-bottom">Unités de gestion</label>
-    <center>
+</div>
+<div>
+    <div id="liste-ugs"></div>
+    <center class="margin-top">
         <img 
             class="inline vertical-align-middle bigicon margin-right"
             src="/static/img/new.png"
@@ -33,7 +36,8 @@
         />
     </center>
 </div>
-<div id="liste-ugs"></div>
+
+
 
 <script>
 //
@@ -148,7 +152,7 @@ async function validateUGs(){
     window.lienChantierMsg = "";
     await checkUGs();
     if(window.lienChantierMsg != ""){
-        alert(window.lienChantierMsg);
+        alert("Corrigez les UGS avant de continuer :\n" + window.lienChantierMsg);
         return;
     }
     
@@ -182,7 +186,8 @@ async function validateUGs(){
     let div1Elt, div2Elt; // enfants directs de grid2
     let baseURL, url, codeUG;
     let elt, response;
-    let idDB, nom, idForm, divElt, checkElt, labelElt;
+    let idDB, nom, idDansForm, divElt, checkElt, labelElt;
+    let dbRows; // assoc array id => nom
     
     // Affiche lieux-dits
     window.lienChantierMsg = "";
@@ -192,6 +197,9 @@ async function validateUGs(){
     div1Elt.style.textAlign = "right";
     div2Elt = document.getElementById("empty-lieudit2");
     div1Elt.innerHTML = "Lieux-dits";
+    // 1 - récup id, noms en ajax dans tableau assoc
+    //     Permet de supprimer les doublons (arrive par ex. si UGs = XIX-54 et XIV-20)
+    dbRows = new Array();
     for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
         codeUG = elt.childNodes[0].value;
@@ -213,31 +221,33 @@ async function validateUGs(){
             continue;
         }
         response.forEach(function(item){
-            idDB = item.Id;
-            nom = item.Nom;
-            idForm = "lieudit-" + idDB
-            checkElt = document.createElement("input");
-            checkElt.setAttribute("type", "checkbox");
-            checkElt.setAttribute("id", idForm);
-            checkElt.setAttribute("name", idForm);                                                                   
-            checkElt.setAttribute("class", "chk-lieudit"); // utile uniquement pour calcul de memoLieudit
-            if(memoLieudit.indexOf(idForm) != -1){
-                checkElt.setAttribute("checked", true);
-            }
-            labelElt = document.createElement("label");
-            labelElt.setAttribute("for", idForm);
-            labelElt.style.fontWeight = "normal";
-            labelElt.innerHTML = nom;
-            divElt = document.createElement("div");
-            divElt.appendChild(checkElt);
-            divElt.appendChild(labelElt);
-            div2Elt.appendChild(divElt);
+            dbRows[item.Id] = item.Nom;
         });
     }
-    
     if(window.lienChantierMsg != ""){
-        alert(window.lienChantierMsg);
+        alert("Corrigez les UGS avant de continuer :\n" + window.lienChantierMsg);
         return;
+    }
+    // 2 - Recrée la liste html
+    for(idDB in dbRows){
+        nom = dbRows[idDB];
+        idDansForm = "lieudit-" + idDB
+        checkElt = document.createElement("input");
+        checkElt.setAttribute("type", "checkbox");
+        checkElt.setAttribute("id", idDansForm);
+        checkElt.setAttribute("name", idDansForm);                                                                   
+        checkElt.setAttribute("class", "chk-lieudit"); // utile uniquement pour calcul de memoLieudit
+        if(memoLieudit.indexOf(idDansForm) != -1){
+            checkElt.setAttribute("checked", true);
+        }
+        labelElt = document.createElement("label");
+        labelElt.setAttribute("for", idDansForm);
+        labelElt.style.fontWeight = "normal";
+        labelElt.innerHTML = nom;
+        divElt = document.createElement("div");
+        divElt.appendChild(checkElt);
+        divElt.appendChild(labelElt);
+        div2Elt.appendChild(divElt);
     }
     
     // Affiche fermiers
@@ -248,6 +258,9 @@ async function validateUGs(){
     div1Elt.style.textAlign = "right";
     div2Elt = document.getElementById("empty-fermier2");
     div1Elt.innerHTML = "Fermiers";
+    // 1 - récup id, noms en ajax dans tableau assoc
+    //     Permet de supprimer les doublons (arrive par ex. si UGs = XIX-54 et XIV-20)
+    dbRows = new Array();
     for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
         codeUG = elt.childNodes[0].value;
@@ -269,43 +282,83 @@ async function validateUGs(){
             continue;
         }
         response.forEach(function(item){
-            idDB = item.id;
-            nom = item.name;
-            idForm = "fermier-" + idDB
-            checkElt = document.createElement("input");
-            checkElt.setAttribute("type", "checkbox");
-            checkElt.setAttribute("id", idForm);
-            checkElt.setAttribute("name", idForm);
-            checkElt.setAttribute("class", "chk-fermier"); // utile uniquement pour calcul de memoFermier
-            if(memoFermier.indexOf(idForm) != -1){
-                checkElt.setAttribute("checked", true);
-            }
-            labelElt = document.createElement("label");
-            labelElt.setAttribute("for", idForm);
-            labelElt.style.fontWeight = "normal";
-            labelElt.innerHTML = nom;
-            divElt = document.createElement("div");
-            divElt.appendChild(checkElt);
-            divElt.appendChild(labelElt);
-            div2Elt.appendChild(divElt);
+            dbRows[item.id] = item.name;
         });
+    }
+    
+    if(window.lienChantierMsg != ""){
+        alert("Corrigez les UGS avant de continuer :\n" + window.lienChantierMsg);
+        return;
+    }
+    // 2 - Recrée la liste html
+    for(idDB in dbRows){
+        nom = dbRows[idDB];
+        idDansForm = "fermier-" + idDB
+        checkElt = document.createElement("input");
+        checkElt.setAttribute("type", "checkbox");
+        checkElt.setAttribute("id", idDansForm);
+        checkElt.setAttribute("name", idDansForm);
+        checkElt.setAttribute("class", "chk-fermier"); // utile uniquement pour calcul de memoFermier
+        if(memoFermier.indexOf(idDansForm) != -1){
+            checkElt.setAttribute("checked", true);
+        }
+        labelElt = document.createElement("label");
+        labelElt.setAttribute("for", idDansForm);
+        labelElt.style.fontWeight = "normal";
+        labelElt.innerHTML = nom;
+        divElt = document.createElement("div");
+        divElt.appendChild(checkElt);
+        divElt.appendChild(labelElt);
+        div2Elt.appendChild(divElt);
     }
 }
 
 /** 
     Vérifie si les UGs saisies existent en base
     Remplit la var globale window.globalUGs
+    (utilisée dans validateFormChantierLien() sans avoir à refaire d'ajax)
     Remplit éventuellement la var globale window.lienChantierMsg
 **/
 async function checkUGs(){
-    const baseURL = "/ajax/get/ug-from-code/";
+    
     const listeUgsElt = document.getElementById("liste-ugs");
-    let url ="";
-    let codeUG = "";
-    let elt, response;
-    for(let i=0; i < listeUgsElt.childNodes.length; i++){
+    let elt, codeUG, i;
+    
+    // Check la cohérence des entrées - sans ajax
+    let codes = [];
+    let foundEmpty = false, foundDuplicate = false;
+    for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
-        codeUG = elt.childNodes[0].value;
+        codeUG = elt.childNodes[0].value.trim();
+        if(codeUG == ""){
+            if(!foundEmpty){
+                window.lienChantierMsg = "- Une UG ne peut pas être vide.\n";
+                foundEmpty = true;
+            }
+            continue;
+        }
+        if(codes.indexOf(codeUG) != -1){
+            if(!foundDuplicate){
+                window.lienChantierMsg = "- Les UGs doivent être différentes.\n";
+                foundDuplicate = true;
+            }
+            continue;
+        }
+        codes.push(codeUG);
+    }
+    
+    if(window.lienChantierMsg != ""){
+        return;
+    }
+    
+    // Check que les UGs saisies existent en base - avec ajax
+    
+    const baseURL = "/ajax/get/ug-from-code/";
+    let url ="";
+    let response;
+    for(i=0; i < listeUgsElt.childNodes.length; i++){
+        elt = listeUgsElt.childNodes[i];
+        codeUG = elt.childNodes[0].value.trim();
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){

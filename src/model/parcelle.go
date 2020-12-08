@@ -141,26 +141,3 @@ func (p *Parcelle) ComputeUGs(db *sqlx.DB) error {
 	}
 	return nil
 }
-
-// ************************** Activité *******************************
-
-// Renvoie les activités ayant eu lieu sur une parcelle.
-// Ordre chronologique inverse
-// Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
-// @todo A FINIR - faire ugs d'abord - CONFIRMER SI DOIT ETRE FAIT
-// A PRIORI PAS BESOIN DE LE FAIRE
-func (p *Parcelle) GetActivitesByDate(db *sqlx.DB) ([]*ParcelleActivite, error) {
-	res := []*ParcelleActivite{}
-	var err error
-	var query string
-	//
-	// Chantiers plaquettes
-	//
-	list1 := []Plaq{}
-	query = "select * from plaq where id_ug in(select id_ug from parcelle_ug where id_parcelle=$1)"
-	err = db.Select(&list1, query, p.Id)
-	if err != nil {
-		return res, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	return res, nil
-}
