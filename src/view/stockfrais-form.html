@@ -13,13 +13,13 @@
         </select>
         
         <label for="date-debut">Date début : </label>
-        <input type="date" id="date-debut" name="date-debut" value="{{.Frais.DateDebut | dateIso}}" required>
+        <input type="date" id="date-debut" name="date-debut" value="{{.Frais.DateDebut | dateIso}}">
         
         <label for="date-fin">Date fin : </label>
-        <input type="date" id="date-fin" name="date-fin" value="{{.Frais.DateFin | dateIso}}" required>
+        <input type="date" id="date-fin" name="date-fin" value="{{.Frais.DateFin | dateIso}}">
         
         <label for="montant">Montant (&euro;) : </label>
-        <input type="number" id="montant" name="montant" step="0.01" min="0" min="0" value="{{.Frais.Montant | zero2empty}}" class="width5" required>
+        <input type="number" id="montant" name="montant" step="0.01" min="0" min="0" value="{{.Frais.Montant | zero2empty}}" class="width5">
         
         <label for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Frais.Notes}}</textarea>
@@ -47,18 +47,31 @@ function initialize(){
 
 // ***************************************
 function validateForm(){
+    //
     let msg = "";
-    var deb = document.getElementById("date-debut").value;
-    var fin = document.getElementById("date-fin").value;
-    if(fin <= deb){
-        msg += "La date de fin doit se situer après la date de début";
+    //
+    if(document.getElementById("CHOOSE_STOCKFRAIS").selected == true){
+        msg += "- Vous devez choisir un type de frais.\n";
     }
-    if(document.getElementById("CHOOSE_TYPEFRAIS").selected == true){
-        msg += "\n- Vous devez choisir un type de frais";                                           
+    //
+    const deb = document.getElementById("date-debut").value;
+    const fin = document.getElementById("date-fin").value;
+    if(deb == ""){
+        msg += "- Vous devez renseigner la date de début.\n";
+    }
+    if(fin == ""){
+        msg += "- Vous devez renseigner la date de fin.\n";
+    }
+    if(deb != "" && fin != "" && fin <= deb){
+        msg += "- La date de fin doit se situer après la date de début.\n";
+    }
+    //
+    if(document.getElementById("montant").value == ""){
+        msg += "- Vous devez renseigner le montant du frais.\n";
     }
     //
     if(msg != ""){
-        msg = "Impossible de valider ce formulaire :" + msg;
+        msg = "Impossible de valider ce formulaire :\n" + msg;
         alert(msg);
         return false;
     }

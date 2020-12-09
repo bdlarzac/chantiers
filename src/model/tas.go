@@ -145,14 +145,18 @@ func (t *Tas) ComputeChantier(db *sqlx.DB) error {
 // pas inclus par défaut dans GetTasFull()
 func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
 	var err error
-	mesures := []*Humid{}
 	query := "select * from humid where id_tas=$1"
-	err = db.Select(&mesures, query, t.Id)
+	err = db.Select(&t.MesuresHumidite, query, t.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	t.MesuresHumidite = mesures
-	return err
+	for _, h := range(t.MesuresHumidite){
+	    err = h.ComputeMesureurs(db)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel humid.ComputeMesureurs()")
+        }
+	}
+	return nil
 }
 
 // ************************** CRUD *******************************

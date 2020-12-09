@@ -47,12 +47,11 @@
 
 </table>
 
-
 <script>
 
 // *****************************************
 function deleteActeur(idActeur, nomActeur, deletable){
-    var msg;
+    let msg;
     if(deletable){
         msg = "ATTENTION, en cliquant sur OK,\n"
                 + "l'acteur \"" + nomActeur + "\" sera définitivement supprimé.\n";
@@ -62,8 +61,7 @@ function deleteActeur(idActeur, nomActeur, deletable){
                 + "l'acteur \"" + nomActeur + "\" sera marqué \"inactif\".\n"
                 + "(Il ne peut pas être supprimé car il a participé à des activités)";
     }
-    var r = confirm(msg);
-    if (r == true) {
+    if(confirm(msg)){
         window.location = "/acteur/delete/" + idActeur;
     }
 }

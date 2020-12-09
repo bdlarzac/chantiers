@@ -39,12 +39,19 @@
                 </a>
 
                 <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = {{.Stock}} maps
+                <!-- **************** Mesures humidité ********************* -->
                 {{if .MesuresHumidite}}
                     <div class="margin-left2">
-                    <ul>
+                    <ul class="naked">
                 {{end}}
                 {{range .MesuresHumidite}}
-                    <li><a href="/humidite/liste/{{.DateMesure | year}}">Mesure d' humidité {{.DateMesure | dateFr}}</a></li>
+                    <li>
+                        <a href="/humidite/liste/{{.DateMesure | year}}">Mesure d' humidité {{.DateMesure | dateFr}}</a>
+                        - {{.Valeur}} %
+                        {{range .Mesureurs}}
+                            - <a href="/acteur/{{.Id}}">{{.String}}</a>
+                        {{end}}
+                    </li>
                 {{end}}
                 {{if .MesuresHumidite}}</ul></div>{{end}}
                 
@@ -160,33 +167,30 @@ function deleteOrArchiveStockage(id, nom, archivable, deletable){
 
 // *****************************************
 function deleteFrais(id, deb, fin, montant){
-    var msg = "Attention, en cliquant sur OK,\n"
-            + "ce loyer sera définitivement supprimé :\n"
+    let msg = "Attention, en cliquant sur OK,\n"
+            + "ce frais sera définitivement supprimé :\n"
             + montant + " euros (du " + deb + " au " + fin + ")";
-    var r = confirm(msg);
-    if (r == true) {
+    if (confirm(msg) == true) {
         window.location = "/frais-stockage/delete/" + id;
     }
 }
 
 // *****************************************
 function deleteHumid(id, date, valeur){
-    var msg = "Attention, en cliquant sur OK,\n"
+    let msg = "Attention, en cliquant sur OK,\n"
             + "la mesure d'humidité du " + date + "\nsera définitivement supprimée.";
-    var r = confirm(msg);
-    if (r == true) {
+    if (confirm(msg) == true) {
         window.location = "/humidite/delete/" + id;
     }
 }
 
 // *****************************************
 function signalerTasVide(id, nom){
-    var msg = "En cliquant sur OK, vous indiquez que le tas :\n"
+    let msg = "En cliquant sur OK, vous indiquez que le tas :\n"
             + "\"" + nom + "\"\nest vide.\n"
             + "Il ne sera plus possible de l'utiliser pour des ventes.\n"
             + "ATTENTION : cette action ne peut pas être annulée.";
-    var r = confirm(msg);
-    if (r == true) {
+    if (confirm(msg) == true) {
         window.location = "/tas/empty/" + id;
     }
 }

@@ -504,30 +504,27 @@
 <script>
 // *****************************************
 function deleteOperationSimple(idOp, idChantier, typOp){
-    var msg = "Attention, en cliquant sur OK,\n"
+    let msg = "Attention, en cliquant sur OK,\n"
             + "cette opération " + typOp + "\nsera définitivement supprimée";
-    var r = confirm(msg);
-    if (r == true) {
+    if(confirm(msg)){
         window.location = "/chantier/plaquette/" + idChantier + "/op/delete/" + idOp;
     }
 }
 
 // *****************************************
 function deleteTransport(idTransport, idChantier){
-    var msg = "Attention, en cliquant sur OK,\n"
+    let msg = "Attention, en cliquant sur OK,\n"
             + "ce transport sera définitivement supprimé";
-    var r = confirm(msg);
-    if (r == true) {
+    if(confirm(msg)){
         window.location = "/chantier/plaquette/" + idChantier + "/transport/delete/" + idTransport;
     }
 }
 
 // *****************************************
 function deleteRangement(idRangement, idChantier){
-    var msg = "Attention, en cliquant sur OK,\n"
+    let msg = "Attention, en cliquant sur OK,\n"
             + "ce rangement sera définitivement supprimé";
-    var r = confirm(msg);
-    if (r == true) {
+    if(confirm(msg)){
         window.location = "/chantier/plaquette/" + idChantier + "/range/delete/" + idRangement;
     }
 }

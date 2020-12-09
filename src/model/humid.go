@@ -28,45 +28,55 @@ type Humid struct {
 	Tas          *Tas
 }
 
-// ************************** Get *******************************
+// ************************** Get one *******************************
+
 // Renvoie une mesure d'humidité contenant
 // - les données stockées en base
 // - les mesureurs
 // - le stockage
 func GetHumidFull(db *sqlx.DB, idMesure int) (*Humid, error) {
-	humid := &Humid{}
+	h := &Humid{}
 	query := "select * from humid where id=$1"
 	row := db.QueryRowx(query, idMesure)
-	err := row.StructScan(humid)
+	err := row.StructScan(h)
 	if err != nil {
-		return humid, werr.Wrapf(err, "Erreur query : "+query)
+		return h, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	// mesureurs
-	query2 := "select id_acteur from humid_acteur where id_humid=$1"
-	rows, err := db.Query(query2, humid.Id)
+	err = h.ComputeMesureurs(db)
 	if err != nil {
-		return humid, werr.Wrapf(err, "Erreur query DB : "+query2)
-	}
-	defer rows.Close()
-	var idActeur int
-	for rows.Next() {
-		err = rows.Scan(&idActeur)
-		if err != nil {
-			return humid, werr.Wrapf(err, "Erreur row scan id acteur pour mesure humidité")
-		}
-		acteur, err := GetActeur(db, idActeur)
-		if err != nil {
-			return humid, werr.Wrapf(err, "Erreur récup acteur pour mesure humidité")
-		}
-		humid.Mesureurs = append(humid.Mesureurs, acteur)
+		return h, werr.Wrapf(err, "Erreur appel ComputeMesureurs()")
 	}
 	// tas
-	humid.Tas, err = GetTasFull(db, humid.IdTas)
+	h.Tas, err = GetTasFull(db, h.IdTas)
 	if err != nil {
-		return humid, werr.Wrapf(err, "Erreur appel GetTas()")
+		return h, werr.Wrapf(err, "Erreur appel GetTas()")
 	}
-	return humid, nil
+	return h, nil
 }
+
+// ************************** Compute *******************************
+
+func (h *Humid) ComputeMesureurs(db *sqlx.DB) error {
+	query := "select * from acteur where id in(select id_acteur from humid_acteur where id_humid=$1)"
+	err := db.Select(&h.Mesureurs, query, &h.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	return nil
+}
+
+func (h *Humid) ComputeTas(db *sqlx.DB) error {
+    var err error
+	h.Tas, err = GetTasFull(db, h.IdTas)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetTas()")
+	}
+	return nil
+}
+
+
+
+// ************************** Get many *******************************
 
 // Renvoie la liste des années ayant des mesures d'humidité,
 // @param exclude   Année à exclure du résultat

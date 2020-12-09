@@ -356,21 +356,19 @@ Livraisons
 
 // *****************************************
 function deleteLivraison(idLivraison, idVente, nomLivreur, dateLivraison){
-    var msg = "ATTENTION, en cliquant sur OK,\n"
+    let msg = "ATTENTION, en cliquant sur OK,\n"
             + "la livraison \"" + nomLivreur + " " + dateLivraison + "\" sera définitivement supprimée.\n"
             + "\nAttention car les chargements associés à cette vente seront aussi supprimés.\n";
-    var r = confirm(msg);
-    if (r == true) {
+    if (confirm(msg) == true) {
         window.location = "/vente/" + idVente + "/livraison/delete/" + idLivraison;
     }
 }
 
 // *****************************************
 function deleteChargement(idChargement, idLivraison, idVente, nomChargeur, dateChargement){
-    var msg = "ATTENTION, en cliquant sur OK,\n"
+    let msg = "ATTENTION, en cliquant sur OK,\n"
             + "le chargement \"" + nomChargeur + " " + dateChargement + "\" sera définitivement supprimé.\n";
-    var r = confirm(msg);
-    if (r == true) {
+    if (confirm(msg) == true) {
         window.location = "/vente/" + idVente + "/livraison/" + idLivraison + "/chargement/delete/" + idChargement;
     }
 }

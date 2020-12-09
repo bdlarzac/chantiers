@@ -7,50 +7,50 @@
         <div><a href="/acteur/{{.Details.Acteur.Id}}">{{.Details.Acteur.String}}</a></div>
 
         <label for="date-debut">Date début : </label>
-        <input type="date" id="date-debut" name="date-debut" value="" required>
+        <input type="date" id="date-debut" name="date-debut" value="">
         
         <label for="date-fin">Date fin : </label>
-        <input type="date" id="date-fin" name="date-fin" value="" required>
+        <input type="date" id="date-fin" name="date-fin" value="">
         
         <div>
             <div class="bold">Activités à affacturer :</div>
             <div class="padding-top right"><a id="op-tout-rien" href="#" onclick="changeOpToutRien();">Tout sélectionner</a></div>
         </div>
         <div>
-            <div><input type="checkbox" id="AB" name="AB"><label for="AB">Abattage</label></div>
-            <div><input type="checkbox" id="DB" name="DB"><label for="DB">Débardage</label></div>
-            <div><input type="checkbox" id="BR" name="BR"><label for="BR">Broyage</label></div>
-            <div><input type="checkbox" id="DC" name="DC"><label for="DC">Déchiquetage</label></div>
+            <div><input class="chk-op" type="checkbox" id="AB" name="AB"><label for="AB">Abattage</label></div>
+            <div><input class="chk-op" type="checkbox" id="DB" name="DB"><label for="DB">Débardage</label></div>
+            <div><input class="chk-op" type="checkbox" id="BR" name="BR"><label for="BR">Broyage</label></div>
+            <div><input class="chk-op" type="checkbox" id="DC" name="DC"><label for="DC">Déchiquetage</label></div>
             <div>
                 <b>Transport plateforme</b>
                 <div class="padding-left2">
-                    <div><input type="checkbox" id="TR" name="TR"><label for="TR">Transporteur (coût global)</label></div>
-                    <div><input type="checkbox" id="TR-CO" name="TR-CO"><label for="TR-CO">Conducteur</label></div>
-                    <div><input type="checkbox" id="TR-OU" name="TR-OU"><label for="TR-OU">Propriétaire outil</label></div>
+                    <div><input class="chk-op" type="checkbox" id="TR" name="TR"><label for="TR">Transporteur (coût global)</label></div>
+                    <div><input class="chk-op" type="checkbox" id="TR-CO" name="TR-CO"><label for="TR-CO">Conducteur</label></div>
+                    <div><input class="chk-op" type="checkbox" id="TR-OU" name="TR-OU"><label for="TR-OU">Propriétaire outil</label></div>
                 </div>
             </div>
             <div>
                 <b>Rangement</b>
                 <div class="padding-left2">
-                    <div><input type="checkbox" id="RG" name="RG"><label for="RG">Rangeur (coût global)</label></div>
-                    <div><input type="checkbox" id="RG-CO" name="RG-CO"><label for="RG-CO">Conducteur</label></div>
-                    <div><input type="checkbox" id="RG-OU" name="RG-OU"><label for="RG-OU">Propriétaire outil</label></div>
+                    <div><input class="chk-op" type="checkbox" id="RG" name="RG"><label for="RG">Rangeur (coût global)</label></div>
+                    <div><input class="chk-op" type="checkbox" id="RG-CO" name="RG-CO"><label for="RG-CO">Conducteur</label></div>
+                    <div><input class="chk-op" type="checkbox" id="RG-OU" name="RG-OU"><label for="RG-OU">Propriétaire outil</label></div>
                 </div>
             </div>
             <div>
                 <b>Chargement</b>
                 <div class="padding-left2">
-                    <div><input type="checkbox" id="CG" name="CG"><label for="CG">Chargeur (coût global)</label></div>
-                    <div><input type="checkbox" id="CG-CO" name="CG-CO"><label for="CG-CO">Conducteur</label></div>
-                    <div><input type="checkbox" id="CG-OU" name="CG-OU"><label for="CG-OU">Propriétaire outil</label></div>
+                    <div><input class="chk-op" type="checkbox" id="CG" name="CG"><label for="CG">Chargeur (coût global)</label></div>
+                    <div><input class="chk-op" type="checkbox" id="CG-CO" name="CG-CO"><label for="CG-CO">Conducteur</label></div>
+                    <div><input class="chk-op" type="checkbox" id="CG-OU" name="CG-OU"><label for="CG-OU">Propriétaire outil</label></div>
                 </div>
             </div>
             <div>
                 <b>Livraison</b>
                 <div class="padding-left2">
-                    <div><input type="checkbox" id="LV" name="LV"><label for="LV">Livreur (coût global)</label></div>
-                    <div><input type="checkbox" id="LV-CO" name="LV-CO"><label for="LV-CO">Conducteur</label></div>
-                    <div><input type="checkbox" id="LV-OU" name="LV-OU"><label for="LV-OU">Propriétaire outil</label></div>
+                    <div><input class="chk-op" type="checkbox" id="LV" name="LV"><label for="LV">Livreur (coût global)</label></div>
+                    <div><input class="chk-op" type="checkbox" id="LV-CO" name="LV-CO"><label for="LV-CO">Conducteur</label></div>
+                    <div><input class="chk-op" type="checkbox" id="LV-OU" name="LV-OU"><label for="LV-OU">Propriétaire outil</label></div>
                 </div>
             </div>
         </div>
@@ -132,10 +132,33 @@ function changeOpToutRien(){
 
 // ***************************************
 function validateForm(){
-    var deb = document.getElementById("date-debut").value;
-    var fin = document.getElementById("date-fin").value;
-    if(fin <= deb){
-        alert("La date de fin doit se situer après la date de début");
+    let msg = "";
+    //
+    const deb = document.getElementsByName("date-debut")[0].value;
+    const fin = document.getElementsByName("date-fin")[0].value;
+    if(deb == ""){
+        msg += "- Vous devez renseigner la date de début.\n";
+    }
+    if(fin == ""){
+        msg += "- Vous devez renseigner la date de fin.\n";
+    }
+    if(deb != "" && fin != "" && fin <= deb){
+        msg += "- La date de fin doit se situer après la date de début.\n";
+    }
+    //
+    let n = 0;
+    const elts = document.getElementsByClassName("chk-op");
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            n++;
+        }
+    }
+    if(n == 0){
+        msg += "- Vous devez au moins sélectionner un type d'activité.\n";
+    }
+    
+    if(msg != ""){
+        alert("Impossible de valider ce formulaire : \n" + msg);
         return false;
     }
     return true;

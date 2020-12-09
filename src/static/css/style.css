@@ -87,8 +87,7 @@ h1{padding-left:1rem;}
 /* bold big2 border2 padding-left02 padding-right02 */
 .icon-empty{
     display:inline-block;
-    font-size:1.15rem;
-    padding: 0 .15rem;
+    padding:0 2px;
     border:2px solid grey;
 }
 
