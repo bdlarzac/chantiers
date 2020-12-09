@@ -9,7 +9,7 @@
         <div>{{.Vente.String}}</div>
         
         <label for="datelivre">Date livraison</label>
-        <input type="date" name="datelivre" id="datelivre" value="{{.DateLivre | dateIso}}" class="width20" required>
+        <input type="date" name="datelivre" id="datelivre" value="{{.DateLivre | dateIso}}" class="width20">
                                                                                   
     </div>
     
@@ -23,7 +23,7 @@
         
         <label for="livreur">Livreur</label>
         <div class="autocomplete">
-            <input type="text" name="livreur" id="livreur" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="livreur" id="livreur" value="" autocomplete="off" class="width20">
         </div>
 
         <label for="glprix">Prix HT</label>
@@ -52,7 +52,7 @@
         
         <label for="conducteur">Conducteur</label>
         <div class="autocomplete">
-            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20">
         </div>
 
         <label for="monheure">Nombre d'heures</label>
@@ -78,7 +78,7 @@
         
         <label for="proprioutil">Propriétaire outil</label>
         <div class="autocomplete">
-            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20">
         </div>
 
         <label for="ouprix">Prix HT</label>
@@ -182,7 +182,7 @@ function setCoutGlobal(){
     document.getElementById("conducteur").readOnly = true;
     document.getElementById("ouprix").value = "";
     document.getElementById("ouprix").readOnly = true;
-    document.getElementById("outva").value = "ou-CHOOSE_TVA_OU";
+    document.getElementById("outva").value = "CHOOSE_TVA_OU";
     document.getElementById("outva").disabled = true;
     document.getElementById("oudatepay").value = "";
     document.getElementById("oudatepay").readOnly = true;
@@ -193,7 +193,7 @@ function setCoutGlobal(){
     document.getElementById("monheure").readOnly = true;
     document.getElementById("moprixh").value = "";
     document.getElementById("moprixh").readOnly = true;
-    document.getElementById("motva").value = "mo-CHOOSE_TVA_MO";
+    document.getElementById("motva").value = "CHOOSE_TVA_MO";
     document.getElementById("motva").disabled = true;
     document.getElementById("modatepay").value = "";
     document.getElementById("modatepay").readOnly = true;      
@@ -204,7 +204,7 @@ function setCoutDetaille(){
     document.getElementById("livreur").readOnly = true;
     document.getElementById("glprix").value="";
     document.getElementById("glprix").readOnly = true;
-    document.getElementById("gltva").value = "gl-CHOOSE_TVA_GL";
+    document.getElementById("gltva").value = "CHOOSE_TVA_GL";
     document.getElementById("gltva").disabled = true;
     document.getElementById("gldatepay").value = "";
     document.getElementById("gldatepay").readOnly = true;
@@ -223,102 +223,69 @@ function setCoutDetaille(){
 
 // ***************************************
 function validateForm(){
-    // attribut required pas utilisable à cause du choix possible entre cout global / détaillé
-    // remplacé par tests et alert
-    let msg = "";
+    //
+    let msg = "", check;
+    //
+    if(document.getElementById("datelivre").value == ""){
+        msg += "- Vous devez choisir une date de livraison.\n";
+    }
+    //
     if(document.getElementById("cout-global").checked){
-        // Coût global
+        //
+        // 1 - Coût global
+        //
+        check = checkActeur("livreur", "- Vous devez renseigner le livreur.\n");
+        document.getElementById("id-livreur").value = check[0];
+        msg += check[1];
+        //
         if(document.getElementById("glprix").value == ""){
-            msg += "\n- Vous devez indiquer un prix (coût global)";
+            msg += "- Vous devez indiquer un prix HT (coût global).\n";
         }
+        //
         if(document.getElementById("gl-CHOOSE_TVA_GL").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA (coût global)";
-        }
-        // calcule id-livreur
-        var personName = document.getElementById("livreur").value.trim();
-        if(personName == ""){
-            msg += "Vous devez renseigner un livreur.";
-        }
-        else {
-            var ok = false;
-            for(var idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    ok = true;
-                    break;
-                }
-            }
-            if(!ok){
-                msg += "Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
-            }
-            else{
-                document.getElementById("id-livreur").value = idActeur;
-            }
-        }
+            msg += "- Vous devez choisir un taux de TVA (coût global).\n";
+        }                                                                                                                 
     } else {
-        // Main oeuvre
+        //
+        // 2 - Coût détaillé
+        //
+        // 2.1 - Main oeuvre
+        //
+        check = checkActeur("conducteur", "- Vous devez renseigner le conducteur.\n");
+        document.getElementById("id-conducteur").value = check[0];
+        msg += check[1];
+        //        
         if(document.getElementById("monheure").value == ""){
-            msg += "\n- Vous devez indiquer un nombre d'heures (m.o.)";
+            msg += "- Vous devez indiquer un nombre d'heures (m.o.).\n";
         }
         if(document.getElementById("moprixh").value == ""){
-            msg += "\n- Vous devez indiquer un prix / h HT (m.o.)";
+            msg += "- Vous devez indiquer un prix / h HT (m.o.).\n";
         }
         if(document.getElementById("mo-CHOOSE_TVA_MO").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA (m.o.)";
+            msg += "- Vous devez choisir un taux de TVA (m.o.).\n";
         }
-        // calcule id-conducteur
-        var personName = document.getElementById("conducteur").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner le conducteur.";
+        //
+        // 2.2 - Outil
+        //
+        check = checkActeur("proprioutil", "- Vous devez renseigner le propriétaire de l'outil.\n");
+        document.getElementById("id-proprioutil").value = check[0];
+        msg += check[1];
+        //
+        if(document.getElementById("ouprix").value == ""){
+            msg += "- Vous devez indiquer un prix HT (outil).\n";
         }
-        else{
-            var ok = false;
-            for(var idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    ok = true;
-                    break;
-                }
-            }
-            if(!ok){
-                msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
-            }
-            else{
-                document.getElementById("id-conducteur").value = idActeur;
-            }
-        }
-        // Outil
-        if(document.getElementById("ouprix").value == ""){                      
-            msg += "\n- Vous devez indiquer un prix HT (outil)";
-        }
+        //
         if(document.getElementById("ou-CHOOSE_TVA_OU").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA (outil)";
-        }
-        // calcule id-proprioutil
-        var personName = document.getElementById("proprioutil").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner le propriétaire de l'outil.";
-        }
-        else{
-            var ok = false;
-            for(var idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    ok = true;
-                    break;
-                }
-            }
-            if(!ok){
-                msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
-            }
-            else{
-                document.getElementById("id-proprioutil").value = idActeur;
-            }
+            msg += "- Vous devez choisir un taux de TVA (outil).\n";
         }
     }
     //
     if(msg != ""){
-        msg = "Certains champs sont obligatoires :" + msg;
+        msg = "Impossible de valider ce formulaire :\n" + msg;
         alert(msg);
         return false;
     }
+    return true;
 }
 </script>
 

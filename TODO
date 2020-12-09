@@ -2,6 +2,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- remplacer html required par js dans tous les forms
+
 - js : remplacer var par let ou const
 
 - js : possible de mettre en commun, entre chautre et bspied
@@ -26,8 +28,6 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est pas valable
 
 - Tester évolution du stock sur les hangars à plaquette
 - tester delete ou update tas dans un Plaq
-- Création loyer stockage : vérifier par ajax cohérence avec les loyers déjà existant (?)
-- tester liste stockages avec stockages archivés
 - loyer lieu de stockage, new, update : vérifier que les dates ne chevauchent pas ?
 
 - BDD : voir not null ou pas

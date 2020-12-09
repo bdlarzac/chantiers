@@ -7,7 +7,7 @@
         
         <label for="client">Client</label>
         <div class="autocomplete">
-            <input type="text" name="client" id="client" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="client" id="client" value="" autocomplete="off" class="width20">
         </div>
         
         <label for="fournisseur">Fournisseur</label>
@@ -17,7 +17,7 @@
                 
         <label for="puht">PU HT</label>
         <div>
-            <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5" required>
+            <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5">
             &euro; / map
         </div>
         
@@ -25,7 +25,7 @@
         <div>{{.TVA}} %</div>
         
         <label for="datevente">Date Vente</label>
-        <input type="date" name="datevente" id="datevente" value="{{.DateVente | dateIso}}" class="width15" required>
+        <input type="date" name="datevente" id="datevente" value="{{.DateVente | dateIso}}" class="width15">
     
     </div>
     
@@ -80,17 +80,18 @@
         <div class="help-title">Aide</div>
         <div class="section">
             <b>Quantité</b> : La quantité d'une vente n'est pas renseignée ici.
-            <br>Elle est calculée à partir des quantités chargées en vue des livraisons effectuées pour cette vente.
+            <br>Elle sera renseignée dans les opérations de <b>chargement</b> liées aux livraisons de cette vente.
         </div>
         <div class="section">
-            <b>Taux TVA</b> : ce taux concerne les plaquettes ; il est le même pour toutes les ventes. Il peut être changé dans la configuration :
+            <b>Taux TVA</b> : ce taux concerne les plaquettes ; il est le même pour toutes les ventes.
+            <br>Il peut être changé dans la configuration :
             <br>fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>vente-plaquettes</code>.
         </div>
         <div class="section">
             <b>Faire apparaître la (les) livraison(s) dans la facture</b> :
             <br>Le coût de la livraison facturée est distinct du coût payé par BDL aux livreurs.
             <br>Ce coût doit être saisi dans <b>PU HT livraison</b>.
-            <br>La quantité utilisée par ce coût de livraison est la même que la quantité de la vente.
+            <br>La quantité utilisée par ce coût de livraison est la même que la quantité de la vente (qui sera renseignée dans les opérations de chargement).
             <br>Le taux de TVA est le même pour toutes les livraisons ; spécifié dans le fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>livraison</code>.
         </div>
         <div class="section">
@@ -117,8 +118,7 @@ function initialize(){
     // form new
     if({{.Client.Id}} == 0){
         if(document.getElementById("fournisseur").length == 2){
-            // s'il n'y a qu'un seul fournisseur possible (BDL)
-            // donc 2 options : "choisir" et "BDL", alors on pré-sélectionne BDL
+            // s'il n'y a qu'un seul fournisseur possible (BDL), alors on pré-sélectionne BDL
             document.getElementById("fournisseur").selectedIndex = "1"; 
         }
         else{
@@ -142,47 +142,43 @@ function initialize(){
 
 // ***************************************
 function validateForm(){
+    //
+    let msg = "", check;
+    //
+    check = checkActeur("client", "- Vous devez renseigner un client.\n");
+    document.getElementById("id-client").value = check[0];
+    msg += check[1];
+    //
     if(document.getElementById("CHOOSE_FOURNISSEUR").selected == true){
-        alert("Vous devez choisir un fournisseur");
-        return false;
+        msg += "- Vous devez choisir un fournisseur.\n";
+    }
+    //
+    if(document.getElementById("puht").value == ""){
+        msg += "- Vous devez choisir un PU HT.\n";
+    }
+    //
+    if(document.getElementById("datevente").value == ""){
+        msg += "- Vous devez choisir une date de vente.\n";
     }
     //
     if(document.getElementById("facturelivraison").checked == true){
         if(document.getElementById("facturelivraisonpuht").value == ""){
-            alert("Si la livraison apparaît sur la facture,\nvous devez spécifier le PU HT livraison.");
-            return false;
+            msg += "- Si la livraison apparaît sur la facture, vous devez spécifier le PU HT livraison.\n";
         }
     }
     //
     document.getElementById("notes").value = document.getElementById("notes").value.trim();
     if(document.getElementById("facturenotes").checked == true){
         if(document.getElementById("notes").value == ""){
-            alert("Si les notes apparaissent sur la facture,\nvous devez saisir des notes.");
-            return false;
+            msg += "- Si les notes apparaissent sur la facture, vous devez saisir des notes.\n";
         }
-    }
-    
-    // calcule id-client
-    var personName = document.getElementById("client").value.trim();
-    if(personName == ""){
-        alert("Vous devez renseigner un client.");
-        return false;
-    }
-    var ok = false;
-    for(var idActeur in window.globalPersons){
-        if(window.globalPersons[idActeur] == personName){
-            ok = true;
-            break;
-        }
-    }
-    if(!ok){
-        alert("Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.");
-        return false;
-    }
-    else{
-        document.getElementById("id-client").value = idActeur;
     }
     //
+    if(msg != ""){
+        msg = "Impossible de valider ce formulaire :\n" + msg;
+        alert(msg);
+        return false;
+    }
     return true;
 }
 

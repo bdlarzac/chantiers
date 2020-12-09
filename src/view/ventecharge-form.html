@@ -17,10 +17,10 @@
         </select>
 
         <label for="qte">Quantité (maps)</label>
-        <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5" required>
+        <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5">
         
         <label for="datecharge">Date chargement</label>
-        <input type="date" name="datecharge" id="datecharge" value="{{.DateCharge | dateIso}}" class="width20" required>
+        <input type="date" name="datecharge" id="datecharge" value="{{.DateCharge | dateIso}}" class="width20">
         
     </div>
     
@@ -34,7 +34,7 @@
         
         <label for="chargeur">Chargeur</label>
         <div class="autocomplete">
-            <input type="text" name="chargeur" id="chargeur" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="chargeur" id="chargeur" value="" autocomplete="off" class="width20">
         </div>
         
         <label for="glprix">Prix HT</label>
@@ -63,7 +63,7 @@
         
         <label for="conducteur">Conducteur</label>
         <div class="autocomplete">
-            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20">
         </div>
 
         <label for="monheure">Nombre d'heures</label>
@@ -89,7 +89,7 @@
         
         <label for="proprioutil">Propriétaire outil</label>
         <div class="autocomplete">
-            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20">
         </div>
 
         <label for="ouprix">Prix HT</label>
@@ -233,103 +233,71 @@ function setCoutDetaille(){
 
 // ***************************************
 function validateForm(){
-    let msg = "";
+    //
+    let msg = "", check;
+    //
     if(document.getElementById("CHOOSE_TAS").selected == true){
-        msg += "\n- Vous devez choisir un tas";
+        msg += "- Vous devez choisir un tas.\n";
     }
-    // attribut required pas utilisable à cause du choix possible entre cout global / détaillé
-    // remplacé par tests et alert
-    // dates de paiement pas obligatoires
+    //
+    if(document.getElementById("qte").value == ""){
+        msg += "- Vous devez indiquer la quantité de plaquettes.\n";
+    }
+    
     if(document.getElementById("cout-global").checked){
-        // Coût global
+        //
+        // 1 - Coût global
+        //
+        check = checkActeur("chargeur", "- Vous devez renseigner le chargeur.\n");
+        document.getElementById("id-chargeur").value = check[0];
+        msg += check[1];
+        //
         if(document.getElementById("glprix").value == ""){
-            msg += "\n- Vous devez indiquer un prix (coût global)";
+            msg += "- Vous devez indiquer un prix (coût global).\n";
         }
+        //
         if(document.getElementById("gl-CHOOSE_TVA_GL").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA (coût global)";
-        }
-        // calcule id-chargeur
-        var personName = document.getElementById("chargeur").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner un chargeur.";
-        }
-        else{
-            var ok = false;
-            for(var idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    ok = true;
-                    break;
-                }
-            }
-            if(!ok){
-                msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
-            }
-            else{
-                document.getElementById("id-chargeur").value = idActeur;
-            }
+            msg += "- Vous devez choisir un taux de TVA (coût global).\n";
         }
     } else {
-        // Main oeuvre
+        //
+        // 2 - Coût détaillé
+        //
+        // 2.1 - Main oeuvre
+        //
+        check = checkActeur("conducteur", "- Vous devez renseigner le conducteur.\n");
+        document.getElementById("id-conducteur").value = check[0];
+        msg += check[1];
+        //
         if(document.getElementById("monheure").value == ""){
-            msg += "\n- Vous devez indiquer un nombre d'heures (m.o.)";
+            msg += "- Vous devez indiquer un nombre d'heures (m.o.).\n";
         }
+        //
         if(document.getElementById("moprixh").value == ""){                      
-            msg += "\n- Vous devez indiquer un prix / h HT (m.o.)";
+            msg += "- Vous devez indiquer un prix / h HT (m.o.).\n";
         }
+        //
         if(document.getElementById("mo-CHOOSE_TVA_MO").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA (m.o.)";
+            msg += "- Vous devez choisir un taux de TVA (m.o.).\n";
         }
-        // calcule id-conducteur
-        var personName = document.getElementById("conducteur").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner le conducteur.";
-        }
-        else{
-            var ok = false;
-            for(var idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    ok = true;
-                    break;
-                }
-            }
-            if(!ok){
-                msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
-            }
-            else{
-                document.getElementById("id-conducteur").value = idActeur;
-            }
-        }
-        // Outil
+        //
+        // 2.2 - Outil
+        //
+        check = checkActeur("proprioutil", "- Vous devez renseigner le propriétaire de l'outil.\n");
+        document.getElementById("id-proprioutil").value = check[0];
+        msg += check[1];
+        //
         if(document.getElementById("ouprix").value == ""){                      
-            msg += "\n- Vous devez indiquer un prix HT (outil)";
+            msg += "- Vous devez indiquer un prix HT (outil).\n";
         }
+        //
         if(document.getElementById("ou-CHOOSE_TVA_OU").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA (outil)";
-        }
-        // calcule id-proprioutil
-        var personName = document.getElementById("proprioutil").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner le propriétaire de l'outil.";
-        }
-        else{
-            var ok = false;
-            for(var idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    ok = true;
-                    break;
-                }
-            }
-            if(!ok){
-                msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
-            }
-            else{
-                document.getElementById("id-proprioutil").value = idActeur;
-            }
+            msg += "- Vous devez choisir un taux de TVA (outil).\n";
         }
     }
     //
     if(msg != ""){
-        msg = "Impossible de valider ce formulaire :" + msg;
+        msg = "Impossible de valider ce formulaire :\n" + msg;
         alert(msg);
         return false;
     }
