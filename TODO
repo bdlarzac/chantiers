@@ -4,6 +4,8 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - remplacer html required par js dans tous les forms
 
+- qd on tape DELAITTE - MOULINIER J. Paul - Françoise autocomplete ne marche pas à partir du J
+
 - js : remplacer var par let ou const
 
 - js : possible de mettre en commun, entre chautre et bspied

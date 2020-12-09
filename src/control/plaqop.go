@@ -75,6 +75,7 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
+                    "/view/common/checkActeur.js",
 				    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqOpForm{
@@ -149,6 +150,7 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
+                    "/view/common/checkActeur.js",
 				    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsPlaqOpForm{

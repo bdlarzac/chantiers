@@ -16,11 +16,11 @@
         <div>                                                                                                                              
             <div class="inline-block">
                 <div class="center"><label for="date-debut">Début</label></div>
-                <input type="date" name="date-debut" id="date-debut" value="{{.DateDebut | dateIso}}" required>
+                <input type="date" name="date-debut" id="date-debut" value="{{.DateDebut | dateIso}}">
             </div>
             <div class="inline-block">
                 <div class="center"><label for="date-fin">Fin</label></div>
-                <input type="date" name="date-fin" id="date-fin" value="{{.DateFin | dateIso}}" required>
+                <input type="date" name="date-fin" id="date-fin" value="{{.DateFin | dateIso}}">
             </div>
         </div>
         
@@ -130,16 +130,21 @@ function initialize() {
 // ***************************************
 function validateForm(){
     let msg = "";
-    
+    //
     msg += validateFormChantierLien(); // dans chantier-lien.html
-    
-    // dates debut - fin
+    //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;
-    if(fin <= deb){
-        msg += "\n- La date de fin doit se situer après la date de début";
+    if(deb == ""){
+        msg += "- Vous devez renseigner la date de début.\n";
     }
-    // check stockages
+    if(fin == ""){
+        msg += "- Vous devez renseigner la date de fin.\n";
+    }
+    if(deb != "" && fin != "" && fin <= deb){
+        msg += "- La date de fin doit se situer après la date de début.\n";
+    }
+    //
     let ok = false;
     {{range $.Details.AllStockages}}
         if(document.getElementById("stockage-{{.Id}}").checked){
@@ -147,24 +152,28 @@ function validateForm(){
         }
     {{end}}
     if(!ok){
-        msg += "\n- Vous devez au moins choisir un lieu de stockage";
+        msg += "- Vous devez au moins choisir un lieu de stockage.\n";
     }
-    // granulométrie
+    //
+    if(document.getElementById("surface").value == ""){
+        msg += "- Vous devez renseigner la surface.\n";
+    }
+    //
     if(document.getElementById("granulo").value == "CHOOSE_GRANULO"){
-        msg += "\n- Vous devez renseigner une granulométrie.";
+        msg += "- Vous devez choisir une granulométrie.\n";
     }
-    // exploitation
+    //
     if(document.getElementById("exploitation").value == "CHOOSE_EXPLOITATION"){
-        msg += "\n- Vous devez renseigner un type d'exploitation.";
+        msg += "- Vous devez choisir un type d'exploitation.\n";
     }
     //
     if(msg != ""){
         alert("Impossible de valider ce formulaire : \n" + msg);
         return false;
     }
-    
+    //
     bidouilleUGChantierLien();
-    
+    //
     return true;
 }
 </script>   

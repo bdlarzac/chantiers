@@ -19,10 +19,10 @@
         </select>
         
         <label for="datetrans">Date transport</label>
-        <input type="date" name="datetrans" id="datetrans" value="{{.DateTrans | dateIso}}" class="width20" required>
+        <input type="date" name="datetrans" id="datetrans" value="{{.DateTrans | dateIso}}" class="width20">
         
         <label for="qte">Quantité</label>
-        <div><input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5" required> maps</div>
+        <div><input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5"> maps</div>
         
         <!-- ****************** Coût global ******************* -->
         <div class="big5 bold">
@@ -33,14 +33,14 @@
         
         <label for="transporteur">Transporteur</label>
         <div class="autocomplete">
-            <input type="text" name="transporteur" id="transporteur" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="transporteur" id="transporteur" value="" autocomplete="off" class="width20">
         </div>
 
         <label for="glprix">Prix HT</label>
-        <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5" required>
+        <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5">
         
         <label for="gltva">Taux TVA</label>
-        <select name="gltva" id="gltva" class="width8" required>
+        <select name="gltva" id="gltva" class="width8">
             {{$.Details.GlTVAOptions}}
         </select>
         
@@ -59,7 +59,7 @@
         
         <label for="conducteur">Conducteur</label>
         <div class="autocomplete">
-            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20">
         </div>
 
         <label for="conheure">Nb heures</label>
@@ -81,7 +81,7 @@
         
         <label for="proprioutil">Propriétaire outil</label>
         <div class="autocomplete">
-            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20">
         </div>
 
         <!-- ****************** Camion ******************* -->
@@ -206,6 +206,10 @@ function initialize(){
         if("{{.TypeCout}}" == "G"){
             document.getElementById("cout-global").setAttribute("checked", true);
             document.getElementById("camion").setAttribute("checked", true);
+            razConducteur();
+            razProprioutil();
+            razCamion();
+            razTracteur();
             enableCoutGlobal();
         }
         else{
@@ -386,124 +390,97 @@ function enableTracteur(){
 
 // ***************************************
 function validateForm(){
-    // attribut required pas utilisable à cause du choix possible entre cout global / détaillé
-    // remplacé par tests et alert
-    let msg = "";
-    let personName;
-    let personOk;
-    let idActeur;
+    //
+    let msg = "", check;
+    //
     if(document.getElementById("CHOOSE_TAS").selected == true){
-        msg += "\n- Vous devez choisir un tas (lieu de stockage)";
+        msg += "- Vous devez choisir un tas (lieu de stockage).\n";
     }
+    //
+    if(document.getElementById("datetrans").value == ""){
+        msg += "- Vous devez spécifier la date de transport.\n";
+    }
+    //
+    if(document.getElementById("qte").value == ""){
+        msg += "- Vous devez spécifier la quantité transportée.\n";
+    }
+    //
     if(document.getElementById("cout-global").checked){
-        // Coût global
-        if(document.getElementById("CHOOSE_TVA_GL").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA pour le coût global";
-        }
+        //
+        // 1 - Coût global
+        //
+        check = checkActeur("transporteur", "- Vous devez renseigner le transporteur.\n");
+        document.getElementById("id-transporteur").value = check[0];
+        msg += check[1];
+        //
         if(document.getElementById("glprix").value == ""){
-            msg += "\n- Vous devez choisir un prix global HT";
+            msg += "- Vous devez choisir un prix HT (coût global).\n";
         }
-        // calcul de id-transporteur
-        personName = document.getElementById("transporteur").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner un transporteur";
+        //
+        if(document.getElementById("gl-CHOOSE_TVA_GL").selected == true){
+            msg += "- Vous devez choisir un taux de TVA (coût global).\n";
         }
-        else {
-            personOk = false;
-            for(idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    personOk = true;
-                    break;
-                }
-            }
-            if(!personOk){
-                msg += "Le nom \"" + personName + "\"n'existe pas en base.";
-            }
-            else{
-                document.getElementById("id-transporteur").value = idActeur;
-            }
-        }
-    } // fin coût global
-    else{
-        // Coût détaillé
-        // Conducteur
-        if(document.getElementById("CHOOSE_TVA_CO").selected == true){
-            msg += "\n- Vous devez choisir un taux de TVA (conducteur)";
-        }
+    } else {
+        //
+        // 2 - Coût détaillé
+        //
+        // 2.1 - Main oeuvre
+        //
+        check = checkActeur("conducteur", "- Vous devez renseigner le conducteur.\n");
+        document.getElementById("id-conducteur").value = check[0];
+        msg += check[1];
+        //
         if(document.getElementById("conheure").value == ""){
-            msg += "\n- Vous devez choisir un nombre d'heures (conducteur)";
+            msg += "- Vous devez choisir un nombre d'heures (conducteur).\n";
         }
+        //
         if(document.getElementById("coprixh").value == ""){
-            msg += "\n- Vous devez choisir un prix / heure (conducteur)";
+            msg += "- Vous devez choisir un prix / heure (conducteur).\n";
         }
+        //
+        if(document.getElementById("co-CHOOSE_TVA_CO").selected == true){
+            msg += "- Vous devez choisir un taux de TVA (conducteur).\n";
+        }
+        //
+        // 2.2 - Outil
+        //
+        check = checkActeur("proprioutil", "- Vous devez renseigner le propriétaire de l'outil.\n");
+        document.getElementById("id-proprioutil").value = check[0];
+        msg += check[1];
+        //
         if(document.getElementById("camion").checked){
-            // Camion
-            if(document.getElementById("CHOOSE_TVA_CA").selected == true){
-                msg += "\n- Vous devez choisir un taux de TVA (camion)";
-            }
+            // 2.2.1 - Camion
             if(document.getElementById("cankm").value == ""){
-                msg += "\n- Vous devez choisir un nombre de km (camion)";
+                msg += "- Vous devez choisir un nombre de km (camion).\n";
             }
+            //
             if(document.getElementById("caprixkm").value == ""){
-                msg += "\n- Vous devez choisir un prix au km (camion)";
+                msg += "- Vous devez choisir un prix au km (camion).\n";
+            }
+            //
+            if(document.getElementById("ca-CHOOSE_TVA_CA").selected == true){
+                msg += "- Vous devez choisir un taux de TVA (camion).\n";
             }
         }
         else{
-            // Tracteur + benne
-            if(document.getElementById("CHOOSE_TVA_TB").selected == true){
-                msg += "\n- Vous devez choisir un taux de TVA (tracteur)";
+            // 2.2.2 Tracteur + benne
+            if(document.getElementById("tbnbenne").value == ""){                      
+                msg += "- Vous devez choisir un nombre de bennes (tracteur).\n";
             }
+            //
             if(document.getElementById("tbduree").value == ""){
-                msg += "\n- Vous devez choisir une durée (tracteur)";
+                msg += "- Vous devez choisir une durée par benne (tracteur).\n";
             }
-            if(document.getElementById("tbnbenne").value == ""){
-                msg += "\n- Vous devez choisir un nombre de bennes (tracteur)";
-            }
+            //
             if(document.getElementById("tbprixh").value == ""){
-                msg += "\n- Vous devez choisir un prix / heure (tracteur)";
+                msg += "- Vous devez choisir un prix / heure (tracteur).\n";
+            }
+            //
+            if(document.getElementById("tb-CHOOSE_TVA_TB").selected == true){
+                msg += "- Vous devez choisir un taux de TVA (tracteur).\n";
             }
         }
-        // calcul de id-conducteur
-        personName = document.getElementById("conducteur").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner un conducteur";
-        }
-        else {
-            personOk = false;
-            for(idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    personOk = true;
-                    break;
-                }
-            }
-            if(!personOk){
-                msg += "Le nom \"" + personName + "\"n'existe pas en base.";
-            }
-            else{
-                document.getElementById("id-conducteur").value = idActeur;
-            }
-        }
-        // calcul de id-proprioutil
-        personName = document.getElementById("proprioutil").value.trim();
-        if(personName == ""){
-            msg += "\n- Vous devez renseigner un propriétaire de l'outil";
-        }
-        else {
-            personOk = false;
-            for(idActeur in window.globalPersons){
-                if(window.globalPersons[idActeur] == personName){
-                    personOk = true;
-                    break;
-                }
-            }
-            if(!personOk){
-                msg += "Le nom \"" + personName + "\"n'existe pas en base.";
-            }
-            else{
-                document.getElementById("id-proprioutil").value = idActeur;
-            }
-        }
-    } // fin coût détaillé
+    }
     //
     if(msg != ""){
         alert(msg);

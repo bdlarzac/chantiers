@@ -9,43 +9,43 @@
         <input type="text" value="{{.Chantier.String}}" readonly>
         
         <label for="type-op">Type d'opération</label>
-        <select name="type-op" id="type-op" class="width10"  onchange="typeOperationChanges();" required>
+        <select name="type-op" id="type-op" class="width10"  onchange="typeOperationChanged();">
             {{$.Details.TypeOpOptions}}
         </select>
 
         <label for="acteur" id ="lbl-acteur">Acteur</label>
         <div class="autocomplete">
-            <input type="text" name="acteur" id="acteur" value="{{.Acteur.NomAutocomplete}}" autocomplete="off" class="width20" required>
+            <input type="text" name="acteur" id="acteur" value="{{.Acteur.NomAutocomplete}}" autocomplete="off" class="width20">
         </div>
 
         <label>Dates opération</label>
         <div>                                                                                                                              
             <div class="inline-block">
                 <div class="center"><label for="date-debut">Début</label></div>
-                <input type="date" name="date-debut" id="date-debut" value="{{.DateDebut | dateIso}}" required>
+                <input type="date" name="date-debut" id="date-debut" value="{{.DateDebut | dateIso}}">
             </div>
             <div class="inline-block">
                 <div class="center"><label for="date-fin">Fin</label></div>
-                <input type="date" name="date-fin" id="date-fin" value="{{.DateFin | dateIso}}" required>
+                <input type="date" name="date-fin" id="date-fin" value="{{.DateFin | dateIso}}">
             </div>
         </div>
         
         <label for="qte">Quantité</label>
         <div>
-            <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5" required>
-            <select name="unite" id="unite" class="width8" onchange="uniteChanges();" required>
+            <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5">
+            <select name="unite" id="unite" class="width8" onchange="uniteChanges();">
                 {{$.Details.UniteOptions}}
             </select>
         </div>
         
         <label for="puht">PU HT</label>
         <div>
-            <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5" required>
+            <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5">
             &euro; <span id="labelPourUnite"></span>
         </div>
         
         <label for="tva">Taux TVA</label>
-        <select name="tva" id="tva" class="width8" required>
+        <select name="tva" id="tva" class="width8">
             {{$.Details.TVAOptions}}
         </select>
 
@@ -100,18 +100,19 @@ function initialize(){
     
     if({{.Acteur.Id}} == 0){
         // form new
-        document.getElementById("CHOOSE_TYPEOP").setAttribute("selected", "selected")
+        document.getElementById("CHOOSE_TYPEOP").setAttribute("selected", "selected");
     }
     else{
         // form update
         window.globalPersons[{{.IdActeur}}] = "{{.Acteur.NomAutocomplete}}";
-        document.getElementById("{{.TypOp}}").setAttribute("selected", "selected")
+        document.getElementById("typeop-{{.TypOp}}").setAttribute("selected", "selected");
+        typeOperationChanged();
     }
 }
 
 // ***************************************
 /** Déclenché lorsqu'on change le choix du type d'opération **/
-function typeOperationChanges(){
+function typeOperationChanged(){
     if(document.getElementById("typeop-DC").selected){
         document.getElementById("unite-MA").selected = true;
     }
@@ -148,46 +149,50 @@ function uniteChanges(){
 
 // ***************************************
 function validateForm(){
-    msg = "";
+    let msg = "", check;
+    //
+    if(document.getElementById("type-op").value == "CHOOSE_TYPEOP"){
+        msg += "- Vous devez renseigner un type d'opération.\n";
+    }
+    //
+    check = checkActeur("acteur", "- Vous devez renseigner l'acteur("
+            + document.getElementById("lbl-acteur").innerHTML.toLowerCase() + ").\n");
+    document.getElementById("id-acteur").value = check[0];
+    msg += check[1];
+    //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;
-    if(fin <= deb){
-        msg += "\n- La date de fin doit se situer après la date de début";
+    if(deb == ""){
+        msg += "- Vous devez renseigner la date de début.\n";
     }
-    if(document.getElementById("type-op").value == "CHOOSE_TYPEOP"){
-        msg += "\n- Vous devez renseigner un type d'opération.";
+    if(fin == ""){
+        msg += "- Vous devez renseigner la date de fin.\n";
     }
+    if(deb != "" && fin != "" && fin <= deb){
+        msg += "- La date de fin doit se situer après la date de début.\n";
+    }
+    //
+    if(document.getElementById("qte").value == ""){
+        msg += "- Vous devez renseigner la quantité.\n";
+    }
+    //
     if(document.getElementById("unite").value == "CHOOSE_UNITE"){
-        msg += "\n- Vous devez renseigner une unité.";
-    }
-    if(document.getElementById("tva").value == "CHOOSE_TVA"){
-        msg += "\n- Vous devez renseigner un taux de TVA.";
+        msg += "- Vous devez renseigner une unité.\n";
     }
     if(document.getElementById("typeop-DC").selected && !document.getElementById("unite-MA").selected){
-        msg += "\n- Pour le déchiquetage, vous devez obligatoirement utiliser des maps.";
+        msg += "- Pour le déchiquetage, vous devez obligatoirement utiliser des maps.\n";
     }
-    // calcule id-acteur
-    var personName = document.getElementById("acteur").value.trim();
-    if(personName == ""){
-        msg += "\n- Vous devez renseigner un acteur.";
+    //
+    if(document.getElementById("puht").value == ""){
+        msg += "- Vous devez renseigner le PU HT.\n";
     }
-    else{
-        var ok = false;
-        for(var idActeur in window.globalPersons){
-            if(window.globalPersons[idActeur] == personName){
-                ok = true;
-                break;
-            }
-        }
-        if(!ok){
-            msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
-        }
-        else{
-            document.getElementById("id-acteur").value = idActeur;
-        }
+    //
+    if(document.getElementById("tva").value == "CHOOSE_TVA"){
+        msg += "- Vous devez renseigner un taux de TVA.\n";
     }
+    //
     if(msg != ""){
-        alert("Impossible de valider ce formulaire : " + msg);
+        alert("Impossible de valider ce formulaire :\n" + msg);
         return false;
     }
     return true;
