@@ -5,7 +5,7 @@ Recherche UG par code
 <form class="form" onsubmit="return validateForm();">
 
     <label for="code">Code</label>
-    <input type="text" name="code" id="code" required onfocus="focusOnCodeUG();">
+    <input type="text" name="code" id="code" onfocus="focusOnCodeUG();">
 
     <div class="margin-top">
         <div class="float-right">
@@ -17,8 +17,7 @@ Recherche UG par code
 </form>
 
 <div>
-<div id="results" class="error display-none">
-</div>
+    <div id="results" class="error display-none"></div>
 </div>
 
 
@@ -29,16 +28,20 @@ function focusOnCodeUG(){
 }
 
 async function validateForm(){
-    let idUG;
-    idUG = await getIdUG();
-alert("idUG = " + idUG);
+    if(document.getElementById("code").value == ""){
+        alert("Vous devez saisir un code UG (ex : \"XV-9\").");
+        return false;
+    }
+    //
+    let idUG = await getIdUG();
+console.log("idUG = " + idUG);
     if(idUG == 0){
         document.getElementById("results").style.display = "inline-block";
         document.getElementById("results").innerHTML
             = "Aucune UG correspondant au code <i><b>" + document.getElementById("code").value + "</b></i>";
         return false;
     }
-//    document.location = "/ug/" + idUG;
+    document.location = "/ug/" + idUG;
     return false;
 }
 
@@ -51,17 +54,13 @@ async function getIdUG(){
     let result = 0;
     const code = document.getElementById("code").value;
     const url = "/ajax/get/ug-from-code/" + code;
-    let response = await fetch(url);
-alert("response =" + response);
+    const response = await fetch(url);
     if(response == null){
-alert('ici null');
         window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
             + "Problème de récupération " + url + " dans ug-search.html\n";
         return result;
     }
-alert("AVANT result = await response.json();");
     result = await response.json();
-alert('result =' + result);
     return result;
 }
 

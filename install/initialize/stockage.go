@@ -20,7 +20,8 @@ import (
 func FillHangarsInitiaux() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-	fmt.Println("Crée le hangar des liquisses")
+	//
+	fmt.Println("Crée le hangar des Liquisses")
 	//
 	var err error
 	var idStock int
@@ -29,7 +30,7 @@ func FillHangarsInitiaux() {
 	var montant float64
 	var datedeb, datefin time.Time
 	//
-	nom = "Hangar des liquisses"
+	nom = "Hangar des Liquisses"
 	idStock, err = model.InsertStockage(db, &model.Stockage{Nom: nom})
 	if err != nil {
 		panic(err)
@@ -55,7 +56,7 @@ func FillHangarsInitiaux() {
 	
 	// Assurance 700 E tous les 6 mois
 	typefrais = "AS"
-	montant = 700 * 6
+	montant = 700 * 6                                                                       
 	notes = "700 E tous les 6 mois"
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
@@ -67,6 +68,14 @@ func FillHangarsInitiaux() {
 	    DateFin: datefin,
 	    Notes: notes,
 	})
+	if err != nil {
+		panic(err)
+	}
+	//
+	fmt.Println("Crée le hangar des Baumes")
+	//
+	nom = "Hangar des Baumes"
+	idStock, err = model.InsertStockage(db, &model.Stockage{Nom: nom})
 	if err != nil {
 		panic(err)
 	}

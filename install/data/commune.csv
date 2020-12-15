@@ -1,14 +1,14 @@
-id;nom
-1;La Bastide-Pradines
-2;La Cavalerie
-3;Cornus
-4;La Couvertoirade
-5;Creissels
-6;L'Hospitalet-du-Larzac
-7;Millau
-8;Nant
-9;La Roque-Sainte-Marguerite
-10;La Panouse-de-Cernon
-11;Saint-Georges-de-Luzençon
-12;Saint-Rome-de-Cernon
-13;Le Caylar
+id;nom;nom_court
+1;La Bastide-Pradines;La Bastide-Pradines
+2;La Cavalerie;La Cavalerie
+3;Cornus;Cornus
+4;La Couvertoirade;La Couvertoirade
+5;Creissels;Creissels
+6;L'Hospitalet-du-Larzac;L'Hospitalet-du-Larzac
+7;Millau;Millau
+8;Nant;Nant
+9;La Roque-Sainte-Marguerite;La Roque-Ste-Marg.
+10;La Panouse-de-Cernon;La Panouse-de-Cernon
+11;Saint-Georges-de-Luzençon;St-Georges-de-Luz.
+12;Saint-Rome-de-Cernon;St-Rome-de-Cernon
+13;Le Caylar;Le Caylar

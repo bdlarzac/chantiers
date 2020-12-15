@@ -15,6 +15,7 @@ import (
 type Commune struct {
 	Id       int
 	Nom      string
+	NomCourt string
 	Lieudits []*Lieudit
 }
 

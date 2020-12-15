@@ -83,7 +83,7 @@
                 <td>{{.TypeFrais | labelStockFrais}}</td>
                 <td>{{.DateDebut | dateFr}}</td>
                 <td>{{.DateFin | dateFr}}</td>
-                <td><b><script>document.write(round({{.Montant}}, 2));</script> &euro;</b></td>
+                <td class="right"><b><script>document.write(round({{.Montant}}, 2));</script> &euro; HT</b></td>
                 <td>{{.Notes | nl2br}}</td>
             </tr>
         {{end}}
@@ -146,7 +146,7 @@ function deleteOrArchiveStockage(id, nom, archivable, deletable){
                 + "le lieu de stockage \"" + nom + "\" sera définitivement supprimé.\n"
                 + "\n"
                 + "En effet, ce lieu de stockage n'est associé à aucun chantier plaquettes.\n"
-                + "Les loyers associés seront aussi définitivement supprimés.";
+                + "Les frais associés (loyers etc.) seront aussi définitivement supprimés.";
         }
         else if(archivable) {
             msg = "Attention, en cliquant sur OK,\n"

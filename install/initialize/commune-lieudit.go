@@ -18,10 +18,10 @@ import (
 )
 
 // *********************************************************
-func FillCommuneOuLieudit(table string) {
-	fmt.Println("Remplit table " + table + " à partir de " + table + ".csv")
+func FillCommune() {
+	fmt.Println("Remplit table commune à partir de commune.csv")
 	dirCsv := getDataDir()
-	filename := path.Join(dirCsv, table+".csv")
+	filename := path.Join(dirCsv, "commune.csv")
 
 	records, err := tiglib.CsvMap(filename, ';')
 
@@ -41,7 +41,45 @@ func FillCommuneOuLieudit(table string) {
 	}()
 
 	for _, v := range records {
-		sql := fmt.Sprintf("insert into %s(id,nom) values(%s, '%s')", table, v["id"], strings.Replace(v["nom"], "'", `''`, -1))
+		sql := fmt.Sprintf(
+		    "insert into commune(id,nom,nomcourt) values(%s, '%s', '%s')",
+		    v["id"],
+		    strings.Replace(v["nom"], "'", `''`, -1),
+		    strings.Replace(v["nom_court"], "'", `''`, -1))
+		if _, err = tx.Exec(sql); err != nil {
+			panic(err)
+		}
+	}
+}
+
+// *********************************************************
+func FillLieudit() {
+	fmt.Println("Remplit table lieudit à partir de lieudit.csv")
+	dirCsv := getDataDir()
+	filename := path.Join(dirCsv, "lieudit.csv")
+
+	records, err := tiglib.CsvMap(filename, ';')
+
+	ctx := ctxt.NewContext()
+	db := ctx.DB
+
+	tx, err := db.Begin()
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+	}()
+
+	for _, v := range records {
+		sql := fmt.Sprintf(
+		    "insert into lieudit(id,nom) values(%s, '%s')",
+		    v["id"],
+		    strings.Replace(v["nom"], "'", `''`, -1))
 		if _, err = tx.Exec(sql); err != nil {
 			panic(err)
 		}

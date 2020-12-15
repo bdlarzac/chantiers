@@ -54,82 +54,10 @@ type LigneRecapUG struct {
 	Benefice         float64
 }
 
-// Pas inclus dans GetUGFull()
-func (ug *UG) ComputeRecap(db *sqlx.DB) error {
-	var query string
-	var err error
-	ug.Recaps = make(map[string]RecapUG)
-	//
-	// chantiers plaquettes
-	//
-	ids := []int{}
-	query = `select id from plaq where id in(
-	    select id_chantier from chantier_ug where type_chantier='plaq' and id_ug =$1
-    )`
-	err = db.Select(&ids, query, ug.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	for _, idChantier := range ids {
-		chantier, err := GetPlaqFull(db, idChantier)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur appel GetPlaqFull()")
-		}
-		y := strconv.Itoa(chantier.DateDebut.Year())
-		myrecap := ug.Recaps[y] // à cause de pb "cannot assign"
-		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
-		myrecap.Plaquettes.Quantite += chantier.Volume
-		myrecap.Plaquettes.Superficie += chantier.Surface
-		myrecap.PlaquettesEtBoisOeuvre.Quantite += chantier.Volume
-		myrecap.PlaquettesEtBoisOeuvre.Superficie += chantier.Surface
-		// TODO myrecap.Plaquettes.CoutExploitation
-		// TODO myrecap.Plaquettes.Benefice
-		ug.Recaps[y] = myrecap
-	}
-	//
-	// Chantier autres valorisations
-	//
-	ids = []int{}
-	query = `select id from chautre where id in(
-	    select id_chantier from chantier_ug where type_chantier='chautre' and id_ug =$1
-    )`
-	err = db.Select(&ids, query, ug.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	for _, idChantier := range ids {
-		chantier, err := GetChautreFull(db, idChantier)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur appel GetChautreFull()")
-		}
-		y := strconv.Itoa(chantier.DateContrat.Year())
-		myrecap := ug.Recaps[y] // à cause de pb "cannot assign"
-		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
-		switch chantier.TypeValo {
-		case "BO":
-			myrecap.BoisOeuvre.Quantite += chantier.Volume
-			myrecap.PlaquettesEtBoisOeuvre.Quantite += chantier.Volume
-		case "CH":
-			myrecap.Chauffage.Quantite += chantier.Volume
-		case "PL":
-			myrecap.Palette.Quantite += chantier.Volume
-		case "PP":
-			myrecap.PateAPapier.Quantite += chantier.Volume
-		}
-		ug.Recaps[y] = myrecap
-	}
-	ug.SortedRecapYears = make([]string, 0, len(ug.Recaps))
-	for k, _ := range ug.Recaps {
-		ug.SortedRecapYears = append(ug.SortedRecapYears, k)
-	}
-	sort.Sort(sort.Reverse(sort.StringSlice(ug.SortedRecapYears)))
-	return nil
-}
-
 // ************************ Nom *********************************
 
 func (ug *UG) String() string {
-	return ug.Code + " -- " + ug.TypeCoupe + " -- " + ug.TypePeuplement
+	return ug.Code + " -- " + ug.TypePeuplement
 }
 
 // ************************ Get *********************************
@@ -241,6 +169,78 @@ func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
 }
 
 // ************************** Compute *******************************
+
+// Pas inclus dans GetUGFull()
+func (ug *UG) ComputeRecap(db *sqlx.DB) error {
+	var query string
+	var err error
+	ug.Recaps = make(map[string]RecapUG)
+	//
+	// chantiers plaquettes
+	//
+	ids := []int{}
+	query = `select id from plaq where id in(
+	    select id_chantier from chantier_ug where type_chantier='plaq' and id_ug =$1
+    )`
+	err = db.Select(&ids, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, idChantier := range ids {
+		chantier, err := GetPlaqFull(db, idChantier)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel GetPlaqFull()")
+		}
+		y := strconv.Itoa(chantier.DateDebut.Year())
+		myrecap := ug.Recaps[y] // à cause de pb "cannot assign"
+		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
+		myrecap.Plaquettes.Quantite += chantier.Volume
+		myrecap.Plaquettes.Superficie += chantier.Surface
+		myrecap.PlaquettesEtBoisOeuvre.Quantite += chantier.Volume
+		myrecap.PlaquettesEtBoisOeuvre.Superficie += chantier.Surface
+		// TODO myrecap.Plaquettes.CoutExploitation
+		// TODO myrecap.Plaquettes.Benefice
+		ug.Recaps[y] = myrecap
+	}
+	//
+	// Chantier autres valorisations
+	//
+	ids = []int{}
+	query = `select id from chautre where id in(
+	    select id_chantier from chantier_ug where type_chantier='chautre' and id_ug =$1
+    )`
+	err = db.Select(&ids, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, idChantier := range ids {
+		chantier, err := GetChautreFull(db, idChantier)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel GetChautreFull()")
+		}
+		y := strconv.Itoa(chantier.DateContrat.Year())
+		myrecap := ug.Recaps[y] // à cause de pb "cannot assign"
+		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
+		switch chantier.TypeValo {
+		case "BO":
+			myrecap.BoisOeuvre.Quantite += chantier.Volume
+			myrecap.PlaquettesEtBoisOeuvre.Quantite += chantier.Volume
+		case "CH":
+			myrecap.Chauffage.Quantite += chantier.Volume
+		case "PL":
+			myrecap.Palette.Quantite += chantier.Volume
+		case "PP":
+			myrecap.PateAPapier.Quantite += chantier.Volume
+		}
+		ug.Recaps[y] = myrecap
+	}
+	ug.SortedRecapYears = make([]string, 0, len(ug.Recaps))
+	for k, _ := range ug.Recaps {
+		ug.SortedRecapYears = append(ug.SortedRecapYears, k)
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(ug.SortedRecapYears)))
+	return nil
+}
 
 func (ug *UG) ComputeParcelles(db *sqlx.DB) error {
 	query := "select id_parcelle from parcelle_ug where id_ug=$1"

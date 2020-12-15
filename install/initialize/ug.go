@@ -78,8 +78,8 @@ func FillUG() {
 		sql := fmt.Sprintf("insert into %s(code,type_coupe,previsionnel_coupe,type_peuplement) values('%s', '%s', '%s', '%s')",
 			table,
 			code,
-			type_coupe,
 			records3[code]["previsionnel_coupe"],
+			type_coupe,
 			records3[code]["type_peuplement"])
 		if _, err = tx.Exec(sql); err != nil {
 			panic(err)

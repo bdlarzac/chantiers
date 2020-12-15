@@ -21,7 +21,7 @@
 </div>
 <div>
     <div id="liste-ugs"></div>
-    <center class="margin-top">
+    <div class="margin-top">
         <img 
             class="inline vertical-align-middle bigicon margin-right"
             src="/static/img/new.png"
@@ -34,7 +34,7 @@
             title="Valider ces UGs et choisir fermiers et lieux-dits"
             onclick="validateUGs();"
         />
-    </center>
+    </div>
 </div>
 
 
@@ -188,6 +188,7 @@ async function validateUGs(){
     let elt, response;
     let idDB, nom, idDansForm, divElt, checkElt, labelElt;
     let dbRows; // assoc array id => nom
+    let curCommune, tmp;
     
     // Affiche lieux-dits
     window.lienChantierMsg = "";
@@ -220,8 +221,14 @@ async function validateUGs(){
             window.lienChantierMsg += "- L'UG \"" + codeUG + "\" n'est associée à aucun lieu-dit.\n";
             continue;
         }
+        // nom affiché = nom lieudit + nom(s) communes(s)
+        tmp = [];
         response.forEach(function(item){
-            dbRows[item.Id] = item.Nom;
+            item.Communes.forEach(function(curCommune){
+                tmp.push(curCommune.Nom)
+            });
+            tmp = [...new Set(tmp)]; // = array_unique
+            dbRows[item.Id] = item.Nom + " (" + tmp.join(", ") + ")";
         });
     }
     if(window.lienChantierMsg != ""){
@@ -432,7 +439,7 @@ function validateFormChantierLien(){
     Ex : remplace "XIX-11" par 6
     Ça permet au controller qui traite le formulaire d'avoir directement les ids UG
 **/
-function bidouilleUGChantierLien(){
+function chantierLienUGCode2id(){
     const ugs = document.getElementsByClassName("input-ug");
     let val;
     for(i = 0; i < ugs.length; i++) {

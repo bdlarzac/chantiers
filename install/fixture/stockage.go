@@ -67,7 +67,7 @@ func FillStockage() {
 	}
 	
 	// Elec 52.5 E tous les 2 mois
-	typefrais = "AS"
+	typefrais = "EL"
 	montant = 52.5 * 18
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")

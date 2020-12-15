@@ -103,7 +103,7 @@
     <tr>
         <td>{{.Volume}} map</td>
         <td><script>let nb = {{.Volume}}*{{$PourcentPerte}}/100; document.write(round(nb, 2));</script> map</td>
-        <td><script>let nb = {{.Volume}}*(1 - {{$PourcentPerte}}/100); document.write(round(nb, 2));</script> map</td>
+        <td><script>nb = {{.Volume}}*(1 - {{$PourcentPerte}}/100); document.write(round(nb, 2));</script> map</td>
     </tr>
 </table>
 

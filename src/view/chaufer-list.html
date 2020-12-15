@@ -54,7 +54,7 @@
         <td>
             <div class="grid2-pres">
             {{range .LiensParcelles}}
-                <div>{{.Parcelle.Code}}</div>
+                <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
                 <div>{{if .Entiere}}Entière{{else}}{{.Surface}} ha{{end}}</div>
             {{end}}
             </div>

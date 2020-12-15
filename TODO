@@ -21,7 +21,7 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 grep -rn xploitant
 
 - revoir les fonctions String() de transport, rangement, chargement, livraison :
-Le test sur transporteur / rangeur / chargeur / livreur n'est pas valable
+Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 + spécifier le nom dans le cdc
 
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure

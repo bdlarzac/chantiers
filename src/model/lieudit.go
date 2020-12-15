@@ -65,7 +65,7 @@ func GetLieuditsAutocomplete(db *sqlx.DB, str string) ([]*Lieudit, error) {
 
 // Renvoie des Lieudit à partir d'un code UG.
 // Utilise les parcelles pour faire le lien
-// Ne contient que les champs de la table ug.
+// Ne contient que les champs de la table ug + le champ Communes.
 // Les autres champs ne sont pas remplis.
 func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) ([]*Lieudit, error) {
 	lds := []*Lieudit{}
@@ -79,6 +79,12 @@ func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) ([]*Lieudit, error) {
 	err := db.Select(&lds, query, codeUG)
 	if err != nil {
 		return lds, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, ld := range(lds){
+	    err = ld.ComputeCommunes(db)
+        if err != nil {
+            return lds, werr.Wrapf(err, "Erreur appel ComputeCommunes()")
+        }
 	}
 	return lds, nil
 }
