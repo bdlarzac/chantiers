@@ -8,7 +8,7 @@
         <label for="fermier">Fermier</label>
         <div>
             <div class="autocomplete">
-                <input type="text" name="fermier" id="fermier" value="" autocomplete="off" class="width20" required>
+                <input type="text" name="fermier" id="fermier" value="" autocomplete="off" class="width20">
             </div>
             <a id="choisir-fermier" href="#" onclick="checkFermier();">
                 <img class="inline bigicon vertical-align-middle" src="/static/img/validate.png" title="Choisir ce fermier" />
@@ -22,7 +22,7 @@
         <div id="parcelles"></div>
         
         <label for="datechantier">Date chantier</label>
-        <div><input type="date" name="datechantier" id="datechantier" value="{{.DateChantier | dateIso}}" required></div>
+        <div><input type="date" name="datechantier" id="datechantier" value="{{.DateChantier | dateIso}}"></div>
         
         <label for="exploitation">Exploitation</label>
         <select name="exploitation" id="exploitation" class="width8">
@@ -36,8 +36,8 @@
         
         <label for="volume">Volume</label>
         <div>
-            <input type="number" name="volume" id="volume" step="0.01" min="0" value="{{.Volume | zero2empty}}" class="width5" required>
-            <select name="unite" id="unite" class="width8" required>
+            <input type="number" name="volume" id="volume" step="0.01" min="0" value="{{.Volume | zero2empty}}" class="width5">
+            <select name="unite" id="unite" class="width8">
                 {{$.Details.UniteOptions}}
             </select>
         </div>
@@ -124,8 +124,14 @@ async function checkFermier(){
         // fermier invalide
         document.getElementById("id-fermier").value = 0;
         document.getElementById("fermier").value = "";
+        if(nomFermier == ""){
+            alert("Saisissez le nom d'un fermier avant de valider.");
+        }
+        else{
+            alert("Le fermier \"" + nomFermier + "\" n'existe pas en base.");
+        }
     }
-    actionAfterChangeFermier();
+    await actionAfterChangeFermier();
 }
 
 // ******************************************************
@@ -147,17 +153,24 @@ async function actionAfterChangeFermier(){
     const url = "/ajax/get/ugs-from-fermier/" + idFermier;
     let response = await fetch(url);
     if(response == null){
-        alert("ERREUR\nTransmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
             + "Problème de récupération " + url + " dans chaufer-form.html");
         return;                                                                     
     }
     response = await response.json();
+/* 
+    // NOTE : commenté, mais pas complètement sûr
     if(response == null){
-        alert("ERREUR\nTransmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
             + "Mauvais format de retour de " + url + " dans chaufer-form.html");
         return;
     }
     if(response.length == 0){
+        ugsElt.innerHTML = "Aucune UG pour ce fermier";
+        return;
+    }
+*/
+    if(response == null || response.length == 0){
         ugsElt.innerHTML = "Aucune UG pour ce fermier";
         return;
     }
@@ -215,13 +228,13 @@ async function afficheParcelles(idUG){
     // Ajax pour écup parcelles correspondant à l'UG
     let response = await fetch(url);
     if(response == null){
-        alert("ERREUR\nTransmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
             + "Problème de récupération " + url + " dans chaufer-form.html");
         return;                                                                     
     }
     response = await response.json();
     if(response == null){
-        alert("ERREUR\nTransmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
             + "Mauvais format de retour de " + url + " dans chaufer-form.html");
         return;
     }
@@ -260,7 +273,7 @@ async function afficheParcelles(idUG){
         // class et id de curdiv servent dans validateForm()
         curdiv.setAttribute("class", "parcelle");
         curdiv.setAttribute("id", "parcelle-" + item.id);
-        surfaceInputNameId = "parcelle-surface-" + item.id; // variable utilisée pour readonly
+        surfaceInputNameId = "parcelle-surface-" + item.id;
         radioName = "radio-parcelle-" + item.id;
         strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
             + "document.getElementById('"+surfaceInputNameId+"').value = '';"
@@ -342,77 +355,76 @@ async function afficheParcelles(idUG){
 
 // ***************************************
 function validateForm(){
-    let msg = "";
-    if(document.getElementById("CHOOSE_ESSENCE").selected == true){
-        msg += "\n- Vous devez choisir une essence";
-    }
-    if(document.getElementById("CHOOSE_EXPLOITATION").selected == true){
-        msg += "\n- Vous devez choisir une exploitation";
-    }
-    if(document.getElementById("CHOOSE_UNITE").selected == true){
-        msg += "\n- Vous devez choisir une unité pour le volume";
-    }
-    let i, id, elt;
-    // vérifie qu'une ug est sélectionnée
-    let ugChecked = false;
-    const ugs = document.getElementsByName("ug");
-    for (i = 0; i < ugs.length; i++) {
-        if(document.getElementById(ugs[i].id).checked == true){
-            ugChecked = true;
-            break;
-        }
-    }
-    if(!ugChecked){
-        msg += "\n- Vous devez sélectionner une unité de gestion";
-    }
-    else{
-        // Vérifie qu'au moins une parcelle est sélectionnée
-        const parcelles = document.getElementsByClassName("parcelle");
-        let parcelleChecked = false;
-        let surfaceZero = false;
-        for (i = 0; i < parcelles.length; i++) {
-            id = parcelles[i].id.replace("parcelle-", "");
-            if(document.getElementById("radio-parcelle-non-selectionne-" + id).checked == false){
-                parcelleChecked = true;
-                elt = document.getElementById("radio-parcelle-surface-" + id);
-                if(elt.checked && (elt.value == 0 || elt.value == "")){
-                    surfaceZero = true;
-                }
-            }
-        }
-///////////////// ICI A TERMINER ////////////////////////
-        if(!parcelleChecked){
-            msg += "\n- Vous devez au moins choisir une parcelle";
-        }
-        if(surfaceZero){
-            msg += "\n- La surface des parcelles doit être différente de 0";
-        }
-    }
-    // calcule id-fermier
-    let personName = document.getElementById("fermier").value.trim();
-    let ok = false;
-    let idActeur;
-    if(personName == ""){
-        msg += "\n- Vous devez renseigner un fermier.";
-    }
-    else{
-        ok = false;
-        for(idActeur in window.globalPersons){
-            if(window.globalPersons[idActeur] == personName){
-                ok = true;
+    //
+    let msg = "", check;
+    let i, elt;
+    // vérifie fermier
+    check = checkActeur("fermier", "- Vous devez renseigner le fermier.\n");
+    document.getElementById("id-fermier").value = check[0];
+    msg += check[1];
+    // vérifie ug et parcelles que si fermier ok
+    if(check[0] != 0){
+        // vérifie qu'une ug est sélectionnée
+        let ugChecked = false;
+        let idParcelle;
+        let surfaceInputElt;
+        const ugs = document.getElementsByName("ug");
+        for (i = 0; i < ugs.length; i++) {
+            if(document.getElementById(ugs[i].id).checked == true){
+                ugChecked = true;
                 break;
             }
         }
+        if(!ugChecked){
+            msg += "- Vous devez sélectionner une unité de gestion.\n";
+        }
+        else{
+            // vérifie qu'au moins une parcelle est sélectionnée
+            const parcelles = document.getElementsByClassName("parcelle");
+            let parcelleChecked = false;
+            let surfaceZero = false;
+            for (i = 0; i < parcelles.length; i++) {
+                idParcelle = parcelles[i].id.replace("parcelle-", "");
+                if(document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked == false){
+                    parcelleChecked = true;
+                    elt = document.getElementById("radio-parcelle-surface-" + idParcelle);
+                    surfaceInputElt = document.getElementById("parcelle-surface-" + idParcelle);
+                    if(elt.checked && (surfaceInputElt.value == 0 || surfaceInputElt.value == "")){
+                        surfaceZero = true;
+                    }
+                }
+            }
+            if(!parcelleChecked){
+                msg += "- Vous devez au moins choisir une parcelle.\n";
+            }
+            if(surfaceZero){
+                msg += "- La surface des parcelles doit être différente de 0.\n";
+            }
+        }
     }
-    if(!ok){
-        msg += "\n- Le nom \"" + personName + "\"\nne correspond à aucune personne connue en base.";
+    //
+    if(document.getElementById("datechantier").value == ""){
+        msg += "- Vous devez choisir la date de chantier.\n";
     }
-    else{
-        document.getElementById("id-fermier").value = idActeur;
+    //
+    if(document.getElementById("CHOOSE_EXPLOITATION").selected == true){
+        msg += "- Vous devez choisir une exploitation.\n";
+    }
+    //
+    if(document.getElementById("CHOOSE_ESSENCE").selected == true){
+        msg += "- Vous devez choisir une essence.\n";
+    }
+    //
+    if(document.getElementById("volume").value == ""){
+        msg += "- Vous devez choisir le volume.\n";
+    }
+    //
+    if(document.getElementById("CHOOSE_UNITE").selected == true){
+        msg += "- Vous devez choisir une unité pour le volume.\n";
     }
     //
     if(msg != ""){
-        alert(msg);
+        alert("Impossible de valider ce formulaire :\n" + msg);
         return false;
     }
     return true;   

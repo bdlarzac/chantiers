@@ -15,7 +15,7 @@ async function getActeursPossibles(inputField){
     let response;
     response = await fetch(url);
     if(response == null){
-        alert("- ERREUR\nTransmettez ce message l'administrateur du site :\n"
+        alert("- ERREUR - Transmettez ce message l'administrateur du site :\n"
             + "Problème de récupération " + url);
         return result;
     }

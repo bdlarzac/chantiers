@@ -127,6 +127,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
+                    "/view/common/checkActeur.js",
                     "/view/common/getActeurPossibles.js"},
 			},
 		}
@@ -190,6 +191,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
+                    "/view/common/checkActeur.js",
                     "/view/common/getActeurPossibles.js"},
 			},
 		}

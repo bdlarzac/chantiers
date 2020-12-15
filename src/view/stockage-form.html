@@ -2,12 +2,12 @@
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.Stockage}}
-<form class="form" action="{{$.Details.UrlAction}}" method="post">
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
 
     <div class="grid2-form">
 
         <label for="nom">Nom</label>
-        <input class="margin-left05" type="text" name="nom" value="{{.Nom}}" required size="40">
+        <input class="margin-left05" type="text" id="nom" name="nom" value="{{.Nom}}" size="40">
         
     </div>
     
@@ -33,3 +33,24 @@
         Un lieu de stockage représente un hangar à plaquettes.
     </div>
 </div>
+
+
+<script>
+// ***************************************
+function validateForm(){
+    // en théorie, il faudrait aussi vérifier en ajax que le nom n'existe pas en base
+    //
+    let msg = ""
+    //
+    if(document.getElementById("nom").value == ""){
+        msg += "- Vous devez spécifier un nom.\n";
+    }
+    //
+    if(msg != ""){
+        alert("Impossible de valider ce formulaire : \n" + msg);
+        return false;
+    }
+    return true;
+}
+
+</script>

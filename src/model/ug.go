@@ -232,7 +232,7 @@ func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
                     select id_sctl from acteur where id=$1
                 )
             )
-        )`
+        ) order by code`
 	err := db.Select(&ugs, query, idFermier)
 	if err != nil {
 		return ugs, werr.Wrapf(err, "Erreur query : "+query)

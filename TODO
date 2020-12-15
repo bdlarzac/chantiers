@@ -4,9 +4,12 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - remplacer html required par js dans tous les forms
 
-- qd on tape DELAITTE - MOULINIER J. Paul - Françoise autocomplete ne marche pas à partir du J
+- Vérifier tous les cas de response vide au lieu de null
+    response = await response.json();
+    if(response == null){
+=> pas d'erreur si null ?
 
-- js : remplacer var par let ou const
+- ré-écrire model.GetUGsFromLieudit() avec jointures (?)
 
 - js : possible de mettre en commun, entre chautre et bspied
     getActeursPossibles() => attention à url, parfois se termine par "fermier"
