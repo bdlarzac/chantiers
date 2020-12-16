@@ -1,33 +1,24 @@
+<h1>{{.Header.Title}}</h1>
+
 {{with .Details.Chantier}}
 
-<h1>Modifier chantier bois sur pied :<br>{{.String}}</h1>{{/* .FullString pas utilisé à cause du retour à la ligne */}}
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
 
     <div class="grid2-form">
 
+        {{template "chantier-lien.html" $.Details}}
+        
+        {{/* divs pour contenir lieux-dits et fermiers */}}
+        <div id="empty-lieudit1"></div><div id="empty-lieudit2"></div>
+        <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
+        
         <label for="acheteur">Acheteur</label>
         <div class="autocomplete">
-            <input type="text" name="acheteur" id="acheteur" value="" autocomplete="off" class="width20" required>
+            <input type="text" name="acheteur" id="acheteur" value="" autocomplete="off" class="width20">
         </div>
         
         <label for="datecontrat">Date contrat</label>
-        <div><input type="date" name="datecontrat" id="datecontrat" value="{{.DateContrat | dateIso}}" required></div>
-        
-        <label for="lieudit">Lieu-dit</label>
-        <div>
-            <div class="autocomplete">
-                <input type="text" name="lieudit" id="lieudit" autocomplete="off" value="{{.Lieudit.Nom}}" required>
-            </div>
-            <a id="choisir-lieudit" href="#" onclick="checkLD();">
-                <img class="inline bigicon vertical-align-middle" src="/static/img/validate.png" title="Choisir ce lieu-dit" />
-            </a>
-        </div>
-        
-        <label for="parcelles">Parcelles</label>
-        <div id="parcelles"></div>
-        
-        <label>UG</label>
-        <div id="ugs"></div>
+        <div><input type="date" name="datecontrat" id="datecontrat" value="{{.DateContrat | dateIso}}"></div>
         
         <label for="exploitation">Exploitation</label>
         <select name="exploitation" id="exploitation" class="width8">
@@ -41,7 +32,7 @@
         
         <label for="nsterecontrat">Nb stères (contrat)</label>
         <div>
-            <input type="number" name="nsterecontrat" id="nsterecontrat" step="0.01" min="0" value="{{.NStereContrat | zero2empty}}" class="width5" required>
+            <input type="number" name="nsterecontrat" id="nsterecontrat" step="0.01" min="0" value="{{.NStereContrat | zero2empty}}" class="width5">
         </div>
         
         <label for="nsterecoupees">Nb stères (coupées)</label>
@@ -51,7 +42,7 @@
         
         <label for="prixstere">Prix / stère HT</label>
         <div>
-            <input type="number" name="prixstere" id="prixstere" step="0.01" min="0" value="{{.PrixStere | zero2empty}}" class="width5" required>
+            <input type="number" name="prixstere" id="prixstere" step="0.01" min="0" value="{{.PrixStere | zero2empty}}" class="width5">
         </div>
         
         <label for="tva">Taux TVA</label>
@@ -84,7 +75,6 @@
     
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
     <input type="hidden" name="id-acheteur" id="id-acheteur" value="{{.IdAcheteur}}">
-    <input type="hidden" name="id-lieudit" id="id-lieudit" value="{{.IdLieudit}}">
     
 </form>
 
@@ -92,10 +82,6 @@
 <div id="help" class="margin display-none">
     <div class="help-content">
         <div class="help-title">Aide</div>
-        <div class="section">
-            <b>Lieu-dit, Parcelles, UG</b> : Il faut définir à la fois une UG et une ou plusieurs parcelles.
-            <br>Pour cela, sélectionnez d'abord un lieu-dit, puis cliquez sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" alt="Valider"> afin d'obtenir une liste de parcelles et d'UGs à sélectionner.
-        </div>
         <div class="section">
             <b>Taux TVA</b> : le taux de TVA est le même pour tous les chantiers bois sur pied. Il peut être modifié dans le fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>bois-sur-pied</code>.
         </div>
@@ -106,7 +92,6 @@
 <script>
 window.addEventListener("load", function(){
     autocomplete(document.getElementById("acheteur"), getActeursPossibles);
-    autocomplete(document.getElementById('lieudit'), getLDPossibles);
     // Pour vérifier que l'acheteur affiché correspond à une personne existant en base.
     // on ne peut pas se fier uniquement à getElementById("acheteur")
     // car l'utilisateur peut modifier le nom
@@ -116,209 +101,53 @@ window.addEventListener("load", function(){
 
 // ***************************************
 function initialize(){
+    initializeLiensChantier(); // dans view/common/chantier-lien.html    
     // form new
-    if({{.Acheteur.Id}} == 0){
-        actionAfterChangeLieudit();
+    if({{.Id}} == 0){
     }
     // form update
     else{
         document.getElementById("acheteur").value = "{{.Acheteur.NomAutocomplete}}";
         window.globalPersons[{{.IdAcheteur}}] = "{{.Acheteur.NomAutocomplete}}";
-        actionAfterChangeLieudit();
-        setTimeout(function(){
-            {{range .IdsParcelles}}
-                document.getElementById("parcelle-" + "{{.}}").checked = true;
-            {{end}}
-            document.getElementById("ug-" + "{{.IdUG}}").checked = true;
-        }, 1000);
     }
-}
-
-// ***************************************
-/** 
-    Fonction utilisée par autocomplete() pour s'alimenter en données
-    @param inputField input type=text utilisé
-                      pour récupérer des noms de lieux-dits par ajax
-**/
-async function getLDPossibles(inputField){
-    const url = "/ajax/autocomplete/lieudit/" + inputField.value;
-    let response = await fetch(url);
-    response = await response.json();
-    let result = [];
-    if(response != null){
-        response.forEach(function(item) {
-            result.push(item.name);
-        });
-    }
-    return result;                             
-}
-
-// ******************************************************
-/** 
-    Vérifie par ajax que le lieu-dit sélectionné correspond à un lieu-dit existant.
-    Si oui, maj le contenu de id-lieudit
-    Si non, efface le contenu de id-lieudit et de lieudit
-    Passe ensuite la main à actionAfterChangeLieudit()
-**/
-async function checkLD(){
-    const nomLD = document.getElementById("lieudit").value;
-    const url = "/ajax/check/lieudit/" + nomLD;
-    const response = await fetch(url);
-    const idLD = await response.json();
-    if(idLD != null && idLD != 0){
-        document.getElementById("id-lieudit").value = idLD;
-    }
-    else{
-        // lieu-dit invalide
-        document.getElementById("id-lieudit").value = 0;
-        document.getElementById("lieudit").value = "";
-    }
-    actionAfterChangeLieudit();
-}
-
-// ******************************************************
-/**
-    Lorsqu'un lieu-dit change, mettre à jour les parcelles possibles
-**/
-async function actionAfterChangeLieudit(){
-    const idLD = document.getElementById("id-lieudit").value;
-    if(idLD == 0){
-        document.getElementById("parcelles").innerHTML = "Choisissez d'abord un lieu-dit";
-        document.getElementById("ugs").innerHTML = "Choisissez d'abord un lieu-dit";
-        return;
-    }
-    const url = "/ajax/get/parcelles-from-lieudit/" + idLD;
-    let response = await fetch(url);
-    response = await response.json();
-    if(response != null){
-        document.getElementById("parcelles").innerHTML = "";
-        let i = 1;
-        response.forEach(function(item) {
-            const name = "parcelle-" + item.id;
-            const checkbox = document.createElement("input");
-            checkbox.setAttribute("type", "checkbox");
-            checkbox.setAttribute("name", name);
-            checkbox.setAttribute("id", name);
-            const label = document.createElement("label");
-            label.setAttribute("for", name);
-            label.innerHTML = item.name;
-            label.style["font-weight"] = "normal";
-            const span = document.createElement("span");
-            span.style["padding-right"] = "1em";
-            span.appendChild(checkbox);
-            span.appendChild(label);
-            document.getElementById("parcelles").appendChild(span);
-            if(i % 3 == 0){
-                const br = document.createElement("br");
-                document.getElementById("parcelles").appendChild(br);
-            }
-            i++;
-        });
-    }
-    await actionAfterChangeLieudit2();
-}
-
-// ***************************************
-/**
-    Lorsqu'un lieu-dit change, mettre à jour les ugs possibles
-    Effectué après actionAfterChangeLieudit()
-**/
-async function actionAfterChangeLieudit2(){
-    const idLD = document.getElementById("id-lieudit").value;
-    const url = "/ajax/get/ugs-from-lieudit/" + idLD;
-    let response = await fetch(url);
-    response = await response.json();
-    if(response == null || response.length == 0){
-        document.getElementById("ugs").innerHTML = "Aucune UG pour ce lieu-dit";
-        return;
-    }
-    let limit = Math.floor(response.length) / 2;    
-    if(response.length / 2 != limit){
-        limit += 1;
-    }
-    document.getElementById("ugs").innerHTML = "";
-    const table = document.createElement("table");
-    document.getElementById("ugs").appendChild(table);
-    const tr = document.createElement("tr");
-    table.appendChild(tr);
-    let td = document.createElement("td");
-    tr.appendChild(td);                             
-    let i = 1;
-    response.forEach(function(item) {
-        let name = "ug-" + item.id;
-        let checkbox = document.createElement("input");
-        checkbox.setAttribute("type", "radio");
-        checkbox.setAttribute("name", "ug");
-        checkbox.setAttribute("id", name);
-        checkbox.setAttribute("value", name);
-        let label = document.createElement("label");
-        label.setAttribute("for", name);
-        label.innerHTML = item.name;
-        label.style["font-weight"] = "normal";
-        let span = document.createElement("span");
-        span.style["padding-right"] = "1em";
-        span.appendChild(checkbox);
-        span.appendChild(label);
-        td.appendChild(span);
-        if(i == limit){
-            td = document.createElement("td");
-            tr.appendChild(td);
-        }
-        else{
-            td.appendChild(document.createElement("br"));
-        }
-        i++;
-    });
 }
 
 // ***************************************
 function validateForm(){
     let msg = "";
+    //
+    msg += validateFormChantierLien(); // dans view/common/chantier-lien.html
+    //
+    const check = checkActeur("acheteur", "- Vous devez renseigner l'acheteur.\n");
+    document.getElementById("id-acheteur").value = check[0];
+    msg += check[1];
+    //
+    if(document.getElementById("datecontrat").value == ""){
+        msg += "- Vous devez renseigner la date du contrat.\n";
+    }
+    //
     if(document.getElementById("exploitation").value == "CHOOSE_EXPLOITATION"){
-        msg += "\n- Vous devez choisir un type d'exploitation";
+        msg += "- Vous devez choisir un type d'exploitation.\n";
     }
+    //
     if(document.getElementById("CHOOSE_ESSENCE").selected == true){
-        msg += "\n- Vous devez choisir une essence";
+        msg += "- Vous devez choisir une essence.\n";
     }
-    // calcule id-acheteur
-    let personName = document.getElementById("acheteur").value.trim();
-    if(personName == ""){
-        msg += "\n- Vous devez renseigner un acheteur.";
+    //
+    if(document.getElementById("nsterecontrat").value == ""){
+        msg += "- Vous devez renseigner le nombre de stères (contrat).\n";
     }
-    else{
-        let ok = false;
-        let idActeur = 0;
-        for(idActeur in window.globalPersons){
-            if(window.globalPersons[idActeur] == personName){
-                ok = true;
-                break;
-            }
-        }
-        if(!ok){
-            msg += "\n- Le nom \"" + personName + "\"\n  ne correspond à aucune personne connue en base.";
-        }
-        else{
-            document.getElementById("id-acheteur").value = idActeur;
-        }
+    //
+    if(document.getElementById("nsterecoupees").value == ""){
+        msg += "- Vous devez renseigner le nombre de stères (coupées).\n";
     }
-    // Vérifie qu'au moins une parcelle est sélectionnée
-    let nParcelles = 0;
-    let elements = document.querySelectorAll('[id^="parcelle-"]');
-    for(let i=0; i<elements.length; i++){
-        if(elements[i].checked == true){
-            nParcelles++;
-        }
+    //
+    if(document.getElementById("prixstere").value == ""){
+        msg += "- Vous devez renseigner le prix / stère HT.\n";
     }
-    if(nParcelles == 0){
-        msg += "\n- Vous devez sélectionner au moins une parcelle";
-    }
-    // Vérifie qu'une ug est sélectionnée
-    if(document.querySelector('input[name="ug"]:checked') == null){
-        msg += "\n- Vous devez sélectionner une UG";
-    }                                              
     //
     if(msg != ""){
-        msg = "Impossible de valider ce formulaire :" + msg;
+        msg = "Impossible de valider ce formulaire :\n" + msg;
         alert(msg);
         return false;
     }

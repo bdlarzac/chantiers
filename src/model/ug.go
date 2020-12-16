@@ -306,9 +306,9 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, elt := range list2 {
-		err = elt.ComputeLieudit(db)
+		err = elt.ComputeLieudits(db)
 		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel BSPied.ComputeLieudit()")
+			return res, werr.Wrapf(err, "Erreur appel BSPied.ComputeLieudits()")
 		}
 		err = elt.ComputeAcheteur(db)
 		if err != nil {

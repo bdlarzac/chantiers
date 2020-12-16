@@ -13,6 +13,7 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"strconv"
+	"strings"
 	"time"
 	//"fmt"
 )
@@ -20,8 +21,6 @@ import (
 type BSPied struct {
 	Id            int
 	IdAcheteur    int `db:"id_acheteur"`
-	IdLieudit     int `db:"id_lieudit"`
-	IdUG          int `db:"id_ug"`
 	Nom           string
 	DateContrat   time.Time
 	Exploitation  string
@@ -36,26 +35,31 @@ type BSPied struct {
 	// Stocké dans bspied_parcelle
 	IdsParcelles []int
 	// pas stocké en base
+	UGs        []*UG
+	Lieudits   []*Lieudit
+	Fermiers   []*Acteur
+	Parcelles  []*Parcelle
 	Acheteur  *Acteur
-	Lieudit   *Lieudit
-	Parcelles []*Parcelle
-	UG        *UG
 }
 
 // ************************** Nom *******************************
 
-func (bsp *BSPied) String() string {
-	if bsp.Lieudit == nil {
-		panic("Erreur dans le code - Le lieu-dit d'un chantier bois sur pied doit être calculé avant d'appeler String()")
+func (ch *BSPied) String() string {
+	if len(ch.Lieudits) == 0 {
+		panic("Erreur dans le code - Les lieux-dits d'un chantier bois-sur-pied doivent être calculés avant d'appeler String()")
 	}
-	if bsp.Acheteur == nil {
+	if ch.Acheteur == nil {
 		panic("Erreur dans le code - L'acheteur d'un chantier bois sur pied doit être calculé avant d'appeler String()")
 	}
-	return bsp.Acheteur.String() + " " + bsp.Lieudit.Nom + " " + tiglib.DateFr(bsp.DateContrat)
+	var noms []string 
+    for _, ld := range ch.Lieudits {
+        noms = append(noms, ld.Nom)
+    }
+	return ch.Acheteur.String() + " " + strings.Join(noms, " - ") + " " + tiglib.DateFr(ch.DateContrat)
 }
 
-func (bsp *BSPied) FullString() string {
-	return "Chantier bois sur pied " + bsp.String()
+func (ch *BSPied) FullString() string {
+	return "Chantier bois sur pied " + ch.String()
 }
 
 // ************************** Get *******************************
@@ -76,32 +80,37 @@ func GetBSPied(db *sqlx.DB, idChantier int) (*BSPied, error) {
 // Renvoie un chantier bois sur pied contenant :
 //      - les données stockées dans la table
 //      - Acheteur
-//      - Lieudit
+//      - les lieux-dits
+//      - les UGs
+//      - les fermiers
 //      - IdsParcelles
 //      - Parcelles
-//      - UG
 func GetBSPiedFull(db *sqlx.DB, idChantier int) (*BSPied, error) {
-	bsp, err := GetBSPied(db, idChantier)
+	ch, err := GetBSPied(db, idChantier)
 	if err != nil {
-		return bsp, werr.Wrapf(err, "Erreur appel GetBSPied()")
+		return ch, werr.Wrapf(err, "Erreur appel GetBSPied()")
 	}
-	err = bsp.ComputeLieudit(db)
+	err = ch.ComputeAcheteur(db)
 	if err != nil {
-		return bsp, werr.Wrapf(err, "Erreur appel BSPied.ComputeLieudit()")
+		return ch, werr.Wrapf(err, "Erreur appel BSPied.ComputeAcheteur()")
 	}
-	err = bsp.ComputeAcheteur(db)
+	err = ch.ComputeParcelles(db)
 	if err != nil {
-		return bsp, werr.Wrapf(err, "Erreur appel BSPied.ComputeAcheteur()")
+		return ch, werr.Wrapf(err, "Erreur appel BSPied.ComputeParcelles()")
 	}
-	err = bsp.ComputeParcelles(db)
+	err = ch.ComputeLieudits(db)
 	if err != nil {
-		return bsp, werr.Wrapf(err, "Erreur appel BSPied.ComputeParcelles()")
+		return ch, werr.Wrapf(err, "Erreur appel BSPied.ComputeLieudits()")
 	}
-	err = bsp.ComputeUG(db)
+	err = ch.ComputeUGs(db)
 	if err != nil {
-		return bsp, werr.Wrapf(err, "Erreur appel BSPied.ComputeUG()")
+		return ch, werr.Wrapf(err, "Erreur appel BSPied.ComputeUGs()")
 	}
-	return bsp, nil
+	err = ch.ComputeFermiers(db)
+	if err != nil {
+		return ch, werr.Wrapf(err, "Erreur appel BSPied.ComputeFermiers()")
+	}
+	return ch, nil
 }
 
 // Renvoie la liste des années ayant des chantiers bois sur pied,
@@ -151,24 +160,12 @@ func GetBSPiedsOfYear(db *sqlx.DB, annee string) ([]*BSPied, error) {
 
 // ************************** Compute *******************************
 
-func (bsp *BSPied) ComputeLieudit(db *sqlx.DB) error {
-	if bsp.Lieudit != nil {
+func (ch *BSPied) ComputeAcheteur(db *sqlx.DB) error {
+	if ch.Acheteur != nil {
 		return nil
 	}
 	var err error
-	bsp.Lieudit, err = GetLieudit(db, bsp.IdLieudit)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetLieudit()")
-	}
-	return nil
-}
-
-func (bsp *BSPied) ComputeAcheteur(db *sqlx.DB) error {
-	if bsp.Acheteur != nil {
-		return nil
-	}
-	var err error
-	bsp.Acheteur, err = GetActeur(db, bsp.IdAcheteur)
+	ch.Acheteur, err = GetActeur(db, ch.IdAcheteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
@@ -176,14 +173,14 @@ func (bsp *BSPied) ComputeAcheteur(db *sqlx.DB) error {
 }
 
 // Calcule à la fois Parcelles et IdsParcelles
-func (bsp *BSPied) ComputeParcelles(db *sqlx.DB) error {
-	if len(bsp.Parcelles) != 0 {
+func (ch *BSPied) ComputeParcelles(db *sqlx.DB) error {
+	if len(ch.Parcelles) != 0 {
 		return nil
 	}
 	var err error
 	query := "select id_parcelle from bspied_parcelle where id_bspied=$1"
 	idsP := []int{}
-	err = db.Select(&idsP, query, bsp.Id)
+	err = db.Select(&idsP, query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -192,31 +189,59 @@ func (bsp *BSPied) ComputeParcelles(db *sqlx.DB) error {
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel GetParcelle()")
 		}
-		bsp.IdsParcelles = append(bsp.IdsParcelles, idP)
-		bsp.Parcelles = append(bsp.Parcelles, p)
+		ch.IdsParcelles = append(ch.IdsParcelles, idP)
+		ch.Parcelles = append(ch.Parcelles, p)
 	}
 	return nil
 }
 
-func (bsp *BSPied) ComputeUG(db *sqlx.DB) error {
-	if bsp.UG != nil {
-		return nil
+func (ch *BSPied) ComputeUGs(db *sqlx.DB) error {
+	if len(ch.UGs) != 0 {
+		return nil // déjà calculé
 	}
-	var err error
-	bsp.UG, err = GetUG(db, bsp.IdUG)
+	query := `select * from ug where id in(
+	    select id_ug from chantier_ug where type_chantier='bspied' and id_chantier=$1
+    )`
+	err := db.Select(&ch.UGs, query, &ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetUG()")
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func (ch *BSPied) ComputeLieudits(db *sqlx.DB) error {
+	if len(ch.Lieudits) != 0 {
+		return nil // déjà calculé
+	}
+	query := `select * from lieudit where id in(
+	    select id_lieudit from chantier_lieudit where type_chantier='bspied' and id_chantier=$1
+    )`
+	err := db.Select(&ch.Lieudits, query, &ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func (ch *BSPied) ComputeFermiers(db *sqlx.DB) error {
+	if len(ch.Fermiers) != 0 {
+		return nil // déjà calculé
+	}
+	query := `select * from acteur where id in(
+	    select id_fermier from chantier_fermier where type_chantier='bspied' and id_chantier=$1
+    )`
+	err := db.Select(&ch.Fermiers, query, &ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return nil
 }
 
 // ************************** CRUD *******************************
 
-func InsertBSPied(db *sqlx.DB, bsp *BSPied) (int, error) {
+func InsertBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) (int, error) {
 	query := `insert into bspied(
         id_acheteur,
-        id_lieudit,
-        id_ug,
         datecontrat,
         exploitation,
         essence,
@@ -227,39 +252,89 @@ func InsertBSPied(db *sqlx.DB, bsp *BSPied) (int, error) {
         datefacture,
         numfacture,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
-		bsp.IdAcheteur,
-		bsp.IdLieudit,
-		bsp.IdUG,
-		bsp.DateContrat,
-		bsp.Exploitation,
-		bsp.Essence,
-		bsp.NStereContrat,
-		bsp.NStereCoupees,
-		bsp.PrixStere,
-		bsp.TVA,
-		bsp.DateFacture,
-		bsp.NumFacture,
-		bsp.Notes).Scan(&id)
+		ch.IdAcheteur,
+		ch.DateContrat,
+		ch.Exploitation,
+		ch.Essence,
+		ch.NStereContrat,
+		ch.NStereCoupees,
+		ch.PrixStere,
+		ch.TVA,
+		ch.DateFacture,
+		ch.NumFacture,
+		ch.Notes).Scan(&id)
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	//
+    //
+	// parcelles
+    //
 	query = "insert into bspied_parcelle values($1, $2)"
-	for _, idP := range bsp.IdsParcelles {
+	for _, idP := range ch.IdsParcelles {
 		_ = db.QueryRow(query, id, idP)
 	}
+    //
+	// UGs
+    //
+	query = `insert into chantier_ug(
+        type_chantier,
+        id_chantier,
+        id_ug) values($1,$2,$3)`
+	for _, idUG := range(idsUG){
+        _, err = db.Exec(
+            query,
+            "bspied",
+            id,
+            idUG)
+        if err != nil {
+            return id, werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+    //
+	// Lieudits
+    //
+	query = `insert into chantier_lieudit(
+        type_chantier,
+        id_chantier,
+        id_lieudit) values($1,$2,$3)`
+	for _, idLieudit := range(idsLieudit){
+        _, err = db.Exec(
+            query,
+            "bspied",
+            id,
+            idLieudit)
+        if err != nil {
+            return id, werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+    //
+	// Fermiers
+    //
+	query = `insert into chantier_fermier(
+        type_chantier,
+        id_chantier,
+        id_fermier) values($1,$2,$3)`
+	for _, idFermier := range(idsFermier){
+        _, err = db.Exec(
+            query,
+            "bspied",
+            id,
+            idFermier)
+        if err != nil {
+            return id, werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+    //
 	return id, nil
 }
 
-func UpdateBSPied(db *sqlx.DB, bsp *BSPied) error {
+func UpdateBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) error {
 	query := `update bspied set(
         id_acheteur,
-        id_lieudit,
-        id_ug,
         datecontrat,
         exploitation,
         essence,
@@ -270,48 +345,145 @@ func UpdateBSPied(db *sqlx.DB, bsp *BSPied) error {
         datefacture,
         numfacture,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) where id=$14`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) where id=$12`
 	_, err := db.Exec(
 		query,
-		bsp.IdAcheteur,
-		bsp.IdLieudit,
-		bsp.IdUG,
-		bsp.DateContrat,
-		bsp.Exploitation,
-		bsp.Essence,
-		bsp.NStereContrat,
-		bsp.NStereCoupees,
-		bsp.PrixStere,
-		bsp.TVA,
-		bsp.DateFacture,
-		bsp.NumFacture,
-		bsp.Notes,
-		bsp.Id)
+		ch.IdAcheteur,
+		ch.DateContrat,
+		ch.Exploitation,
+		ch.Essence,
+		ch.NStereContrat,
+		ch.NStereCoupees,
+		ch.PrixStere,
+		ch.TVA,
+		ch.DateFacture,
+		ch.NumFacture,
+		ch.Notes,
+		ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+	//
+	// Parcelles
+	//
 	query = "delete from bspied_parcelle where id_bspied=$1"
-	_, err = db.Exec(query, bsp.Id)
+	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	query = "insert into bspied_parcelle values($1,$2)"
-	for _, idP := range bsp.IdsParcelles {
-		_ = db.QueryRow(query, bsp.Id, idP)
+	for _, idP := range ch.IdsParcelles {
+		_ = db.QueryRow(query, ch.Id, idP)
 	}
+	//
+	// UGs
+	//
+	query = "delete from chantier_ug where type_chantier='bspied' and id=$1"
+	_, err = db.Exec(query, ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	query = `insert into chantier_ug(
+        type_chantier,
+        id_chantier,
+        id_ug) values($1,$2,$3)`
+	for _, idUG := range(idsUG){
+        _, err = db.Exec(
+            query,
+            "bspied",
+            ch.Id,
+            idUG)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+    //
+	// Lieudits
+	//
+	query = "delete from chantier_lieudit where type_chantier='bspied' and id=$1"
+	_, err = db.Exec(query, ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	query = `insert into chantier_lieudit(
+        type_chantier,
+        id_chantier,
+        id_lieudit) values($1,$2,$3)`
+	for _, idLieudit := range(idsLieudit){
+        _, err = db.Exec(
+            query,
+            "bspied",
+            ch.Id,
+            idLieudit)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+    //
+	// Fermiers
+	//
+	query = "delete from chantier_fermier where type_chantier='bspied' and id=$1"
+	_, err = db.Exec(query, ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	query = `insert into chantier_fermier(
+        type_chantier,
+        id_chantier,
+        id_fermier) values($1,$2,$3)`
+	for _, idFermier := range(idsFermier){
+        _, err = db.Exec(
+            query,
+            "bspied",
+            ch.Id,
+            idFermier)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur query : "+query)
+        }
+    }
+	//
 	return nil
 }
 
 func DeleteBSPied(db *sqlx.DB, id int) error {
-	query := "delete from bspied_parcelle where id_bspied=$1"
-	_, err := db.Exec(query, id)
+	//
+	// delete UGs, Lieudits, Fermiers associés à ce chantier
+	//
+	var query string
+	var err error
+	query = "delete from chantier_ug where type_chantier='bspied' and id=$1"
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+	//
+	query = "delete from chantier_lieudit where type_chantier='bspied' and id=$1"
+	_, err = db.Exec(query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	//
+	query = "delete from chantier_fermier where type_chantier='bspied' and id=$1"
+	_, err = db.Exec(query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	//
+	// delete parcelles
+	//
+	query = "delete from bspied_parcelle where id_bspied=$1"
+	_, err = db.Exec(query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	//
+	// delete le chantier
+	//
 	query = "delete from bspied where id=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+	//
 	return nil
 }

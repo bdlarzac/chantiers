@@ -7,4 +7,5 @@ create table chantier_fermier (
     id_fermier              int not null references acteur(id),
     primary key(type_chantier, id_chantier, id_fermier)
 );
-CREATE INDEX chantier_fermier_idx ON chantier_fermier (type_chantier, id_chantier);
+CREATE INDEX chantier_fermier_chantier_idx ON chantier_fermier (type_chantier, id_chantier);
+CREATE INDEX chantier_fermier_fermier_idx ON chantier_fermier (type_chantier, id_fermier);

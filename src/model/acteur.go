@@ -588,7 +588,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 	}
 	for _, elt := range list7 {
 		elt.Acheteur = a
-		err = elt.ComputeLieudit(db)
+		err = elt.ComputeLieudits(db)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel BSPied.ComputeLieudit()")
 		}
@@ -610,7 +610,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 	}
 	for _, elt := range list8 {
 		elt.Client = a
-		err = elt.ComputeLieudit(db)
+		err = elt.ComputeLieudits(db)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel Chautre.ComputeLieudit()")
 		}

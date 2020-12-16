@@ -108,7 +108,7 @@ window.addEventListener("load", function(){
 
 // ***************************************
 function initialize() {
-    initializeLiensChantier();    
+    initializeLiensChantier(); // dans view/common/chantier-lien.html    
     // form new
     if({{.Id}} == 0){
         // essence initalisée à pin sylvestre car c'est le cas le plus fréquent
@@ -131,7 +131,7 @@ function initialize() {
 function validateForm(){
     let msg = "";
     //
-    msg += validateFormChantierLien(); // dans chantier-lien.html
+    msg += validateFormChantierLien(); // dans view/common/chantier-lien.html
     //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;

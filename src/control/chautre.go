@@ -17,12 +17,13 @@ import (
 )
 
 type detailsChautreForm struct {
+	Chantier            *model.Chautre
+	TypeChantier        string
 	UrlAction           string
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
 	ValorisationOptions template.HTML
 	UniteOptions        template.HTML
-	Chantier            *model.Chautre
 }
 
 type detailsChautreList struct {
@@ -85,7 +86,37 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		_, err = model.InsertChautre(ctx.DB, chantier)
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertChautre()
+        var idsUG, idsLieudit, idsFermier []int
+		var id int
+        for key, val := range(r.PostForm){
+            if strings.Index(key, "ug-") == 0 {
+                // ex : ug-0:[6] (6 est l'id UG)
+                id, err = strconv.Atoi(val[0])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsUG, id)
+            }
+            if strings.Index(key, "lieudit-") == 0 {
+                // ex : lieudit-164:[on] (164 est l'id lieudit)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsLieudit = append(idsLieudit, id)
+            }
+            if strings.Index(key, "fermier-") == 0 {
+                // ex : fermier-25:[on] (25 est l'id fermier)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsFermier = append(idsFermier, id)
+            }
+        }
+        //
+		_, err = model.InsertChautre(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
 		if err != nil {
 			return err
 		}
@@ -98,7 +129,6 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		chantier := &model.Chautre{}
 		chantier.Client = &model.Acteur{}
-		chantier.Lieudit = &model.Lieudit{}
 		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
@@ -121,7 +151,8 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/getActeurPossibles.js"},
+                    "/view/common/checkActeur.js",
+				    "/view/common/getActeurPossibles.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -145,7 +176,37 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
-		err = model.UpdateChautre(ctx.DB, chantier)
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdateChautre()
+        var idsUG, idsLieudit, idsFermier []int
+		var id int
+        for key, val := range(r.PostForm){
+            if strings.Index(key, "ug-") == 0 {
+                // ex : ug-0:[6] (6 est l'id UG)
+                id, err = strconv.Atoi(val[0])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsUG, id)
+            }
+            if strings.Index(key, "lieudit-") == 0 {
+                // ex : lieudit-164:[on] (164 est l'id lieudit)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsLieudit = append(idsLieudit, id)
+            }
+            if strings.Index(key, "fermier-") == 0 {
+                // ex : fermier-25:[on] (25 est l'id fermier)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsFermier = append(idsFermier, id)
+            }
+        }
+		//
+		err = model.UpdateChautre(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
 		if err != nil {
 			return err
 		}
@@ -178,10 +239,12 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/getActeurPossibles.js"},
+                    "/view/common/checkActeur.js",
+				    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsChautreForm{
 				Chantier:            chantier,
+				TypeChantier:        "chautre",
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "valorisation-"+chantier.TypeValo),
@@ -218,62 +281,56 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 // Auxiliaire de NewBSPied() et UpdateBSPied()
 // Ne gère pas le champ Id
 // Ne gère pas le champ TVA (tiré de la config)
+// Ne gère pas liens vers UGs, lieux-dits, fermiers
 func chautreForm2var(r *http.Request) (*model.Chautre, error) {
-	chantier := &model.Chautre{}
+	ch := &model.Chautre{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return chantier, err
+		return ch, err
 	}
 	//
-	chantier.IdClient, err = strconv.Atoi(r.PostFormValue("id-client"))
+	ch.IdClient, err = strconv.Atoi(r.PostFormValue("id-client"))
 	if err != nil {
-		return chantier, err
+		return ch, err
 	}
 	//
-	chantier.DateContrat, err = time.Parse("2006-01-02", r.PostFormValue("datecontrat"))
+	ch.DateContrat, err = time.Parse("2006-01-02", r.PostFormValue("datecontrat"))
 	if err != nil {
-		return chantier, err
+		return ch, err
 	}
 	//
-	chantier.IdLieudit, err = strconv.Atoi(r.PostFormValue("id-lieudit"))
+	ch.TypeValo = strings.Replace(r.PostFormValue("typevalo"), "valorisation-", "", -1)
+	//
+	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
+	//
+	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
+	//
+	ch.Volume, err = strconv.ParseFloat(r.PostFormValue("volume"), 32)
 	if err != nil {
-		return chantier, err
+		return ch, err
 	}
+	ch.Volume = tiglib.Round(ch.Volume, 2)
 	//
-	chantier.IdUG, _ = strconv.Atoi(strings.Replace(r.PostFormValue("ug"), "ug-", "", -1))
+	ch.Unite = strings.Replace(r.PostFormValue("unite"), "unite-", "", -1)
 	//
-	chantier.TypeValo = strings.Replace(r.PostFormValue("typevalo"), "valorisation-", "", -1)
-	//
-	chantier.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
-	//
-	chantier.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
-	//
-	chantier.Volume, err = strconv.ParseFloat(r.PostFormValue("volume"), 32)
+	ch.PUHT, err = strconv.ParseFloat(r.PostFormValue("puht"), 32)
 	if err != nil {
-		return chantier, err
+		return ch, err
 	}
-	chantier.Volume = tiglib.Round(chantier.Volume, 2)
-	//
-	chantier.Unite = strings.Replace(r.PostFormValue("unite"), "unite-", "", -1)
-	//
-	chantier.PUHT, err = strconv.ParseFloat(r.PostFormValue("puht"), 32)
-	if err != nil {
-		return chantier, err
-	}
-	chantier.PUHT = tiglib.Round(chantier.PUHT, 2)
+	ch.PUHT = tiglib.Round(ch.PUHT, 2)
 	//
 	if r.PostFormValue("datefacture") != "" {
-		chantier.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
+		ch.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
 		if err != nil {
-			return chantier, err
+			return ch, err
 		}
 	}
 	//
-	chantier.NumFacture = r.PostFormValue("numfacture")
+	ch.NumFacture = r.PostFormValue("numfacture")
 	//
-	chantier.Notes = r.PostFormValue("notes")
+	ch.Notes = r.PostFormValue("notes")
 	//
-	return chantier, nil
+	return ch, nil
 }
 
 // *********************************************************
@@ -284,7 +341,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 		return err
 	}
 	//
-	chantier, err := model.GetChautreFull(ctx.DB, id)
+	ch, err := model.GetChautreFull(ctx.DB, id)
 	if err != nil {
 		return err
 	}
@@ -304,7 +361,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	//
 	pdf.SetXY(60, 70)
 	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(100, 7, tr(StringActeurFacture(chantier.Client)), "1", "C", false)
+	pdf.MultiCell(100, 7, tr(StringActeurFacture(ch.Client)), "1", "C", false)
 	//
 	// Date  + n° facture
 	//
@@ -329,10 +386,10 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	y += he
 	//
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, tiglib.DateFr(chantier.DateFacture), "LRB", "C", false)
+	pdf.MultiCell(wi, he, tiglib.DateFr(ch.DateFacture), "LRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, chantier.NumFacture, "RB", "C", false)
+	pdf.MultiCell(wi, he, ch.NumFacture, "RB", "C", false)
 	//
 	// Tableau principal
 	//
@@ -363,24 +420,24 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	y += he
 	pdf.SetXY(x, y)
 	wi = w1
-	str = "Vente " + tr(model.LabelValorisation(chantier.TypeValo)) + " " + tr(model.LabelEssence(chantier.Essence))
+	str = "Vente " + tr(model.LabelValorisation(ch.TypeValo)) + " " + tr(model.LabelEssence(ch.Essence))
 	pdf.MultiCell(wi, he, str, "LRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w2
-	pdf.MultiCell(wi, he, strconv.FormatFloat(chantier.Volume, 'f', 2, 64), "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.Volume, 'f', 2, 64), "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w3
-	pdf.MultiCell(wi, he, tr(model.LabelUnite(chantier.Unite)), "RB", "C", false)
+	pdf.MultiCell(wi, he, tr(model.LabelUnite(ch.Unite)), "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w4
-	pdf.MultiCell(wi, he, strconv.FormatFloat(chantier.PUHT, 'f', 2, 64), "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.PUHT, 'f', 2, 64), "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w5
-	prixHT := chantier.Volume * chantier.PUHT
+	prixHT := ch.Volume * ch.PUHT
 	pdf.MultiCell(wi, he, strconv.FormatFloat(prixHT, 'f', 2, 64), "RB", "C", false)
 	//
 	pdf.SetFont("Arial", "B", 10)
@@ -400,11 +457,11 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	x += wi
 	wi = w4
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, strconv.FormatFloat(chantier.TVA, 'f', 2, 64)+" %", "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.TVA, 'f', 2, 64)+" %", "RB", "C", false)
 	x += wi
 	wi = w5
 	pdf.SetXY(x, y)
-	prixTVA := prixHT * chantier.TVA / 100
+	prixTVA := prixHT * ch.TVA / 100
 	pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVA, 'f', 2, 64), "RB", "C", false)
 	//
 	pdf.SetFont("Arial", "B", 10)

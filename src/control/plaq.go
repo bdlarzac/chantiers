@@ -16,9 +16,9 @@ import (
 )
 
 type detailsPlaqForm struct {
-	UrlAction           string
 	Chantier            *model.Plaq
 	TypeChantier        string
+	UrlAction           string
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
 	GranuloOptions      template.HTML
@@ -360,53 +360,53 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 // Auxiliaire de NewPlaq() et UpdatePlaq()
 // Ne gère pas le champ Id
 // Ne gère pas les stockages (tas)
-// NE gère pas liens vers UGs, lieux-dits, fermiers
+// Ne gère pas liens vers UGs, lieux-dits, fermiers
 func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
-	chantier := &model.Plaq{}
+	ch := &model.Plaq{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return chantier, err
+		return ch, err
 	}
 	//
-	chantier.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
+	ch.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
 	if err != nil {
-		return chantier, err
+		return ch, err
 	}
 	//
-	chantier.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
+	ch.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
-		return chantier, err
+		return ch, err
 	}
 	//
 	if r.PostFormValue("surface") != "" {
-		chantier.Surface, err = strconv.ParseFloat(r.PostFormValue("surface"), 32)
+		ch.Surface, err = strconv.ParseFloat(r.PostFormValue("surface"), 32)
 		if err != nil {
-			return chantier, err
+			return ch, err
 		}
-		chantier.Surface = tiglib.Round(chantier.Surface, 2)
+		ch.Surface = tiglib.Round(ch.Surface, 2)
 	}
 	//
-	chantier.Granulo = strings.ReplaceAll(r.PostFormValue("granulo"), "granulo-", "")
+	ch.Granulo = strings.ReplaceAll(r.PostFormValue("granulo"), "granulo-", "")
 	//
-	chantier.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
+	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//
-	chantier.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
+	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
 	//
 	if r.PostFormValue("frais-repas") != "" {
-		chantier.FraisRepas, err = strconv.ParseFloat(r.PostFormValue("frais-repas"), 32)
+		ch.FraisRepas, err = strconv.ParseFloat(r.PostFormValue("frais-repas"), 32)
 		if err != nil {
-			return chantier, err
+			return ch, err
 		}
-		chantier.FraisRepas = tiglib.Round(chantier.FraisRepas, 2)
+		ch.FraisRepas = tiglib.Round(ch.FraisRepas, 2)
 	}
 	//
 	if r.PostFormValue("frais-reparation") != "" {
-		chantier.FraisReparation, err = strconv.ParseFloat(r.PostFormValue("frais-reparation"), 32)
+		ch.FraisReparation, err = strconv.ParseFloat(r.PostFormValue("frais-reparation"), 32)
 		if err != nil {
-			return chantier, err
+			return ch, err
 		}
-		chantier.FraisReparation = tiglib.Round(chantier.FraisReparation, 2)
+		ch.FraisReparation = tiglib.Round(ch.FraisReparation, 2)
 	}
 	//
-	return chantier, nil
+	return ch, nil
 }

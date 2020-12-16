@@ -20,6 +20,7 @@ import (
 
 type detailsBSPiedForm struct {
 	Chantier            *model.BSPied
+	TypeChantier        string
 	UrlAction           string
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
@@ -94,7 +95,37 @@ func NewBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		if err != nil {
 			return err
 		}
-		_, err = model.InsertBSPied(ctx.DB, chantier)
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertBSPied()
+        var idsUG, idsLieudit, idsFermier []int
+		var id int
+        for key, val := range(r.PostForm){
+            if strings.Index(key, "ug-") == 0 {
+                // ex : ug-0:[6] (6 est l'id UG)
+                id, err = strconv.Atoi(val[0])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsUG, id)
+            }
+            if strings.Index(key, "lieudit-") == 0 {
+                // ex : lieudit-164:[on] (164 est l'id lieudit)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsLieudit = append(idsLieudit, id)
+            }
+            if strings.Index(key, "fermier-") == 0 {
+                // ex : fermier-25:[on] (25 est l'id fermier)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsFermier = append(idsFermier, id)
+            }
+        }
+        //
+		_, err = model.InsertBSPied(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
 		if err != nil {
 			return err
 		}
@@ -107,7 +138,6 @@ func NewBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		//
 		chantier := &model.BSPied{}
 		chantier.Acheteur = &model.Acteur{}
-		chantier.Lieudit = &model.Lieudit{}
 		chantier.TVA = ctx.Config.TVABDL.BoisSurPied
 		ctx.TemplateName = "bspied-form.html"
 		ctx.Page = &ctxt.Page{
@@ -128,7 +158,8 @@ func NewBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/getActeurPossibles.js"},
+                    "/view/common/checkActeur.js",
+				    "/view/common/getActeurPossibles.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -153,7 +184,37 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		err = model.UpdateBSPied(ctx.DB, chantier)
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdateBSPied()
+        var idsUG, idsLieudit, idsFermier []int
+		var id int
+        for key, val := range(r.PostForm){
+            if strings.Index(key, "ug-") == 0 {
+                // ex : ug-0:[6] (6 est l'id UG)
+                id, err = strconv.Atoi(val[0])
+                if err != nil {
+                    return err
+                }
+                idsUG = append(idsUG, id)
+            }
+            if strings.Index(key, "lieudit-") == 0 {
+                // ex : lieudit-164:[on] (164 est l'id lieudit)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsLieudit = append(idsLieudit, id)
+            }
+            if strings.Index(key, "fermier-") == 0 {
+                // ex : fermier-25:[on] (25 est l'id fermier)
+                id, err = strconv.Atoi(key[8:])
+                if err != nil {
+                    return err
+                }
+                idsFermier = append(idsFermier, id)
+            }
+        }
+		//
+		err = model.UpdateBSPied(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
 		if err != nil {
 			return err
 		}
@@ -186,10 +247,12 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/getActeurPossibles.js"},
+                    "/view/common/checkActeur.js",
+				    "/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsBSPiedForm{
 				Chantier:            chantier,
+				TypeChantier:        "bspied",
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				UrlAction:           "/chantier/bois-sur-pied/update/" + vars["id"],
@@ -224,73 +287,67 @@ func DeleteBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 // Auxiliaire de NewBSPied() et UpdateBSPied()
 // Ne gère pas le champ Id
 // Ne gère pas le champ TVA
+// Ne gère pas liens vers UGs, lieux-dits, fermiers
 func chantierBSPiedForm2var(r *http.Request) (*model.BSPied, error) {
-	bsp := &model.BSPied{}
+	ch := &model.BSPied{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return bsp, err
+		return ch, err
 	}
 	//
-	bsp.IdAcheteur, err = strconv.Atoi(r.PostFormValue("id-acheteur"))
+	ch.IdAcheteur, err = strconv.Atoi(r.PostFormValue("id-acheteur"))
 	if err != nil {
-		return bsp, err
+		return ch, err
 	}
 	//
-	bsp.DateContrat, err = time.Parse("2006-01-02", r.PostFormValue("datecontrat"))
+	ch.DateContrat, err = time.Parse("2006-01-02", r.PostFormValue("datecontrat"))
 	if err != nil {
-		return bsp, err
-	}
-	//
-	bsp.IdLieudit, err = strconv.Atoi(r.PostFormValue("id-lieudit"))
-	if err != nil {
-		return bsp, err
+		return ch, err
 	}
 	//
 	for k, _ := range r.PostForm {
 		if strings.HasPrefix(k, "parcelle-") {
 			idP, _ := strconv.Atoi(strings.Replace(k, "parcelle-", "", -1))
-			bsp.IdsParcelles = append(bsp.IdsParcelles, idP)
+			ch.IdsParcelles = append(ch.IdsParcelles, idP)
 		}
 	}
 	//
-	bsp.IdUG, _ = strconv.Atoi(strings.Replace(r.PostFormValue("ug"), "ug-", "", -1))
+	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//
-	bsp.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
+	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
 	//
-	bsp.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
-	//
-	bsp.NStereContrat, err = strconv.ParseFloat(r.PostFormValue("nsterecontrat"), 32)
+	ch.NStereContrat, err = strconv.ParseFloat(r.PostFormValue("nsterecontrat"), 32)
 	if err != nil {
-		return bsp, err
+		return ch, err
 	}
-	bsp.NStereContrat = tiglib.Round(bsp.NStereContrat, 2)
+	ch.NStereContrat = tiglib.Round(ch.NStereContrat, 2)
 	//
 	if r.PostFormValue("nsterecoupees") != "" {
-		bsp.NStereCoupees, err = strconv.ParseFloat(r.PostFormValue("nsterecoupees"), 32)
+		ch.NStereCoupees, err = strconv.ParseFloat(r.PostFormValue("nsterecoupees"), 32)
 		if err != nil {
-			return bsp, err
+			return ch, err
 		}
-		bsp.NStereCoupees = tiglib.Round(bsp.NStereCoupees, 2)
+		ch.NStereCoupees = tiglib.Round(ch.NStereCoupees, 2)
 	}
 	//
-	bsp.PrixStere, err = strconv.ParseFloat(r.PostFormValue("prixstere"), 32)
+	ch.PrixStere, err = strconv.ParseFloat(r.PostFormValue("prixstere"), 32)
 	if err != nil {
-		return bsp, err
+		return ch, err
 	}
-	bsp.PrixStere = tiglib.Round(bsp.PrixStere, 2)
+	ch.PrixStere = tiglib.Round(ch.PrixStere, 2)
 	//
 	if r.PostFormValue("datefacture") != "" {
-		bsp.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
+		ch.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
 		if err != nil {
-			return bsp, err
+			return ch, err
 		}
 	}
 	//
-	bsp.NumFacture = r.PostFormValue("numfacture")
+	ch.NumFacture = r.PostFormValue("numfacture")
 	//
-	bsp.Notes = r.PostFormValue("notes")
+	ch.Notes = r.PostFormValue("notes")
 	//
-	return bsp, nil
+	return ch, nil
 }
 
 // *********************************************************
@@ -301,7 +358,7 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		return err
 	}
 	//
-	bsp, err := model.GetBSPiedFull(ctx.DB, id)
+	ch, err := model.GetBSPiedFull(ctx.DB, id)
 	if err != nil {
 		return err
 	}
@@ -321,7 +378,7 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	//
 	pdf.SetXY(60, 70)
 	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(100, 7, tr(StringActeurFacture(bsp.Acheteur)), "1", "C", false)
+	pdf.MultiCell(100, 7, tr(StringActeurFacture(ch.Acheteur)), "1", "C", false)
 	//
 	// Date  + n° facture
 	//
@@ -346,10 +403,10 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	y += he
 	//
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, tiglib.DateFr(bsp.DateFacture), "LRB", "C", false)
+	pdf.MultiCell(wi, he, tiglib.DateFr(ch.DateFacture), "LRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, bsp.NumFacture, "RB", "C", false)
+	pdf.MultiCell(wi, he, ch.NumFacture, "RB", "C", false)
 	//
 	// Tableau principal
 	//
@@ -380,12 +437,12 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	y += he
 	pdf.SetXY(x, y)
 	wi = w1
-	str = "Vente de bois de " + tr(model.LabelEssence(bsp.Essence)) + " sur pied"
+	str = "Vente de bois de " + tr(model.LabelEssence(ch.Essence)) + " sur pied"
 	pdf.MultiCell(wi, he, str, "LRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w2
-	pdf.MultiCell(wi, he, strconv.FormatFloat(bsp.NStereCoupees, 'f', 2, 64), "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.NStereCoupees, 'f', 2, 64), "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w3
@@ -393,11 +450,11 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w4
-	pdf.MultiCell(wi, he, strconv.FormatFloat(bsp.PrixStere, 'f', 2, 64), "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.PrixStere, 'f', 2, 64), "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w5
-	prixHT := bsp.NStereCoupees * bsp.PrixStere
+	prixHT := ch.NStereCoupees * ch.PrixStere
 	pdf.MultiCell(wi, he, strconv.FormatFloat(prixHT, 'f', 2, 64), "RB", "C", false)
 	//
 	pdf.SetFont("Arial", "B", 10)
@@ -417,11 +474,11 @@ func ShowFactureBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	x += wi
 	wi = w4
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, strconv.FormatFloat(bsp.TVA, 'f', 2, 64)+" %", "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.TVA, 'f', 2, 64)+" %", "RB", "C", false)
 	x += wi
 	wi = w5
 	pdf.SetXY(x, y)
-	prixTVA := prixHT * bsp.TVA / 100
+	prixTVA := prixHT * ch.TVA / 100
 	pdf.MultiCell(wi, he, strconv.FormatFloat(prixTVA, 'f', 2, 64), "RB", "C", false)
 	//
 	pdf.SetFont("Arial", "B", 10)

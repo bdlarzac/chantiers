@@ -120,7 +120,6 @@ func (p *Parcelle) ComputeCommunes(db *sqlx.DB) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	
 	return nil
 }
 
