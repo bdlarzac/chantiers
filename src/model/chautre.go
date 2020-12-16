@@ -88,7 +88,8 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	err = ch.ComputeUGs(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeUGs()")
-	}
+	}              
+	err = ch.ComputeFermiers(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeFermiers()")
 	}
@@ -323,7 +324,7 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 	//
 	// UGs
 	//
-	query = "delete from chantier_ug where type_chantier='chautre' and id=$1"
+	query = "delete from chantier_ug where type_chantier='chautre' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -345,7 +346,7 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
     //
 	// Lieudits
 	//
-	query = "delete from chantier_lieudit where type_chantier='chautre' and id=$1"
+	query = "delete from chantier_lieudit where type_chantier='chautre' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -367,7 +368,7 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
     //
 	// Fermiers
 	//
-	query = "delete from chantier_fermier where type_chantier='chautre' and id=$1"
+	query = "delete from chantier_fermier where type_chantier='chautre' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -396,19 +397,19 @@ func DeleteChautre(db *sqlx.DB, id int) error {
 	//
 	var query string
 	var err error
-	query = "delete from chantier_ug where type_chantier='chautre' and id=$1"
+	query = "delete from chantier_ug where type_chantier='chautre' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	query = "delete from chantier_lieudit where type_chantier='chautre' and id=$1"
+	query = "delete from chantier_lieudit where type_chantier='chautre' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	query = "delete from chantier_fermier where type_chantier='chautre' and id=$1"
+	query = "delete from chantier_fermier where type_chantier='chautre' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

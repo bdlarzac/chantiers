@@ -235,7 +235,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		chantier.Id, err = strconv.Atoi(r.PostFormValue("id"))
+		chantier.Id, err = strconv.Atoi(r.PostFormValue("id-chantier"))
 		if err != nil {
 			return err
 		}

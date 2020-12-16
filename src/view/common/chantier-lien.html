@@ -225,7 +225,7 @@ async function validateUGs(){
         tmp = [];
         response.forEach(function(item){
             item.Communes.forEach(function(curCommune){
-                tmp.push(curCommune.Nom)
+                tmp.push(curCommune.NomCourt)
             });
             tmp = [...new Set(tmp)]; // = array_unique
             dbRows[item.Id] = item.Nom + " (" + tmp.join(", ") + ")";

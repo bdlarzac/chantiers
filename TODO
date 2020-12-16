@@ -2,6 +2,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- Faire aide pour lien chantier
+
 - Fonction pour backup base + path défini dans la config
 
 - Voir bspied Parcelles et IdsParcelles => ???

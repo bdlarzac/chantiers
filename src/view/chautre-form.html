@@ -104,6 +104,8 @@ function initialize(){
     initializeLiensChantier(); // dans view/common/chantier-lien.html   
     // form new
     if({{.Id}} == 0){
+        // unité la plus courante sélectionnée par défaut
+        document.getElementById("unite-ST").selected = true;
     }
     // form update
     else{
@@ -155,6 +157,9 @@ function validateForm(){
         alert(msg);
         return false;
     }
+    //
+    chantierLienUGCode2id();
+    //
     return true;
 }
 </script>

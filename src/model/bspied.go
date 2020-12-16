@@ -32,13 +32,10 @@ type BSPied struct {
 	DateFacture   time.Time
 	NumFacture    string
 	Notes         string
-	// Stocké dans bspied_parcelle
-	IdsParcelles []int
 	// pas stocké en base
 	UGs        []*UG
 	Lieudits   []*Lieudit
 	Fermiers   []*Acteur
-	Parcelles  []*Parcelle
 	Acheteur  *Acteur
 }
 
@@ -83,8 +80,6 @@ func GetBSPied(db *sqlx.DB, idChantier int) (*BSPied, error) {
 //      - les lieux-dits
 //      - les UGs
 //      - les fermiers
-//      - IdsParcelles
-//      - Parcelles
 func GetBSPiedFull(db *sqlx.DB, idChantier int) (*BSPied, error) {
 	ch, err := GetBSPied(db, idChantier)
 	if err != nil {
@@ -93,10 +88,6 @@ func GetBSPiedFull(db *sqlx.DB, idChantier int) (*BSPied, error) {
 	err = ch.ComputeAcheteur(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel BSPied.ComputeAcheteur()")
-	}
-	err = ch.ComputeParcelles(db)
-	if err != nil {
-		return ch, werr.Wrapf(err, "Erreur appel BSPied.ComputeParcelles()")
 	}
 	err = ch.ComputeLieudits(db)
 	if err != nil {
@@ -168,29 +159,6 @@ func (ch *BSPied) ComputeAcheteur(db *sqlx.DB) error {
 	ch.Acheteur, err = GetActeur(db, ch.IdAcheteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
-	}
-	return nil
-}
-
-// Calcule à la fois Parcelles et IdsParcelles
-func (ch *BSPied) ComputeParcelles(db *sqlx.DB) error {
-	if len(ch.Parcelles) != 0 {
-		return nil
-	}
-	var err error
-	query := "select id_parcelle from bspied_parcelle where id_bspied=$1"
-	idsP := []int{}
-	err = db.Select(&idsP, query, ch.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, idP := range idsP {
-		p, err := GetParcelle(db, idP)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur appel GetParcelle()")
-		}
-		ch.IdsParcelles = append(ch.IdsParcelles, idP)
-		ch.Parcelles = append(ch.Parcelles, p)
 	}
 	return nil
 }
@@ -269,13 +237,6 @@ func InsertBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
 		ch.Notes).Scan(&id)
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
-	}
-    //
-	// parcelles
-    //
-	query = "insert into bspied_parcelle values($1, $2)"
-	for _, idP := range ch.IdsParcelles {
-		_ = db.QueryRow(query, id, idP)
 	}
     //
 	// UGs
@@ -364,21 +325,9 @@ func UpdateBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	// Parcelles
-	//
-	query = "delete from bspied_parcelle where id_bspied=$1"
-	_, err = db.Exec(query, ch.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	query = "insert into bspied_parcelle values($1,$2)"
-	for _, idP := range ch.IdsParcelles {
-		_ = db.QueryRow(query, ch.Id, idP)
-	}
-	//
 	// UGs
 	//
-	query = "delete from chantier_ug where type_chantier='bspied' and id=$1"
+	query = "delete from chantier_ug where type_chantier='bspied' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -400,7 +349,7 @@ func UpdateBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
     //
 	// Lieudits
 	//
-	query = "delete from chantier_lieudit where type_chantier='bspied' and id=$1"
+	query = "delete from chantier_lieudit where type_chantier='bspied' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -422,7 +371,7 @@ func UpdateBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
     //
 	// Fermiers
 	//
-	query = "delete from chantier_fermier where type_chantier='bspied' and id=$1"
+	query = "delete from chantier_fermier where type_chantier='bspied' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -451,27 +400,19 @@ func DeleteBSPied(db *sqlx.DB, id int) error {
 	//
 	var query string
 	var err error
-	query = "delete from chantier_ug where type_chantier='bspied' and id=$1"
+	query = "delete from chantier_ug where type_chantier='bspied' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	query = "delete from chantier_lieudit where type_chantier='bspied' and id=$1"
+	query = "delete from chantier_lieudit where type_chantier='bspied' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	query = "delete from chantier_fermier where type_chantier='bspied' and id=$1"
-	_, err = db.Exec(query, id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	//
-	// delete parcelles
-	//
-	query = "delete from bspied_parcelle where id_bspied=$1"
+	query = "delete from chantier_fermier where type_chantier='bspied' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

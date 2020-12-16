@@ -37,7 +37,7 @@
                 <img src="/static/img/delete.png" title="Supprimer ce chantier">     
             </a>
         </td>
-        <td>
+        <td class="vertical-align-top">
             <div class="grid2-pres">
                 <div>Client</div>
                 <div><a href="/acteur/{{.IdClient}}">{{.Client.String}}</a></div>
@@ -54,11 +54,17 @@
                 <div>Exploitation</div>
                 <div>{{.Exploitation | labelExploitation}}</div>
                 
-                <div>UG</div>
-                <div><a href="/ug/{{.IdUG}}">{{.UG.String}}</a></div>
+                <div>UGs</div>
+                <div>{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
+                
+                <div>Lieux-dits</div>
+                <div>{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
+                
+                <div>Fermiers</div>
+                <div>{{range .Fermiers}}<a href="/acteur/{{.Id}}">{{.String}}</a><br>{{end}}</div>
             </div>
         </td>
-        <td>
+        <td class="vertical-align-top">
             <div class="grid2-pres">
                 <div>Volume</div>
                 <div>{{.Volume}} {{.Unite | labelUnite}}</div>
@@ -76,7 +82,7 @@
                 <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Volume}}), {{.TVA}}), 2));</script></span> &euro;</div>
             </div>
         </td>
-        <td>
+        <td class="vertical-align-top">
             <div class="grid2-pres">
                 {{if not .DateFacture.IsZero}}
                 <div>Date</div>
@@ -88,7 +94,7 @@
                 {{end}}
             </div>
         </td>
-        <td>{{.Notes | nl2br}}</td>
+        <td class="vertical-align-top">{{.Notes | nl2br}}</td>
     </tr>
     {{end}}
 

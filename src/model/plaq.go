@@ -616,7 +616,7 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	//
 	// UGs
 	//
-	query = "delete from chantier_ug where type_chantier='plaq' and id=$1"
+	query = "delete from chantier_ug where type_chantier='plaq' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -638,7 +638,7 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
     //
 	// Lieudits
 	//
-	query = "delete from chantier_lieudit where type_chantier='plaq' and id=$1"
+	query = "delete from chantier_lieudit where type_chantier='plaq' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -660,7 +660,7 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
     //
 	// Fermiers
 	//
-	query = "delete from chantier_fermier where type_chantier='plaq' and id=$1"
+	query = "delete from chantier_fermier where type_chantier='plaq' and id_chantier=$1"
 	_, err = db.Exec(query, ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -747,19 +747,19 @@ func DeletePlaq(db *sqlx.DB, id int) error {
 	//
 	// delete UGs, Lieudits, Fermiers associés à ce chantier
 	//
-	query = "delete from chantier_ug where type_chantier='plaq' and id=$1"
+	query = "delete from chantier_ug where type_chantier='plaq' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	query = "delete from chantier_lieudit where type_chantier='plaq' and id=$1"
+	query = "delete from chantier_lieudit where type_chantier='plaq' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	query = "delete from chantier_fermier where type_chantier='plaq' and id=$1"
+	query = "delete from chantier_fermier where type_chantier='plaq' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

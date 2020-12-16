@@ -305,13 +305,6 @@ func chantierBSPiedForm2var(r *http.Request) (*model.BSPied, error) {
 		return ch, err
 	}
 	//
-	for k, _ := range r.PostForm {
-		if strings.HasPrefix(k, "parcelle-") {
-			idP, _ := strconv.Atoi(strings.Replace(k, "parcelle-", "", -1))
-			ch.IdsParcelles = append(ch.IdsParcelles, idP)
-		}
-	}
-	//
 	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//
 	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
