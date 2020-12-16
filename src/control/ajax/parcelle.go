@@ -45,6 +45,7 @@ func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	type respElement struct {
 		Id   int    `json:"id"`
 		Name string `json:"name"`
+		Communes []*model.Commune  `json:"communes"`
 	}
 	var resp []respElement
 	ug, err := model.GetUG(ctx.DB, idUG)
@@ -52,8 +53,15 @@ func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 		return err
 	}
 	err = ug.ComputeParcelles(ctx.DB)
+	if err != nil {
+		return err
+	}
 	for _, p := range ug.Parcelles {
-		resp = append(resp, respElement{p.Id, p.Code})
+	    err = p.ComputeCommunes(ctx.DB)
+        if err != nil {
+            return err
+        }
+		resp = append(resp, respElement{p.Id, p.Code, p.Communes})
 	}
 	json, err := json.Marshal(resp)
 	if err != nil {

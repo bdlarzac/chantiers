@@ -239,7 +239,7 @@ async function afficheParcelles(idUG){
         return;
     }
     if(response.length == 0){
-        ugsElt.innerHTML = "Aucune UG pour ce fermier";
+        ugsElt.innerHTML = "Aucune parcelle pour cette UG";
         return;
     }
     let parcellesElt = document.getElementById("parcelles");
@@ -263,10 +263,18 @@ async function afficheParcelles(idUG){
     //
     let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
     let i = 1;
+    let curCommune, tmp;
     response.forEach(function(item){
         curdiv = document.createElement("div");
         //
         curdiv.innerHTML = "<b>" + item.name + "</b>";
+        // communes de la parcelle
+        tmp = [];
+        item.communes.forEach(function(curCommune){
+            tmp.push(curCommune.NomCourt)
+        });
+        curdiv.innerHTML += "<br>" + tmp.join(", ");
+        
         grid2Elt.appendChild(curdiv);
         //
         curdiv = document.createElement("div");
