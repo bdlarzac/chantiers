@@ -4,14 +4,14 @@
     <li><a href="/docs/cahier-des-charges-bdl-2020.html">Cahier des charges</a></li>
     <li>
         <a href="/docs/mcd-bdl.svg">Schéma de la base</a>
-        <br>Attention : ce schéma correspond à l'état futur de la base (les liaisons n-n entre les chantiers et lieu-dit - parcelle - commune ne sont pas encore codées).
-        <br>Légende :
         <ul>
+            <li>Toutes les entités de la base sont représentées.</li>
+            <li>Pour chaque entité, seules les caractéristiques exprimant des relations vers d'autres entités sont écrites.</li>
+            <li>Les liens épais représentent des relations n-n ; les liens fins représentent des relations 1-n ou 0-n.</li>
             <li>
-                Lire "un chantier plaquette est relié à 1 seul acteur"
-                <br>et "un acteur est relié à 0-n chantiers (0 ou 1 ou 2 ou 3...)"
+                Les cardinalités utilisent la syntaxe Merise (0-n au lieu de 0..*) mais le sens est conforme à UML.
+                <br>Ex : un chantier plaquette est relié à 0-n opérations simples ; une opération simple est reliée à 1 chantier plaquette.
             </li>
-            <li>Les liaisons n-n sont représentées en gras</li>
         </ul>
     </li>
     <li>Autres fichiers présents dans le <a href="/docs/">répertoire <code>docs/</code></a></li>

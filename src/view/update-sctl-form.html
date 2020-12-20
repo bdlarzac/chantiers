@@ -9,9 +9,9 @@ Prendre en compte des modifications dans le logiciel foncier (SCTL).
     <div class="big3 bold">Aucune donnée à mettre à jour</div>
 {{else}}
     <table class="entities">
+    <tr><th>Action</th><th></th></tr>
     {{range .Details.Items}}
         <tr>
-            <td>{{.Type}}</td>
             <td>{{.Action}}</td>                 
             <td>{{.Value}}</td>
         </tr>

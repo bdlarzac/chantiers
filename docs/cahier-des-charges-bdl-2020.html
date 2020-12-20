@@ -688,26 +688,30 @@ Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par B
 <ul>
     <li>Acheteur, acteur identifié par le système</li>
     <li>Date du Contrat</li>
-    <li>Lieu-dit, identifié par le système</li>
-    <li>Parcelles concernées (appartenant au lieu-dit)</li>
-    <li>UG (appartenant au lieu-dit)</li>
     <li>Type d'exploitation (1ère ... 5e exploitation)</li>
     <li>Essence</li>
-    <li>Nb stères spécifiées sur le contrat</li>
-    <li>Nb stères effectivement coupées</li>
-    <li>Prix HT / stère</li>
+    <li>Quantité spécifiée sur le contrat</li>
+    <li>Quantité effectivement coupée</li>
+    <li>
+        Unité pour les quantités : stère, m<sup>3</sup>, map
+        <br>L'unité par défaut est le stère.
+    </li>
+    <li>Prix HT / unité</li>
     <li>Taux de TVA</li>
     <li>Date de facturation</li>
     <li>Notes : champ texte libre</li>
 </ul>
 
-Noter que ce type de chantier est particulier, car il faut spécifier à la fois les parcelles ET l'unité de gestion.
-<br>Spécifier l'UG est nécessaire pour calculer le bilan forestier (qui se fait par UG, et pas par parcelle).
+Liens avec les autres entités :
+<ul>
+    <li>Concerne une ou plusieurs UGs</li>
+    <li>Se trouve sur des terres louées par u ou plusieurs fermiers</li>
+    <li>Se trouve sur un ou plusieurs Lieux-dits</li>
+</ul>
 
 <h5>Facture chantier bois sur pied</h5>
 Le numéro de facture doit être saisi par l'utilisateur.
 
-<div class="question">A vérifier : toujours en stères ? Eric parle de m<sup>3</sup></div>
 
 <!-- *********************************************************** -->
 <h4><a name="2-10-chantiers-autres-valorisations">6 - Chantiers Autres valorisations</a></h4>
@@ -715,7 +719,6 @@ Fait l'objet d'une facturation par BDL.
 <br>Caractéristiques :
 <ul>
     <li>Client, acteur identifié par le système</li>
-    <li>UG</li>
     <li>
         Type de valorisation, pouvant être :
         <ul>
@@ -743,6 +746,12 @@ Fait l'objet d'une facturation par BDL.
     <li>Date de facturation</li>
 </ul>
 
+Liens avec les autres entités :
+<ul>
+    <li>Concerne une ou plusieurs UGs</li>
+    <li>Se trouve sur des terres louées par u ou plusieurs fermiers</li>
+    <li>Se trouve sur un ou plusieurs Lieux-dits</li>
+</ul>
 <h4>Facture chantier bois sur pied</h4>
 Le numéro de facture doit être saisi par l'utilisateur.
 
@@ -791,7 +800,7 @@ Règles de gestion des acteurs :
         <br>- ne pourront pas être supprimés s'ils ont participé à des activités BDL, mais il sera possible de les marquer "inactif".
     </li>
     <li>
-        Les caractéristiques des acteurs créés dans le logiciel BDL pourront être modifiés.
+        Les caractéristiques des acteurs créés dans le logiciel BDL pourront être modifiées.
     </li>
 </ul>
 
@@ -823,7 +832,7 @@ Les données à importer sont :
     <li>
         Parcelles cadastrales, avec leurs caractéristiques : numéro et superficie
     </li>
-    <li>Commune</li>
+    <li>Communes</li>
     <li>Lieux-dits</li>
     <li>Associations fermiers - parcelles</li>
     <li>Associations parcelles - lieux-dits</li>
@@ -1090,13 +1099,42 @@ Page générale affichant la liste des lieux de stockage (pas de page spécifiqu
 <!-- *********************************************************** -->                                                         
 <h3><a name="3-12-mise-a-jour-des-donnees-externes">Mise à jour des données externes</a></h3>
 
+<h4>Couche typologie</h4>
+Les UGs sont importées dans la base BDL en utilisant un export CSV de la couche typo, situé dans <code>appli/install/data/ug.csv</code>.
+<br>Une mise à jour du PSG a lieu tous les 10 ans. Il n'est pas prévu de mise à jour automatique des UGs dans la base BDL. Une mise à jour du PSG pourra être intégrée dans la base BDL gratuitement sur demande, dans la mesure où les UGs sont stables, ce qui signifie que lors d'une mise à jour du PSG :
+<ul>
+    <li>la structure de l'export CSV reste inchangée ;</li>
+    <li>les UGs dans l'export CSV sont listées exactement dans le même ordre (en particulier, il n'y a ni création ni suppression d'UG) ;</li>
+    <li>les codes UG ne changent pas ;</li>
+    <li>les associations entre UGs et parcelles ne changent pas.</li>
+</ul>
+Les seuls changements possibles sont donc les caractéristiques des UGS : type_coupe, previsionnel_coupe, type_peuplement.
+<br>Toute autre situation fera l'objet d'un devis.
+
 <h4>Logiciel SCTL</h4>
-Seules les personnes ayant des baux non-agricoles doivent être importées.
+Seules les personnes ayant des baux agricoles doivent être gérées par la base BDL. Si un sociétaire SCTL non-agricole intervient dans l'activité économique de BDL (ex : conducteur), il doit être créé dans le logiciel BDL.
+
+<h5>Modification des données SCTL</h5>
+Le logiciel BDL permet de mettre à jour la base BDL suite à des changements dans la base SCTL si les conditions suivantes sont respectées :
+<ul>
+    <li>Communes, parcelles et lieux-dits ne changent pas, en particulier conservent les mêmes ids.</li>
+    <li>Les acteurs peuvent évoluer en base SCTL (ajout, suppression, mise à jour des informations), mais les acteurs existant conservent les mêmes ids.</li>
+</ul>
+
+La mise à jour des données SCTL gère :
+<ul>
+    <li>Arrivée de nouveaux exploitants</li>
+    <li>Départ d'exploitants</li>
+    <li>Modification des caractéristiques d'exploitants existant</li>
+    <li>Cangement des associations exploitant / parcelle</li>
+</ul>
+
+Le logiciel doit pouvoir accéder à la base Access (fichier .mdb, dont le chemin d'accès est à renseigner dans config.yml).
 
 
 <!-- *********************************************************** -->                                                         
 <h3><a name="3-13-sauvegarde-des-donnees">Sauvegarde des données</a></h3>
-<div class="question">A définir ; noter qu'une sauvegarde n'est pertinente que si elle est stockée dans un lieu physique différent.</div>
+<div class="bold">Noter qu'une sauvegarde n'est pertinente que si elle est stockée dans un lieu physique différent.</div>
 
 <!-- ********************************************************************************* -->
 <h2><a name="technologies">Technologies</a></h2>

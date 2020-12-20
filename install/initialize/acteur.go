@@ -35,9 +35,10 @@ func FillActeurZero() {
 }
 
 // *********************************************************
+// Remplit les acteurs à partir d'un export de la base SCTL
 func FillActeur() {
 	table := "acteur"
-	fmt.Println("Remplit " + table + " acteur à partir de Exploita.csv")
+	fmt.Println("Remplit " + table + " à partir de Exploita.csv")
 	dirCsv := getPrivateDir()
 	filename := path.Join(dirCsv, "Exploita.csv")
 
@@ -87,11 +88,18 @@ func FillActeur() {
 			v["IdExploitant"],
 			strings.Replace(v["NOMEXP"], "'", `''`, -1),
 			strings.Replace(v["Prenom"], "'", `''`, -1),
-			strings.Replace(v["AdresseExp"], "'", `''`, -1),
+			// Lignes suivantes commentées pour éviter de mettre des infos personnelles en base
+			// pour pouvoir tester en ligne
+			// TODO Remettre dans la version de prod
+			//strings.Replace(v["AdresseExp"], "'", `''`, -1),
+			"",
 			cp,
-			strings.Replace(v["VilleExp"], "'", `''`, -1),
-			v["Telephone"],
-			v["Mail"],
+			//strings.Replace(v["VilleExp"], "'", `''`, -1),
+			"",
+			// v["Telephone"],
+			"",
+			// v["Mail"],
+			"",
 			false,
 			true)
 		if _, err = tx.Exec(sql); err != nil {
@@ -174,6 +182,7 @@ func FillProprietaire() {
 }
 
 // *********************************************************
+// Remplit les liens parcelle - exploitant à partir d'un export de la base SCTL
 func FillLiensParcelleExploitant() {
 	table := "parcelle_exploitant"
 	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
@@ -232,6 +241,7 @@ func FillLiensParcelleExploitant() {
 // *********************************************************
 // Ajoute les acteurs saisis dans un fichier csv pour importer 
 // les acteurs de BDL au moment du démarrage de la base
+// (acteurs non SCTL)
 func AddActeursInitiaux() {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"

@@ -26,9 +26,6 @@ paths:
   # Emplacement du fichier .mdb contenant la base access du logiciel de parts SCTL
   logiciel-foncier: /path/to/file.mdb
   
-  # Emplacement du fichier .TAB contenant la couche typo
-  couche-typo: /path/to/file.tab
-
 # Pourcentage arbitraire de perte
 # appliqué sur le bois vert lors d'un chantier plaquette.
 pourcentage-perte: 9
@@ -70,5 +67,5 @@ affacture:
     Montredon
     12100 La Roque Ste Marguerite
 
-# Nombre de chantiers affichés dans la partie "activités récentes"
+# Nombre de chantiers affichés dans la partie "activités récentes" (page d'accueil)
 nb-recent: 5

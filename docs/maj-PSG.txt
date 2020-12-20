@@ -1,0 +1,19 @@
+
+MAJ PSG
+Opération à faire à la main une fois tous les 10 ans, pas gérée par le programme
+
+
+Dans la mesure où les conditions décrites dans le cahier des charges sont respectées (seules les caractéristiques des ugs changent), suite à une MAJ du PSG, faire :
+
+- remplacer le fichier appli/install/data/ug.csv par une nouvelle version
+
+- vider la table ug : truncate table ug;
+
+- Dans le code de install-bdl.go, modifier la fonction installUG()
+Commenter toutes les lignes de manière à ne conserver que
+	initialize.FillUG()
+
+- Dans appli/install, exécuter :
+go run install-bdl.go -i ug
+
+- Annuler les modifiations faites dans install-bdl.go

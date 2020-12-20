@@ -24,7 +24,6 @@ type Config struct {
 	} `yaml:"database"`
 	Paths struct {
 		LogicielFoncier string `yaml:"logiciel-foncier"`
-		CoucheTypo      string `yaml:"couche-typo"`
 	} `yaml:"paths"`
 	PourcentagePerte float64   `yaml:"pourcentage-perte"`
 	TVAExt           []float64 `yaml:"tva-ext"`

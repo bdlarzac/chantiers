@@ -37,7 +37,7 @@ func UpdateSCTL(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				Title:    "Mise à jour données foncières (SCTL)",
 				CSSFiles: []string{"/static/css/form.css"},
 			},
-			Menu: "acteurs",
+			Menu: "accueil",
 			Details: detailsUpdateSCTLForm{
 				UrlAction: "/update-sctl",
 				Items:     items,
