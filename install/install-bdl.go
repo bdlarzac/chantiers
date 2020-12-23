@@ -133,7 +133,7 @@ func installActeur() {
 	initialize.FillActeur()
 	initialize.AddActeurBDL()
 	initialize.AddActeurGFA()
-	initialize.FillProprietaire()
+	initialize.AddActeurSCTL()
 	initialize.AddActeursInitiaux()
 }
 func installParcelle() {

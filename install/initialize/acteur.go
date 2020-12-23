@@ -62,8 +62,8 @@ func FillActeur() {
 	for _, v := range records {
 		if v["Agricole"] != "1" {
 			// Importer que les agricoles
-			// continue
-			// @todo - fait planter FillLiensParcelleExploitant
+			continue
+			// @todo - commenté car fait planter FillLiensParcelleExploitant
 			// Pour ça, vérifier sur une carte
 		}
 		cp := v["CPExp"]
@@ -146,8 +146,8 @@ func AddActeurBDL() {
 
 // *********************************************************
 // Ajoute un acteur GFA
-// Pas présent dans la base SCTL mais nécessaire au fonctionnement
-// du logiciel BDL (car c'est un propriétaire)
+// Nécessaire au fonctionnement du logiciel BDL (car c'est un propriétaire)
+// Pas présent dans la base SCTL jusu'en 2020
 func AddActeurGFA() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
@@ -159,7 +159,7 @@ func AddActeurGFA() {
 	id := int(0)
 	err := db.QueryRow(
 		query,
-		"GFA",
+		"GFA Larzac",
 		true,
 		true).Scan(&id)
 	if err != nil {
@@ -169,16 +169,27 @@ func AddActeurGFA() {
 }
 
 // *********************************************************
-// Remplit le champ proprietaire de l'acteur SCTL
-func FillProprietaire() {
-	fmt.Printf("Set proprietaire=true pour l'acteur SCTL, id_sctl = %d\n", SCTL_ID_SCTL)
+// Ajoute un acteur SCTL
+// Nécessaire au fonctionnement du logiciel BDL (car c'est un propriétaire)
+// Un exploitant "SCTL" est présent dans la base SCTL, mais pas importé car non agricole
+func AddActeurSCTL() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-	query := `update acteur set proprietaire=$1 where id_sctl=$2`
-	_, err := db.Exec(query, true, SCTL_ID_SCTL)
+	query := `insert into acteur(
+        nom,
+        proprietaire,  
+        actif
+        )values($1,$2,$3) returning id`
+	id := int(0)
+	err := db.QueryRow(
+		query,
+		"SCTL",
+		true,
+		true).Scan(&id)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("Crée acteur SCTL, id = %d\n", id)
 }
 
 // *********************************************************
@@ -193,7 +204,6 @@ func FillLiensParcelleExploitant() {
 	if err != nil {
 		panic(err)
 	}
-
 	// remove doublons
 	var k string
 	var v [2]string
@@ -230,7 +240,7 @@ func FillLiensParcelleExploitant() {
 		sql := fmt.Sprintf("insert into %s(id_parcelle,id_sctl_exploitant) values(%s, %s)", table, idP, idE)
 		if _, err = tx.Exec(sql); err != nil {
 			//n++
-			//fmt.Printf("idP=%s - idE=%s\n", idP, idE)
+			fmt.Printf("idP=%s - idE=%s\n", idP, idE)
 			panic(err)
 		}
 	}
@@ -245,7 +255,6 @@ func FillLiensParcelleExploitant() {
 func AddActeursInitiaux() {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"
-	fmt.Println("Remplit", table, "à partir de", csvfile)
 	dirCsv := getPrivateDir()
 	filename := path.Join(dirCsv, csvfile)
 	// conversion utf8
@@ -317,6 +326,5 @@ func AddActeursInitiaux() {
         }
         n++
     }
-	fmt.Println(n, "lignes insérées")
+	fmt.Println("Insère", n, "lignes dans", table, "à partir de", csvfile)
 }
-

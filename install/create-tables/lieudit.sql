@@ -1,4 +1,5 @@
 
+-- id n'est pas serial (auto increment) car utilise les ids de la base SCTL
 create table lieudit (
     id                      int primary key,
     nom                     varchar(255) not null

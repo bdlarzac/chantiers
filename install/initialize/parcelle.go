@@ -44,15 +44,18 @@ func FillParcelle() {
 		}
 		err = tx.Commit()
 	}()
-
+	
 	// 2 propriétaires possibles : SCTL ou GFA
+	// ATTENTION : les ids de SCTL et GFA sont récupérés à partir du nom
+	// Si le nom change, ce code plante
+	// Voir appli/install/initialize/acteur.go, AddActeurBDL() et AddActeurSCTL()
 	var idSCTL, idGFA int // colonne id
 	query := "select id from acteur where nom=$1"
 	err = db.QueryRow(query, "SCTL").Scan(&idSCTL)
 	if err != nil {
 		panic(err)
 	}
-	err = db.QueryRow(query, "GFA").Scan(&idGFA)
+	err = db.QueryRow(query, "GFA Larzac").Scan(&idGFA)
 	if err != nil {
 		panic(err)
 	}

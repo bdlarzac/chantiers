@@ -54,9 +54,9 @@ func FillCommune() {
 
 // *********************************************************
 func FillLieudit() {
-	fmt.Println("Remplit table lieudit à partir de lieudit.csv")
+	fmt.Println("Remplit table lieudit à partir de LieuDit.csv")
 	dirCsv := getDataDir()
-	filename := path.Join(dirCsv, "lieudit.csv")
+	filename := path.Join(dirCsv, "LieuDit.csv")
 
 	records, err := tiglib.CsvMap(filename, ';')
 
@@ -78,8 +78,8 @@ func FillLieudit() {
 	for _, v := range records {
 		sql := fmt.Sprintf(
 		    "insert into lieudit(id,nom) values(%s, '%s')",
-		    v["id"],
-		    strings.Replace(v["nom"], "'", `''`, -1))
+		    v["IdLieuDit"],
+		    strings.Replace(v["Libelle"], "'", `''`, -1))
 		if _, err = tx.Exec(sql); err != nil {
 			panic(err)
 		}
@@ -92,16 +92,15 @@ func FillLiensCommuneLieudit() {
 	fmt.Println("Remplit table " + table + " à partir de SubdivCadastre.csv")
 	dirCsv := getDataDir()
 	filename := path.Join(dirCsv, "SubdivCadastre.csv")
-
-	records, err := tiglib.CsvMap(filename, ';') // N = 2844
+	//
+	records, err := tiglib.CsvMap(filename, ';') // N = 2844 pour base 2018
 	if err != nil {
 		panic(err)
 	}
-
 	// remove doublons
 	var k string
 	var v [2]string
-	uniques := make(map[string][2]string) // N = 433
+	uniques := make(map[string][2]string) // N = 433 pour base 2018
 	for _, record := range records {
 		idC := record["IdCommune"]
 		idLD := record["IdLieuDit"]
@@ -110,31 +109,34 @@ func FillLiensCommuneLieudit() {
 		v[1] = idLD
 		uniques[k] = v
 	}
-
 	// insert db
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
+    
+	stmt, err := db.Prepare("insert into " + table + "(id_commune,id_lieudit) values($1, $2)")
+    if err != nil {
+        panic(err)
+    }
 	for _, unique := range uniques {
 		idC := unique[0]
 		idLD := unique[1]
-		sql := fmt.Sprintf("insert into %s(id_commune,id_lieudit) values(%s, '%s')", table, idC, idLD)
-		if _, err = tx.Exec(sql); err != nil {
+        _, err := stmt.Exec(idC, idLD)
+        if err != nil {
+            panic(err)
+        }
+    }
+/* 
+	for _, unique := range uniques {
+		idC := unique[0]
+		idLD := unique[1]
+		query := "insert into " + table + "(id_commune,id_lieudit) values($2, $3)"
+        err := db.QueryRow(query, idC, idLD)
+		if err != nil {
+            fmt.Println("err", idC, idLD)
 			panic(err)
-		}
+        }
 	}
+*/
 }
 
 // *********************************************************
