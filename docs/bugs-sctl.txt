@@ -1,0 +1,8 @@
+
+Données 2020-12-16
+
+- lieudit 267 (Les Mares) supprimé, mais reste des liens dans SubdivCadastre
+
+- lien vers parcelle 59 présent dans Subdivision, mais parcelle inexistante
+(lien vers acteur id_sctl=3, qui a l'air d'être un doublon)
+

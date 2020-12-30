@@ -23,7 +23,7 @@ import (
 **/
 func FillParcelle() {
 	table := "parcelle"
-	csvname := "Parcelle_Corr.csv"
+	csvname := "Parcelle.csv"
 	fmt.Println("Remplit table parcelle à partir de " + csvname)
 	dirCsv := getDataDir()
 	filename := path.Join(dirCsv, csvname)
@@ -88,9 +88,9 @@ func FillParcelle() {
 // *********************************************************
 func FillLiensParcelleLieudit() {
 	table := "parcelle_lieudit"
-	fmt.Println("Remplit table " + table + " à partir de Parcelle_Corr.csv")
+	fmt.Println("Remplit table " + table + " à partir de Parcelle.csv")
 	dirCsv := getDataDir()
-	filename := path.Join(dirCsv, "Parcelle_Corr.csv")
+	filename := path.Join(dirCsv, "Parcelle.csv")
 
 	records, err := tiglib.CsvMap(filename, ';')
 	if err != nil {

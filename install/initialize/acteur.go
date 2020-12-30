@@ -91,15 +91,12 @@ func FillActeur() {
 			// Lignes suivantes commentées pour éviter de mettre des infos personnelles en base
 			// pour pouvoir tester en ligne
 			// TODO Remettre dans la version de prod
+			"", "", "", "", "",
 			//strings.Replace(v["AdresseExp"], "'", `''`, -1),
-			"",
-			cp,
+			// cp,
 			//strings.Replace(v["VilleExp"], "'", `''`, -1),
-			"",
 			// v["Telephone"],
-			"",
 			// v["Mail"],
-			"",
 			false,
 			true)
 		if _, err = tx.Exec(sql); err != nil {
@@ -131,11 +128,12 @@ func AddActeurBDL() {
 		query,
 		"BDL",
 		"Bois du Larzac",
-		"Montredon",
-		"12230",
-		"La Roque-Sainte-Marguerite",
-		"05 65 62 13 39",
-		"lesboisdularzac@larzac.org",
+		"", "", "", "", "",
+		//"Montredon",
+		//"12230",
+		//"La Roque-Sainte-Marguerite",
+		//"05 65 62 13 39",
+		//"lesboisdularzac@larzac.org",
 		true,
 		true).Scan(&id)
 	if err != nil {
@@ -191,62 +189,6 @@ func AddActeurSCTL() {
 	}
 	fmt.Printf("Crée acteur SCTL, id = %d\n", id)
 }
-
-// *********************************************************
-// Remplit les liens parcelle - exploitant à partir d'un export de la base SCTL
-func FillLiensParcelleExploitant() {
-	table := "parcelle_exploitant"
-	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
-	dirCsv := getDataDir()
-	filename := path.Join(dirCsv, "Subdivision.csv")
-
-	records, err := tiglib.CsvMap(filename, ';') // N = 2844
-	if err != nil {
-		panic(err)
-	}
-	// remove doublons
-	var k string
-	var v [2]string
-	uniques := make(map[string][2]string) // N = 433
-	for _, record := range records {
-		idP := record["IdParcelle"]
-		idE := record["IdExploitant"]
-		k = idP + "-" + idE
-		v[0] = idP
-		v[1] = idE
-		uniques[k] = v
-	}
-
-	// insert db
-	ctx := ctxt.NewContext()
-	db := ctx.DB
-
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
-	//n := 0
-	for _, unique := range uniques {
-		idP := unique[0]
-		idE := unique[1]
-		sql := fmt.Sprintf("insert into %s(id_parcelle,id_sctl_exploitant) values(%s, %s)", table, idP, idE)
-		if _, err = tx.Exec(sql); err != nil {
-			//n++
-			fmt.Printf("idP=%s - idE=%s\n", idP, idE)
-			panic(err)
-		}
-	}
-	//fmt.Printf("%d associations pas enregistrées (non-agricoles)\n", n)
-}
-
 
 // *********************************************************
 // Ajoute les acteurs saisis dans un fichier csv pour importer 
@@ -315,10 +257,12 @@ func AddActeursInitiaux() {
             query,
             line["nom"],
             line["prenom"],
-            line["adresse1"],
-            line["adresse2"],
-            line["cp"],
-            line["ville"],
+            // suprime infos pour protection vie privée
+            "", "", "", "",
+            // line["adresse1"],
+            // line["adresse2"],
+            // line["cp"],
+            // line["ville"],
             actif,
             line["notes"]).Scan(&id)
         if err != nil {
@@ -327,4 +271,64 @@ func AddActeursInitiaux() {
         n++
     }
 	fmt.Println("Insère", n, "lignes dans", table, "à partir de", csvfile)
+}
+
+
+// *********************************************************
+// Remplit les liens parcelle - exploitant à partir d'un export de la base SCTL
+func FillLiensParcelleExploitant() {
+	table := "parcelle_exploitant"
+	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
+	dirCsv := getDataDir()
+	filename := path.Join(dirCsv, "Subdivision.csv")
+
+	records, err := tiglib.CsvMap(filename, ';') // N = 2844
+	if err != nil {
+		panic(err)
+	}
+	// remove doublons
+	var k string
+	var v [2]string
+	uniques := make(map[string][2]string) // N = 433
+	for _, record := range records {
+		idP := record["IdParcelle"]
+		idE := record["IdExploitant"]
+		k = idP + "-" + idE
+		v[0] = idP
+		v[1] = idE
+		uniques[k] = v
+	}
+
+	// insert db
+	ctx := ctxt.NewContext()
+	db := ctx.DB
+
+	tx, err := db.Begin()
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			return
+		}
+		err = tx.Commit()
+	}()
+
+	n := 0
+	for _, unique := range uniques {
+		idP := unique[0]
+		idE := unique[1]
+		sql := fmt.Sprintf("insert into %s(id_parcelle,id_sctl_exploitant) values(%s, %s)", table, idP, idE)
+		if _, err = tx.Exec(sql); err != nil {
+			n++
+			continue
+			// if idP == "59" || idP == "1859" || idP == "102" {
+			    // continue
+			// }
+			// fmt.Printf("idP=%s - idE=%s\n", idP, idE)
+			// panic(err)
+		}
+	}
+	fmt.Printf("%d associations pas enregistrées (bugs SCTL)\n", n)
 }

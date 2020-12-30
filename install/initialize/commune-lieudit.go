@@ -22,33 +22,19 @@ func FillCommune() {
 	fmt.Println("Remplit table commune à partir de commune.csv")
 	dirCsv := getDataDir()
 	filename := path.Join(dirCsv, "commune.csv")
-
 	records, err := tiglib.CsvMap(filename, ';')
-
+	// insert db
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-
-	tx, err := db.Begin()
 	if err != nil {
 		panic(err)
 	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
+	stmt, err := db.Prepare("insert into commune(id,nom,nomcourt) values($1, $2, $3)")
 	for _, v := range records {
-		sql := fmt.Sprintf(
-		    "insert into commune(id,nom,nomcourt) values(%s, '%s', '%s')",
-		    v["id"],
-		    strings.Replace(v["nom"], "'", `''`, -1),
-		    strings.Replace(v["nom_court"], "'", `''`, -1))
-		if _, err = tx.Exec(sql); err != nil {
-			panic(err)
-		}
+        _, err = stmt.Exec(v["id"], v["nom"], v["nom_court"])
+        if err != nil {
+            panic(err)
+        }
 	}
 }
 
@@ -57,32 +43,19 @@ func FillLieudit() {
 	fmt.Println("Remplit table lieudit à partir de LieuDit.csv")
 	dirCsv := getDataDir()
 	filename := path.Join(dirCsv, "LieuDit.csv")
-
 	records, err := tiglib.CsvMap(filename, ';')
-
+	// insert db
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-
-	tx, err := db.Begin()
 	if err != nil {
 		panic(err)
 	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
+	stmt, err := db.Prepare("insert into lieudit(id,nom) values($1, $2)")
 	for _, v := range records {
-		sql := fmt.Sprintf(
-		    "insert into lieudit(id,nom) values(%s, '%s')",
-		    v["IdLieuDit"],
-		    strings.Replace(v["Libelle"], "'", `''`, -1))
-		if _, err = tx.Exec(sql); err != nil {
-			panic(err)
-		}
+        _, err = stmt.Exec(v["IdLieuDit"], v["Libelle"])
+        if err != nil {
+            panic(err)
+        }
 	}
 }
 
@@ -112,7 +85,6 @@ func FillLiensCommuneLieudit() {
 	// insert db
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-    
 	stmt, err := db.Prepare("insert into " + table + "(id_commune,id_lieudit) values($1, $2)")
     if err != nil {
         panic(err)
@@ -122,21 +94,12 @@ func FillLiensCommuneLieudit() {
 		idLD := unique[1]
         _, err := stmt.Exec(idC, idLD)
         if err != nil {
+            if idLD == "267" {
+                continue; // Les Mares, bug sctl
+            }
             panic(err)
         }
     }
-/* 
-	for _, unique := range uniques {
-		idC := unique[0]
-		idLD := unique[1]
-		query := "insert into " + table + "(id_commune,id_lieudit) values($2, $3)"
-        err := db.QueryRow(query, idC, idLD)
-		if err != nil {
-            fmt.Println("err", idC, idLD)
-			panic(err)
-        }
-	}
-*/
 }
 
 // *********************************************************
