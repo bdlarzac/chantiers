@@ -22,7 +22,7 @@
         <input type="date" name="datetrans" id="datetrans" value="{{.DateTrans | dateIso}}" class="width20">
         
         <label for="qte">Quantité</label>
-        <div><input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5"> maps</div>
+        <div><input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5"> maps (secs)</div>
         
         <!-- ****************** Coût global ******************* -->
         <div class="big5 bold">
@@ -137,9 +137,14 @@
         
     </div>
     
-    <div class="float-right margin-top">
-        <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
-        <input type="submit" class="margin-left" value="Valider">
+    <div class="margin-top">
+        <div class="float-left">
+            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
+        </div>
+        <div class="float-right">
+            <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+            <input type="submit" class="margin-left" value="Valider">
+        </div>
     </div>
 
     <input type="hidden" name="id-plaqtrans" id="id-plaqtrans" value="{{.Id}}">
@@ -150,6 +155,16 @@
     
 </form>
 
+<a name="help"></a>
+<div id="help" class="margin display-none">
+    <div class="help-content">
+        <div class="help-title">Aide</div>
+        
+        <div class="section">
+            <b>Quantité</b> : la quantité à renseigner doit être exprimée en <b>maps secs</b> (= volume de bois vert - pourcentage de perte).
+        </div>
+    </div>
+</div>
 
 <script>
 window.addEventListener("load", function(){

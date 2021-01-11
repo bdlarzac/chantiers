@@ -8,10 +8,10 @@
     {{with .Details.Acteur}}
     {{if not .IsSctl}}
     <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
-        <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/delete.png" alt="Supprimer cet acteur">
+        <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/delete.png" title="Supprimer cet acteur">
     </a>
     <a href="/acteur/update/{{.Id}}">
-        <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/update.png" alt="Modifier cet acteur">
+        <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/update.png" title="Modifier cet acteur">
     </a>
     {{end}}
     {{end}}

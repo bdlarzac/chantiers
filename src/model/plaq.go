@@ -358,6 +358,7 @@ func (ch *Plaq) ComputeVentes(db *sqlx.DB) error {
 
 // Calcule les différents coûts d'exploitation
 // Doit être effectué sur un chantier obtenu par GetPlaqFull() - pas de vérification d'erreur
+// TODO Attention, il reste du code inutile pour calculer le coût du stockage
 func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	if ch.Volume == 0 {
 		// valeurs par défaut, tous les coûts restent à 0
@@ -366,6 +367,7 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	ch.Cout = &CoutPlaq{}
 	nMapSec := ch.Volume * (1 - config.PourcentagePerte/100)
 	var cout float64
+	// j1, j2, DATE_MIN, DATE_MAX utilisés pour coût stockage
 	// j1 = date du premier transport
 	// j2 = date du dernier chargement
 	DATE_MAX, _ := time.Parse("2006-01-02", "2999-12-31")
@@ -400,9 +402,11 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 		if t.TypeCout == "G" {
 			cout += t.GlPrix
 		} else if t.TypeCout == "C" {
-			cout += t.CaNkm * t.CaPrixKm
+		    cout += t.CoNheure * t.CoPrixH    // conducteur
+			cout += t.CaNkm * t.CaPrixKm      // outil
 		} else if t.TypeCout == "T" {
-			cout += float64(t.TbNbenne) * t.TbDuree * t.TbPrixH
+		    cout += t.CoNheure * t.CoPrixH                        // conducteur
+			cout += float64(t.TbNbenne) * t.TbDuree * t.TbPrixH   // outil
 		}
         if t.DateTrans.Before(j1) {
             j1 = t.DateTrans
@@ -437,7 +441,8 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 			if l.TypeCout == "G" {
 				coutL += l.GlPrix
 			} else {
-				coutL += l.MoNHeure * l.MoPrixH
+				coutL += l.OuPrix                // outil
+				coutL += l.MoNHeure * l.MoPrixH  // main d'oeuvre
 			}
 			for _, c := range l.Chargements {
 				if c.TypeCout == "G" {
@@ -457,6 +462,7 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	//
 	// Stockage
 	//
+	/* 
     var tas *Tas
     cout = 0
     // s'il y a au moins un transport et un chargement
@@ -472,6 +478,7 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	        
 	    }
 	}
+	*/
 	//
 	return nil
 }
