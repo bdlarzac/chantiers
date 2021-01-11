@@ -27,7 +27,7 @@ type detailsActeurShow struct {
 
 // *********************************************************
 func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	list, err := model.SortedActeurs(ctx.DB, "nom")
+	list, err := model.GetSortedActeurs(ctx.DB, "nom")
 	if err != nil {
 		return err
 	}
@@ -66,6 +66,10 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	if err != nil {
 		return err
 	}
+    acteur.Deletable, err = acteur.IsDeletable(ctx.DB)
+    if err != nil {
+        return err
+    }
 	activites, err := acteur.GetActivitesByDate(ctx.DB)
 	if err != nil {
 		return err
@@ -186,23 +190,20 @@ func UpdateActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	}
 }
 
-/*
 // *********************************************************
 func DeleteActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
     vars := mux.Vars(r)
-    idOp, err := strconv.Atoi(vars["id"])
+    id, err := strconv.Atoi(vars["id"])
     if err != nil{
         return err
     }
-    err = model.DeletePlaq(ctx.DB, idOp)
+    err = model.DeleteActeur(ctx.DB, id)
     if err != nil{
         return err
     }
     ctx.Redirect = "/acteur/liste"
     return nil
 }
-
-*/
 
 // *********************************************************
 // Fabrique un Acteur à partir des valeurs d'un formulaire.

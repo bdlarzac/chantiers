@@ -90,7 +90,6 @@ h1{padding-left:1rem;}
     padding:0 2px;
     border:2px solid grey;
 }
-
 .icon-euro{
     font-size:1.5rem;
     padding: 0 .5rem;
@@ -99,7 +98,18 @@ h1{padding-left:1rem;}
     background:grey;
     font-weight:lighter;
 }
-
+.icon-euro-small{
+    padding: 0 .5rem;
+    border:1px solid black;
+    color:white;
+    background:grey;
+    font-weight:lighter;
+}
+.verybigicon{
+    display:block;
+    border:2px solid grey;
+    padding:7px;
+}
 .bigicon{
     display:block;
     border:2px solid grey;

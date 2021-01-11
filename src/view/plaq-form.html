@@ -79,10 +79,9 @@
 <div id="help" class="margin display-none">
     <div class="help-content">
         <div class="help-title">Aide</div>
-        <div class="section">
-            <b>Lieu-dit</b>, <b>Fermier</b>, <b>Unité de gestion</b> : pour accéder à la liste des fermiers et unités de gestion, il faut d'abord choisir un lieu dit, puis valider en cliquant sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png" alt="Valider">
-            <br>Il faut ensuite obligatoirement choisir un fermier et une UG.
-        </div>
+        
+        {{template "chantier-lien-help.html"}}
+        
         <div class="section">
             <b>Lieu de stockage (tas)</b> : permet de spécifier les hangars contenant les tas associés au chantier.
             <br>Un chantier peut être associé à plusieurs tas mais ne peut être associé qu'à un seul tas par hangar.

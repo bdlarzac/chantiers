@@ -46,6 +46,7 @@ func init() {
             ParseGlob(filepath.Join("view", "*.html"))).
             Option("missingkey=error")
     tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien.html"))
+    tmpl.New("chantier-lien-help").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien-help.html"))
 }
 
 // ************************* pipelines ********************************

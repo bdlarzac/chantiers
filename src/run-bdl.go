@@ -64,6 +64,7 @@ func main() {
 	r.HandleFunc("/acteur/liste", H(control.ListActeur))
 	r.HandleFunc("/acteur/new", H(control.NewActeur))
 	r.HandleFunc("/acteur/update/{id:[0-9]+}", H(control.UpdateActeur))
+	r.HandleFunc("/acteur/delete/{id:[0-9]+}", H(control.DeleteActeur))
 	r.HandleFunc("/acteur/{id:[0-9]+}", H(control.ShowActeur))
 
 	r.HandleFunc("/affacture/form/{id:[0-9]+}", H(control.FormAffacture))

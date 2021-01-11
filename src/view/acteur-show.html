@@ -1,8 +1,20 @@
 <h1>
     {{.Header.Title}}
+    
     <a class="padding-left" href="/affacture/form/{{.Details.Acteur.Id}}">
         <span class="icon-euro" title="Payer cet acteur">&euro;</span>
     </a>
+    
+    {{with .Details.Acteur}}
+    {{if not .IsSctl}}
+    <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
+        <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/delete.png" alt="Supprimer cet acteur">
+    </a>
+    <a href="/acteur/update/{{.Id}}">
+        <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/update.png" alt="Modifier cet acteur">
+    </a>
+    {{end}}
+    {{end}}
     
 </h1>
 
@@ -89,3 +101,22 @@
 </div><!-- end class="flex-wrap" -->
 
 
+<script>
+// *****************************************
+function deleteActeur(idActeur, nomActeur, deletable){
+    let msg;
+    if(deletable){
+        msg = "ATTENTION, en cliquant sur OK,\n"
+                + "l'acteur \"" + nomActeur + "\" sera définitivement supprimé.\n";
+    }
+    else{
+        msg = "ATTENTION, en cliquant sur OK,\n"
+                + "l'acteur \"" + nomActeur + "\" sera marqué \"inactif\".\n"
+                + "(Il ne peut pas être supprimé car il a participé à des activités)";
+    }
+    if(confirm(msg)){
+        window.location = "/acteur/delete/" + idActeur;
+    }
+}
+
+</script>

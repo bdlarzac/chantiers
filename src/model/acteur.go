@@ -143,9 +143,9 @@ func GetActeurByNomAutocomplete(db *sqlx.DB, str string) (*Acteur, error) {
 
 // Renvoie une liste d'Acteurs triés en utilisant un champ de la table
 // @param field    Champ de la table acteur utilisé pour le tri
-func SortedActeurs(db *sqlx.DB, field string) ([]*Acteur, error) {
+func GetSortedActeurs(db *sqlx.DB, field string) ([]*Acteur, error) {
 	acteurs := []*Acteur{}
-	query := "select * from acteur order by " + field
+	query := "select * from acteur where id<>0 order by " + field
 	err := db.Select(&acteurs, query)
 	if err != nil {
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
@@ -767,7 +767,6 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) error {
 	return nil
 }
 
-/*
 func DeleteActeur(db *sqlx.DB, id int) error {
     // peut-être ici protection pour savoir si Deletable = true
     // (la situation actuelle fait confiance à l'UI pour ne pas proposer delete sur acteur non deletable)
@@ -778,4 +777,3 @@ func DeleteActeur(db *sqlx.DB, id int) error {
     }
     return nil
 }
-*/

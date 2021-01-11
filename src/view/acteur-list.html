@@ -31,6 +31,9 @@
         <a href="/acteur/update/{{.Id}}">
             <img src="../static/img/update.png" alt="Modifier cet acteur">
         </a>
+        <a href="/affacture/form/{{.Id}}">
+            <span class="icon-euro-small" title="Payer cet acteur">&euro;</span>
+        </a>
         {{end}}
     </td>
     <td><a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>
@@ -40,7 +43,7 @@
     <td class="whitespace-nowrap">{{.Tel}}</td>
     <td class="whitespace-nowrap">{{.Mobile}}</td>
     <td>{{.Email}}</td>
-    <td>{{.Actif}}</td>
+    <td>{{if .Actif}}oui{{else}}non{{end}}</td>
     <td>{{.Notes}}</td>
 </tr>
 {{end}}
