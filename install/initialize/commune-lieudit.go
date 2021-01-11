@@ -23,6 +23,7 @@ func FillCommune() {
 	dirCsv := getDataDir()
 	filename := path.Join(dirCsv, "commune.csv")
 	records, err := tiglib.CsvMap(filename, ';')
+//fmt.Printf("%+v\n",records)
 	// insert db
 	ctx := ctxt.NewContext()
 	db := ctx.DB
