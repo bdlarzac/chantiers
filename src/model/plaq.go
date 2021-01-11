@@ -15,7 +15,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+//"fmt"
 )
 
 type Plaq struct {
@@ -356,9 +356,9 @@ func (ch *Plaq) ComputeVentes(db *sqlx.DB) error {
 	return nil
 }
 
-// Coût exploitation
+// Calcule les différents coûts d'exploitation
 // Doit être effectué sur un chantier obtenu par GetPlaqFull() - pas de vérification d'erreur
-func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
+func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	if ch.Volume == 0 {
 		// valeurs par défaut, tous les coûts restent à 0
 		return nil
@@ -366,6 +366,12 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 	ch.Cout = &CoutPlaq{}
 	nMapSec := ch.Volume * (1 - config.PourcentagePerte/100)
 	var cout float64
+	// j1 = date du premier transport
+	// j2 = date du dernier chargement
+	DATE_MAX, _ := time.Parse("2006-01-02", "2999-12-31")
+	DATE_MIN, _ := time.Parse("2006-01-02", "1999-12-31")
+	j1 := DATE_MAX
+	j2 := DATE_MIN
 	//
 	// Opérations simples
 	//
@@ -398,6 +404,9 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 		} else if t.TypeCout == "T" {
 			cout += float64(t.TbNbenne) * t.TbDuree * t.TbPrixH
 		}
+        if t.DateTrans.Before(j1) {
+            j1 = t.DateTrans
+        }
 	}
 	ch.Cout.Transport = cout / nMapSec
 	//
@@ -414,15 +423,17 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 	}
 	ch.Cout.Rangement = cout / nMapSec
 	//
-	// Stockage
-	//
-	// todo calcul coût stockage
-	//
 	// Chargement et livraisons
 	//
 	var coutC, coutL float64
 	for _, v := range ch.Ventes {
-		for _, l := range v.Livraisons {
+	    // ch.Ventes ne contient que les champs de la base
+	    // donc appel de GetVentePlaqFull() pour avoir une vente et ses livraisons
+	    vf, err := GetVentePlaqFull(db, v.Id)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel GetVentePlaqFull()")
+		}
+		for _, l := range vf.Livraisons {
 			if l.TypeCout == "G" {
 				coutL += l.GlPrix
 			} else {
@@ -435,11 +446,32 @@ func (ch *Plaq) ComputeCout(db *sqlx.DB, config *Config) error {
 					coutC += c.OuPrix               // outil
 					coutC += c.MoNHeure * c.MoPrixH // main d'oeuvre
 				}
+                if c.DateCharge.After(j2) {
+                    j2 = c.DateCharge
+                }
 			}
 		}
 	}
 	ch.Cout.Chargement = coutC / nMapSec
 	ch.Cout.Livraison = coutL / nMapSec
+	//
+	// Stockage
+	//
+    var tas *Tas
+    cout = 0
+    // s'il y a au moins un transport et un chargement
+	if j1 != DATE_MAX && j2 != DATE_MIN {
+	    // vérifie que tous les tas du chantier ont été déclarés vides
+	    vides := true
+	    for _, tas = range(ch.Tas){
+	        if tas.Actif {
+	            vides = false
+	        }
+	    }
+	    if vides == true {
+	        
+	    }
+	}
 	//
 	return nil
 }

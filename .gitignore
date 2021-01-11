@@ -1,6 +1,9 @@
-z.*
 
 config.yml
+
+*.exe
+z.*
+
 
 # editor stuff
 *.vim

@@ -3,6 +3,7 @@ module bdl.local/bdl
 go 1.14
 
 require (
+	github.com/benbjohnson/genesis v0.2.1 // indirect
 	github.com/gorilla/mux v1.7.4
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/jung-kurt/gofpdf v1.16.2

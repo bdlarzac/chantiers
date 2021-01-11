@@ -1,0 +1,23 @@
+# github.com/benbjohnson/genesis v0.2.1
+## explicit
+# github.com/gorilla/mux v1.7.4
+## explicit
+github.com/gorilla/mux
+# github.com/jmoiron/sqlx v1.2.0
+## explicit
+github.com/jmoiron/sqlx
+github.com/jmoiron/sqlx/reflectx
+# github.com/jung-kurt/gofpdf v1.16.2
+## explicit
+github.com/jung-kurt/gofpdf
+# github.com/lib/pq v1.3.0
+## explicit
+github.com/lib/pq
+github.com/lib/pq/oid
+github.com/lib/pq/scram
+# github.com/recursionpharma/go-csv-map v0.0.0-20160524001940-792523c65ae9
+## explicit
+github.com/recursionpharma/go-csv-map
+# gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+## explicit
+gopkg.in/yaml.v3

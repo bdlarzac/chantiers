@@ -88,7 +88,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	err = chantier.ComputeCout(ctx.DB, ctx.Config)
+	err = chantier.ComputeCouts(ctx.DB, ctx.Config)
 	if err != nil {
 		return err
 	}
@@ -286,7 +286,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		//
-		redirect := "/chantier/plaquette/" + r.PostFormValue("id")
+		redirect := "/chantier/plaquette/" + r.PostFormValue("id-chantier")
 		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
 		if err != nil {
 			return err

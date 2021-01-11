@@ -21,6 +21,7 @@ database:
   password: my_password
   dbname: my_db
   schema: my_schema
+  ssl-mode: disable
 
 paths:
   # Emplacement du fichier .mdb contenant la base access du logiciel de parts SCTL
@@ -28,7 +29,7 @@ paths:
   
 # Pourcentage arbitraire de perte
 # appliqué sur le bois vert lors d'un chantier plaquette.
-pourcentage-perte: 9
+pourcentage-perte: 10
 
 # Taux de TVA pour les opérations facturées à BDL par des opérateurs extérieurs
 tva-ext:

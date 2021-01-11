@@ -168,7 +168,7 @@ function validateForm(){
     if(fin == ""){
         msg += "- Vous devez renseigner la date de fin.\n";
     }
-    if(deb != "" && fin != "" && fin <= deb){
+    if(deb != "" && fin != "" && fin < deb){
         msg += "- La date de fin doit se situer après la date de début.\n";
     }
     //

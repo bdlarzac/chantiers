@@ -2,8 +2,14 @@
 {{if eq .Details.Chantier.Volume 0.0}}
 
 Le coût d'exploitation d'un chantier ne peut être calculé que si le volume de plaquettes est différent de 0.
+<div>(Il faut au moins une opération de déchiquetage)</div>
 
 {{else}}
+
+Calculs effectués avec 
+<script>let tmp = {{.Details.Chantier.Volume}}*(1 - {{.Details.PourcentagePerte}}/100); document.write(round(tmp, 2));</script>
+maps de matière sèche.
+
 
 {{with .Details.Chantier.Cout}}
 <table class="bordered">
@@ -57,48 +63,11 @@ Le coût d'exploitation d'un chantier ne peut être calculé que si le volume de
 
 <!-- ********************************************************************************* -->
 <hr class="margin-top3">
+<h2>PROTOTYPE, données ne correspondant pas au chantier</h2>
 <h2>A compléter, spécifications pas claires</h2>
 <hr>
-<h2>PROTOTYPE, données ne correspondant pas au chantier</h2>
+
 <div style="float:left;">
-
-<table class="bordered">
-    <tr><th>Poste</th><th>Coût &euro; / MAP sèche</th></tr>
-    <tr>
-        <td>Abattage</td>
-        <td>1.59 &euro;</td>
-    </tr>
-    <tr>
-        <td>Débardage</td>
-        <td>3.24 &euro;</td>
-    </tr>
-    <tr>
-        <td>Déchiquetage</td>
-        <td>5.30 &euro;</td>
-    </tr>
-    <tr>
-        <td>Transport plateforme <br>(MO, tracteur/benne, télescopique, repas)</td>
-        <td>2.09 &euro;</td>
-    </tr>
-    <tr>
-        <td>Broyage parcelle</td>
-        <td>1.00 &euro;</td>
-    </tr>
-    <tr>
-        <td>Stockage</td>
-        <td>2.00 &euro;</td>
-    </tr>
-    <tr>
-        <td>Livraison + chargement</td>
-        <td>4.56 &euro;</td>
-    </tr>
-
-</table>
-
-</div>
-
-
-<div style="float:left; margin-left:2em; position:relative; top:-2em;">
 
 <h3>Récap compta</h3>
 <table class="bordered" style="color:red";>

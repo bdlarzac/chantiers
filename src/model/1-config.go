@@ -21,6 +21,7 @@ type Config struct {
 		User     string `yaml:"user"`
 		Password string `yaml:"password"`
 		DbName   string `yaml:"dbname"`
+		SSLMode  string `yaml:"ssl-mode"`
 	} `yaml:"database"`
 	Paths struct {
 		LogicielFoncier string `yaml:"logiciel-foncier"`

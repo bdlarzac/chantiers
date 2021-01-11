@@ -1,0 +1,6 @@
+export GOOS=windows
+export GOARCH=amd64
+#GOARCH=386
+
+#go build -v -o bdl.exe
+go build

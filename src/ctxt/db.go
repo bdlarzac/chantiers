@@ -18,12 +18,13 @@ var db *sqlx.DB
 
 func init() {
 	connStr := fmt.Sprintf(
-		"dbname=%s user=%s password=%s host=%s port=%s",
+		"dbname=%s user=%s password=%s host=%s port=%s sslmode=%s",
 		config.Database.DbName,
 		config.Database.User,
 		config.Database.Password,
 		config.Database.Host,
 		config.Database.Port,
+		config.Database.SSLMode,
 	)
 	var err error
 	db, err = sqlx.Open("postgres", connStr)
