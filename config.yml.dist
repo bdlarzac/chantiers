@@ -22,6 +22,9 @@ database:
   dbname: my_db
   schema: my_schema
   ssl-mode: disable
+  backup:
+    directory: /tmp
+    cmd-pgdump: pg_dump
 
 paths:
   # Emplacement du fichier .mdb contenant la base access du logiciel de parts SCTL

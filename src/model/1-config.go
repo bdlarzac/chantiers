@@ -21,7 +21,12 @@ type Config struct {
 		User     string `yaml:"user"`
 		Password string `yaml:"password"`
 		DbName   string `yaml:"dbname"`
+		Schema   string `yaml:"schema"`
 		SSLMode  string `yaml:"ssl-mode"`
+        Backup struct {
+            Directory string `yaml:"directory"`
+            CmdPgdump string `yaml:"cmd-pgdump"`
+        } `yaml:"backup"`
 	} `yaml:"database"`
 	Paths struct {
 		LogicielFoncier string `yaml:"logiciel-foncier"`
