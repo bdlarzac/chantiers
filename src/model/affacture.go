@@ -367,7 +367,7 @@ func (aff *Affacture) computeItemsTransportProprioutil(db *sqlx.DB) error {
 			montantTVA = montantHT * elt.TbTVA / 100
 			montantTTC = montantHT + montantTVA
 			ligne = AffactureLigne{
-				Titre: "Tracteur + benne",
+				Titre: "Tract. + benne",
 				Colonnes: []AffactureColonne{
 					{
 						Titre:  "Nb de bennes",
