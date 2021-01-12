@@ -276,12 +276,12 @@ func UpdateChaufer(db *sqlx.DB, chantier *Chaufer) error {
 }
 
 func DeleteChaufer(db *sqlx.DB, id int) error {
-	query := "delete from chaufer where id=$1"
+	query := "delete from chaufer_parcelle where id_chaufer=$1"
 	_, err := db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	query = "delete from chaufer_parcelle where id_chaufer=$1"
+	query = "delete from chaufer where id=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

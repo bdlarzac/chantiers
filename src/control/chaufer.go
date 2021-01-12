@@ -254,10 +254,12 @@ func chantierChauferForm2var(r *http.Request) (*model.Chaufer, error) {
 			lien.IdParcelle = idP
 			if v[0] == "radio-parcelle-entiere-"+idPString {
 				lien.Entiere = true
-			} else {
+			} else if v[0] == "radio-parcelle-surface-"+idPString{
 				lien.Entiere = false
 				lien.Surface, _ = strconv.ParseFloat(r.PostFormValue("parcelle-surface-"+idPString), 32)
 				lien.Surface = tiglib.Round(lien.Surface, 2)
+			} else {
+			    continue;
 			}
 			chantier.LiensParcelles = append(chantier.LiensParcelles, &lien)
 		}
