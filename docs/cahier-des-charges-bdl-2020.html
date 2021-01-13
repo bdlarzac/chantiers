@@ -324,8 +324,7 @@ Les mesures d'humidité ne sont impliquées dans aucun calcul.
 
 <!-- *********************************************************** -->
 <h4><a name="2-6-chantiers-plaquettes">2 - Chantiers plaquettes</a></h4>
-Un chantier plaquette est relié à une (et une seule) unité de gestion.
-<br>Il possède des caractéristiques propres, et est associé à plusieurs opérations :
+Un chantier plaquettes possède des caractéristiques propres, et est associé à 0, 1 ou plusieurs opérations :
 <ul>
     <li>Abattage</li>
     <li>Débardage</li>
@@ -335,15 +334,32 @@ Un chantier plaquette est relié à une (et une seule) unité de gestion.
     <li>Broyage</li>
 </ul>
 
+Un chantier plaquettes est relié à d'autres entités du système :
+<ul>
+    <li>Concerne une ou plusieurs UGs</li>
+    <li>Se trouve sur des terres louées par un ou plusieurs fermiers</li>
+    <li>Se trouve sur un ou plusieurs Lieux-dits</li>
+    <li>Les plaquettes sont transportées vers un ou plusieurs lieu(x) de stockage</li>
+</ul>
+
+La relation entre un chantier plaquettes et un lieu de stockage est particulièrement importante. Elle obéit aux règles suivantes :
+<ul>
+    <li>
+        Un chantier peut être associé à un ou plusieurs lieu(x) de stockage.
+        <br>Ces associations sont définies lors de la création (ou de la modification) du chantier.
+    </li>
+    <li>
+        Pour chacune de ces associations, un nouveau <b>tas</b> est créé dans le lieu de stockage.
+        <br><b>Un chantier plaquettes est lié à un et un seul tas par lieu de stockage</b>.
+    </li>
+</ul>
+
 <!-- ************************************* -->
 <h5>2.1 - Caractéristiques propres à un chantier plaquettes</h5>
 Un chantier plaquettes est caractérisé par :
 <ul>
     <li>Nom = nom du lieu-dit suivi de la date de début</li>
     <li>Dates de début et de fin (déchiquetage)</li>
-    <li>Unité de gestion</li>
-    <li>Lieu-dit (déduit de l'unité de gestion)</li>
-    <li>Fermier</li>
     <li>Type d'exploitation (1ère ... 5e exploitation)</li>                                            
     <li>Surface concernée</li>
     <li>Essence</li>
@@ -353,7 +369,7 @@ Un chantier plaquettes est caractérisé par :
 
 Un pourcentage de perte arbitraire (10%) est à mettre en configuration.
 <br>
-<br>Note : le volume de bois vert broyé au départ (en map) n'est pas une caractéristique d'un chantiier plaquette.
+<br><b>NOTE</b> : le volume de bois vert broyé au départ (en map) n'est pas une caractéristique d'un chantiier plaquette.
 <br>Ce volume est défini comme la somme des quantités déchiquetées.
 
 
@@ -379,7 +395,7 @@ Unité réfère à Quantité (ex : Quantité = 10 et Unité = heures signifie : 
 
 <!-- ************************************* -->
 <h5>2.3 - Transport vers un lieu de stockage</h5>
-Chaque chantier plaquette donne lieu à 0, 1 ou plusieurs opérations de transport vers tas (dans un lieu de stockage).
+Chaque chantier plaquettes donne lieu à 0, 1 ou plusieurs opérations de transport vers tas (dans un lieu de stockage).
 <br>Le transport vers un lieu de stockage est constitué de deux opérations : le transport et le rangement.
 <br>
 <br>Transport et rangement ne sont pas liés.
@@ -512,6 +528,13 @@ Caractérisé par :
     <li>Date de paiement de l'outil</li>
 </ul>
 
+<!-- ************************************* -->
+<h5>2.5 - Remarque générale</h5>
+Le programme effectue des vérifications de cohérence au sein de chaque formulaire, <b>mais ne fait pas de vérifications globales</b>.
+<br>Par exemple, lorsqe l'utilisateur saisit une opération simple, le programme vérifie que les champs obligatoires sont bien renseignés, que la date de début est antérieure à la date de fin etc.
+<br>Mais le programme ne va pas vérifier par exemple que la somme des quantités déchiquetées correspond bien à la somme des quantités transportées, ou que la date du débardage est antérieure aux dates du transport.
+
+
 <!-- *********************************************************** -->
 <h4><a name="2-7-ventes-plaquettes">3 - Ventes plaquettes</a></h4>
 
@@ -532,7 +555,7 @@ Une vente fait l'objet d'une facturation ; une vente est liée à une et une seu
     <li>Un chargement se fait à partir d'un seul tas.</li>
 </ul>
 
-Une vente se trouve donc liée à un chantier plaquette de la manière suivante :
+Une vente se trouve donc liée à un chantier plaquettes de la manière suivante :
 <ul>
     <li>Une vente est liée à une ou plusieurs livraison(s).</li>
     <li>Une livraison est liée à un ou plusieurs chargement(s).</li>
@@ -550,11 +573,19 @@ Une vente est caractérisée par :
 <ul>
     <li>Client, acteur identifié par le système</li>
     <li>Fournisseur, acteur identifié par le système</li>
-    <li>Qté vendue (maps)</li>
     <li>PU HT (prix d'une map de plaquettes)</li>
-    <li>Taux de TVA</li>
+    <li>Date de la vente</li>
+    <li>Taux de TVA, qui est le même pour toutes les ventes (stocké en configuration, <code>tva-bdl / vente-plaquettes</code>)</li>
     <li>Notes : champ texte libre</li>
+    <li>Caractéristiques de la facture (voir plus bas)</li>
 </ul>
+
+Bien noter que la quantité vendue (en maps) n'est pas une caractéristique de la vente.
+<br>Elle est la somme des quantités chargées lors des chargements liés aux livraisons de la vente.
+<br>Ex : une vente est liée à deux livraisons, L1 et L2.
+<br>L1 est liés à un chargement C1.
+<br>L2 est liée à deux chargements C2 et C3.
+<br>Quantité vendue = quantité(C1) + quantité(C2) + quantité(C3).
 
 <!-- ************************************* -->
 <h5>Facture vente plaquettes</h5>
@@ -569,97 +600,120 @@ Une facture reprend les informations liées à la vente, avec en plus :
         <ul>
             <li>Quantité = quantité de plaquettes livrées</li>
             <li>PU HT</li>
-            <li>Taux de TVA</li>
+            <li>Taux de TVA, qui est le même pour toutes les livraisons (stocké en configuration, <code>tva-bdl / livraison</code>)</li>
         </ul>
     </li>
     <li>Une indication pour savoir si les notes apparaissent dans la facture (par exemple pour indiquer une remise).</li>
 </ul>
 
+Noter que ce taux de TVA, qui apparaît sur la facture, est distinct du taux de TVA utilisé par les livreurs.
+
 <!-- ************************************* -->
-<h5>3.1 - Livraison -- A MODIFIER</h5>
+<h5>3.1 - Livraison</h5>
 Une livraison est caractérisée par :
 <ul>
-    <li>Vente concernée par ce chargement</li>
-    <li>Livreur, acteur identifié par le système</li>
-    <li>Date livraison</li>
+    <li>Vente concernée par cette livraison</li>
+    <li>Date de livraison</li>
     <li>
         Coût, qui peut être :
         <ul>
             <li>
                 Coût global, composé de :
                 <ul>
+                    <li>Livreur, acteur identifié par le système</li>
                     <li>Prix global HT</li>
                     <li>Taux de TVA pour prix global</li>
+                    <li>Date de paiement du livreur</li>
                 </ul>
+                Dans ce cas, coût livraison = prix global.
             </li>
             <li>
-                Coût main d'oeuvre, composé de :
+                Coût détaillé, composé de :
                 <ul>
-                    <li>Nb heures</li>
-                    <li>Coût m.o. / h HT</li>
-                    <li>Taux de TVA pour m.o.</li>
+                    <li>
+                        Coût conducteur, composé de :
+                        <ul>
+                            <li>Conducteur, acteur identifié par le système</li>
+                            <li>Nb heures</li>
+                            <li>Prix HT du conducteur / heure</li>
+                            <li>Taux de TVA pour m.o.</li>
+                            <li>Date de paiement du conducteur</li>
+                        </ul>
+                    </li>
+                    <li>
+                        Coût outil (véhicule effectuant la livraison), composé de :
+                        <ul>
+                            <li>Propriétaire de l'outil, acteur identifié par le système</li>
+                            <li>Nb heures</li>
+                            <li>Prix HT de l'outil</li>
+                            <li>Taux de TVA pour l'outil</li>
+                            <li>Date de paiement du propriétaire de l'outil</li>
+                        </ul>
+                    </li>
                 </ul>
+                Dans ce cas, coût livraison = prix outil + prix conducteur
             </li>
         </ul>
     </li>
-    <li>Date paiement (main d'oeuvre ou prix global)</li>
     <li>Notes : champ texte libre</li>
 </ul>
-La quantité livrée (en maps) est la somme des quantités chargées.
-                                                              
+La quantité livrée (en maps) est la somme des quantités chargées ; ne fait pas partie des caractéristiques de la livraison.
+
 
 <!-- ************************************* -->
 <h5>3.2 - Chargement</h5>
-Le chargement est caractérisé par :
+Un chargement est caractérisé par :
 <ul>
     <li>Livraison concernée par ce chargement</li>
+    <li>Vente concernée par la livraison</li>
     <li>Tas où vont être prises les plaquettes</li>
-    <li>Quantité chargée (en maps)</li>
-    <li>Date chargement</li>
+    <li>
+        Quantité chargée (en maps)
+        <br><b>NOTE</b> : La quantité chargée est importante, car utilisée dans le calcul du stock du tas.
+    </li>
+    <li>Date de chargement</li>
+    <li>
+        Coût, qui peut être :
+        <ul>
+            <li>
+                Coût global, composé de :
+                <ul>
+                    <li>Chargeur, acteur identifié par le système</li>
+                    <li>Prix global HT</li>
+                    <li>Taux de TVA pour prix global</li>
+                    <li>Date de paiement du chargeur</li>
+                </ul>
+                Dans ce cas, coût chargement = prix global.
+            </li>
+            <li>
+                Coût détaillé, composé de :
+                <ul>
+                    <li>
+                        Coût conducteur, composé de :
+                        <ul>
+                            <li>Conducteur, acteur identifié par le système</li>
+                            <li>Nb heures</li>
+                            <li>Prix HT du conducteur / heure</li>
+                            <li>Taux de TVA pour m.o.</li>
+                            <li>Date de paiement du conducteur</li>
+                        </ul>
+                    </li>
+                    <li>
+                        Coût outil (véhicule effectuant le chargement), composé de :
+                        <ul>
+                            <li>Propriétaire de l'outil, acteur identifié par le système</li>
+                            <li>Nb heures</li>
+                            <li>Prix HT de l'outil</li>
+                            <li>Taux de TVA pour l'outil</li>
+                            <li>Date de paiement du propriétaire de l'outil</li>
+                        </ul>
+                    </li>
+                </ul>
+                Dans ce cas, coût chargement = prix outil + prix conducteur
+            </li>
+        </ul>
+    </li>
     <li>Notes : champ texte libre</li>
-</ul>
-
-<b>NOTE</b> : La quantité chargée est importante, car utilisée dans le calcul du stock du tas.
-
-<br><br>Le coût du chargement doit pouvoir être précisé de 2 manières :
-<ul>
-    <li>Coût global</li>
-    <li>Coût détaillé : coût = coût conducteur + coût outil</li>
-</ul>
-
-<!-- ************************************* -->
-<h6>3.2.1 - Coût global</h6>
-Caractérisé par :
-<ul>
-    <li>Chargeur, acteur identifié par le système</li>
-    <li>Prix global HT</li>
-    <li>Taux de TVA pour prix global</li>
-    <li>Date paiement du prix global</li>
-</ul>
-
-<!-- ************************************* -->
-<h6>3.2.2 - Coût détaillé</h6>
-Dans ce cas, <code>coût = coût conducteur + coût outil</code>
-
-<!-- ************************************* -->
-<div class="h7">3.2.2.1 - Coût conducteur</div>
-Caractérisé par :
-<ul>
-    <li>Conducteur, acteur identifié par le système</li>
-    <li>Nb heures effectuées par le conducteur</li>
-    <li>Prix / h HT du conducteur</li>
-    <li>Taux de TVA pour le conducteur</li>
-    <li>Date de paiement du conducteur</li>
-</ul>
-
-<!-- ************************************* -->
-<div class="h7">3.2.2.2 - Coût outil</div>
-Caractérisé par :
-<ul>
-    <li>Propriétaire de l'outil, acteur identifié par le système</li>
-    <li>Prix outil HT</li>
-    <li>Taux de TVA pour l'outil</li>
-    <li>Date paiement outil</li>
 </ul>
 
 
@@ -709,7 +763,7 @@ Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par B
 Liens avec les autres entités :
 <ul>
     <li>Concerne une ou plusieurs UGs</li>
-    <li>Se trouve sur des terres louées par u ou plusieurs fermiers</li>
+    <li>Se trouve sur des terres louées par un ou plusieurs fermiers</li>
     <li>Se trouve sur un ou plusieurs Lieux-dits</li>
 </ul>
 
@@ -753,7 +807,7 @@ Fait l'objet d'une facturation par BDL.
 Liens avec les autres entités :
 <ul>
     <li>Concerne une ou plusieurs UGs</li>
-    <li>Se trouve sur des terres louées par u ou plusieurs fermiers</li>
+    <li>Se trouve sur des terres louées par un ou plusieurs fermiers</li>
     <li>Se trouve sur un ou plusieurs Lieux-dits</li>
 </ul>
 <h4>Facture chantier bois sur pied</h4>
@@ -836,11 +890,11 @@ Les données à importer sont :
     <li>
         Parcelles cadastrales, avec leurs caractéristiques : numéro et superficie
     </li>
+    <li>Associations fermiers - parcelles</li>
     <li>Communes</li>
     <li>Lieux-dits</li>
-    <li>Associations fermiers - parcelles</li>
-    <li>Associations parcelles - lieux-dits</li>
     <li>Associations communes - lieux-dits</li>
+    <li>Associations parcelles - lieux-dits</li>
 </ul>
 
 <!-- ************************************* -->
@@ -899,7 +953,7 @@ Ces fonctionnalités s'appliquent à toutes les entités du logiciel et ne sont 
 <h3><a name="3-1-communes-lieux-dits">Communes, lieux-dits</a></h3>
 <ul>
     <li>A partir d'une commune, l'utilisateur doit pouvoir accéder aux lieux-dits de cette commune.</li>
-    <li>A Partir d'un lieu-dit, l'utilisateur doit pouvoir accéder aux parcelles, aux UG et aux chantiers liés au lieu-dit.</li>
+    <li>A Partir d'un lieu-dit, l'utilisateur doit pouvoir accéder aux parcelles, aux UGs et aux fermiers liés au lieu-dit.</li>
 </ul>
 
 <!-- *********************************************************** -->
@@ -954,7 +1008,7 @@ Cet écran affiche les caractéristiques générales du chantier.
 <!-- ************************************* -->
 <h4>Chantiers plaquettes - écran "Chantiers"</h4>
 
-Cet écran présente la liste des opérations associées au chantier plaquette : abattage, débardage, broyage, déchiquetage, transport, rangement.
+Cet écran présente la liste des opérations associées au chantier plaquettes : abattage, débardage, broyage, déchiquetage, transport, rangement.
 <br>Cette liste affiche toutes les caractéristiques des opérations.
 <br>A partir de cette liste, l'utilisateur doit pouvoir accéder aux opérateurs.
 

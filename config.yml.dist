@@ -34,7 +34,7 @@ paths:
 # appliqué sur le bois vert lors d'un chantier plaquette.
 pourcentage-perte: 10
 
-# Taux de TVA pour les opérations facturées à BDL par des opérateurs extérieurs
+# Taux de TVA possibles pour les opérations facturées à BDL par des opérateurs extérieurs
 tva-ext:
   - 0
   - 5.5
