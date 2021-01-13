@@ -2,10 +2,10 @@
 Recherche UG par code
 </h1>
 
-<form class="form" onsubmit="return validateForm();">
+<form class="form" onsubmit="return validateForm(event);" method="post">
 
     <label for="code">Code</label>
-    <input type="text" name="code" id="code" onfocus="focusOnCodeUG();">
+    <input type="text" name="code" id="code">
 
     <div class="margin-top">
         <div class="float-right">
@@ -16,29 +16,20 @@ Recherche UG par code
 
 </form>
 
-<div>
-    <div id="results" class="error display-none"></div>
-</div>
-
 
 <script>
 
-function focusOnCodeUG(){
-    document.getElementById("results").style.display = "none";
-}
-
-async function validateForm(){
+// ***************************************
+async function validateForm(event){
+    event.preventDefault();
     if(document.getElementById("code").value == ""){
         alert("Vous devez saisir un code UG (ex : \"XV-9\").");
         return false;
     }
     //
     let idUG = await getIdUG();
-console.log("idUG = " + idUG);
     if(idUG == 0){
-        document.getElementById("results").style.display = "inline-block";
-        document.getElementById("results").innerHTML
-            = "Aucune UG correspondant au code <i><b>" + document.getElementById("code").value + "</b></i>";
+        alert("Aucune UG correspondant au code " + document.getElementById("code").value);
         return false;
     }
     document.location = "/ug/" + idUG;

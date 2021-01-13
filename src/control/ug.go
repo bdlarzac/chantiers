@@ -42,7 +42,7 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.TemplateName = "ug-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    "Unité de gestion " + vars["id"],
+			Title:    "Unité de gestion " + ug.Code,
 			CSSFiles: []string{"/static/css/tabstrip.css"},
 		},
 		Menu: "accueil",
