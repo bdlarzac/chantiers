@@ -2,6 +2,10 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+
+- BUG recent : si on change la date de chantier, apparaît deux fois dans la liste des récents
+Bug qui apparaîtra dès qu'une modif sur le chantier fait changer le label
+
 - Faire aide pour lien chantier
 
 - Fonction pour backup base + path défini dans la config

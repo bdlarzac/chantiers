@@ -96,35 +96,35 @@ func NewBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 			return err
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertBSPied()
-        var idsUG, idsLieudit, idsFermier []int
+		var idsUG, idsLieudit, idsFermier []int
 		var id int
-        for key, val := range(r.PostForm){
-            if strings.Index(key, "ug-") == 0 {
-                // ex : ug-0:[6] (6 est l'id UG)
-                id, err = strconv.Atoi(val[0])
-                if err != nil {
-                    return err
-                }
-                idsUG = append(idsUG, id)
-            }
-            if strings.Index(key, "lieudit-") == 0 {
-                // ex : lieudit-164:[on] (164 est l'id lieudit)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsLieudit = append(idsLieudit, id)
-            }
-            if strings.Index(key, "fermier-") == 0 {
-                // ex : fermier-25:[on] (25 est l'id fermier)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsFermier = append(idsFermier, id)
-            }
-        }
-        //
+		for key, val := range r.PostForm {
+			if strings.Index(key, "ug-") == 0 {
+				// ex : ug-0:[6] (6 est l'id UG)
+				id, err = strconv.Atoi(val[0])
+				if err != nil {
+					return err
+				}
+				idsUG = append(idsUG, id)
+			}
+			if strings.Index(key, "lieudit-") == 0 {
+				// ex : lieudit-164:[on] (164 est l'id lieudit)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsLieudit = append(idsLieudit, id)
+			}
+			if strings.Index(key, "fermier-") == 0 {
+				// ex : fermier-25:[on] (25 est l'id fermier)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsFermier = append(idsFermier, id)
+			}
+		}
+		//
 		_, err = model.InsertBSPied(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
 		if err != nil {
 			return err
@@ -158,8 +158,8 @@ func NewBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/checkActeur.js",
-				    "/view/common/getActeurPossibles.js"},
+					"/view/common/checkActeur.js",
+					"/view/common/getActeurPossibles.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -185,34 +185,34 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			return err
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdateBSPied()
-        var idsUG, idsLieudit, idsFermier []int
+		var idsUG, idsLieudit, idsFermier []int
 		var id int
-        for key, val := range(r.PostForm){
-            if strings.Index(key, "ug-") == 0 {
-                // ex : ug-0:[6] (6 est l'id UG)
-                id, err = strconv.Atoi(val[0])
-                if err != nil {
-                    return err
-                }
-                idsUG = append(idsUG, id)
-            }
-            if strings.Index(key, "lieudit-") == 0 {
-                // ex : lieudit-164:[on] (164 est l'id lieudit)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsLieudit = append(idsLieudit, id)
-            }
-            if strings.Index(key, "fermier-") == 0 {
-                // ex : fermier-25:[on] (25 est l'id fermier)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsFermier = append(idsFermier, id)
-            }
-        }
+		for key, val := range r.PostForm {
+			if strings.Index(key, "ug-") == 0 {
+				// ex : ug-0:[6] (6 est l'id UG)
+				id, err = strconv.Atoi(val[0])
+				if err != nil {
+					return err
+				}
+				idsUG = append(idsUG, id)
+			}
+			if strings.Index(key, "lieudit-") == 0 {
+				// ex : lieudit-164:[on] (164 est l'id lieudit)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsLieudit = append(idsLieudit, id)
+			}
+			if strings.Index(key, "fermier-") == 0 {
+				// ex : fermier-25:[on] (25 est l'id fermier)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsFermier = append(idsFermier, id)
+			}
+		}
 		//
 		err = model.UpdateBSPied(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
 		if err != nil {
@@ -247,8 +247,8 @@ func UpdateBSPied(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/checkActeur.js",
-				    "/view/common/getActeurPossibles.js"},
+					"/view/common/checkActeur.js",
+					"/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsBSPiedForm{
 				Chantier:            chantier,

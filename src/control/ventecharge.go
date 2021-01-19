@@ -88,8 +88,8 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/checkActeur.js",
-                    "/view/common/getActeurPossibles.js"},
+					"/view/common/checkActeur.js",
+					"/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,
@@ -195,8 +195,8 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/checkActeur.js",
-                    "/view/common/getActeurPossibles.js"},
+					"/view/common/checkActeur.js",
+					"/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,

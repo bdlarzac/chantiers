@@ -22,11 +22,11 @@ type Stockage struct {
 	// Lat float64
 	Archived bool
 	// pas stocké en base
-	Stock     float64
-	Deletable bool
+	Stock      float64
+	Deletable  bool
 	Archivable bool
-	TasActifs []*Tas
-	Frais     []*StockFrais
+	TasActifs  []*Tas
+	Frais      []*StockFrais
 }
 
 // ************************** Get one *******************************
@@ -85,9 +85,9 @@ func GetStockages(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
 	stockages := []*Stockage{}
 	query := "select * from stockage where archived="
 	if actifs {
-	    query += "FALSE"
+		query += "FALSE"
 	} else {
-	    query += "TRUE"
+		query += "TRUE"
 	}
 	query += " order by nom"
 	err := db.Select(&stockages, query)
@@ -106,9 +106,9 @@ func GetStockagesFull(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
 	stockages := []*Stockage{}
 	query := "select id from stockage where archived="
 	if actifs {
-	    query += "FALSE"
+		query += "FALSE"
 	} else {
-	    query += "TRUE"
+		query += "TRUE"
 	}
 	query += " order by nom"
 	ids := []int{}
@@ -188,13 +188,13 @@ func (s *Stockage) ComputeDeletableAndArchivable(db *sqlx.DB) error {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	s.Deletable = (count == 0)
-    // Archivable
-    query = "select count(*) from tas where actif and id_stockage=$1"
-    err = db.QueryRow(query, s.Id).Scan(&count)
-    if err != nil {
-            return werr.Wrapf(err, "Erreur query DB : "+query)
-    }
-    s.Archivable = (count == 0)
+	// Archivable
+	query = "select count(*) from tas where actif and id_stockage=$1"
+	err = db.QueryRow(query, s.Id).Scan(&count)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	s.Archivable = (count == 0)
 	return nil
 }
 

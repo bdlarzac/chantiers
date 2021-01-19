@@ -15,8 +15,8 @@ type detailsStockageForm struct {
 }
 
 type detailsStockageList struct {
-	Actifs  []*model.Stockage
-	Archives  []*model.Stockage
+	Actifs   []*model.Stockage
+	Archives []*model.Stockage
 }
 
 // *********************************************************
@@ -43,9 +43,9 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			CSSFiles: []string{"/static/css/form.css"},
 			JSFiles:  []string{"/static/js/round.js"},
 		},
-		Menu:    "accueil",
+		Menu: "accueil",
 		Details: detailsStockageList{
-			Actifs: actifs,
+			Actifs:   actifs,
 			Archives: archives,
 		},
 	}
@@ -174,13 +174,13 @@ func DeleteOrArchiveStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.R
 			return err
 		}
 	} else if stockage.Archivable {
-        stockage.Archived = true
-        err = model.UpdateStockage(ctx.DB, stockage)
-        if err != nil {
-            return err
-        }
-    }
-    // Si ni Archivable ni Deletable, on ne fait rien
+		stockage.Archived = true
+		err = model.UpdateStockage(ctx.DB, stockage)
+		if err != nil {
+			return err
+		}
+	}
+	// Si ni Archivable ni Deletable, on ne fait rien
 	ctx.Redirect = "/stockage/liste"
 	return nil
 }

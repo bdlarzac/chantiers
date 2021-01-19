@@ -11,10 +11,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	"path/filepath"
-	
-//	"bdl.local/bdl/statik" // pour genesis - TODO remove avec go 1.16 embed
+	"time"
+
+	//	"bdl.local/bdl/statik" // pour genesis - TODO remove avec go 1.16 embed
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
 	"bdl.local/bdl/ctxt"
@@ -142,6 +142,8 @@ func main() {
 	r.HandleFunc("/humidite/update/{id:[0-9]+}", H(control.UpdateHumid))
 	r.HandleFunc("/humidite/delete/{id:[0-9]+}", H(control.DeleteHumid))
 
+	r.HandleFunc("/bilans", H(control.FormBilans))
+
 	// *** geo ***
 	r.HandleFunc("/ug/search", H(control.SearchUG))
 	r.HandleFunc("/ug/{id:[0-9]+}", H(control.ShowUG))
@@ -263,7 +265,7 @@ func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *ht
 		Details string
 	}
 	var err error
-	
+
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "ERREUR",

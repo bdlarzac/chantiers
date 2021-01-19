@@ -32,10 +32,10 @@ type Chautre struct {
 	NumFacture   string
 	Notes        string
 	// pas stocké en base
-	UGs        []*UG
-	Lieudits   []*Lieudit
-	Fermiers   []*Acteur
-	Client  *Acteur
+	UGs      []*UG
+	Lieudits []*Lieudit
+	Fermiers []*Acteur
+	Client   *Acteur
 }
 
 // ************************** Nom *******************************
@@ -88,7 +88,7 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	err = ch.ComputeUGs(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeUGs()")
-	}              
+	}
 	err = ch.ComputeFermiers(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeFermiers()")
@@ -196,8 +196,6 @@ func (ch *Chautre) ComputeFermiers(db *sqlx.DB) error {
 	return nil
 }
 
-
-
 // ************************** CRUD *******************************
 
 func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (int, error) {
@@ -233,58 +231,58 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
-    //
+	//
 	// UGs
-    //
+	//
 	query = `insert into chantier_ug(
         type_chantier,
         id_chantier,
         id_ug) values($1,$2,$3)`
-	for _, idUG := range(idsUG){
-        _, err = db.Exec(
-            query,
-            "chautre",
-            id,
-            idUG)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idUG := range idsUG {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			id,
+			idUG)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Lieudits
-    //
+	//
 	query = `insert into chantier_lieudit(
         type_chantier,
         id_chantier,
         id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range(idsLieudit){
-        _, err = db.Exec(
-            query,
-            "chautre",
-            id,
-            idLieudit)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idLieudit := range idsLieudit {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			id,
+			idLieudit)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Fermiers
-    //
+	//
 	query = `insert into chantier_fermier(
         type_chantier,
         id_chantier,
         id_fermier) values($1,$2,$3)`
-	for _, idFermier := range(idsFermier){
-        _, err = db.Exec(
-            query,
-            "chautre",
-            id,
-            idFermier)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idFermier := range idsFermier {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			id,
+			idFermier)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	return id, nil
 }
 
@@ -333,17 +331,17 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         type_chantier,
         id_chantier,
         id_ug) values($1,$2,$3)`
-	for _, idUG := range(idsUG){
-        _, err = db.Exec(
-            query,
-            "chautre",
-            ch.Id,
-            idUG)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idUG := range idsUG {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			ch.Id,
+			idUG)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Lieudits
 	//
 	query = "delete from chantier_lieudit where type_chantier='chautre' and id_chantier=$1"
@@ -355,17 +353,17 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         type_chantier,
         id_chantier,
         id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range(idsLieudit){
-        _, err = db.Exec(
-            query,
-            "chautre",
-            ch.Id,
-            idLieudit)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idLieudit := range idsLieudit {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			ch.Id,
+			idLieudit)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Fermiers
 	//
 	query = "delete from chantier_fermier where type_chantier='chautre' and id_chantier=$1"
@@ -377,16 +375,16 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         type_chantier,
         id_chantier,
         id_fermier) values($1,$2,$3)`
-	for _, idFermier := range(idsFermier){
-        _, err = db.Exec(
-            query,
-            "chautre",
-            ch.Id,
-            idFermier)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
+	for _, idFermier := range idsFermier {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			ch.Id,
+			idFermier)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
 	//
 	return nil
 }

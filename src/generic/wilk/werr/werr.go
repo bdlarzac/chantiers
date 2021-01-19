@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-)                      
+)
 
 // ====== ajouts Thierry ======
 // TODO supprimer, plus utile
@@ -18,8 +18,8 @@ func Bidon() error {
 
 // SprintHTML returns traceback as string formatted for html display
 func SprintHTML(err error) string {
-    res := ""
-    res += `
+	res := ""
+	res += `
 <style>
     table.werr{
         border-collapse:collapse;
@@ -40,23 +40,23 @@ func SprintHTML(err error) string {
     }
 </style>
     `
-	res += "<table class=\"werr\">\n";
+	res += "<table class=\"werr\">\n"
 	lines := strings.Split(SprintSkip(err, ""), "\n")
 	// lines contains traceback separated by "|", displayed in a table
 	// and the error message, stored in msg, displayed in a div
 	var tmp []string
 	msg := "<div class=\"werr\">"
-	for _, line := range(lines){
-	    tmp = strings.Split(line, "|")
-	    if len(tmp) == 2 {
-            res += "    <tr>\n"
-            res += "        <td>" + strings.TrimSpace(tmp[0]) + "</td><td>" + strings.TrimSpace(tmp[1]) + "</td>\n"
-            res += "    </tr>\n"
-        } else {
-            msg += tmp[0] + "<br>\n"
-        }
+	for _, line := range lines {
+		tmp = strings.Split(line, "|")
+		if len(tmp) == 2 {
+			res += "    <tr>\n"
+			res += "        <td>" + strings.TrimSpace(tmp[0]) + "</td><td>" + strings.TrimSpace(tmp[1]) + "</td>\n"
+			res += "    </tr>\n"
+		} else {
+			msg += tmp[0] + "<br>\n"
+		}
 	}
-	res += "</table>\n";
+	res += "</table>\n"
 	msg += "</div>\n"
 	res += msg
 	return res

@@ -66,15 +66,13 @@ func (h *Humid) ComputeMesureurs(db *sqlx.DB) error {
 }
 
 func (h *Humid) ComputeTas(db *sqlx.DB) error {
-    var err error
+	var err error
 	h.Tas, err = GetTasFull(db, h.IdTas)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTas()")
 	}
 	return nil
 }
-
-
 
 // ************************** Get many *******************************
 

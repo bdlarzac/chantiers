@@ -40,13 +40,13 @@ func init() {
 		"zero2empty":        zero2empty,
 	}
 	tmpl = template.
-	    Must(template.
-            New("").
-            Funcs(fmap).
-            ParseGlob(filepath.Join("view", "*.html"))).
-            Option("missingkey=error")
-    tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien.html"))
-    tmpl.New("chantier-lien-help").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien-help.html"))
+		Must(template.
+			New("").
+			Funcs(fmap).
+			ParseGlob(filepath.Join("view", "*.html"))).
+		Option("missingkey=error")
+	tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien.html"))
+	tmpl.New("chantier-lien-help").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien-help.html"))
 }
 
 // ************************* pipelines ********************************
@@ -57,7 +57,7 @@ func nl2br(t string) template.HTML {
 
 // Affiche une date JJ/MM/AAAA
 func dateFr(t time.Time) template.HTML {
-	return template.HTML(tiglib.DateFr(t))                                                                                
+	return template.HTML(tiglib.DateFr(t))
 }
 
 // Affiche une date YYYY-MM-DD

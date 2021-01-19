@@ -66,10 +66,10 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	if err != nil {
 		return err
 	}
-    acteur.Deletable, err = acteur.IsDeletable(ctx.DB)
-    if err != nil {
-        return err
-    }
+	acteur.Deletable, err = acteur.IsDeletable(ctx.DB)
+	if err != nil {
+		return err
+	}
 	activites, err := acteur.GetActivitesByDate(ctx.DB)
 	if err != nil {
 		return err
@@ -192,17 +192,17 @@ func UpdateActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 
 // *********************************************************
 func DeleteActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-    vars := mux.Vars(r)
-    id, err := strconv.Atoi(vars["id"])
-    if err != nil{
-        return err
-    }
-    err = model.DeleteActeur(ctx.DB, id)
-    if err != nil{
-        return err
-    }
-    ctx.Redirect = "/acteur/liste"
-    return nil
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return err
+	}
+	err = model.DeleteActeur(ctx.DB, id)
+	if err != nil {
+		return err
+	}
+	ctx.Redirect = "/acteur/liste"
+	return nil
 }
 
 // *********************************************************

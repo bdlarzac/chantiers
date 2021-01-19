@@ -33,10 +33,10 @@ type BSPied struct {
 	NumFacture    string
 	Notes         string
 	// pas stocké en base
-	UGs        []*UG
-	Lieudits   []*Lieudit
-	Fermiers   []*Acteur
-	Acheteur  *Acteur
+	UGs      []*UG
+	Lieudits []*Lieudit
+	Fermiers []*Acteur
+	Acheteur *Acteur
 }
 
 // ************************** Nom *******************************
@@ -48,10 +48,10 @@ func (ch *BSPied) String() string {
 	if ch.Acheteur == nil {
 		panic("Erreur dans le code - L'acheteur d'un chantier bois sur pied doit être calculé avant d'appeler String()")
 	}
-	var noms []string 
-    for _, ld := range ch.Lieudits {
-        noms = append(noms, ld.Nom)
-    }
+	var noms []string
+	for _, ld := range ch.Lieudits {
+		noms = append(noms, ld.Nom)
+	}
 	return ch.Acheteur.String() + " " + strings.Join(noms, " - ") + " " + tiglib.DateFr(ch.DateContrat)
 }
 
@@ -238,58 +238,58 @@ func InsertBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
-    //
+	//
 	// UGs
-    //
+	//
 	query = `insert into chantier_ug(
         type_chantier,
         id_chantier,
         id_ug) values($1,$2,$3)`
-	for _, idUG := range(idsUG){
-        _, err = db.Exec(
-            query,
-            "bspied",
-            id,
-            idUG)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idUG := range idsUG {
+		_, err = db.Exec(
+			query,
+			"bspied",
+			id,
+			idUG)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Lieudits
-    //
+	//
 	query = `insert into chantier_lieudit(
         type_chantier,
         id_chantier,
         id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range(idsLieudit){
-        _, err = db.Exec(
-            query,
-            "bspied",
-            id,
-            idLieudit)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idLieudit := range idsLieudit {
+		_, err = db.Exec(
+			query,
+			"bspied",
+			id,
+			idLieudit)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Fermiers
-    //
+	//
 	query = `insert into chantier_fermier(
         type_chantier,
         id_chantier,
         id_fermier) values($1,$2,$3)`
-	for _, idFermier := range(idsFermier){
-        _, err = db.Exec(
-            query,
-            "bspied",
-            id,
-            idFermier)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idFermier := range idsFermier {
+		_, err = db.Exec(
+			query,
+			"bspied",
+			id,
+			idFermier)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	return id, nil
 }
 
@@ -336,17 +336,17 @@ func UpdateBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
         type_chantier,
         id_chantier,
         id_ug) values($1,$2,$3)`
-	for _, idUG := range(idsUG){
-        _, err = db.Exec(
-            query,
-            "bspied",
-            ch.Id,
-            idUG)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idUG := range idsUG {
+		_, err = db.Exec(
+			query,
+			"bspied",
+			ch.Id,
+			idUG)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Lieudits
 	//
 	query = "delete from chantier_lieudit where type_chantier='bspied' and id_chantier=$1"
@@ -358,17 +358,17 @@ func UpdateBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
         type_chantier,
         id_chantier,
         id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range(idsLieudit){
-        _, err = db.Exec(
-            query,
-            "bspied",
-            ch.Id,
-            idLieudit)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idLieudit := range idsLieudit {
+		_, err = db.Exec(
+			query,
+			"bspied",
+			ch.Id,
+			idLieudit)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Fermiers
 	//
 	query = "delete from chantier_fermier where type_chantier='bspied' and id_chantier=$1"
@@ -380,16 +380,16 @@ func UpdateBSPied(db *sqlx.DB, ch *BSPied, idsUG, idsLieudit, idsFermier []int) 
         type_chantier,
         id_chantier,
         id_fermier) values($1,$2,$3)`
-	for _, idFermier := range(idsFermier){
-        _, err = db.Exec(
-            query,
-            "bspied",
-            ch.Id,
-            idFermier)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
+	for _, idFermier := range idsFermier {
+		_, err = db.Exec(
+			query,
+			"bspied",
+			ch.Id,
+			idFermier)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
 	//
 	return nil
 }

@@ -127,8 +127,8 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/checkActeur.js",
-                    "/view/common/getActeurPossibles.js"},
+					"/view/common/checkActeur.js",
+					"/view/common/getActeurPossibles.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -191,8 +191,8 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				JSFiles: []string{
 					"/static/js/toogle.js",
 					"/static/autocomplete/autocomplete.js",
-                    "/view/common/checkActeur.js",
-                    "/view/common/getActeurPossibles.js"},
+					"/view/common/checkActeur.js",
+					"/view/common/getActeurPossibles.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -254,12 +254,12 @@ func chantierChauferForm2var(r *http.Request) (*model.Chaufer, error) {
 			lien.IdParcelle = idP
 			if v[0] == "radio-parcelle-entiere-"+idPString {
 				lien.Entiere = true
-			} else if v[0] == "radio-parcelle-surface-"+idPString{
+			} else if v[0] == "radio-parcelle-surface-"+idPString {
 				lien.Entiere = false
 				lien.Surface, _ = strconv.ParseFloat(r.PostFormValue("parcelle-surface-"+idPString), 32)
 				lien.Surface = tiglib.Round(lien.Surface, 2)
 			} else {
-			    continue;
+				continue
 			}
 			chantier.LiensParcelles = append(chantier.LiensParcelles, &lien)
 		}

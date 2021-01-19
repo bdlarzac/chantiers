@@ -150,11 +150,11 @@ func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, h := range(t.MesuresHumidite){
-	    err = h.ComputeMesureurs(db)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur appel humid.ComputeMesureurs()")
-        }
+	for _, h := range t.MesuresHumidite {
+		err = h.ComputeMesureurs(db)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel humid.ComputeMesureurs()")
+		}
 	}
 	return nil
 }

@@ -80,11 +80,11 @@ func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) ([]*Lieudit, error) {
 	if err != nil {
 		return lds, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, ld := range(lds){
-	    err = ld.ComputeCommunes(db)
-        if err != nil {
-            return lds, werr.Wrapf(err, "Erreur appel ComputeCommunes()")
-        }
+	for _, ld := range lds {
+		err = ld.ComputeCommunes(db)
+		if err != nil {
+			return lds, werr.Wrapf(err, "Erreur appel ComputeCommunes()")
+		}
 	}
 	return lds, nil
 }

@@ -463,6 +463,7 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	// Stockage
 	//
 	/* 
+	// TODO commenté car besoin de trouver le mode de calcul
     var tas *Tas
     cout = 0
     // s'il y a au moins un transport et un chargement

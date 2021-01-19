@@ -81,9 +81,9 @@ func (p *Parcelle) ComputeProprietaire(db *sqlx.DB) error {
 
 // Remplit le champ Lieudits d'une parcelle
 func (p *Parcelle) ComputeLieudits(db *sqlx.DB) error {
-    if len(p.Lieudits) != 0 {
-        return nil // déjà calculé
-    }
+	if len(p.Lieudits) != 0 {
+		return nil // déjà calculé
+	}
 	query := "select id_lieudit from parcelle_lieudit where id_parcelle=$1"
 	rows, err := db.Query(query, p.Id)
 	if err != nil {
@@ -106,10 +106,10 @@ func (p *Parcelle) ComputeLieudits(db *sqlx.DB) error {
 
 // Remplit le champ Communes d'une parcelle
 func (p *Parcelle) ComputeCommunes(db *sqlx.DB) error {
-    if len(p.Communes) != 0 {
-        return nil // déjà calculé
-    }
-    query := `select * from commune where id in(
+	if len(p.Communes) != 0 {
+		return nil // déjà calculé
+	}
+	query := `select * from commune where id in(
                 select id_commune from commune_lieudit where id_lieudit in(
                     select id_lieudit from parcelle_lieudit where id_parcelle=$1
                 )
@@ -125,9 +125,9 @@ func (p *Parcelle) ComputeCommunes(db *sqlx.DB) error {
 
 // Remplit le champ Exploitants d'une parcelle
 func (p *Parcelle) ComputeExploitants(db *sqlx.DB) error {
-    if len(p.Exploitants) != 0 {
-        return nil // déjà calculé
-    }
+	if len(p.Exploitants) != 0 {
+		return nil // déjà calculé
+	}
 	query := "select id_sctl_exploitant from parcelle_exploitant where id_parcelle=$1"
 	rows, err := db.Query(query, p.Id)
 	if err != nil {

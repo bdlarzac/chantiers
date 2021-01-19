@@ -23,15 +23,16 @@ type Config struct {
 		DbName   string `yaml:"dbname"`
 		Schema   string `yaml:"schema"`
 		SSLMode  string `yaml:"ssl-mode"`
-        Backup struct {
-            Directory string `yaml:"directory"`
-            CmdPgdump string `yaml:"cmd-pgdump"`
-        } `yaml:"backup"`
+		Backup   struct {
+			Directory string `yaml:"directory"`
+			CmdPgdump string `yaml:"cmd-pgdump"`
+		} `yaml:"backup"`
 	} `yaml:"database"`
 	Paths struct {
 		LogicielFoncier string `yaml:"logiciel-foncier"`
 	} `yaml:"paths"`
 	PourcentagePerte float64   `yaml:"pourcentage-perte"`
+	DebutSaison      string    `yaml:"debut-saison"`
 	TVAExt           []float64 `yaml:"tva-ext"`
 	TVABDL           struct {
 		Livraison         float64 `yaml:"livraison"`

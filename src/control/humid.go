@@ -105,7 +105,7 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				JSFiles: []string{
 					"/static/autocomplete/autocomplete.js",
 					"/static/js/toogle.js",
-				    "/view/common/getActeurPossibles.js"},
+					"/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsHumidForm{
 				Humid:      humid,
@@ -182,7 +182,7 @@ func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 				JSFiles: []string{
 					"/static/autocomplete/autocomplete.js",
 					"/static/js/toogle.js",
-				    "/view/common/getActeurPossibles.js"},
+					"/view/common/getActeurPossibles.js"},
 			},
 			Details: detailsHumidForm{
 				Humid:      humid,

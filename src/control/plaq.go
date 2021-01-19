@@ -12,7 +12,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-//"fmt"
+	//"fmt"
 )
 
 type detailsPlaqForm struct {
@@ -144,34 +144,34 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
-        var idsUG, idsLieudit, idsFermier []int
+		var idsUG, idsLieudit, idsFermier []int
 		var id int
-        for key, val := range(r.PostForm){
-            if strings.Index(key, "ug-") == 0 {
-                // ex : ug-0:[6] (6 est l'id UG)
-                id, err = strconv.Atoi(val[0])
-                if err != nil {
-                    return err
-                }
-                idsUG = append(idsUG, id)
-            }
-            if strings.Index(key, "lieudit-") == 0 {
-                // ex : lieudit-164:[on] (164 est l'id lieudit)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsLieudit = append(idsLieudit, id)
-            }
-            if strings.Index(key, "fermier-") == 0 {
-                // ex : fermier-25:[on] (25 est l'id fermier)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsFermier = append(idsFermier, id)
-            }
-        }
+		for key, val := range r.PostForm {
+			if strings.Index(key, "ug-") == 0 {
+				// ex : ug-0:[6] (6 est l'id UG)
+				id, err = strconv.Atoi(val[0])
+				if err != nil {
+					return err
+				}
+				idsUG = append(idsUG, id)
+			}
+			if strings.Index(key, "lieudit-") == 0 {
+				// ex : lieudit-164:[on] (164 est l'id lieudit)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsLieudit = append(idsLieudit, id)
+			}
+			if strings.Index(key, "fermier-") == 0 {
+				// ex : fermier-25:[on] (25 est l'id fermier)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsFermier = append(idsFermier, id)
+			}
+		}
 		//
 		id, err = model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUG, idsLieudit, idsFermier)
 		if err != nil {
@@ -252,34 +252,34 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			}
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdatePlaq()
-        var idsUG, idsLieudit, idsFermier []int
+		var idsUG, idsLieudit, idsFermier []int
 		var id int
-        for key, val := range(r.PostForm){
-            if strings.Index(key, "ug-") == 0 {
-                // ex : ug-0:[6] (6 est l'id UG)
-                id, err = strconv.Atoi(val[0])
-                if err != nil {
-                    return err
-                }
-                idsUG = append(idsUG, id)
-            }
-            if strings.Index(key, "lieudit-") == 0 {
-                // ex : lieudit-164:[on] (164 est l'id lieudit)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsLieudit = append(idsLieudit, id)
-            }
-            if strings.Index(key, "fermier-") == 0 {
-                // ex : fermier-25:[on] (25 est l'id fermier)
-                id, err = strconv.Atoi(key[8:])
-                if err != nil {
-                    return err
-                }
-                idsFermier = append(idsFermier, id)
-            }
-        }
+		for key, val := range r.PostForm {
+			if strings.Index(key, "ug-") == 0 {
+				// ex : ug-0:[6] (6 est l'id UG)
+				id, err = strconv.Atoi(val[0])
+				if err != nil {
+					return err
+				}
+				idsUG = append(idsUG, id)
+			}
+			if strings.Index(key, "lieudit-") == 0 {
+				// ex : lieudit-164:[on] (164 est l'id lieudit)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsLieudit = append(idsLieudit, id)
+			}
+			if strings.Index(key, "fermier-") == 0 {
+				// ex : fermier-25:[on] (25 est l'id fermier)
+				id, err = strconv.Atoi(key[8:])
+				if err != nil {
+					return err
+				}
+				idsFermier = append(idsFermier, id)
+			}
+		}
 		//
 		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUG, idsLieudit, idsFermier)
 		if err != nil {

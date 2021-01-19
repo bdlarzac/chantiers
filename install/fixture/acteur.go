@@ -69,7 +69,7 @@ func AnonymizeActeurs() {
 		Notes:       "Données de test - ne correspond à aucune personne réelle",
 	}
 
-	acteurs, _ := model.SortedActeurs(ctx.DB, "id")
+	acteurs, _ := model.GetSortedActeurs(ctx.DB, "id")
 
 	for _, a := range acteurs {
 		if a.Nom == "BDL" || a.Nom == "SCTL"  || a.Nom == "GFA" {

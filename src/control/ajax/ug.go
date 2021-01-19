@@ -80,4 +80,3 @@ func GetUGsFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	w.Write(json)
 	return nil
 }
-
