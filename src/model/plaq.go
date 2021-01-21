@@ -9,13 +9,13 @@ package model
 
 import (
 	"strconv"
-	"time"
 	"strings"
+	"time"
 
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-//"fmt"
+	//"fmt"
 )
 
 type Plaq struct {
@@ -72,11 +72,11 @@ func (ch *Plaq) String() string {
 		panic("Erreur dans le code - Les lieux-dits d'un chantier plaquettes doivent être calculés avant d'appeler String()")
 	}
 	res := ""
-	var noms []string 
-    for _, ld := range ch.Lieudits {
-        noms = append(noms, ld.Nom)
-    }
-    res += strings.Join(noms, " - ")
+	var noms []string
+	for _, ld := range ch.Lieudits {
+		noms = append(noms, ld.Nom)
+	}
+	res += strings.Join(noms, " - ")
 	res += " " + tiglib.DateFr(ch.DateDebut)
 	return res
 }
@@ -402,15 +402,15 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 		if t.TypeCout == "G" {
 			cout += t.GlPrix
 		} else if t.TypeCout == "C" {
-		    cout += t.CoNheure * t.CoPrixH    // conducteur
-			cout += t.CaNkm * t.CaPrixKm      // outil
+			cout += t.CoNheure * t.CoPrixH // conducteur
+			cout += t.CaNkm * t.CaPrixKm   // outil
 		} else if t.TypeCout == "T" {
-		    cout += t.CoNheure * t.CoPrixH                        // conducteur
-			cout += float64(t.TbNbenne) * t.TbDuree * t.TbPrixH   // outil
+			cout += t.CoNheure * t.CoPrixH                      // conducteur
+			cout += float64(t.TbNbenne) * t.TbDuree * t.TbPrixH // outil
 		}
-        if t.DateTrans.Before(j1) {
-            j1 = t.DateTrans
-        }
+		if t.DateTrans.Before(j1) {
+			j1 = t.DateTrans
+		}
 	}
 	ch.Cout.Transport = cout / nMapSec
 	//
@@ -431,9 +431,9 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	//
 	var coutC, coutL float64
 	for _, v := range ch.Ventes {
-	    // ch.Ventes ne contient que les champs de la base
-	    // donc appel de GetVentePlaqFull() pour avoir une vente et ses livraisons
-	    vf, err := GetVentePlaqFull(db, v.Id)
+		// ch.Ventes ne contient que les champs de la base
+		// donc appel de GetVentePlaqFull() pour avoir une vente et ses livraisons
+		vf, err := GetVentePlaqFull(db, v.Id)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel GetVentePlaqFull()")
 		}
@@ -441,8 +441,8 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 			if l.TypeCout == "G" {
 				coutL += l.GlPrix
 			} else {
-				coutL += l.OuPrix                // outil
-				coutL += l.MoNHeure * l.MoPrixH  // main d'oeuvre
+				coutL += l.OuPrix               // outil
+				coutL += l.MoNHeure * l.MoPrixH // main d'oeuvre
 			}
 			for _, c := range l.Chargements {
 				if c.TypeCout == "G" {
@@ -451,9 +451,9 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 					coutC += c.OuPrix               // outil
 					coutC += c.MoNHeure * c.MoPrixH // main d'oeuvre
 				}
-                if c.DateCharge.After(j2) {
-                    j2 = c.DateCharge
-                }
+				if c.DateCharge.After(j2) {
+					j2 = c.DateCharge
+				}
 			}
 		}
 	}
@@ -462,23 +462,23 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	//
 	// Stockage
 	//
-	/* 
-	// TODO commenté car besoin de trouver le mode de calcul
-    var tas *Tas
-    cout = 0
-    // s'il y a au moins un transport et un chargement
-	if j1 != DATE_MAX && j2 != DATE_MIN {
-	    // vérifie que tous les tas du chantier ont été déclarés vides
-	    vides := true
-	    for _, tas = range(ch.Tas){
-	        if tas.Actif {
-	            vides = false
-	        }
-	    }
-	    if vides == true {
-	        
-	    }
-	}
+	/*
+		// TODO commenté car besoin de trouver le mode de calcul
+	    var tas *Tas
+	    cout = 0
+	    // s'il y a au moins un transport et un chargement
+		if j1 != DATE_MAX && j2 != DATE_MIN {
+		    // vérifie que tous les tas du chantier ont été déclarés vides
+		    vides := true
+		    for _, tas = range(ch.Tas){
+		        if tas.Actif {
+		            vides = false
+		        }
+		    }
+		    if vides == true {
+
+		    }
+		}
 	*/
 	//
 	return nil
@@ -518,65 +518,65 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	}
 	//
 	// tas - crée un tas par lieu de stockage sélectionné
-    //
+	//
 	for _, idStockage := range idsStockages {
 		tas := NewTas(idStockage, id, 0, true)
-		_, err = InsertTas(db, tas)                                               
+		_, err = InsertTas(db, tas)
 		if err != nil {
 			return id, werr.Wrapf(err, "Erreur appel InsertTas()")
 		}
 	}
-    //
+	//
 	// UGs
-    //
+	//
 	query = `insert into chantier_ug(
         type_chantier,
         id_chantier,
         id_ug) values($1,$2,$3)`
-	for _, idUG := range(idsUG){
-        _, err = db.Exec(
-            query,
-            "plaq",
-            id,
-            idUG)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idUG := range idsUG {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			id,
+			idUG)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Lieudits
-    //
+	//
 	query = `insert into chantier_lieudit(
         type_chantier,
         id_chantier,
         id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range(idsLieudit){
-        _, err = db.Exec(
-            query,
-            "plaq",
-            id,
-            idLieudit)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idLieudit := range idsLieudit {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			id,
+			idLieudit)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Fermiers
-    //
+	//
 	query = `insert into chantier_fermier(
         type_chantier,
         id_chantier,
         id_fermier) values($1,$2,$3)`
-	for _, idFermier := range(idsFermier){
-        _, err = db.Exec(
-            query,
-            "plaq",
-            id,
-            idFermier)
-        if err != nil {
-            return id, werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
+	for _, idFermier := range idsFermier {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			id,
+			idFermier)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
 	//
 	return id, nil
 }
@@ -665,17 +665,17 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
         type_chantier,
         id_chantier,
         id_ug) values($1,$2,$3)`
-	for _, idUG := range(idsUG){
-        _, err = db.Exec(
-            query,
-            "plaq",
-            ch.Id,
-            idUG)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idUG := range idsUG {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			ch.Id,
+			idUG)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Lieudits
 	//
 	query = "delete from chantier_lieudit where type_chantier='plaq' and id_chantier=$1"
@@ -687,17 +687,17 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
         type_chantier,
         id_chantier,
         id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range(idsLieudit){
-        _, err = db.Exec(
-            query,
-            "plaq",
-            ch.Id,
-            idLieudit)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idLieudit := range idsLieudit {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			ch.Id,
+			idLieudit)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Fermiers
 	//
 	query = "delete from chantier_fermier where type_chantier='plaq' and id_chantier=$1"
@@ -709,17 +709,17 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
         type_chantier,
         id_chantier,
         id_fermier) values($1,$2,$3)`
-	for _, idFermier := range(idsFermier){
-        _, err = db.Exec(
-            query,
-            "plaq",
-            ch.Id,
-            idFermier)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur query : "+query)
-        }
-    }
-    //
+	for _, idFermier := range idsFermier {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			ch.Id,
+			idFermier)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	return nil
 }
 

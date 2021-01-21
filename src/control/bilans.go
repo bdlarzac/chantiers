@@ -8,58 +8,31 @@ import (
 )
 
 type detailsBilansForm struct {
-    Periods [][2]time.Time
+	Periods   [][2]time.Time
 	UrlAction string
+}
+
+type detailsBilansPlaquettes struct {
+	DateDebut time.Time
+	DateFin   time.Time
 }
 
 func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
 	case "POST":
-		/*
-		   		//
-		   		// Process form
-		   		//
-		   		chantier, err := chantierBSPiedForm2var(r)
-		   		if err != nil {
-		   			return err
-		   		}
-		   		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertBSPied()
-		           var idsUG, idsLieudit, idsFermier []int
-		   		var id int
-		           for key, val := range(r.PostForm){
-		               if strings.Index(key, "ug-") == 0 {
-		                   // ex : ug-0:[6] (6 est l'id UG)
-		                   id, err = strconv.Atoi(val[0])
-		                   if err != nil {
-		                       return err
-		                   }
-		                   idsUG = append(idsUG, id)
-		               }
-		               if strings.Index(key, "lieudit-") == 0 {
-		                   // ex : lieudit-164:[on] (164 est l'id lieudit)
-		                   id, err = strconv.Atoi(key[8:])
-		                   if err != nil {
-		                       return err
-		                   }
-		                   idsLieudit = append(idsLieudit, id)
-		               }
-		               if strings.Index(key, "fermier-") == 0 {
-		                   // ex : fermier-25:[on] (25 est l'id fermier)
-		                   id, err = strconv.Atoi(key[8:])
-		                   if err != nil {
-		                       return err
-		                   }
-		                   idsFermier = append(idsFermier, id)
-		               }
-		           }
-		           //
-		   		_, err = model.InsertBSPied(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
-		   		if err != nil {
-		   			return err
-		   		}
-		   		ctx.Redirect = "/chantier/bois-sur-pied/liste/" + strconv.Itoa(chantier.DateContrat.Year())
-		   		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
-		*/
+		var err error
+		if err = r.ParseForm(); err != nil {
+			return err
+		}
+		//
+		// Process form
+		//
+		if r.PostFormValue("type-bilan") == "clients-plaquettes" {
+			err = ShowBilanClientslaquettes(ctx, r.PostFormValue("date-debut"), r.PostFormValue("date-fin"))
+            if err != nil {
+                return err
+            }
+		}
 		return nil
 	default:
 		//
@@ -77,8 +50,8 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 					"/static/css/form.css"},
 			},
 			Details: detailsBilansForm{
-				Periods:  periods,
-				UrlAction: "/bilans/show",
+				Periods:   periods,
+				UrlAction: "/bilans",
 			},
 			Menu: "bilans",
 			Footer: ctxt.Footer{
@@ -89,4 +62,36 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		}
 		return nil
 	}
+}
+
+// *********************************************************
+func ShowBilanClientslaquettes(ctx *ctxt.Context, debut, fin string) error {
+	dateDebut, err := time.Parse("2006-01-02", debut)
+	if err != nil {
+		return err
+	}
+	dateFin, err := time.Parse("2006-01-02", fin)
+	if err != nil {
+		return err
+	}
+	ctx.TemplateName = "bilan-clients-plaquettes-show.html"
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title:    "Bilan clients plaquettes",
+			CSSFiles: []string{},
+			JSFiles:  []string{},
+		},
+		Menu: "bilans",
+		Footer: ctxt.Footer{
+			JSFiles: []string{},
+		},
+		Details: detailsBilansPlaquettes{
+			DateDebut: dateDebut,
+			DateFin:   dateFin,
+		},
+	}
+	if err != nil {
+		return err
+	}
+	return nil
 }

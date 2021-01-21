@@ -7,29 +7,46 @@
     
     <div class="grid2-form">
         
-        <label for="periods">Période</label>
-        <select id="periods" name="periods" onChange="periodChanged();">
-            <option value="CHOOSE_PERIOD">--- Choisir période ---</option>
-            {{range $val := .Periods}}
-                <option value="">{{(index $val 0) | dateFr}} - {{(index $val 1) | dateFr}}</option>
-            {{end}}
-        </select>
-        
-        <label>Dates libres</label>
+        <div class="bold">Dates</div>
         <div>
-            <div class="inline-block">
-                <div class="center"><label for="date-debut">Début</label></div>
-                <input type="date" name="date-debut" id="date-debut" value="">
+            <div class="inline-block vertical-align-top padding-right2">
+                <div class="bold center padding-bottom ">Période</div>
+                <div>
+                    <select id="periods" name="periods" onChange="periodChanged();">
+                        <option value="CHOOSE_PERIOD">--- Choisir période ---</option>
+                        {{range $index, $period := .Periods}}
+                            <option value="period-{{$index}}">{{(index $period 0) | dateFr}} - {{(index $period 1) | dateFr}}</option>
+                        {{end}}
+                    </select>
+                </div>
             </div>
+            
             <div class="inline-block">
-                <div class="center"><label for="date-fin">Fin</label></div>
-                <input type="date" name="date-fin" id="date-fin" value="">
+                <div class="bold center padding-bottom">Dates libres</div>
+                <div>
+                    <div class="inline-block">
+                        <div class="center"><label for="date-debut">Début</label></div>
+                        <input type="date" name="date-debut" id="date-debut" value="">
+                    </div>
+                    <div class="inline-block">
+                        <div class="center"><label for="date-fin">Fin</label></div>
+                        <input type="date" name="date-fin" id="date-fin" value="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bold padding-top2">Bilan</div>
+        <div>
+            <div class="bold padding-top2">
+                <input type="radio" name="type-bilan" id="clients-plaquettes" value="clients-plaquettes">
+                <label for="clients-plaquettes">Clients plaquettes</label>
             </div>
         </div>
         
     </div>
     
-    <div class="margin-top">
+    <div class="margin-top2">
         <div class="float-left">
             <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
         </div>
@@ -54,8 +71,38 @@
 
 <script>
 
+window.addEventListener("load", function(){
+    initialize();
+});
+
+// ***************************************
+function initialize(){
+    // Crée un tableau javascript avec les dates de périodes
+    // Besoin pour periodChanged() : il faut mettre dans date-debut / date-fin les dates de la période sélectionnée.
+    // Donc faire qqchose du genre :
+    // const deb = "{ {(index .Periods idx 0) | dateIso} s}";
+    // avec idx calculé en js.
+    // Semble impossible, donc fabrication d'un array js à partir du go
+    window.globalPeriods = [];
+    {{range $index, $period := .Periods}}
+        window.globalPeriods[{{$index}}] = [];
+        window.globalPeriods[{{$index}}][0] = "{{(index $period 0) | dateIso}}";
+        window.globalPeriods[{{$index}}][1] = "{{(index $period 1) | dateIso}}";
+    {{end}}
+}
+
+// ***************************************
 function periodChanged(){
-    
+    const selectElt = document.getElementById("periods");
+    const value = selectElt.options[selectElt.selectedIndex].value;
+    const idx = value.replace("period-", "");
+    if(idx == "CHOOSE_PERIOD"){
+        document.getElementById("date-debut").value = "";
+        document.getElementById("date-fin").value = "";
+        return;
+    }
+    document.getElementById("date-debut").value = window.globalPeriods[idx][0];
+    document.getElementById("date-fin").value = window.globalPeriods[idx][1];
 }
 
 // ***************************************
@@ -74,6 +121,17 @@ function validateForm(){
         msg += "- La date de fin doit se situer après la date de début.\n";
     }
     //
+    if(
+        !document.getElementById("clients-plaquettes").checked
+    ){
+        msg += "- Vous devez choisir un type de bilan.\n";
+    }
+    //
+    if(msg != ""){
+        msg = "Impossible de valider ce formulaire :\n" + msg;
+        alert(msg);
+        return false;
+    }
     return true;
 }
 
