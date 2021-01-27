@@ -1,4 +1,9 @@
 
+Base 2020-12-16
+---------------
+Tests sur SubdivCadastre
+Tests sur Parcelle donnent 23 enregistrements
+
 Lieu-dit 5 BESPLOS
     5 Creissels
     7 Millau

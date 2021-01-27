@@ -1,0 +1,52 @@
+
+Base 2020-12-16
+------------------
+Teste lieux-dits sans communes (table Parcelle)
+COMBEGRAND
+LE PERTUS
+LES AUMIERES
+PUECH BLACOUS
+PUECH ROUCOUS ET PEY
+REDOULES
+ROUTAOUS
+SERRE DE LA BAUME
+SERRE DE LAS SOUTS
+=> 9 lieux-dits sans commune
+
+Compare associations commune - lieudit entre Subdivision et SubdivCadastre
+    OK, pas de différence
+Compare associations commune - lieudit entre SubdivCadastre et Subdivision
+    OK, pas de différence
+
+Compare id communes dans Subdivision, SubdivCadastre, Parcelle:
+  Subdivision - SubdivCadastre : OK
+  SubdivCadastre - Subdivision : OK
+  Subdivision - Parcelle : OK
+  Parcelle - Subdivision : OK
+  SubdivCadastre - Parcelle : OK
+  Parcelle - SubdivCadastre : OK
+Compare id lieudit dans Subdivision, SubdivCadastre, Parcelle:
+  Subdivision - SubdivCadastre : OK
+  SubdivCadastre - Subdivision : OK
+  Subdivision - Parcelle : 
+    Dans Subdivision et pas dans Parcelle : 267
+  Parcelle - Subdivision : OK
+  SubdivCadastre - Parcelle : 
+    Dans SubdivCadastre et pas dans Parcelle : 267
+  Parcelle - SubdivCadastre : OK
+
+Compare id exploitant + liens exploitant - parcelles 
+Dans Exploita : 108 IdExploitant distincts
+Dans Recad : 97 IdExploitant distincts
+Dans SubdivCadastre : 105 IdExploitant distincts
+Dans Subdivision : 105 IdExploitant distincts
+IdExploitant dans Exploita et pas dans Recad : 112 102 103 104 105 107 108 109 110 113 115 116 117 120 118 119 121 122 123 124
+IdExploitant dans Exploita et pas dans SubdivCadastre : 71 84 98 124
+IdExploitant dans Exploita et pas dans Subdivision : 71 84 98 124
+== Pour l'exploitant 28 SCTL
+  Liens IdParcelle dans SubdivCadastre et pas dans Subdivision : 2462
+== Pour l'exploitant 1 PERSONNE
+  Liens IdParcelle dans SubdivCadastre et pas dans Subdivision : 2435 2436
+  Liens IdParcelle dans Subdivision et pas dans SubdivCadastre : 2108
+== Pour l'exploitant 0 
+  Liens IdParcelle dans Subdivision et pas dans SubdivCadastre : 2462

@@ -27,16 +27,16 @@ $version = '2020-12-16';
 
 $csvDir = $config['dev']['sctl-data'] . "/csv-$version";
 
-//test_1n($csvDir, $tables);
+test_1n($csvDir, $tables);
 //test_pareil($csvDir, $tables);
 //test_coherence($csvDir, $tables);
 //liste_multiples($csvDir, $tables);
-test_zero($csvDir, $tables);
+//test_zero($csvDir, $tables);
 
 // ******************************************************
 /**
     Teste s'il existe des lieux-dits sans communes
-    Utilise SubdivCadastre
+    Utilise Parcelle
     Résultat : 
     2018 : tous les lieux-dits sont associés à une commune.
     2020-02-27
@@ -53,8 +53,8 @@ test_zero($csvDir, $tables);
         => 9 lieux-dits sans commune
 **/
 function test_zero($csvDir, $tables){
-    echo "Teste lieux-dits sans communes\n";
-    $table = 'SubdivCadastre';
+    $table = 'Parcelle';
+    echo "Teste lieux-dits sans communes (table $table)\n";
     $res = [];
     $nameIdC = $tables[$table][0];
     $nameIdLD = $tables[$table][1];
@@ -100,10 +100,10 @@ function test_zero($csvDir, $tables){
 // ******************************************************
 /**
     Liste les lieux-dits associés à plusieurs communes
-    Utilise SubdivCadastre
+    Utilise Parcelle
 **/
 function liste_multiples($csvDir, $tables){
-    $table = 'SubdivCadastre';
+    $table = 'Parcelle';
     $res = [];
     $nameIdC = $tables[$table][0];
     $nameIdLD = $tables[$table][1];
@@ -154,14 +154,15 @@ function liste_multiples($csvDir, $tables){
 /**
     Teste si les 3 tables ont les mêmes communes et les mêmes lieudit
     Résultat :
-        communes : ok, les 3 tables sont pareil
+        communes : ok, les 3 tables sont identiques
         lieudit : lieudit 393 (TRAVERS DE CLAPADE) pas dans Parcelle
                   les 2 autres tables contiennent les mêmes lieudit
         => Pour fabriquer la table de liens, utiliser SubdivCadastre ou Subdivision, mais pas Parcelle.
 **/
 function test_pareil($csvDir, $tables){
-    
+    //
     // teste id commune
+    //
     $idsC = [];
     foreach($tables as $table => $details){
         $idsC[$table] = [];
@@ -176,8 +177,8 @@ function test_pareil($csvDir, $tables){
         $idsC[$table] = array_values(array_unique($elements));
     }
     
-    echo "Compare id communes :\n";
     [$t1, $t2, $t3] = array_keys($tables);
+    echo "Compare id commune dans $t1, $t2, $t3:\n";
     //
     $test = array_diff($idsC[$t1], $idsC[$t2]);
     echo "  $t1 - $t2 : ";
@@ -229,8 +230,9 @@ function test_pareil($csvDir, $tables){
     else{
         echo "\n    Dans $t3 et pas dans $t2 : " . implode(' ', $test) . "\n";
     }
-    
+    //
     // teste id lieudit
+    //
     $idsLD = [];
     foreach($tables as $table => $details){
         $idsLD[$table] = [];
@@ -244,9 +246,7 @@ function test_pareil($csvDir, $tables){
     foreach($idsLD as $table => $elements){
         $idsLD[$table] = array_values(array_unique($elements));
     }
-    
-    echo "Compare id lieudit :\n";
-    [$t1, $t2, $t3] = array_keys($tables);
+    echo "Compare id lieudit dans $t1, $t2, $t3:\n";
     //
     $test = array_diff($idsLD[$t1], $idsLD[$t2]);
     echo "  $t1 - $t2 : ";
@@ -298,10 +298,8 @@ function test_pareil($csvDir, $tables){
     else{
         echo "\n    Dans $t3 et pas dans $t2 : " . implode(' ', $test) . "\n";
     }
-    
     echo "\n";
 }
-
 
 // ******************************************************
 /**
@@ -324,20 +322,21 @@ function test_coherence($csvDir, $tables){
             $res[$table][$idLD][] = $idC;
         }
     }
-    
+    //
     // remove doublons
+    //
     foreach($res as $table => $infos){
         foreach($infos as $idLD => $idsC){
             $idsC = array_values(array_unique($idsC)); // array_values to reindex
             $res[$table][$idLD] = $idsC;
         }
     }
-    
+    //
     // on ne compare que pour Subdivision et SubdivCadastre
     // puisque test_pareil() a montré qu'il faut éviter d'utiliser Parcelle
     [$t1, $t2, $t3] = array_keys($tables);
-    
-    echo "Compare associations $t1 - $t2\n";
+    //
+    echo "Compare associations commune - lieudit entre $t1 et $t2\n";
     $ok = true;
     foreach($res[$t1] as $idLD => $idsC){
         $test = array_diff($idsC, $res[$t2][$idLD]);
@@ -349,9 +348,8 @@ function test_coherence($csvDir, $tables){
     if($ok){
         echo "    OK, pas de différence\n";
     }
-    
-    
-    echo "Compare associations $t2 - $t1\n";
+    //
+    echo "Compare associations commune - lieudit entre $t2 et $t1\n";
     $ok = true;
     foreach($res[$t2] as $idLD => $idsC){
         $test = array_diff($idsC, $res[$t1][$idLD]);
@@ -363,8 +361,6 @@ function test_coherence($csvDir, $tables){
     if($ok){
         echo "    OK, pas de différence\n";
     }
-    
-    
 }
 
 // *********************************************************
@@ -373,7 +369,7 @@ function test_coherence($csvDir, $tables){
     Résultat : non, lien n-n pour 24 lieux-dits
 **/
 function test_1n($csvDir, $tables){
-    
+    echo "Identifie liens n-n entre lieux-dits et communes\n";
     $res = [];
     foreach($tables as $table => $details){
         $res[$table] = [];
@@ -389,7 +385,7 @@ function test_1n($csvDir, $tables){
             $res[$table][$idLD][] = $idC;
         }
     }
-    
+    //
     $multiples = [];
     foreach($res as $table => $infos){
         $multiples[$table] = [];
@@ -400,14 +396,14 @@ function test_1n($csvDir, $tables){
             }
         }
     }
-    
+    //
     $lisibles = []; // keys = idLD
     foreach($multiples as $table => $multiple){
         foreach($multiple as $idLD => $idsC){
             $lisibles[$idLD][$table] = $idsC;
         }
     }
-    
+    //
     foreach($lisibles as $idLD => $details){
         echo "Lieu dit $idLD\n";
         foreach($details as $table => $idsC){
