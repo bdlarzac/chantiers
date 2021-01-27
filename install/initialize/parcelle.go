@@ -14,25 +14,26 @@ import (
 	"fmt"
 	"path"
 	"strconv"
+	"strings"
+	"bufio"
+	"os"
 )
 
 // *********************************************************
-/**
-    ATTENTION : code à remplacer, parcelle doit être remplie à partir de la base Access SCTL
-    Le remplissage à partir du csv est provisoire
-**/
-func FillParcelle() {
+// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
+func FillParcelle(versionSCTL string) {
 	table := "parcelle"
 	csvname := "Parcelle.csv"
 	fmt.Println("Remplit table parcelle à partir de " + csvname)
-	dirCsv := getDataDir()
+	
+	ctx := ctxt.NewContext()
+	
+	dirCsv := getSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, csvname)
 
 	records, err := tiglib.CsvMap(filename, ';')
 
-	ctx := ctxt.NewContext()
 	db := ctx.DB
-
 	tx, err := db.Begin()
 	if err != nil {
 		panic(err)
@@ -86,36 +87,57 @@ func FillParcelle() {
 }
 
 // *********************************************************
-func FillLiensParcelleLieudit() {
+// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
+func FillLiensParcelleLieudit(versionSCTL string) {
 	table := "parcelle_lieudit"
 	fmt.Println("Remplit table " + table + " à partir de Parcelle.csv")
-	dirCsv := getDataDir()
+	
+	ctx := ctxt.NewContext()
+	
+	dirCsv := getSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Parcelle.csv")
-
-	records, err := tiglib.CsvMap(filename, ';')
-	if err != nil {
-		panic(err)
-	}
-
-	// remove doublons
-	/*
-	   var k string
-	   var v [2]string
-	   uniques := make(map[string][2]string) // N =
-	   for _, record := range records{
-	       idC := record["IdParcelle"]
-	       idLD := record["IdLieuDit"]
-	       k = idC + "-" + idLD
-	       v[0] = idC
-	       v[1] = idLD
-	       uniques[k] = v
-	   }
-	*/
+	
+	// pour lire le csv, on ne peut pas utiliser du code générique tiglib.CsvMap()
+	// car certaines lignes contiennent des \n (champ Observation de la table)
+	// => à ignorer
+    file, err := os.Open(filename)
+    if err != nil {
+        panic(err)
+    }
+    defer file.Close()
+    scanner := bufio.NewScanner(file)
+    if err := scanner.Err(); err != nil {
+        panic(err)
+    }
+    var records []map[string]string
+    var tmp []string
+    var nCols int
+    var colNames []string
+    i := -1
+    for scanner.Scan() {
+        line := scanner.Text()
+        i++
+        if i == 0 {
+            // récupère le nom des colonnes
+            colNames = strings.Split(line, ";")
+            nCols = len(colNames)
+            continue
+        }
+        // remplit une ligne de données
+        tmp = strings.Split(line, ";")
+        if len(tmp) != nCols{
+            // ligne foireuse, la ligne précédente contient un \n dans le champ Observation
+            continue
+        }
+        var record = make(map[string]string, nCols)
+		for idx, field := range colNames {
+			record[field] = tmp[idx]
+		}
+		records = append(records, record)
+    }
 
 	// insert db
-	ctx := ctxt.NewContext()
 	db := ctx.DB
-
 	tx, err := db.Begin()
 	if err != nil {
 		panic(err)

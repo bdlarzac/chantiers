@@ -1,0 +1,14 @@
+
+
+sudo apt install mdbtools
+
+mdb-tables	    list tables in the specified file
+mdb-schema	    generate schema DDL for the specified file
+mdb-export	    generate CSV style output for a table
+mdb-ver	        display the version of the specified file
+mdb-header	    support for using MDB data in C
+mdb-parsecsv	support for using MDB data in C
+mdb-sql	        command line SQL query tool
+
+mdb-export -d ";" -Q 2-Sctl-Gfa.mdb Parcelle > csv/parcelles.csv
+mdb-export -d ";" -Q Sctl-Gfa-2018 Exploita > csv-2018/Exploita.csv

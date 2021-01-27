@@ -77,3 +77,9 @@ affacture:
 
 # Nombre de chantiers affichés dans la partie "activités récentes" (page d'accueil)
 nb-recent: 5
+
+# Utiles uniquement pour le développement de l'application
+dev:
+  # Répertoire contenant les différents dumps de la base SCTL
+  # Doit contenir des sous-répertoires avec les différents .mdb et exports csv
+  sctl-data-source: /path/to/sctl/data

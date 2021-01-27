@@ -18,12 +18,14 @@ import (
 )
 
 // *********************************************************
+// Prend les données dans install/data/commune.csv
+// A la différence des autres données venant de la SCTL,
+// commune.csv est versionné (car modifié, ajout de colonne nom_court)
 func FillCommune() {
 	fmt.Println("Remplit table commune à partir de commune.csv")
 	dirCsv := getDataDir()
 	filename := path.Join(dirCsv, "commune.csv")
 	records, err := tiglib.CsvMap(filename, ';')
-//fmt.Printf("%+v\n",records)
 	// insert db
 	ctx := ctxt.NewContext()
 	db := ctx.DB
@@ -40,17 +42,20 @@ func FillCommune() {
 }
 
 // *********************************************************
-func FillLieudit() {
+// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
+func FillLieudit(versionSCTL string) {
 	fmt.Println("Remplit table lieudit à partir de LieuDit.csv")
-	dirCsv := getDataDir()
+	
+	ctx := ctxt.NewContext()
+	
+	dirCsv := getSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "LieuDit.csv")
 	records, err := tiglib.CsvMap(filename, ';')
-	// insert db
-	ctx := ctxt.NewContext()
-	db := ctx.DB
 	if err != nil {
 		panic(err)
 	}
+	// insert db
+	db := ctx.DB
 	stmt, err := db.Prepare("insert into lieudit(id,nom) values($1, $2)")
 	for _, v := range records {
         _, err = stmt.Exec(v["IdLieuDit"], v["Libelle"])
@@ -61,10 +66,14 @@ func FillLieudit() {
 }
 
 // *********************************************************
-func FillLiensCommuneLieudit() {
+// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
+func FillLiensCommuneLieudit(versionSCTL string) {
 	table := "commune_lieudit"
 	fmt.Println("Remplit table " + table + " à partir de SubdivCadastre.csv")
-	dirCsv := getDataDir()
+
+	ctx := ctxt.NewContext()
+	
+	dirCsv := getSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "SubdivCadastre.csv")
 	//
 	records, err := tiglib.CsvMap(filename, ';') // N = 2844 pour base 2018
@@ -84,7 +93,6 @@ func FillLiensCommuneLieudit() {
 		uniques[k] = v
 	}
 	// insert db
-	ctx := ctxt.NewContext()
 	db := ctx.DB
 	stmt, err := db.Prepare("insert into " + table + "(id_commune,id_lieudit) values($1, $2)")
     if err != nil {

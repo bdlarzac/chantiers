@@ -1,19 +1,16 @@
 
-En prod, les seuls fichiers à conserver en l'état sont :
-commune.csv
-lieudit.csv
-ug.csv
+Données servant à fabriquer la première base de prod
+- ug.csv        doit être remplacé à chaque modification du PSG
+- commune.csv   diffère de l'export mdb (ajout de colonne nom_court)
 
-ug.csv doit être remplacé à chaque modification du PSG
+D'autres fichiers sont utilisés :
 
-Les autres fichiers doivent être supprimés et remplacés par des accès à la base Access SCTL
-                                                      
-commune.csv         sert à remplir la table commune
-lieudit.csv         sert à remplir la table lieudit
-Parcelle_Corr.csv   sert à remplir les tables parcelle et parcelle_lieudit
+- data-private/ contient les acteurs initiaux saisis par Bastien - non versionné.
+
+- voir config.yml, dev / sctl-data-source, qui contient des fichiers qui pourraient
+  être remplacés par des accès à la base Access SCTL :
+LieuDit.csv         sert à remplir la table lieudit
+Parcelle.csv        sert à remplir les tables parcelle et parcelle_lieudit
 SubdivCadastre.csv  sert à remplir la table commune_lieudit
 Exploita.csv        sert à remplir la table acteur
 Subdivision.csv     sert à remplir la table parcelle_exploitant
-
-ATTENTION : Exploita.csv se trouve dans private/
-

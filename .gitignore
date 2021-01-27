@@ -1,17 +1,27 @@
 
 config.yml
 
-*.exe
+# private data
+install/data-private
+install/sctl-analyse/evolution-Exploita.csv
+
+# build sctl - ne versionne pas les données mais versionne certains fichiers
+install/sctl-data/*
+!install/sctl-data/mdb2csv
+!install/sctl-data/README
+!install/sctl-data/mdb-doc.txt
+
+# convention, files marked for deletion
 z.*
 
+# temporary executables generated during development
+gin-bin
+run-bdl
+
+# temporary stuff
+*.exe
+.~*
 
 # editor stuff
 *.vim
 *.code-workspace
-
-# temporary executable generated during development
-gin-bin
-
-# private data
-private
-install/data/Exploita.csv

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Exporte les tables de la base SCTL utiles à BDL
+# Usage : mdb2csv <version>
+# Exemple mdb2csv 2020-02-27
+#
+# Utilise mdb-export
+# sudo apt install mdbtools
+#
+# Le répertoire courant doit contenir
+# - Un export de la base nommé "Sctl-Gfa-<version>.mdb" (ex "Sctl-Gfa-2020-02-27.mdb")
+# - un répertoire nommé "csv-<version>" (ex "csv-2020-02-27")
+
+if [[ $# -ne 1 ]]; then
+    echo "ERREUR - Nécessite un paramètre pour spécifier la version de la base"
+    echo "ex: $0 2020-02-27"
+    exit 1
+fi
+version=$1
+
+mdbfile="Sctl-Gfa-$version.mdb"
+if [ ! -f "$mdbfile" ]; then
+    echo "ERREUR - Le fichier $mdbfile doit exister dans le répertoire courant"
+    exit 1
+fi
+
+csvdir="csv-$version"
+if [ ! -d $csvdir ]; then
+    mkdir $csvdir
+    echo "Crée le répertoire $csvdir"
+fi
+
+tables=("LieuDit" "SubdivCadastre" "Exploita" "Parcelle" "Subdivision")
+
+for t in "${tables[@]}"
+do
+    echo "Export $t ==> $csvdir/$t.csv"
+    mdb-export -d ';' -Q $mdbfile $t > $csvdir/$t.csv
+done
+
+exit 0

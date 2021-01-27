@@ -56,4 +56,7 @@ type Config struct {
 		Adresse string `yaml:"adresse"`
 	} `yaml:"affacture"`
 	NbRecent int `yaml:"nb-recent"`
+	Dev struct {
+		SCTLDataSource string `yaml:"sctl-data-source"`
+	} `yaml:"dev"`
 }

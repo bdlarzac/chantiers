@@ -1,0 +1,104 @@
+
+Lieu-dit 5 BESPLOS
+    5 Creissels
+    7 Millau
+
+Lieu-dit 46 COMBE LONGUE
+    7 Millau
+    8 Nant
+
+Lieu-dit 48 COMBEBELLE
+    2 La Cavalerie
+    8 Nant
+    9 La Roque Ste Marguerite
+
+Lieu-dit 56 COSTERASTE
+    2 La Cavalerie
+    9 La Roque Ste Marguerite
+
+Lieu-dit 82 LA BLAQUE
+    6 L'Hospitalet du Larzac
+    7 Millau
+    8 Nant
+
+Lieu-dit 83 LA BLAQUIERE
+    4 La Couvertoirade
+    7 Millau
+
+Lieu-dit 95 LA COMBE
+    4 La Couvertoirade
+    7 Millau
+    8 Nant
+    9 La Roque Ste Marguerite
+
+Lieu-dit 131 LADRECH
+    7 Millau
+    8 Nant
+    9 La Roque Ste Marguerite
+
+Lieu-dit 151 LE CLAUZAL
+    8 Nant
+    4 La Couvertoirade
+
+Lieu-dit 159 LE CUN
+    3 Cornus
+    4 La Couvertoirade
+
+Lieu-dit 160 LE DEVEZ
+    5 Creissels
+    8 Nant
+
+Lieu-dit 169 LE LAVAGNOL
+    8 Nant
+    9 La Roque Ste Marguerite
+
+Lieu-dit 178 LE PLO
+    4 La Couvertoirade
+    6 L'Hospitalet du Larzac
+    8 Nant
+
+Lieu-dit 185 LE PUECH
+    6 L'Hospitalet du Larzac
+    7 Millau
+
+Lieu-dit 188 LE RANC
+    7 Millau
+    8 Nant
+
+Lieu-dit 202 LE TOURNET
+    7 Millau
+    9 La Roque Ste Marguerite
+
+Lieu-dit 214 LES BARTHES
+    6 L'Hospitalet du Larzac
+    8 Nant
+
+Lieu-dit 215 LES BAUMES
+    7 Millau
+    9 La Roque Ste Marguerite
+
+Lieu-dit 217 LES BOUISSIERES
+    3 Cornus
+    7 Millau
+
+Lieu-dit 272 LES PARRAS
+    4 La Couvertoirade
+    9 La Roque Ste Marguerite
+
+Lieu-dit 278 LES PLOS
+    4 La Couvertoirade
+    7 Millau
+
+Lieu-dit 282 LES RABASSIERES
+    8 Nant
+    9 La Roque Ste Marguerite
+
+Lieu-dit 345 PUECH ROUSSET
+    4 La Couvertoirade
+    7 Millau
+
+Lieu-dit 355 ROC TRAUCAT
+    7 Millau
+    8 Nant
+
+24 lieux-dits concernés

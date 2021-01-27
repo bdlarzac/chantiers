@@ -36,15 +36,17 @@ func FillActeurZero() {
 
 // *********************************************************
 // Remplit les acteurs à partir d'un export de la base SCTL
-func FillActeur() {
+// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
+func FillActeur(versionSCTL string) {
 	table := "acteur"
 	fmt.Println("Remplit " + table + " à partir de Exploita.csv")
-	dirCsv := getPrivateDir()
+	
+	ctx := ctxt.NewContext()
+	
+	dirCsv := getSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Exploita.csv")
-
 	records, err := tiglib.CsvMap(filename, ';')
 
-	ctx := ctxt.NewContext()
 	db := ctx.DB
 
 	tx, err := db.Begin()
@@ -276,10 +278,14 @@ func AddActeursInitiaux() {
 
 // *********************************************************
 // Remplit les liens parcelle - exploitant à partir d'un export de la base SCTL
-func FillLiensParcelleExploitant() {
+// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
+func FillLiensParcelleExploitant(versionSCTL string) {
 	table := "parcelle_exploitant"
 	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
-	dirCsv := getDataDir()
+	
+	ctx := ctxt.NewContext()
+	
+	dirCsv := getSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Subdivision.csv")
 
 	records, err := tiglib.CsvMap(filename, ';') // N = 2844
@@ -300,9 +306,7 @@ func FillLiensParcelleExploitant() {
 	}
 
 	// insert db
-	ctx := ctxt.NewContext()
 	db := ctx.DB
-
 	tx, err := db.Begin()
 	if err != nil {
 		panic(err)
@@ -322,13 +326,9 @@ func FillLiensParcelleExploitant() {
 		sql := fmt.Sprintf("insert into %s(id_parcelle,id_sctl_exploitant) values(%s, %s)", table, idP, idE)
 		if _, err = tx.Exec(sql); err != nil {
 			n++
-			continue
-			// if idP == "59" || idP == "1859" || idP == "102" {
-			    // continue
-			// }
-			// fmt.Printf("idP=%s - idE=%s\n", idP, idE)
-			// panic(err)
+panic(err)
+//			continue
 		}
 	}
-	fmt.Printf("%d associations pas enregistrées (bugs SCTL)\n", n)
+	fmt.Printf("  %d associations pas enregistrées (bugs SCTL)\n", n)
 }

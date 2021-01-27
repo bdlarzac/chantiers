@@ -6,10 +6,11 @@
     @history    2019-11-05 05:50:37+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
 package initialize
-
+                                                                                                                                 
 import (
 	"path"
 	"runtime"
+	"bdl.local/bdl/ctxt"
 )
 
 // getCreateTableDir renvoie le chemin absolu vers le répertoire contenant
@@ -31,5 +32,12 @@ func getDataDir() string {
 // des fichiers contenant des données personnelles
 func getPrivateDir() string {
 	_, filename, _, _ := runtime.Caller(0) // path to current go file
-	return path.Join(path.Dir(path.Dir(path.Dir(filename))), "private")
+	return path.Join(path.Dir(path.Dir(filename)), "data-private")
+}
+
+// getSCTLDataDir renvoie le chemin absolu vers le répertoire contenant
+// des exports de la base SCTL
+func getSCTLDataDir(ctx *ctxt.Context, versionSCTL string) string {
+    basedir := ctx.Config.Dev.SCTLDataSource
+	return path.Join(basedir, "csv-" + versionSCTL)
 }

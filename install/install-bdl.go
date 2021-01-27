@@ -1,7 +1,22 @@
 /******************************************************************************
     Initialisation de l'environnement nécessaire au fonctionnement de l'application.
     Code pas utilisé en fonctionnement normal.
-
+    
+    L'option -s est utilisée en lien avec la config (dev / sctl-data-source).
+    Correspond à un sous-répertoire de la valeur de la config.
+    Ex: Si la config contient
+    dev:
+      sctl-data-source: /path/to/db-sctl
+    Et que l'option -s contient 2020-12-23
+    Alors les exports de la base Access doivent se trouver dans /path/to/db-sctl/csv-2020-12-23
+    Ces exports sont des fichiers csv obtenus avec mdb-export
+    
+    Ex de commande à exécuter depuis /path/to/db-sctl :
+    mdb-export -d ';' -Q Sctl-Gfa-2020-02-27.mdb LieuDit > csv-2020-03-06/LieuDit.csv
+    
+    Pour installer mdb-export :
+    sudo apt install mdbtools
+    
     @copyright  BDL, Bois du Larzac
     @license    GPL
     @history    2019-09-26 17:41:35+02:00, Thierry Graff : Creation
@@ -17,16 +32,22 @@ import (
 )
 
 var errorMsg string
-var flagInstall, flagFixture *string
+var flagInstall, flagFixture, flagSctlDataSource *string
 
 // *********************************************************
 // toujours appelé par go au chargement du package
 func init() {
     errorMsg = "COMMANDE INVALIDE\n"
     errorMsg += "Utiliser avec -i (install) ou -f (fixture)\n"
+    errorMsg += "Certaines commandes ont aussi besoin de -s (source des données SCTL) :\n"
+    errorMsg += "  -i acteur\n"
+    errorMsg += "  -i commune\n"
+    errorMsg += "  -i parcelle\n"
+    errorMsg += "  -i all\n"
     errorMsg += "Exemples :\n"
-    errorMsg += "  go run install-bdl.go -i commune\n"
+    errorMsg += "  go run install-bdl.go -i chantier\n"
     errorMsg += "  go run install-bdl.go -f stockage\n"
+    errorMsg += "  go run install-bdl.go -i commune -s 2020-12-23\n"
     
 	possibleInstall := []string{
 		"all",
@@ -52,8 +73,11 @@ func init() {
     strFixture := strings.Join(possibleFixture, ", ")
 	errorMsg += strFixture + "\n"
 	
+	strSctlDataSource := "Répertoire contenant les dumps SCTL"
+	
 	flagInstall = flag.String("i", "", strInstall)
 	flagFixture = flag.String("f", "", strFixture)
+	flagSctlDataSource = flag.String("s", "", strSctlDataSource)
 }
 
 // *********************************************************
@@ -66,6 +90,14 @@ func main() {
 		return
 	}
 
+	if *flagInstall == "acteur" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all" {
+	    if *flagSctlDataSource == "" {
+            fmt.Println(errorMsg)
+            fmt.Println("PARAMETRE MANQUANT : -s")
+            return
+	    }
+	}
+	
 	if *flagInstall != "" {
 		handleInstall()
 	} else if *flagFixture != "" {
@@ -122,15 +154,15 @@ func installCommune() {
 	initialize.CreateTable("lieudit")
 	initialize.CreateTable("commune_lieudit")
 	initialize.FillCommune()
-	initialize.FillLieudit()
-	initialize.FillLiensCommuneLieudit()
+	initialize.FillLieudit(*flagSctlDataSource)
+	initialize.FillLiensCommuneLieudit(*flagSctlDataSource)
 	initialize.CreateTable("lieudit_mot")
 	initialize.FillLieuditMot()
 }
 func installActeur() {
 	initialize.CreateTable("acteur")
     initialize.FillActeurZero()
-	initialize.FillActeur()
+	initialize.FillActeur(*flagSctlDataSource)
 	initialize.AddActeurBDL()
 	initialize.AddActeurGFA()
 	initialize.AddActeurSCTL()
@@ -140,9 +172,9 @@ func installParcelle() {
 	initialize.CreateTable("parcelle")
 	initialize.CreateTable("parcelle_lieudit")
 	initialize.CreateTable("parcelle_exploitant")
-	initialize.FillParcelle()
-	initialize.FillLiensParcelleExploitant()
-	initialize.FillLiensParcelleLieudit()
+	initialize.FillParcelle(*flagSctlDataSource)
+	initialize.FillLiensParcelleExploitant(*flagSctlDataSource)
+	initialize.FillLiensParcelleLieudit(*flagSctlDataSource)
 }
 func installUG() {
 	initialize.CreateTable("ug")

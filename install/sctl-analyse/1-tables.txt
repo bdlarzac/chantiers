@@ -1,0 +1,337 @@
+mdb-tables 2-Sctl-Gfa.mdb 
+mdb-schema 2-Sctl-Gfa.mdb 
+mdb-export -d ";" -Q 2-Sctl-Gfa.mdb Parcelle > csv/parcelles.csv
+
+CadValeur
+ClassCadastre
+Commune             13
+Config          
+Exploita            104
+Fermage
+ForPrintSctl
+NumGfa
+Options
+Parcelle            2386
+ParcelleSup
+Recad
+SubdivCadastre
+Subdivision
+TypeCadastre
+ValeurPointGFA
+ValeurPointSCTL
+Coef
+LieuDit             403
+PSG 
+
+Liens parcelles - exploitants :
+Recad           2734
+SubdivCadastre  2844
+Subdivision     2729
+
+
+-- ----------------------------------------------------------
+-- MDB Tools - A library for reading MS Access database files
+-- Copyright (C) 2000-2011 Brian Bruns and others.
+-- Files in libmdb are licensed under LGPL and the utilities under
+-- the GPL, see COPYING.LIB and COPYING files respectively.
+-- Check out http://mdbtools.sourceforge.net
+-- ----------------------------------------------------------
+
+
+
+-- That file uses encoding UTF-8
+
+CREATE TABLE [CadValeur]
+ (
+	[COMMUNE]			Integer, 
+	[Type Cad]			Text (20), 
+	[ClassCad]			Integer, 
+	[NOM]			Text (100), 
+	[Valeur]			Double, 
+	[ValeurActuel]			Double, 
+	[IdCadValeur]			Long Integer NOT NULL, 
+	[IdCommune]			Long Integer, 
+	[IdTypeCad]			Long Integer, 
+	[IdClassCad]			Long Integer
+);
+
+CREATE TABLE [ClassCadastre]
+ (
+	[IdClassCad]			Long Integer NOT NULL, 
+	[ClassCadastre]			Long Integer, 
+	[Libelle]			Text (40), 
+	[Couleur]			Long Integer
+);
+
+CREATE TABLE [Commune]
+ (
+	[COMMUNE]			Integer, 
+	[NOM]			Text (256), 
+	[IdCommune]			Long Integer NOT NULL, 
+	[Couleur]			Long Integer, 
+	[CodeInsee]			Text (100)
+);
+
+CREATE TABLE [Config]
+ (
+	[IdConfig]			Long Integer NOT NULL, 
+	[RaisonSociale]			Text (510), 
+	[Adresse]			Text (400), 
+	[CodePostal]			Text (40), 
+	[Ville]			Text (256), 
+	[Telephone]			Text (60), 
+	[Fax]			Text (60), 
+	[Mail]			Text (510), 
+	[Siret]			Text (100)
+);
+
+CREATE TABLE [Exploita]
+ (
+	[NUMEXP]			Integer, 
+	[NOMEXP]			Text (100), 
+	[AdresseExp]			Text (256), 
+	[CPExp]			Text (20), 
+	[VilleExp]			Text (100), 
+	[IdExploitant]			Long Integer NOT NULL, 
+	[IdValeurPointGFA]			Long Integer, 
+	[IdValeurPointSCTL]			Long Integer, 
+	[Telephone]			Text (40), 
+	[Mail]			Text (256), 
+	[Prenom]			Text (100), 
+	[DateDebutBailGFA]			DateTime, 
+	[DateFinBailGFA]			DateTime, 
+	[DateAvenantGFA]			DateTime, 
+	[NumAvenantGFA]			Long Integer, 
+	[DateDebutBailSCTL]			DateTime, 
+	[DateFinBailSCTL]			DateTime, 
+	[DateAvenantSCTL]			DateTime, 
+	[NumAvenantSCTL]			Long Integer, 
+	[SuppDureeGFA]			Boolean NOT NULL, 
+	[SuppDureeSCTL]			Boolean NOT NULL, 
+	[AssocieSCTL]			Boolean NOT NULL, 
+	[Agricole]			Boolean NOT NULL, 
+	[Ignorer]			Boolean NOT NULL
+);
+
+CREATE TABLE [Fermage]
+ (
+	[TypeFermage]			Text (20), 
+	[Points]			Integer, 
+	[IdFermage]			Long Integer NOT NULL, 
+	[Libelle]			Text (40), 
+	[Couleur]			Long Integer
+);
+
+CREATE TABLE [ForPrintSctl]
+ (
+	[COMMUNE]			Integer, 
+	[PARCELLE]			Text (20), 
+	[DIVISION]			Integer, 
+	[GFA]			Text (20), 
+	[NUMEXP]			Integer, 
+	[DUREE]			Integer, 
+	[SURFACE]			Double, 
+	[NOMEXP]			Text (256), 
+	[REVENU]			Double, 
+	[TYPECAD]			Text (20), 
+	[TYPEFERMAGE]			Text (20), 
+	[POINT]			Double, 
+	[DUREEFERMAGE]			Integer, 
+	[NomCommune]			Text (100), 
+	[Lieudit]			Text (100), 
+	[Parcelle A]			Text (20), 
+	[Parcelle B]			Long Integer, 
+	[Parcelle c]			Text (20), 
+	[Sup Total]			Double, 
+	[Lettre]			Text (100), 
+	[Chiffre]			Long Integer, 
+	[IdForPrintSctl]			Long Integer NOT NULL, 
+	[SURFACEDIVISION]			Double, 
+	[SURFACEDIVHA]			Text (256), 
+	[SURFACEPARCELLEHA]			Text (256), 
+	[SURFACEPARCELLE]			Double, 
+	[CLASSCADASTRE]			Long Integer, 
+	[PRENOM]			Text (100), 
+	[IdExploitant]			Long Integer, 
+	[DIV_SUBDIV]			Text (20), 
+	[COMMENTAIRES]			Text (510)
+);
+
+CREATE TABLE [NumGfa]
+ (
+	[IdNumGfa]			Long Integer NOT NULL, 
+	[Numero]			Long Integer, 
+	[Libelle]			Text (40), 
+	[Couleur]			Long Integer, 
+	[AssocieSCTL]			Boolean NOT NULL
+);
+
+CREATE TABLE [Options]
+ (
+	[IdOption]			Long Integer NOT NULL, 
+	[Libelle1]			Text (100), 
+	[Libelle2]			Text (100), 
+	[Libelle3]			Text (100), 
+	[Libelle4]			Text (100), 
+	[Couleur1]			Long Integer, 
+	[Couleur2]			Long Integer, 
+	[Couleur3]			Long Integer, 
+	[Couleur4]			Long Integer, 
+	[Param1]			Long Integer, 
+	[Param2]			Long Integer, 
+	[Param3]			Long Integer, 
+	[Param4]			Long Integer, 
+	[RepWord]			Text (256), 
+	[RepExcel]			Text (256)
+);
+
+CREATE TABLE [Parcelle]
+ (
+	[PARCELLE]			Text (20), 
+	[SURFACE]			Double, 
+	[REVENU]			Double, 
+	[SCTL]			Boolean NOT NULL, 
+	[IdParcelle]			Long Integer NOT NULL, 
+	[IdGfa]			Long Integer, 
+	[IdCommune]			Long Integer, 
+	[IdLieuDit]			Long Integer, 
+	[IdTypeCad]			Long Integer, 
+	[IdClassCad]			Long Integer, 
+	[Observations]			Text (510), 
+	[CodeMapInfo]			Text (100)
+);
+
+CREATE TABLE [ParcelleSup]
+ (
+	[COMMUNE]			Integer, 
+	[PARCELLE]			Text (20), 
+	[GFA]			Text (2), 
+	[LIEUDIT]			Text (100), 
+	[TYPECAD]			Text (20), 
+	[SURFACE]			Double, 
+	[REVENU]			Double, 
+	[INFO]			Memo/Hyperlink (255), 
+	[DATESUP]			DateTime, 
+	[IdParcelleSup]			Long Integer NOT NULL, 
+	[IdGfa]			Long Integer, 
+	[IdTypeCad]			Long Integer, 
+	[IdClassCad]			Long Integer, 
+	[IdCommune]			Long Integer, 
+	[IdLieuDit]			Long Integer
+);
+
+CREATE TABLE [Recad]
+ (
+	[DIVISION]			Integer, 
+	[DUREE]			Integer, 
+	[SURFACE]			Double, 
+	[REVENU]			Double, 
+	[DUREEFERMAGE]			Integer, 
+	[SCTL]			Boolean NOT NULL, 
+	[IdRecad]			Long Integer NOT NULL, 
+	[IdParcelle]			Long Integer, 
+	[IdGfa]			Long Integer, 
+	[IdTypeCad]			Long Integer, 
+	[IdFermage]			Long Integer, 
+	[IdExploitant]			Long Integer, 
+	[IdCommune]			Long Integer, 
+	[IdSubdivCadastre]			Long Integer
+);
+
+CREATE TABLE [SubdivCadastre]
+ (
+	[DIVISION]			Integer, 
+	[SUBDIVISION]			Integer, 
+	[SURFACE]			Double, 
+	[GFA]			Text (20), 
+	[REVENU]			Double, 
+	[IdSubdivCadastre]			Long Integer NOT NULL, 
+	[IdParcelle]			Long Integer, 
+	[IdTypeCad]			Long Integer, 
+	[IdClassCad]			Long Integer, 
+	[IdFermage]			Long Integer, 
+	[IdExploitant]			Long Integer, 
+	[IdCommune]			Long Integer, 
+	[IdLieuDit]			Long Integer, 
+	[DureeFermage]			Long Integer, 
+	[Point]			Double, 
+	[IdRecad]			Long Integer
+);
+
+CREATE TABLE [Subdivision]
+ (
+	[DIVISION]			Integer, 
+	[SUBDIVISION]			Integer, 
+	[SURFACE]			Double, 
+	[GFA]			Text (20), 
+	[REVENU]			Double, 
+	[IdSubdivision]			Long Integer NOT NULL, 
+	[IdParcelle]			Long Integer, 
+	[IdTypeCad]			Long Integer, 
+	[IdClassCad]			Long Integer, 
+	[IdFermage]			Long Integer, 
+	[IdExploitant]			Long Integer, 
+	[IdCommune]			Long Integer, 
+	[IdLieuDit]			Long Integer, 
+	[DureeFermage]			Long Integer, 
+	[Point]			Double, 
+	[IdRecad]			Long Integer, 
+	[PointFermage]			Double
+);
+
+CREATE TABLE [TypeCadastre]
+ (
+	[TypeCadastre]			Text (20), 
+	[IdTypeCad]			Long Integer NOT NULL, 
+	[Libelle]			Text (100), 
+	[Couleur]			Long Integer
+);
+
+CREATE TABLE [ValeurPointGFA]
+ (
+	[IdValeurPoint]			Long Integer NOT NULL, 
+	[Valeur]			Double, 
+	[Num]			Long Integer, 
+	[Libelle]			Text (40), 
+	[Couleur]			Long Integer
+);
+
+CREATE TABLE [ValeurPointSCTL]
+ (
+	[IdValeurPoint]			Long Integer NOT NULL, 
+	[Valeur]			Double, 
+	[Num]			Long Integer, 
+	[Libelle]			Text (40), 
+	[Couleur]			Long Integer
+);
+
+CREATE TABLE [Coef]
+ (
+	[Coef]			Double, 
+	[IdCoef]			Long Integer NOT NULL
+);
+
+CREATE TABLE [LieuDit]
+ (
+	[IdLieuDit]			Long Integer NOT NULL, 
+	[Libelle]			Text (256), 
+	[Couleur]			Long Integer
+);
+
+CREATE TABLE [PSG]
+ (
+	[IdPSG]			Long Integer NOT NULL, 
+	[IdParcelle]			Double, 
+	[Parcelle]			Text (100), 
+	[Surface]			Double, 
+	[LieuDit]			Text (160), 
+	[TypeCadastre]			Text (20), 
+	[NomExploitant]			Text (100), 
+	[PrenomExploitant]			Text (100), 
+	[Commune]			Text (100), 
+	[CodeInsee]			Text (40), 
+	[proprietaire]			Text (40), 
+	[CeQuiDiffere]			Text (510)
+);
+
+
