@@ -82,4 +82,6 @@ nb-recent: 5
 dev:
   # Répertoire contenant les différents dumps de la base SCTL
   # Doit contenir des sous-répertoires avec les différents .mdb et exports csv
-  sctl-data-source: /path/to/sctl/data
+  sctl-data: /path/to/sctl/data
+  # Répertoire contenant les résultats des tests effectués sur la base SCTL
+  sctl-analyse: /path/to/sctl/analyse

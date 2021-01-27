@@ -7,7 +7,7 @@ install/sctl-analyse/evolution-Exploita.csv
 
 # build sctl - ne versionne pas les données mais versionne certains fichiers
 install/sctl-data/*
-!install/sctl-data/mdb2csv
+!install/sctl-data/sctl-mdb2csv
 !install/sctl-data/README
 !install/sctl-data/mdb-doc.txt
 

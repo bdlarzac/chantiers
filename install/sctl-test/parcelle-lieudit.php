@@ -1,4 +1,4 @@
-    <?php
+<?php
 /******************************************************************************
     Teste les associations parcelles / lieux-dits
     Utilise les csv extraits de la base de terres avec mdb-tools
@@ -40,41 +40,45 @@ Une parcelle est caractérisée par
     - id (int)
 Cette association est uniquement présente dans les tables Parcelle et PSG
 
-On travaille avec Parcelle_Corr = table Parcelle modifiée en enlevant les \n à la main
-
 Conclusion après exec des tests :
-On utilise Parcelle_Corr pour construire
+On utilise Parcelle pour construire
 - une table parcelle
     id int pk
     code string
 - une table parcelle_lieudit
     id_parcelle int fk
     id_lieudit int fk
-Pour la prod, le pb de \n qui oblige à faire Parcelle_Corr ne se posera pas
+Pour la prod, le pb de \n qui oblige à faire Parcelle ne se posera pas
 si on part de la base access à la place du csv    
-
 */
 
-require_once 'csvAssociative.php';
+require_once 'lib-php/csvAssociative.php';
 
-$csvDir = '/home/thierry/dev/jobs/bdl/2.build/db-terres/csv';
-$tables = ['Parcelle_Corr', 'SubdivCadastre', 'Subdivision'];
+$config = yaml_parse(file_get_contents('../../config.yml'));
 
-//test_ids($csvDir, $tables);
-test_idCodeParcelle($csvDir);
+//$version = '2018';
+//$version = '2020-02-27';
+$version = '2020-12-16';
+
+$csvDir = $config['dev']['sctl-data'] . "/csv-$version";
+
+$tables = ['Parcelle', 'SubdivCadastre', 'Subdivision'];
+
+test_ids($csvDir, $tables);
+//test_idCodeParcelle($csvDir);
 //test_assoc($csvDir, $tables);
 //test_surface($csvDir);
 
 
 // ******************************************************
 /**
-    Affiche surface min et max des parcelles dans Parcelle_Corr
+    Affiche surface min et max des parcelles dans Parcelle
     Résultats :
         min = 7.0000000000000000e+00
         max = 1.5183800000000000e+06
 **/
 function test_surface($csvDir){
-    $csv = csvAssociative::compute($csvDir . '/Parcelle_Corr.csv');
+    $csv = csvAssociative::compute($csvDir . '/Parcelle.csv');
     $min = PHP_INT_MAX;
     $max = PHP_INT_MIN;
     foreach($csv as $row){
@@ -160,7 +164,7 @@ function test_assoc($csvDir, $tables){
 
 // ******************************************************
 /**
-    Teste les associations id parcelle - code parcelle dans Parcelle_Corr et PSG
+    Teste les associations id parcelle - code parcelle dans Parcelle et PSG
     Résultats :
     - Chaque id est associé à un seul code
     - un code peut être associé à plusieurs ids (202 codes dans ce cas)
@@ -171,7 +175,7 @@ function test_assoc($csvDir, $tables){
 function test_idCodeParcelle($csvDir){
     
     $tables = [
-        'Parcelle_Corr' => ['IdParcelle', 'PARCELLE'],
+        'Parcelle' => ['IdParcelle', 'PARCELLE'],
         'PSG' => ['IdParcelle', 'Parcelle'],
     ];
     
@@ -230,7 +234,7 @@ function test_idCodeParcelle($csvDir){
     }             
     
     // compare assoc dans les deux tables
-    foreach($idCodes['Parcelle_Corr'] as $id => $codes){
+    foreach($idCodes['Parcelle'] as $id => $codes){
         if(!isset($idCodes['PSG'][$id])){
             echo "Manque id $id dans PSG\n";
         }
@@ -245,10 +249,10 @@ function test_idCodeParcelle($csvDir){
         }
     }
     foreach($idCodes['PSG'] as $id => $codes){
-        if(!isset($idCodes['Parcelle_Corr'][$id])){
-            echo "Manque id $id dans Parcelle_Corr\n";
+        if(!isset($idCodes['Parcelle'][$id])){
+            echo "Manque id $id dans Parcelle\n";
         }
-        $codes2 = $idCodes['Parcelle_Corr'][$id];
+        $codes2 = $idCodes['Parcelle'][$id];
         $diff1 = array_diff($codes, $codes2);
         if(count($diff1) != 0){
             echo "\n"; print_r($diff1); echo "\n";
@@ -278,19 +282,29 @@ function test_ids($csvDir, $tables){
     }
     foreach($tables as $table){
         $data[$table] = array_unique($data[$table]);
-        echo str_pad($table, 15) . ' : ' . count($data[$table]) . "\n";
+        echo $table . ' : ' . count($data[$table]) . "\n";
     }
     
     $diff1 = array_diff($data[$tables[0]], $data[$tables[1]]);
-    $diff2 = array_diff($data[$tables[0]], $data[$tables[2]]);
-    $diff3 = array_diff($data[$tables[1]], $data[$tables[2]]);
+    $str1 = "Dans {$tables[0]} et pas dans {$tables[1]}";
     $diff1a = array_diff($data[$tables[1]], $data[$tables[0]]);
+    $str1a = "Dans {$tables[1]} et pas dans {$tables[0]}";
+    //
+    $diff2 = array_diff($data[$tables[0]], $data[$tables[2]]);
+    $str2 = "Dans {$tables[0]} et pas dans {$tables[2]}";
     $diff2a = array_diff($data[$tables[2]], $data[$tables[0]]);
+    $str2a = "Dans {$tables[2]} et pas dans {$tables[0]}";
+    //
+    $diff3 = array_diff($data[$tables[1]], $data[$tables[2]]);
+    $str3 = "Dans {$tables[1]} et pas dans {$tables[2]}";
     $diff3a = array_diff($data[$tables[2]], $data[$tables[1]]);
-    echo 'diff1 : ' . count($diff1) . "\n";
-    echo 'diff2 : ' . count($diff2) . "\n";
-    echo 'diff3 : ' . count($diff3) . "\n";
-    echo 'diff1a : ' . count($diff1a) . "\n";
-    echo 'diff2a : ' . count($diff2a) . "\n";
-    echo 'diff3a : ' . count($diff3a) . "\n";
+    $str3a = "Dans {$tables[2]} et pas dans {$tables[1]}";
+    echo "$str1 : " . count($diff1) . "\n";
+    echo "$str1a : " . count($diff1a) . "\n";
+    echo "\n";
+    echo "$str2 : " . count($diff2) . "\n";
+    echo "$str2a : " . count($diff2a) . "\n";
+    echo "\n";
+    echo "$str3 : " . count($diff3) . "\n";
+    echo "$str3a : " . count($diff3a) . "\n";
 }

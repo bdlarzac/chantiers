@@ -6,7 +6,6 @@
     @history    2019-06-11 08:49:25+02:00, Thierry Graff : Creation from old code
 ********************************************************************************/
 
-
 class csvAssociative{
     
     /**

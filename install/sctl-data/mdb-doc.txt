@@ -10,5 +10,6 @@ mdb-header	    support for using MDB data in C
 mdb-parsecsv	support for using MDB data in C
 mdb-sql	        command line SQL query tool
 
-mdb-export -d ";" -Q 2-Sctl-Gfa.mdb Parcelle > csv/parcelles.csv
 mdb-export -d ";" -Q Sctl-Gfa-2018 Exploita > csv-2018/Exploita.csv
+
+echo "select PARCELLE,SURFACE,REVENU,SCTL,IdParcelle,IdGfa,IdCommune,IdLieuDit,IdTypeCad,IdClassCad from Parcelle" | mdb-sql -Fp -d ';' -o $csvdir/Parcelle.csv $mdbfile

@@ -2,11 +2,11 @@
     Initialisation de l'environnement nécessaire au fonctionnement de l'application.
     Code pas utilisé en fonctionnement normal.
     
-    L'option -s est utilisée en lien avec la config (dev / sctl-data-source).
+    L'option -s est utilisée en lien avec la config (dev / sctl-data).
     Correspond à un sous-répertoire de la valeur de la config.
     Ex: Si la config contient
     dev:
-      sctl-data-source: /path/to/db-sctl
+      sctl-data: /path/to/db-sctl
     Et que l'option -s contient 2020-12-23
     Alors les exports de la base Access doivent se trouver dans /path/to/db-sctl/csv-2020-12-23
     Ces exports sont des fichiers csv obtenus avec mdb-export

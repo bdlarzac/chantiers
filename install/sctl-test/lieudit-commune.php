@@ -1,15 +1,15 @@
 <?php
 /******************************************************************************
     Teste les associations lieux-dits / communes
-    Utilise les csv extraits de la base de terres avec mdb-tools
+    Utilise les csv extraits de la base SCTL avec mdb-tools
     
     @license    GPL
     @history    2019-11-03 10:45:15+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-require_once 'csvAssociative.php';
+require_once 'lib-php/csvAssociative.php';
 
-// Tables de la base de terres où on trouve lieux-dits et communes :
+// Tables de la base SCTL où on trouve lieux-dits et communes :
 $tables = [
     // 'PSG' => ['', ''], // IdLieuDit, nom commune
     'Subdivision' => ['IdCommune', 'IdLieuDit'],
@@ -19,7 +19,13 @@ $tables = [
     // ForPrintSctl (pas id)
 ];
 
-$csvDir = '/home/thierry/dev/jobs/bdl/2.build/db-terres/csv';
+$config = yaml_parse(file_get_contents('../../config.yml'));
+
+//$version = '2018';
+//$version = '2020-02-27';
+$version = '2020-12-16';
+
+$csvDir = $config['dev']['sctl-data'] . "/csv-$version";
 
 //test_1n($csvDir, $tables);
 //test_pareil($csvDir, $tables);
@@ -31,9 +37,23 @@ test_zero($csvDir, $tables);
 /**
     Teste s'il existe des lieux-dits sans communes
     Utilise SubdivCadastre
-    Résultat : tous les lieux-dits sont associés à une commune.
+    Résultat : 
+    2018 : tous les lieux-dits sont associés à une commune.
+    2020-02-27
+    2020-12-16 :
+        COMBEGRAND
+        LE PERTUS
+        LES AUMIERES
+        PUECH BLACOUS
+        PUECH ROUCOUS ET PEY
+        REDOULES
+        ROUTAOUS
+        SERRE DE LA BAUME
+        SERRE DE LAS SOUTS
+        => 9 lieux-dits sans commune
 **/
 function test_zero($csvDir, $tables){
+    echo "Teste lieux-dits sans communes\n";
     $table = 'SubdivCadastre';
     $res = [];
     $nameIdC = $tables[$table][0];
@@ -67,12 +87,14 @@ function test_zero($csvDir, $tables){
     }
     
     // test 0 associations
+    $N = 0;
     foreach($lieuxdits as $idLD => $nomLD){
         if(!isset($res[$idLD])){
             echo "$nomLD\n";
+            $N++;
         }
     }
-    
+    echo "=> $N lieux-dits sans commune\n";
 }
 
 // ******************************************************
@@ -349,7 +371,6 @@ function test_coherence($csvDir, $tables){
 /** 
     Teste s'il y a un lien 1-n entre lieux-dits et communes.
     Résultat : non, lien n-n pour 24 lieux-dits
-    Voir 2.build/db-terres/analyse
 **/
 function test_1n($csvDir, $tables){
     

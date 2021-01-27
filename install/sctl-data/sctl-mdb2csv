@@ -30,12 +30,18 @@ if [ ! -d $csvdir ]; then
     echo "Crée le répertoire $csvdir"
 fi
 
-tables=("LieuDit" "SubdivCadastre" "Exploita" "Parcelle" "Subdivision")
+tables=("Commune" "Exploita" "LieuDit" "Recad" "SubdivCadastre" "Subdivision")
 
 for t in "${tables[@]}"
 do
     echo "Export $t ==> $csvdir/$t.csv"
     mdb-export -d ';' -Q $mdbfile $t > $csvdir/$t.csv
 done
+
+# Parcelle est traitée différemment à cause de la colonne Observations
+# qui contient des \n et perturbe l'export csv
+# La colonne CodeMapInfo n'est pas exportée car elle disparaît de la base entre le 2020-02-27 et le 2020-03-02
+echo "Export Parcelle ==> $csvdir/Parcelle.csv"
+echo "select PARCELLE,SURFACE,REVENU,SCTL,IdParcelle,IdGfa,IdCommune,IdLieuDit,IdTypeCad,IdClassCad from Parcelle" | mdb-sql -Fp -d ';' -o $csvdir/Parcelle.csv $mdbfile
 
 exit 0

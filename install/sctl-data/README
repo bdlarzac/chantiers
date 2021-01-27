@@ -2,4 +2,4 @@
 
 Ce répertoire contient différentes versions de la base Access (.mdb), non versionnés, ainsi que les exports csv.
 
-Répertoire référencé dans config.yml par dev / sctl-data-source
+Répertoire référencé dans config.yml par dev / sctl-data

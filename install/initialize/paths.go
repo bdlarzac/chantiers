@@ -38,6 +38,6 @@ func getPrivateDir() string {
 // getSCTLDataDir renvoie le chemin absolu vers le répertoire contenant
 // des exports de la base SCTL
 func getSCTLDataDir(ctx *ctxt.Context, versionSCTL string) string {
-    basedir := ctx.Config.Dev.SCTLDataSource
+    basedir := ctx.Config.Dev.SCTLData
 	return path.Join(basedir, "csv-" + versionSCTL)
 }
