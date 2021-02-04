@@ -38,12 +38,13 @@ function autocomplete(inputField, dataProvider) {
                         // voir note
                         //if (response[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
                         b = document.createElement("DIV");
-                        // version originale, qui met en gras les 2 premiers caractères
+                        // version originale, qui met en gras les N premiers caractères
                         //b.innerHTML = "<strong>" + response[i].substr(0, val.length) + "</strong>";
                         //b.innerHTML += response[i].substr(val.length);
                         // version modifiée, qui met en gras le texte saisi ; pas forcément les 2 premiers caractères
                         // Attention, bug si on utilise strong à la place de b :
-                        // si val="st" ou "rt" ou "ro" etc. le 2e replace va remplacer à l'intérieur de <strong> 
+                        // si val="st" ou "tr" ou "ro" etc. le 2e replace va remplacer à l'intérieur de <strong>
+                        const replace = "<b>" + find + "</b>"
                         b.innerHTML = response[i]
                                 .replace(val.toUpperCase(), "<b>" + val.toUpperCase() + "</b>")
                                 .replace(val.toLowerCase(), "<b>" + val.toLowerCase() + "</b>");
@@ -58,7 +59,7 @@ function autocomplete(inputField, dataProvider) {
                 }
             }, // end resolve dataProvider promise
             function(error) {
-                //alert("BB Problème autocomplete\nContacter l'administrateur du site");
+                //alert("Problème autocomplete\nContacter l'administrateur du site");
             }) // end then
             .catch(
                 () => { alert("Problème autocomplete\nContacter l'administrateur du site"); }

@@ -48,7 +48,6 @@ func FillActeur(versionSCTL string) {
 	records, err := tiglib.CsvMap(filename, ';')
 
 	db := ctx.DB
-
 	tx, err := db.Begin()
 	if err != nil {
 		panic(err)
@@ -65,8 +64,6 @@ func FillActeur(versionSCTL string) {
 		if v["Agricole"] != "1" {
 			// Importer que les agricoles
 			continue
-			// @todo - commenté car fait planter FillLiensParcelleExploitant
-			// Pour ça, vérifier sur une carte
 		}
 		cp := v["CPExp"]
 		if len(cp) > 5 {
@@ -147,7 +144,7 @@ func AddActeurBDL() {
 // *********************************************************
 // Ajoute un acteur GFA
 // Nécessaire au fonctionnement du logiciel BDL (car c'est un propriétaire)
-// Pas présent dans la base SCTL jusu'en 2020
+// Pas présent dans la base SCTL jusqu'en 2020
 func AddActeurGFA() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
@@ -326,8 +323,7 @@ func FillLiensParcelleExploitant(versionSCTL string) {
 		sql := fmt.Sprintf("insert into %s(id_parcelle,id_sctl_exploitant) values(%s, %s)", table, idP, idE)
 		if _, err = tx.Exec(sql); err != nil {
 			n++
-panic(err)
-//			continue
+			continue
 		}
 	}
 	fmt.Printf("  %d associations pas enregistrées (bugs SCTL)\n", n)

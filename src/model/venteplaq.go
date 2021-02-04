@@ -203,7 +203,7 @@ func (vp *VentePlaq) ComputeLivraisons(db *sqlx.DB) error {
 
 func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 	ids := []int{}
-	query := `select id_chantier from tas where id in (
+	query := `select distinct id_chantier from tas where id in (
                   select id_tas from ventecharge where id_livraison in(
                       select id from ventelivre where id_vente in(
                           select id from venteplaq where id=$1

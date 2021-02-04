@@ -118,7 +118,10 @@ func GetActeurByIdSctl(db *sqlx.DB, id int) (*Acteur, error) {
 	row := db.QueryRowx(query, id)
 	err := row.StructScan(a)
 	if err != nil {
-		return a, werr.Wrapf(err, "Erreur query : "+query)
+	    // Erreur commentée car GetActeurByIdSctl appelée uniquement par (p *Parcelle) ComputeExploitants
+	    // Se produit pour l'utilisateur id_sctl = 1 : PERSONNE dans la base SCTL
+	    // Utilisateur non importé car non agricole
+		// return a, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return a, nil
 }

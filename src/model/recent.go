@@ -35,13 +35,13 @@ func GetRecents(db *sqlx.DB) ([]*Recent, error) {
 // si le label est déjà en base, update la ligne en changeant la date de visite
 // sinon ajoute une ligne.
 // Ensuite efface les entrées les plus anciennes
-// NOTE : utilise label, pas url, car url mène à des doublons
+// NOTE : utilise url, mais url mène à des doublons
 // (ex : chantier/plaquette/1 et chantier/plaquette/1/chantiers)
 func AddRecent(db *sqlx.DB, conf *Config, r *Recent) error {
 	var err error
 	var count int
 	now := time.Now()
-	_ = db.QueryRow("select count(*) from recent where label=$1", r.Label).Scan(&count)
+	_ = db.QueryRow("select count(*) from recent where url=$1", r.URL).Scan(&count)
 	if count == 0 {
 		query := `insert into recent(
             url,
@@ -57,8 +57,9 @@ func AddRecent(db *sqlx.DB, conf *Config, r *Recent) error {
 			return werr.Wrapf(err, "Erreur query : "+query)
 		}
 	} else {
-		query := `update recent set datevisite=$1 where label=$2`
-		_, err = db.Exec(query, now, r.Label)
+	    // update aussi le label en cas d'update d'une activité
+		query := `update recent set (datevisite,label)=($1,$2) where url=$3`
+		_, err = db.Exec(query, now, r.Label, r.URL)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur query : "+query)
 		}
@@ -70,12 +71,12 @@ func AddRecent(db *sqlx.DB, conf *Config, r *Recent) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	query = "delete from recent where label=$1"
+	query = "delete from recent where url=$1"
 	for i, r := range all {
 		if i < conf.NbRecent {
 			continue
 		}
-		_, err := db.Exec(query, r.Label)
+		_, err := db.Exec(query, r.URL)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur query : "+query)
 		}
