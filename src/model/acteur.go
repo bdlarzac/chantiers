@@ -13,7 +13,6 @@ import (
 	"sort"
 	"strconv"
 	"time"
-	//"fmt"
 )
 
 type Acteur struct {
@@ -31,7 +30,7 @@ type Acteur struct {
 	Bic          string
 	Iban         string
 	Siret        string
-	Proprietaire bool // à supprimer
+	Proprietaire bool
 	Fournisseur  bool
 	Actif        bool
 	Notes        string

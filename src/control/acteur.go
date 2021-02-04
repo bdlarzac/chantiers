@@ -32,6 +32,7 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		return err
 	}
 	for _, acteur := range list {
+	    // TODO bizarre de faire ça ici, devrait être dans model/
 		acteur.Deletable, err = acteur.IsDeletable(ctx.DB)
 		if err != nil {
 			return err
