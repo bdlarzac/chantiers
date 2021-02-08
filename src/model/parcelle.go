@@ -12,7 +12,6 @@ import (
 
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
 )
 
 type Parcelle struct {
@@ -24,7 +23,7 @@ type Parcelle struct {
 	Proprietaire *Acteur
 	Lieudits     []*Lieudit
 	Communes     []*Commune
-	Exploitants  []*Acteur
+	Fermiers     []*Fermier
 	UGs          []*UG
 }
 
@@ -123,27 +122,19 @@ func (p *Parcelle) ComputeCommunes(db *sqlx.DB) error {
 	return nil
 }
 
-// Remplit le champ Exploitants d'une parcelle
-func (p *Parcelle) ComputeExploitants(db *sqlx.DB) error {
-	if len(p.Exploitants) != 0 {
+// Remplit le champ Fermiers d'une parcelle
+func (p *Parcelle) ComputeFermiers(db *sqlx.DB) error {
+	if len(p.Fermiers) != 0 {
 		return nil // déjà calculé
 	}
-	query := "select id_sctl_exploitant from parcelle_exploitant where id_parcelle=$1"
-	rows, err := db.Query(query, p.Id)
+	query := `select * from fermier where id in(
+	        select id_fermier from parcelle_fermier where id_parcelle=$1
+	    )`
+	fermiers := []*Fermier{}
+	err := db.Select(&fermiers, query, p.Id)
+	p.Fermiers = fermiers
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	defer rows.Close()
-	var idE int
-	for rows.Next() {
-		if err := rows.Scan(&idE); err != nil {
-			return werr.Wrapf(err, "Erreur rows.Scan sur query : "+query)
-		}
-		exploitant, err := GetActeurByIdSctl(db, idE)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur appel GetActeurByIdSctl()")
-		}
-		p.Exploitants = append(p.Exploitants, exploitant)
 	}
 	return nil
 }

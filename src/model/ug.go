@@ -150,14 +150,14 @@ func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
 // Utilise les parcelles pour faire le lien
 // Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
-// @param   idFermier id d'un acteur (pas id_sctl)
+// @param   idFermier id d'un acteur (champ id, pas id_fermier)
 func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
 	ugs := []*UG{}
 	query := `
         select * from ug where id in(
             select id_ug from parcelle_ug where id_parcelle in(
-                select id_parcelle from parcelle_exploitant where id_sctl_exploitant in(
-                    select id_sctl from acteur where id=$1
+                select id_parcelle from parcelle_fermier where id_fermier in(
+                    select id_fermier from acteur where id=$1
                 )
             )
         ) order by code`

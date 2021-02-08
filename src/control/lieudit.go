@@ -35,9 +35,9 @@ func ShowLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel ComputeProprietaire()")
 		}
-		err = lieudit.Parcelles[i].ComputeExploitants(ctx.DB)
+		err = lieudit.Parcelles[i].ComputeFermiers(ctx.DB)
 		if err != nil {
-			return werr.Wrapf(err, "Erreur appel ComputeExploitants()")
+			return werr.Wrapf(err, "Erreur appel ComputeFermiers()")
 		}
 	}
 

@@ -15,9 +15,16 @@ import (
 	"time"
 )
 
+// valeur du champ id
+// déterminés à la création de la base
+// voir install/initialize/acteur.go
+const ID_SCTL = 1
+const ID_BDL = 2
+const ID_GFA = 3
+
 type Acteur struct {
 	Id           int
-	IdSctl       int `db:"id_sctl"`
+	IdFermier    int `db:"id_fermier"`
 	Nom          string
 	Prenom       string
 	Adresse1     string
@@ -50,13 +57,13 @@ type ActeurActivite struct {
 
 // ************************** Structure *******************************
 
-func (a *Acteur) IsSctl() bool {
-	return a.IdSctl != 0
+func (a *Acteur) IsFermier() bool {
+	return a.IdFermier != 0
 }
 
 // cf règles de gestion dans cahier des charges
 func (a *Acteur) IsDeletable(db *sqlx.DB) (bool, error) {
-	if a.IdSctl != 0 {
+	if a.IdFermier != 0 {
 		return false, nil
 	}
 	act, err := a.GetActivitesByDate(db)
@@ -111,15 +118,15 @@ func GetActeur(db *sqlx.DB, id int) (*Acteur, error) {
 // Renvoie un Acteur à partir de son id sctl.
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
-func GetActeurByIdSctl(db *sqlx.DB, id int) (*Acteur, error) {
+func GetActeurByIdFermier(db *sqlx.DB, id int) (*Acteur, error) {
 	a := &Acteur{}
-	query := "select * from acteur where id_sctl=$1"
+	query := "select * from acteur where id_fermier=$1"
 	row := db.QueryRowx(query, id)
 	err := row.StructScan(a)
 	if err != nil {
-	    // Erreur commentée car GetActeurByIdSctl appelée uniquement par (p *Parcelle) ComputeExploitants
-	    // Se produit pour l'utilisateur id_sctl = 1 : PERSONNE dans la base SCTL
-	    // Utilisateur non importé car non agricole
+	    // Erreur commentée car GetActeurByIdFermier appelée uniquement par (p *Parcelle) ComputeFermiers
+	    // Se produit pour id_fermier = 1 : PERSONNE dans la base SCTL
+	    // Fermier non importé car non agricole
 		// return a, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return a, nil
@@ -166,42 +173,6 @@ func GetFournisseurs(db *sqlx.DB) ([]*Acteur, error) {
 	return acteurs, err
 }
 
-// Renvoie des Acteurs (fermiers) à partir d'un lieu-dit.
-// Utilise les parcelles pour faire le lien
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-// Utilisé par ajax
-func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	query := `
-	    select * from acteur where id_sctl in(
-            select distinct id_sctl_exploitant from parcelle_exploitant where id_parcelle in(
-                select id_parcelle from parcelle_lieudit where id_lieudit=$1
-            )
-        ) order by nom`
-	err := db.Select(&acteurs, query, idLieudit)
-	return acteurs, err
-}
-
-// Renvoie des Acteurs (fermiers) à partir d'une UG.
-// Utilise les parcelles pour faire le lien
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-// Utilisé par ajax
-func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	query := `
-	    select * from acteur where id_sctl in(
-            select distinct id_sctl_exploitant from parcelle_exploitant where id_parcelle in(
-                select id_parcelle from parcelle_ug where id_ug in(
-                    select id from ug where code=$1
-                )
-            )
-        ) order by nom`
-	err := db.Select(&acteurs, query, codeUG)
-	return acteurs, err
-}
-
 // Renvoie des Acteurs à partir du début de leurs noms.
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
@@ -209,23 +180,6 @@ func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Acteur, error) {
 func GetActeursAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
 	acteurs := []*Acteur{}
 	query := "select * from acteur where nom ilike '" + str + "%'"
-	err := db.Select(&acteurs, query)
-	if err != nil {
-		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return acteurs, nil
-}
-
-// Renvoie des fermiers à partir du début de leurs noms.
-// fermier = acteur associé à une ou plusieurs parcelles
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-// Utilisé par ajax
-func GetFermiersAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	query := `select * from acteur where nom ilike '` + str + `%' and id in(
-        select id_sctl_exploitant from parcelle_exploitant
-    )`
 	err := db.Select(&acteurs, query)
 	if err != nil {
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)

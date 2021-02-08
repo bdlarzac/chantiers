@@ -38,9 +38,9 @@ func ShowParcelle(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		return werr.Wrapf(err, "Erreur appel ComputeProprietaire()")
 	}
 
-	err = parcelle.ComputeExploitants(ctx.DB)
+	err = parcelle.ComputeFermiers(ctx.DB)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel ComputeExploitants()")
+		return werr.Wrapf(err, "Erreur appel ComputeFermiers()")
 	}
 
 	err = parcelle.ComputeUGs(ctx.DB)

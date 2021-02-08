@@ -6,7 +6,7 @@
     </a>
     
     {{with .Details.Acteur}}
-    {{if not .IsSctl}}
+    {{if not .IsFermier}}
     <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
         <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/delete.png" title="Supprimer cet acteur">
     </a>

@@ -40,7 +40,7 @@ func init() {
     errorMsg = "COMMANDE INVALIDE\n"
     errorMsg += "Utiliser avec -i (install) ou -f (fixture)\n"
     errorMsg += "Certaines commandes ont aussi besoin de -s (source des données SCTL) :\n"
-    errorMsg += "  -i acteur\n"
+    errorMsg += "  -i fermier\n"
     errorMsg += "  -i commune\n"
     errorMsg += "  -i parcelle\n"
     errorMsg += "  -i all\n"
@@ -54,6 +54,7 @@ func init() {
 		"acteur",
 		"chantier",
 		"commune",
+		"fermier",
 		"parcelle",
 		"recent",
 		"stockage",
@@ -89,8 +90,9 @@ func main() {
 		fmt.Println(errorMsg)
 		return
 	}
-
-	if *flagInstall == "acteur" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all" {
+	
+	// options ayant besoin de la version de la base SCTL utilisée
+	if *flagInstall == "fermier" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all" {
 	    if *flagSctlDataSource == "" {
             fmt.Println(errorMsg)
             fmt.Println("PARAMETRE MANQUANT : -s")
@@ -112,6 +114,7 @@ func handleInstall() {
 		installTypes()
 		installCommune()
 		installActeur()
+		installFermier()
 		installParcelle()
 		installUG()
 		installStockage()
@@ -124,6 +127,8 @@ func handleInstall() {
 		installCommune()
 	} else if *flagInstall == "acteur" {
 		installActeur()
+	} else if *flagInstall == "fermier" {
+		installFermier()
 	} else if *flagInstall == "parcelle" {
 		installParcelle()
 	} else if *flagInstall == "ug" {
@@ -161,19 +166,19 @@ func installCommune() {
 }
 func installActeur() {
 	initialize.CreateTable("acteur")
-    initialize.FillActeurZero()
-	initialize.FillActeur(*flagSctlDataSource)
-	initialize.AddActeurBDL()
-	initialize.AddActeurGFA()
-	initialize.AddActeurSCTL()
 	initialize.AddActeursInitiaux()
+	initialize.AddActeursFromCSV()
+}
+func installFermier(){
+	initialize.CreateTable("fermier")
+	initialize.FillFermier(*flagSctlDataSource)
 }
 func installParcelle() {
 	initialize.CreateTable("parcelle")
 	initialize.CreateTable("parcelle_lieudit")
-	initialize.CreateTable("parcelle_exploitant")
+	initialize.CreateTable("parcelle_fermier")
 	initialize.FillParcelle(*flagSctlDataSource)
-	initialize.FillLiensParcelleExploitant(*flagSctlDataSource)
+	initialize.FillLiensParcelleFermier(*flagSctlDataSource)
 	initialize.FillLiensParcelleLieudit(*flagSctlDataSource)
 }
 func installUG() {

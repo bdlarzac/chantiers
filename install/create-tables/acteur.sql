@@ -1,14 +1,13 @@
 
--- Note : on devrait avoir id_sctl unique
--- pour que parcelle_exploitant.id_sctl_exploitant puisse référencer id_sctl comme fk
--- Mais si on met id_sctl unique, on ne peut plus insérer de nouveaux acteurs sans id_sctl.
--- Donc supprimé unique pour id_sctl et supprimé la fk dans parcelle_exploitant.
+-- Note : on devrait avoir id_fermier unique
+-- pour que parcelle_fermier.id_fermier_exploitant puisse référencer id_fermier comme fk
+-- Mais si on met id_fermier unique, on ne peut plus insérer de nouveaux acteurs sans id_fermier.
+-- Donc supprimé unique pour id_fermier et supprimé la fk dans parcelle_fermier.
 -- Mais pas satisfaisant
 
 create table acteur (
     id                      serial primary key,
---  id_sctl                   int unique,
-    id_sctl                 int not null default 0,
+    id_fermier              int not null default 0,
     nom                     varchar(255) not null,
     prenom                  varchar(255) not null default '',
     adresse1                varchar(255) not null default '',
@@ -26,5 +25,5 @@ create table acteur (
     actif                   boolean not null default true,
     notes                   text not null default ''
 );
-create index acteur_id_sctl_idx on acteur(id_sctl);
+create index acteur_id_fermier_idx on acteur(id_fermier);
 create index acteur_fournisseur_idx on acteur(fournisseur);

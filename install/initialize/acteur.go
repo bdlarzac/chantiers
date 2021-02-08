@@ -16,18 +16,24 @@ import (
     "os"
 	
 	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/tiglib"
     "golang.org/x/text/encoding/charmap"
     "golang.org/x/text/transform"
 )
 
-// Valeur du champ id_sctl pour l'acteur SCTL
-// valeur fixe venant de la base SCTL
-const SCTL_ID_SCTL = 28
+func AddActeursInitiaux() {
+    // Attention ordre d'appel important
+    // car détermine les ids des 4 premiers acteurs
+    // ces ids sont utilisés dans l'appli BDL
+    addActeurZero()
+    addActeurSCTL()
+    addActeurBDL()
+    addActeurGFA()
+}
 
 // *********************************************************
-// Acteur 0 sert à autoriser des clés étrangères optionnelles dans les tables plaqtrans et plaqrange
-func FillActeurZero() {
+// Acteur servant à autoriser des clés étrangères optionnelles dans les tables plaqtrans et plaqrange
+// id = 0
+func addActeurZero() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
 	_,_ = db.Exec("insert into acteur values(0,0,'','','','','','','','','','','','',false,false,false,'')")
@@ -35,141 +41,11 @@ func FillActeurZero() {
 }
 
 // *********************************************************
-// Remplit les acteurs à partir d'un export de la base SCTL
-// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillActeur(versionSCTL string) {
-	table := "acteur"
-	fmt.Println("Remplit " + table + " à partir de Exploita.csv")
-	
-	ctx := ctxt.NewContext()
-	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
-	filename := path.Join(dirCsv, "Exploita.csv")
-	records, err := tiglib.CsvMap(filename, ';')
-
-	db := ctx.DB
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
-	for _, v := range records {
-		if v["Agricole"] != "1" {
-			// Importer que les agricoles
-			continue
-		}
-		cp := v["CPExp"]
-		if len(cp) > 5 {
-			cp = cp[:5] // fix une typo dans la base SCTL
-		}
-		query := `insert into %s(
-            id_sctl,
-            nom,
-            prenom,
-            adresse1,
-            cp,
-            ville,
-            tel,
-            email,
-            fournisseur,
-            actif
-            ) values(%s,'%s','%s','%s','%s','%s','%s','%s',%t,%t)`
-		sql := fmt.Sprintf(
-			query,
-			table,
-			v["IdExploitant"],
-			strings.Replace(v["NOMEXP"], "'", `''`, -1),
-			strings.Replace(v["Prenom"], "'", `''`, -1),
-			// Lignes suivantes commentées pour éviter de mettre des infos personnelles en base
-			// pour pouvoir tester en ligne
-			// TODO Remettre dans la version de prod
-			"", "", "", "", "",
-			//strings.Replace(v["AdresseExp"], "'", `''`, -1),
-			// cp,
-			//strings.Replace(v["VilleExp"], "'", `''`, -1),
-			// v["Telephone"],
-			// v["Mail"],
-			false,
-			true)
-		if _, err = tx.Exec(sql); err != nil {
-			panic(err)
-		}
-	}
-}
-
-// *********************************************************
-// Ajoute un acteur BDL
-// Pas présent dans la base SCTL mais nécessaire au fonctionnement
-// du logiciel BDL (car c'est un fournisseur)
-func AddActeurBDL() {
-	ctx := ctxt.NewContext()
-	db := ctx.DB
-	query := `insert into acteur(
-        nom,
-        prenom,       
-        adresse1,     
-        cp,
-        ville,
-        tel,
-        email,
-        fournisseur,  
-        actif
-        )values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning id`
-	id := int(0)
-	err := db.QueryRow(
-		query,
-		"BDL",
-		"Bois du Larzac",
-		"", "", "", "", "",
-		//"Montredon",
-		//"12230",
-		//"La Roque-Sainte-Marguerite",
-		//"05 65 62 13 39",
-		//"lesboisdularzac@larzac.org",
-		true,
-		true).Scan(&id)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Crée acteur BDL, id = %d\n", id)
-}
-
-// *********************************************************
-// Ajoute un acteur GFA
-// Nécessaire au fonctionnement du logiciel BDL (car c'est un propriétaire)
-// Pas présent dans la base SCTL jusqu'en 2020
-func AddActeurGFA() {
-	ctx := ctxt.NewContext()
-	db := ctx.DB
-	query := `insert into acteur(
-        nom,
-        proprietaire,  
-        actif
-        )values($1,$2,$3) returning id`
-	id := int(0)
-	err := db.QueryRow(
-		query,
-		"GFA Larzac",
-		true,
-		true).Scan(&id)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Crée acteur GFA, id = %d\n", id)
-}
-
-// *********************************************************
 // Ajoute un acteur SCTL
+// id = 1
 // Nécessaire au fonctionnement du logiciel BDL (car c'est un propriétaire)
 // Un exploitant "SCTL" est présent dans la base SCTL, mais pas importé car non agricole
-func AddActeurSCTL() {
+func addActeurSCTL() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
 	query := `insert into acteur(
@@ -190,10 +66,72 @@ func AddActeurSCTL() {
 }
 
 // *********************************************************
-// Ajoute les acteurs saisis dans un fichier csv pour importer 
-// les acteurs de BDL au moment du démarrage de la base
-// (acteurs non SCTL)
-func AddActeursInitiaux() {
+// Ajoute un acteur BDL
+// id = 2
+// Nécessaire au fonctionnement du logiciel BDL car c'est un fournisseur
+func addActeurBDL() {
+	ctx := ctxt.NewContext()
+	db := ctx.DB
+	query := `insert into acteur(
+        nom,
+        prenom,       
+        adresse1,     
+        cp,
+        ville,
+        tel,
+        email,
+        fournisseur,  
+        actif
+        )values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning id`
+	id := int(0)
+	err := db.QueryRow(
+		query,
+		"BDL",
+		"Bois du Larzac",
+		"", "", "", "", "",
+        // infos supprimées pour protection vie privée - TODO remettre pour mise en prod
+		//"Montredon",
+		//"12230",
+		//"La Roque-Sainte-Marguerite",
+		//"05 65 62 13 39",
+		//"lesboisdularzac@larzac.org",
+		true,
+		true).Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Crée acteur BDL, id = %d\n", id)
+}
+
+// *********************************************************
+// Ajoute un acteur GFA
+// id = 3
+// Nécessaire au fonctionnement du logiciel BDL car c'est un propriétaire
+// Un exploitant "GFA" est présent dans la base SCTL, mais pas importé car non agricole
+func addActeurGFA() {
+	ctx := ctxt.NewContext()
+	db := ctx.DB
+	query := `insert into acteur(
+        nom,
+        proprietaire,  
+        actif
+        )values($1,$2,$3) returning id`
+	id := int(0)
+	err := db.QueryRow(
+		query,
+		"GFA Larzac",
+		true,
+		true).Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Crée acteur GFA, id = %d\n", id)
+}
+
+// *********************************************************
+// Ajoute les acteurs saisis dans un fichier csv de Bastien
+// pour importer les acteurs de BDL au moment du démarrage de la base
+func AddActeursFromCSV() {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"
 	dirCsv := getPrivateDir()
@@ -256,7 +194,7 @@ func AddActeursInitiaux() {
             query,
             line["nom"],
             line["prenom"],
-            // suprime infos pour protection vie privée
+            // infos supprimées pour protection vie privée - TODO remettre pour mise en prod
             "", "", "", "",
             // line["adresse1"],
             // line["adresse2"],
@@ -273,58 +211,3 @@ func AddActeursInitiaux() {
 }
 
 
-// *********************************************************
-// Remplit les liens parcelle - exploitant à partir d'un export de la base SCTL
-// @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillLiensParcelleExploitant(versionSCTL string) {
-	table := "parcelle_exploitant"
-	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
-	
-	ctx := ctxt.NewContext()
-	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
-	filename := path.Join(dirCsv, "Subdivision.csv")
-
-	records, err := tiglib.CsvMap(filename, ';') // N = 2844
-	if err != nil {
-		panic(err)
-	}
-	// remove doublons
-	var k string
-	var v [2]string
-	uniques := make(map[string][2]string) // N = 433
-	for _, record := range records {
-		idP := record["IdParcelle"]
-		idE := record["IdExploitant"]
-		k = idP + "-" + idE
-		v[0] = idP
-		v[1] = idE
-		uniques[k] = v
-	}
-
-	// insert db
-	db := ctx.DB
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
-	n := 0
-	for _, unique := range uniques {
-		idP := unique[0]
-		idE := unique[1]
-		sql := fmt.Sprintf("insert into %s(id_parcelle,id_sctl_exploitant) values(%s, %s)", table, idP, idE)
-		if _, err = tx.Exec(sql); err != nil {
-			n++
-			continue
-		}
-	}
-	fmt.Printf("  %d associations pas enregistrées (bugs SCTL)\n", n)
-}

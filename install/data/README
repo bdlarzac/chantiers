@@ -13,4 +13,4 @@ LieuDit.csv         sert à remplir la table lieudit
 Parcelle.csv        sert à remplir les tables parcelle et parcelle_lieudit
 SubdivCadastre.csv  sert à remplir la table commune_lieudit
 Exploita.csv        sert à remplir la table acteur
-Subdivision.csv     sert à remplir la table parcelle_exploitant
+Subdivision.csv     sert à remplir la table parcelle_fermier

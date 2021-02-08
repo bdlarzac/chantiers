@@ -25,11 +25,11 @@
 <tr>
     <td class="whitespace-nowrap">
         {{/* Exclure acteurs BDL, SCL, GFA */}}
-        {{if(not (or .Fournisseur .Proprietaire))}}
+        {{if(not (le .Id 3))}}
             <a href="/affacture/form/{{.Id}}">
                 <span class="icon-euro-small" title="Payer cet acteur">&euro;</span>
             </a>
-            {{if not .IsSctl}}
+            {{if not .IsFermier}}
                 <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
                     <img src="../static/img/delete.png" alt="Supprimer cet acteur">
                 </a>

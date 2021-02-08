@@ -35,10 +35,10 @@ func main() {
 	r := mux.NewRouter()
 
 	// ajax acteurs
-	r.HandleFunc("/ajax/autocomplete/acteur/{str}/{type-acteur}", Hajax(ajax.AutocompleteActeur))
 	r.HandleFunc("/ajax/autocomplete/acteur/{str}", Hajax(ajax.AutocompleteActeur))
 	r.HandleFunc("/ajax/check/acteur/{str}", Hajax(ajax.CheckNomActeur))
 	r.HandleFunc("/ajax/check/acteur/", Hajax(ajax.CheckNomActeur))
+	// ajax fermiers
 	r.HandleFunc("/ajax/get/fermiers-from-lieudit/{id}", Hajax(ajax.GetFermiersFromLieudit))
 	r.HandleFunc("/ajax/get/fermiers-from-code-ug/{code}", Hajax(ajax.GetFermiersFromCodeUG))
 	// ajax lieux-dits

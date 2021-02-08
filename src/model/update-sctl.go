@@ -92,13 +92,13 @@ func ComputeUpdateSCTL(db *sqlx.DB, conf *Config) ([]*UpdatedItem, error) {
 func loadOldActeurs(db *sqlx.DB) (map[int]Acteur, error) {
 	res := map[int]Acteur{}
 	acteurs := []*Acteur{}
-	query := "select * from acteur where id_sctl<>0 order by id_sctl"
+	query := "select * from acteur where id_fermier<>0 order by id_fermier"
 	err := db.Select(&acteurs, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	for _, a := range acteurs {
-		res[a.IdSctl] = *a
+		res[a.IdFermier] = *a
 	}
 	return res, nil
 }
@@ -124,7 +124,7 @@ func loadNewActeurs(conf *Config) (map[int]Acteur, error) {
 			cp = cp[:5] // fix une typo dans la base SCTL
 		}
 		res[idExploitant] = Acteur{
-			IdSctl:   idExploitant,
+			IdFermier:   idExploitant,
 			Nom:      record["NOMEXP"],
 			Prenom:   record["Prenom"],
 			Adresse1: record["AdresseExp"],
