@@ -8,8 +8,8 @@
     <tr>
         <td><a href="/parcelle/{{.Id}}">{{.Code}}</a></td>
         <td>
-            {{range .Exploitants}}
-                <a href="/acteur/{{.Id}}">{{.Prenom}} {{.Nom}}</a>
+            {{range .Fermiers}}
+                <a href="/fermier/liste">{{.Prenom}} {{.Nom}}</a>
             {{end}}
         </td>
         <td>

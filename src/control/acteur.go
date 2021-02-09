@@ -104,7 +104,6 @@ func NewActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 			return err
 		}
 		acteur.Deletable = true // nouvellement créé, pas SCTL, pas d'activité => effaçable
-		acteur.Actif = true     // un acteur devient inactif lorsqu'il est effacé de la base SCTL
 		id, err := model.InsertActeur(ctx.DB, acteur)
 		if err != nil {
 			return err
@@ -238,6 +237,11 @@ func acteurForm2var(r *http.Request) (*model.Acteur, error) {
 	acteur.Fournisseur = false
 	if r.PostFormValue("fournisseur") == "on" {
 		acteur.Fournisseur = true
+	}
+	//
+	acteur.Actif = false
+	if r.PostFormValue("actif") == "on" {
+		acteur.Actif = true
 	}
 	//
 	acteur.Notes = r.PostFormValue("notes")

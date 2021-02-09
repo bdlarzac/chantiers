@@ -68,6 +68,9 @@ func main() {
 	r.HandleFunc("/acteur/delete/{id:[0-9]+}", H(control.DeleteActeur))
 	r.HandleFunc("/acteur/{id:[0-9]+}", H(control.ShowActeur))
 
+	r.HandleFunc("/fermier/liste", H(control.ListFermier))
+	//r.HandleFunc("/fermier/{id:[0-9]+}", H(control.ShowFermier))
+
 	r.HandleFunc("/affacture/form/{id:[0-9]+}", H(control.FormAffacture))
 	r.HandleFunc("/affacture/show", HPDF(control.ShowAffacture))
 

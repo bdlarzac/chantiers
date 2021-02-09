@@ -46,15 +46,25 @@ func FillFermier(versionSCTL string) {
 		err = tx.Commit()
 	}()
 
+    var adresse, cp, ville, tel, email string
+    
 	for _, v := range records {
 		if v["Agricole"] != "1" {
 			// Importer que les agricoles
 			continue
 		}
-		cp := v["CPExp"]
-		if len(cp) > 5 {
-			cp = cp[:5] // fix une typo dans la base SCTL
-		}
+        if PRIVACY{
+            adresse, cp, ville, tel, email = "", "", "", "", ""
+        } else {
+            adresse = strings.Replace(v["AdresseExp"], "'", `''`, -1)
+            cp := v["CPExp"]
+            if len(cp) > 5 {
+                cp = cp[:5] // fix une typo dans la base SCTL
+            }
+            ville = strings.Replace(v["VilleExp"], "'", `''`, -1)
+            tel = v["Telephone"]
+            email = v["Mail"]
+        }
 		query := `insert into %s(
             id_sctl,
             nom,
@@ -71,14 +81,11 @@ func FillFermier(versionSCTL string) {
 			v["IdExploitant"],
 			strings.Replace(v["NOMEXP"], "'", `''`, -1),
 			strings.Replace(v["Prenom"], "'", `''`, -1),
-            // infos supprimées pour protection vie privée - TODO remettre pour mise en prod
-			"", "", "", "", "")
-			//strings.Replace(v["AdresseExp"], "'", `''`, -1),
-			// cp,
-			//strings.Replace(v["VilleExp"], "'", `''`, -1),
-			// v["Telephone"],
-			// v["Mail"]
-			// )
+			adresse,
+			cp,
+			ville,
+			tel,
+			email)
 		if _, err = tx.Exec(sql); err != nil {
 			panic(err)
 		}

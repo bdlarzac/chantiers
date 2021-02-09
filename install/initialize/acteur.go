@@ -70,7 +70,23 @@ func addActeurSCTL() {
 // id = 2
 // Nécessaire au fonctionnement du logiciel BDL car c'est un fournisseur
 func addActeurBDL() {
-	ctx := ctxt.NewContext()
+    
+    var adresse1, cp, ville, tel, email string
+    if PRIVACY {
+		adresse1 = ""
+		cp = ""
+		ville = ""
+		tel = ""
+		email = ""
+    } else {
+		adresse1 = "Montredon"
+		cp = "12230"
+		ville = "La Roque-Sainte-Marguerite"
+		tel = "05 65 62 13 39"
+		email = "lesboisdularzac@larzac.org"
+    }
+	
+    ctx := ctxt.NewContext()
 	db := ctx.DB
 	query := `insert into acteur(
         nom,
@@ -88,13 +104,11 @@ func addActeurBDL() {
 		query,
 		"BDL",
 		"Bois du Larzac",
-		"", "", "", "", "",
-        // infos supprimées pour protection vie privée - TODO remettre pour mise en prod
-		//"Montredon",
-		//"12230",
-		//"La Roque-Sainte-Marguerite",
-		//"05 65 62 13 39",
-		//"lesboisdularzac@larzac.org",
+		adresse1,
+		cp,
+		ville,
+		tel,
+		email,
 		true,
 		true).Scan(&id)
 	if err != nil {
@@ -183,8 +197,20 @@ func AddActeursFromCSV() {
         actif,
         notes
         )values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
-    actif := true
+    var actif bool
+    var adresse1, adresse2, cp, ville string
     for _, line := range(csv){
+        if PRIVACY {
+            adresse1 = ""
+            adresse2 = ""
+            cp       = ""
+            ville    = ""
+        } else {
+            adresse1 = line["adresse1"]
+            adresse2 = line["adresse2"]
+            cp       = line["cp"]
+            ville    = line["ville"]
+        }
         if line["actif"] == "oui" {
             actif = true
         } else {
@@ -194,12 +220,10 @@ func AddActeursFromCSV() {
             query,
             line["nom"],
             line["prenom"],
-            // infos supprimées pour protection vie privée - TODO remettre pour mise en prod
-            "", "", "", "",
-            // line["adresse1"],
-            // line["adresse2"],
-            // line["cp"],
-            // line["ville"],
+            adresse1,
+            adresse2,
+            cp,
+            ville,
             actif,
             line["notes"]).Scan(&id)
         if err != nil {

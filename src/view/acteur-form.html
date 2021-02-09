@@ -52,6 +52,11 @@
             <input type="checkbox" name="proprietaire" id="proprietaire" {{if .Proprietaire}} checked{{end}}>
         </div>
         
+        <label for="actif">Actif</label>
+        <div>
+            <input type="checkbox" name="actif" id="actif" {{if .Actif}} checked{{end}}>
+        </div>
+        
         <label for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
 

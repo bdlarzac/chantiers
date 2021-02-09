@@ -50,6 +50,36 @@ func CountFermiers(db *sqlx.DB) int {
 	return count
 }
 
+// ************************** Compute *******************************
+
+func (f *Fermier) ComputeParcelles(db *sqlx.DB) error {
+	if len(f.Parcelles) != 0 {
+		return nil // déjà calculé
+	}
+	query := "select id_parcelle from parcelle_fermier where id_fermier=$1"
+	rows, err := db.Query(query, f.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	defer rows.Close()
+	var idP int
+	for rows.Next() {
+		if err := rows.Scan(&idP); err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+		parcelle, err := GetParcelle(db, idP)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur GetParcelle()")
+		}
+		f.Parcelles = append(f.Parcelles, parcelle)
+	}
+	err = rows.Err()
+	if err != nil {
+		return werr.Wrapf(err, "Erreur rows.Next()")
+	}
+	return nil
+}
+
 // ************************** Get one *******************************
 
 // Renvoie un Fermier à partir de son id.
@@ -105,7 +135,7 @@ func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Fermier, error) {
 func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Fermier, error) {
 	fermiers := []*Fermier{}
 	query := `
-	    select * from fermier where id_fermier in(
+	    select * from fermier where id in(
             select distinct id_fermier from parcelle_fermier where id_parcelle in(
                 select id_parcelle from parcelle_ug where id_ug in(
                     select id from ug where code=$1
@@ -128,72 +158,4 @@ func GetFermiersAutocomplete(db *sqlx.DB, str string) ([]*Fermier, error) {
 		return fermiers, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return fermiers, nil
-}
-
-
-// ************************** CRUD *******************************
-
-func InsertFermier(db *sqlx.DB, fermier *Fermier) (int, error) {
-	query := `insert into fermier(
-	    id_sctl,
-        nom,
-        prenom,
-        adresse,
-        cp,
-        ville,
-        tel,
-        email
-        ) values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
-	id := int(0)
-	err := db.QueryRow(
-		query,
-		fermier.IdSCTL,
-		fermier.Nom,
-		fermier.Prenom,
-		fermier.Adresse,
-		fermier.Cp,
-		fermier.Ville,
-		fermier.Tel,
-		fermier.Email).Scan(&id)
-	if err != nil {
-		return id, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return id, nil
-}
-
-func UpdateFermier(db *sqlx.DB, fermier *Fermier) error {
-	query := `update fermier set(
-	    id_sctl,
-        nom,
-        prenom,
-        adresse,
-        cp,
-        ville,
-        tel,
-        email
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8) where id=$9`
-	_, err := db.Exec(
-		query,
-		fermier.IdSCTL,
-		fermier.Nom,
-		fermier.Prenom,
-		fermier.Adresse,
-		fermier.Cp,
-		fermier.Ville,
-		fermier.Tel,
-		fermier.Email,
-		fermier.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return nil
-}
-
-func DeleteFermier(db *sqlx.DB, id int) error {
-	query := "delete from fermier where id=$1"
-	_, err := db.Exec(query, id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return nil
 }

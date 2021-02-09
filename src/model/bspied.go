@@ -35,7 +35,7 @@ type BSPied struct {
 	// pas stocké en base
 	UGs      []*UG
 	Lieudits []*Lieudit
-	Fermiers []*Acteur
+	Fermiers []*Fermier
 	Acheteur *Acteur
 }
 
@@ -195,7 +195,7 @@ func (ch *BSPied) ComputeFermiers(db *sqlx.DB) error {
 	if len(ch.Fermiers) != 0 {
 		return nil // déjà calculé
 	}
-	query := `select * from acteur where id in(
+	query := `select * from fermier where id in(
 	    select id_fermier from chantier_fermier where type_chantier='bspied' and id_chantier=$1
     )`
 	err := db.Select(&ch.Fermiers, query, &ch.Id)

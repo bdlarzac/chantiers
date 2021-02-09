@@ -31,7 +31,7 @@ type Plaq struct {
 	// pas stocké en base
 	UGs        []*UG
 	Lieudits   []*Lieudit
-	Fermiers   []*Acteur
+	Fermiers   []*Fermier
 	Volume     float64
 	Tas        []*Tas
 	Operations []*PlaqOp
@@ -238,7 +238,7 @@ func (ch *Plaq) ComputeFermiers(db *sqlx.DB) error {
 	if len(ch.Fermiers) != 0 {
 		return nil // déjà calculé
 	}
-	query := `select * from acteur where id in(
+	query := `select * from fermier where id in(
 	    select id_fermier from chantier_fermier where type_chantier='plaq' and id_chantier=$1
     )`
 	err := db.Select(&ch.Fermiers, query, &ch.Id)

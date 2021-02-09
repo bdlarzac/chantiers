@@ -14,9 +14,6 @@
     <th>Adresse1</th>    
     <th>CP</th>          
     <th>Ville</th>       
-    <th>Tel</th>         
-    <th>Mobile</th>
-    <th>Email</th>       
     <th>Actif</th>       
     <th>Notes</th>
 </tr>
@@ -43,9 +40,6 @@
     <td>{{.Adresse1}}</td>
     <td>{{.Cp}}</td>
     <td>{{.Ville}}</td>
-    <td class="whitespace-nowrap">{{.Tel}}</td>
-    <td class="whitespace-nowrap">{{.Mobile}}</td>
-    <td>{{.Email}}</td>
     <td>{{if .Actif}}oui{{else}}non{{end}}</td>
     <td>{{.Notes}}</td>
 </tr>

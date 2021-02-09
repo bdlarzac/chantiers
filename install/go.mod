@@ -1,6 +1,6 @@
 module bdl.local/install
 
-go 1.14
+go 1.15
 
 require bdl.local/bdl v0.0.0
 

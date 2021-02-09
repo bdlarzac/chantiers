@@ -12,7 +12,6 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
 )
 
 type detailsPlaqTransForm struct {
