@@ -24,7 +24,6 @@ const ID_GFA = 3
 
 type Acteur struct {
 	Id           int
-	IdFermier    int `db:"id_fermier"`
 	Nom          string
 	Prenom       string
 	Adresse1     string
@@ -113,23 +112,6 @@ func GetActeur(db *sqlx.DB, id int) (*Acteur, error) {
 		return a, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return a, err
-}
-
-// Renvoie un Acteur à partir de son id sctl.
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-func GetActeurByIdFermier(db *sqlx.DB, id int) (*Acteur, error) {
-	a := &Acteur{}
-	query := "select * from acteur where id_fermier=$1"
-	row := db.QueryRowx(query, id)
-	err := row.StructScan(a)
-	if err != nil {
-	    // Erreur commentée car GetActeurByIdFermier appelée uniquement par (p *Parcelle) ComputeFermiers
-	    // Se produit pour id_fermier = 1 : PERSONNE dans la base SCTL
-	    // Fermier non importé car non agricole
-		// return a, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return a, nil
 }
 
 // Renvoie un Acteur à partir de son nom et de son prénom.

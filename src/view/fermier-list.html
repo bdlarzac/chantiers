@@ -33,7 +33,7 @@ a.parcelles:hover{cursor:pointer;}
 
 {{range .Details.List}}
 <tr>
-    <td>{{.IdSCTL}}</td>
+    <td>{{.Id}}</td>
     <td><a class="parcelles" title="Voir les parcelles" onClick="toogleTR('parcelles-{{.Id}}');">{{.Nom}} {{.Prenom}}</a></td>
     <td>{{.Adresse}}</td>
     <td>{{.Cp}}</td>

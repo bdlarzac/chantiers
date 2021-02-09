@@ -15,6 +15,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+//"fmt"
 )
 
 type UG struct {
@@ -150,25 +151,36 @@ func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
 // Utilise les parcelles pour faire le lien
 // Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
-// @param   idFermier id d'un acteur (champ id, pas id_fermier)
 func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
 	ugs := []*UG{}
 	query := `
         select * from ug where id in(
             select id_ug from parcelle_ug where id_parcelle in(
                 select id_parcelle from parcelle_fermier where id_fermier in(
-                    select id_fermier from acteur where id=$1
+                    select id from fermier where id=$1
                 )
             )
         ) order by code`
 	err := db.Select(&ugs, query, idFermier)
 	if err != nil {
-		return ugs, werr.Wrapf(err, "Erreur query : "+query)
+		return ugs, werr.Wrapf(db.Select(&ugs, query, idFermier), "Erreur query : "+query)
 	}
 	return ugs, nil
 }
 
 // ************************** Compute *******************************
+
+// Remplit le champ Parcelles d'une UG
+func (ug *UG) ComputeParcelles(db *sqlx.DB) error {
+	if len(ug.Parcelles) != 0 {
+		return nil // déjà calculé
+	}
+	query := `
+	    select * from parcelle where id in(
+            select id_parcelle from parcelle_ug where id_ug=$1
+        ) order by code`
+	return db.Select(&ug.Parcelles, query, ug.Id)
+}
 
 // Pas inclus dans GetUGFull()
 func (ug *UG) ComputeRecap(db *sqlx.DB) error {
@@ -239,27 +251,6 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		ug.SortedRecapYears = append(ug.SortedRecapYears, k)
 	}
 	sort.Sort(sort.Reverse(sort.StringSlice(ug.SortedRecapYears)))
-	return nil
-}
-
-func (ug *UG) ComputeParcelles(db *sqlx.DB) error {
-	query := "select id_parcelle from parcelle_ug where id_ug=$1"
-	rows, err := db.Query(query, ug.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	defer rows.Close()
-	var idP int
-	for rows.Next() {
-		if err := rows.Scan(&idP); err != nil {
-			return werr.Wrapf(err, "Erreur rows.Scan sur query : "+query)
-		}
-		parcelle, err := GetParcelle(db, idP)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur GetParcelle()")
-		}
-		ug.Parcelles = append(ug.Parcelles, parcelle)
-	}
 	return nil
 }
 

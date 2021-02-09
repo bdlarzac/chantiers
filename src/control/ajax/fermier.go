@@ -51,7 +51,6 @@ func GetFermiersFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
         return err
     }
     for _, f := range fermiers {
-        // on met bien id, pas id_sctl
         resp = append(resp, respElement{f.Id, f.String()})
     }
     json, err := json.Marshal(resp)

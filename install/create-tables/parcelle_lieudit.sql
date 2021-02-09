@@ -1,4 +1,7 @@
 
+-- id_parcelle : IdParcelle de la base SCTL
+-- id_lieudit  : IdLieuDit de la base SCTL
+
 create table parcelle_lieudit (
     id_parcelle             int not null references parcelle(id),
     id_lieudit              int not null references lieudit(id),

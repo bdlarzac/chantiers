@@ -12,12 +12,12 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
 )
 
 type detailsChauferForm struct {
 	Chantier            *model.Chaufer
 	UrlAction           string
+	FermierOptions      template.HTML
 	EssenceOptions      template.HTML
 	UniteOptions        template.HTML
 	ExploitationOptions template.HTML
@@ -107,6 +107,10 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		chantier.Fermier = &model.Acteur{}
 		chantier.UG = &model.UG{}
 		chantier.LiensParcelles = []*model.ChauferParcelle{}
+		weboFermier, err := WeboFermier(ctx)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "chaufer-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -117,6 +121,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			},
 			Details: detailsChauferForm{
 				Chantier:            chantier,
+				FermierOptions:      webo.FmtOptions(weboFermier, "CHOOSE_FERMIER"),
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				UniteOptions:        webo.FmtOptions(WeboChauferUnite(), "CHOOSE_UNITE"),

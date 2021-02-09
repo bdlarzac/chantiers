@@ -166,7 +166,7 @@ func WeboStockage(ctx *ctxt.Context) ([]webo.OptionString, error) {
 	return res, nil
 }
 
-// Renvoie la liste des lieux de stockage possibles
+// Renvoie la liste des tas actifs
 // dans un format utilisable par webo
 func WeboTas(ctx *ctxt.Context) ([]webo.OptionString, error) {
 	res := []webo.OptionString{}
@@ -177,6 +177,21 @@ func WeboTas(ctx *ctxt.Context) ([]webo.OptionString, error) {
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_TAS", OptionLabel: "--- Choisir ---"})
 	for _, t := range tas {
 		res = append(res, webo.OptionString{OptionValue: strconv.Itoa(t.Id), OptionLabel: t.Nom})
+	}
+	return res, nil
+}
+
+// Renvoie la liste des fermiers SCTL
+// dans un format utilisable par webo
+func WeboFermier(ctx *ctxt.Context) ([]webo.OptionString, error) {
+	res := []webo.OptionString{}
+    fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
+	if err != nil {
+		return res, err
+	}
+	res = append(res, webo.OptionString{OptionValue: "CHOOSE_FERMIER", OptionLabel: "--- Choisir ---"})
+	for _, f := range fermiers {
+		res = append(res, webo.OptionString{OptionValue: "fermier-" + strconv.Itoa(f.Id), OptionLabel: f.String()})
 	}
 	return res, nil
 }

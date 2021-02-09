@@ -1,4 +1,7 @@
 
+-- id_commune : IdCommune de la base SCTL
+-- id_lieudit : IdLieuDit de la base SCTL
+
 create table commune_lieudit (
     id_commune              int not null references commune(id),
     id_lieudit              int not null references lieudit(id),

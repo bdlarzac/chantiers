@@ -13,8 +13,7 @@ import (
 )
 
 type Fermier struct {
-	Id           int
-	IdSCTL       int `db:"id_sctl"`
+	Id           int // IdExploitant de la base SCTL
 	Nom          string
 	Prenom       string
 	Adresse      string
@@ -56,27 +55,13 @@ func (f *Fermier) ComputeParcelles(db *sqlx.DB) error {
 	if len(f.Parcelles) != 0 {
 		return nil // déjà calculé
 	}
-	query := "select id_parcelle from parcelle_fermier where id_fermier=$1"
-	rows, err := db.Query(query, f.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	defer rows.Close()
-	var idP int
-	for rows.Next() {
-		if err := rows.Scan(&idP); err != nil {
-			return werr.Wrapf(err, "Erreur query : "+query)
-		}
-		parcelle, err := GetParcelle(db, idP)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur GetParcelle()")
-		}
-		f.Parcelles = append(f.Parcelles, parcelle)
-	}
-	err = rows.Err()
-	if err != nil {
-		return werr.Wrapf(err, "Erreur rows.Next()")
-	}
+	query := `select * from parcelle where id in(
+	    select id_parcelle from parcelle_fermier where id_fermier=$1)
+	`
+	err := db.Select(&f.Parcelles, query, f.Id)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur query : "+query)
+    }
 	return nil
 }
 
@@ -118,7 +103,7 @@ func GetSortedFermiers(db *sqlx.DB, field string) ([]*Fermier, error) {
 func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Fermier, error) {
 	fermiers := []*Fermier{}
 	query := `
-	    select * from fermier where id_fermier in(
+	    select * from fermier where id in(
             select distinct id_fermier from parcelle_fermier where id_parcelle in(
                 select id_parcelle from parcelle_lieudit where id_lieudit=$1
             )

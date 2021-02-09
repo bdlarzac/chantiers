@@ -39,7 +39,7 @@ func main() {
 	r.HandleFunc("/ajax/check/acteur/{str}", Hajax(ajax.CheckNomActeur))
 	r.HandleFunc("/ajax/check/acteur/", Hajax(ajax.CheckNomActeur))
 	// ajax fermiers
-	r.HandleFunc("/ajax/get/fermiers-from-lieudit/{id}", Hajax(ajax.GetFermiersFromLieudit))
+//	r.HandleFunc("/ajax/get/fermiers-from-lieudit/{id}", Hajax(ajax.GetFermiersFromLieudit))
 	r.HandleFunc("/ajax/get/fermiers-from-code-ug/{code}", Hajax(ajax.GetFermiersFromCodeUG))
 	// ajax lieux-dits
 	r.HandleFunc("/ajax/autocomplete/lieudit/{str}", Hajax(ajax.AutocompleteLieudit))
@@ -69,7 +69,7 @@ func main() {
 	r.HandleFunc("/acteur/{id:[0-9]+}", H(control.ShowActeur))
 
 	r.HandleFunc("/fermier/liste", H(control.ListFermier))
-	//r.HandleFunc("/fermier/{id:[0-9]+}", H(control.ShowFermier))
+//	r.HandleFunc("/fermier/{id:[0-9]+}", H(control.ShowFermier))
 
 	r.HandleFunc("/affacture/form/{id:[0-9]+}", H(control.FormAffacture))
 	r.HandleFunc("/affacture/show", HPDF(control.ShowAffacture))

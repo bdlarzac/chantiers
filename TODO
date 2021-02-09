@@ -2,19 +2,15 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- Finir de nettoyer le model (fonctions inutiles, jointures au lieu de plusieurs select)
 
-- BUG recent : si on change la date de chantier, apparaît deux fois dans la liste des récents
-Bug qui apparaîtra dès qu'une modif sur le chantier fait changer le label
+- Sortir BDL, SCTL, GFA des acteurs ???
 
-- Faire aide pour lien chantier
-
-- Fonction pour backup base + path défini dans la config
+- supprimer GetFermiersFromCodeUG si inutilisé - dans run-bdl, ajax et model
 
 - Voir bspied Parcelles et IdsParcelles => ???
 
 - Dans toutes les fonctions model.Compute*, faire un test au début pour return si déjà calculé
-
-- remplacer html required par js dans tous les forms
 
 - Vérifier tous les cas de response vide au lieu de null
     response = await response.json();
@@ -27,10 +23,6 @@ Bug qui apparaîtra dès qu'une modif sur le chantier fait changer le label
     getActeursPossibles() => attention à url, parfois se termine par "fermier"
     getLDPossibles()
     checkLD()
-
-- Confusion entre exploitant / fermier ?
-=> remplacer table parcelle_exploitant par parcelle_fermier et partout dans le code ?
-grep -rn xploitant
 
 - revoir les fonctions String() de transport, rangement, chargement, livraison :
 Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable

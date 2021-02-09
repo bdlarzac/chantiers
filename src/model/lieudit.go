@@ -13,7 +13,7 @@ import (
 )
 
 type Lieudit struct {
-	Id        int
+	Id        int    // IdLieuDit de la base SCTL
 	Nom       string
 	Parcelles []*Parcelle
 	Communes  []*Commune
@@ -65,17 +65,19 @@ func GetLieuditsAutocomplete(db *sqlx.DB, str string) ([]*Lieudit, error) {
 
 // Renvoie des Lieudit à partir d'un code UG.
 // Utilise les parcelles pour faire le lien
-// Ne contient que les champs de la table ug + le champ Communes.
+// Ne contient que les champs de la table lieudit
+// + le champ Communes.
 // Les autres champs ne sont pas remplis.
 func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) ([]*Lieudit, error) {
 	lds := []*Lieudit{}
-	query := `select * from lieudit where id in(
-	    select id_lieudit from parcelle_lieudit where id_parcelle in(
-	        select id_parcelle from parcelle_ug where id_ug in(
-	            select id from ug where code=$1
+	query := `
+	    select * from lieudit where id in(
+            select id_lieudit from parcelle_lieudit where id_parcelle in(
+                select id_parcelle from parcelle_ug where id_ug in(
+                    select id from ug where code=$1
+                )
             )
-	    )
-    )`
+        )`
 	err := db.Select(&lds, query, codeUG)
 	if err != nil {
 		return lds, werr.Wrapf(err, "Erreur query : "+query)
@@ -93,52 +95,18 @@ func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) ([]*Lieudit, error) {
 
 // Remplit le champ Parcelles d'un Lieudit
 func (ld *Lieudit) ComputeParcelles(db *sqlx.DB) error {
-	query := "select id_parcelle from parcelle_lieudit where id_lieudit=$1"
-	rows, err := db.Query(query, ld.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	defer rows.Close()
-	var idP int
-	for rows.Next() {
-		if err := rows.Scan(&idP); err != nil {
-			return werr.Wrapf(err, "Erreur query : "+query)
-		}
-		parcelle, err := GetParcelle(db, idP)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur GetParcelle()")
-		}
-		ld.Parcelles = append(ld.Parcelles, parcelle)
-	}
-	err = rows.Err()
-	if err != nil {
-		return werr.Wrapf(err, "Erreur rows.Next()")
-	}
-	return nil
+	query := `
+	    select * from parcelle where id in(
+            select id_parcelle from parcelle_lieudit where id_lieudit=$1
+        ) order by code`
+	return db.Select(&ld.Parcelles, query, ld.Id)
 }
 
 // Remplit le champ Communes d'un Lieudit
 func (ld *Lieudit) ComputeCommunes(db *sqlx.DB) error {
-	query := "select id_commune from commune_lieudit where id_lieudit=$1"
-	rows, err := db.Query(query, ld.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	defer rows.Close()
-	var idC int
-	for rows.Next() {
-		if err := rows.Scan(&idC); err != nil {
-			return werr.Wrapf(err, "Erreur query : %s"+query)
-		}
-		commune, err := GetCommune(db, idC)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur GetCommune()")
-		}
-		ld.Communes = append(ld.Communes, commune)
-	}
-	err = rows.Err()
-	if err != nil {
-		return werr.Wrapf(err, "Erreur rows.Next()")
-	}
-	return nil
+	query := `
+	    select * from commune where id in(
+            select id_commune from commune_lieudit where id_lieudit=$1
+        ) order by nom`
+	return db.Select(&ld.Communes, query, ld.Id)
 }

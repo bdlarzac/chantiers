@@ -16,10 +16,6 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 )
 
-// Valeur du champ id_sctl pour l'acteur SCTL
-// valeur fixe venant de la base SCTL
-const SCTL_ID_SCTL = 28
-
 // *********************************************************
 // Remplit les acteurs à partir d'un export de la base SCTL
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
@@ -66,7 +62,7 @@ func FillFermier(versionSCTL string) {
             email = v["Mail"]
         }
 		query := `insert into %s(
-            id_sctl,
+            id,
             nom,
             prenom,
             adresse,

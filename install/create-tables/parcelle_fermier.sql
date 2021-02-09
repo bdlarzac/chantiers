@@ -1,4 +1,7 @@
 
+-- id_parcelle : IdParcelle de la base SCTL
+-- id_fermier  : IdExploitant de la base SCTL
+
 create table parcelle_fermier (
     id_parcelle             int not null references parcelle(id),
     id_fermier              int not null,

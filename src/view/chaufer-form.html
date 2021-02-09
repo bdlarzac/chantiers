@@ -6,14 +6,9 @@
     <div class="grid2-form">
 
         <label for="fermier">Fermier</label>
-        <div>
-            <div class="autocomplete">
-                <input type="text" name="fermier" id="fermier" value="" autocomplete="off" class="width20">
-            </div>
-            <a id="choisir-fermier" href="#" onclick="checkFermier();">
-                <img class="inline bigicon vertical-align-middle" src="/static/img/validate.png" title="Choisir ce fermier" />
-            </a>
-        </div>
+        <select name="fermier" id="fermier">
+            {{$.Details.FermierOptions}}
+        </select>
         
         <label for="ugs">UG</label>
         <div id="ugs"></div>
@@ -75,11 +70,12 @@
 
 <script>
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById("fermier"), getActeursPossibles);
-    // Pour vérifier que le fermier affiché correspond à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("fermier")
-    // car l'utilisateur peut modifier le nom
-    window.globalPersons = [];
+    document.getElementById("fermier").addEventListener("change", function() {
+        actionAfterChangeFermier();
+    });        
+    // document.getElementById("fermier").onChange = function(e){
+        // actionAfterChangeFermier();
+    // };
     initialize();
 });
 
@@ -91,8 +87,6 @@ async function initialize(){
     }
     // form update
     else{
-        document.getElementById("fermier").value = "{{.Fermier.NomAutocomplete}}";
-        window.globalPersons[{{.IdFermier}}] = "{{.Fermier.NomAutocomplete}}";
         await actionAfterChangeFermier();
         document.getElementById("ug-" + "{{.IdUG}}").checked = true;
         await afficheParcelles({{.IdUG}});
@@ -109,34 +103,6 @@ async function initialize(){
     }
 }
 
-// ***************************************
-/** 
-    Vérifie par ajax que le fermier sélectionné correspond à un fermier existant.
-    Si non, efface le contenu de id-fermier et fermier
-    Si oui, exécute actionAfterChangeFermier()
-**/
-async function checkFermier(){
-    const nomFermier = document.getElementById("fermier").value;
-    const url = "/ajax/check/acteur/" + nomFermier;
-    const response = await fetch(url);
-    const idFermier = await response.json();
-    if(idFermier != null && idFermier != 0){
-        document.getElementById("id-fermier").value = idFermier;
-    }
-    else{
-        // fermier invalide
-        document.getElementById("id-fermier").value = 0;
-        document.getElementById("fermier").value = "";
-        if(nomFermier == ""){
-            alert("Saisissez le nom d'un fermier avant de valider.");
-        }
-        else{
-            alert("Le fermier \"" + nomFermier + "\" n'existe pas en base.");
-        }
-    }
-    await actionAfterChangeFermier();
-}
-
 // ******************************************************
 /**
     Lorsqu'un fermier change, met à jour les ugs possibles
@@ -144,12 +110,14 @@ async function checkFermier(){
     Aucune UG n'est sélectionnée
 **/
 async function actionAfterChangeFermier(){
-    const idFermier = document.getElementById("id-fermier").value;
+    const fermierElt = document.getElementById("fermier");
+    const idFermier = fermierElt.children[fermierElt.selectedIndex].id.replace("fermier-", "");
     let ugsElt = document.getElementById("ugs");
     let parcellesElt = document.getElementById("parcelles");
     ugsElt.innerHTML = "Choisissez d'abord un fermier";
     parcellesElt.innerHTML = "Choisissez d'abord une UG";
-    if(idFermier == 0){
+console.log("idFermier", idFermier);
+    if(idFermier == "CHOOSE_FERMIER"){
         return;
     }
     // ajax pour récupérer les UGs possibles
