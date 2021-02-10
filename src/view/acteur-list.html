@@ -26,14 +26,12 @@
             <a href="/affacture/form/{{.Id}}">
                 <span class="icon-euro-small" title="Payer cet acteur">&euro;</span>
             </a>
-            {{if not .IsFermier}}
-                <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
-                    <img src="../static/img/delete.png" alt="Supprimer cet acteur">
-                </a>
-                <a href="/acteur/update/{{.Id}}">
-                    <img src="../static/img/update.png" alt="Modifier cet acteur">
-                </a>
-            {{end}}
+            <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
+                <img src="../static/img/delete.png" alt="Supprimer cet acteur">
+            </a>
+            <a href="/acteur/update/{{.Id}}">
+                <img src="../static/img/update.png" alt="Modifier cet acteur">
+            </a>
         {{end}}
     </td>
     <td><a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>

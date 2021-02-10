@@ -44,9 +44,6 @@ a.parcelles:hover{cursor:pointer;}
 <tr class="display-none" id="parcelles-{{.Id}}">
     <td colspan="1"></td>
     <td colspan="6">
-    {{range .Parcelles}}
-        <span class=""><a href="/parcelle/{{.Id}}">{{.Code}}</a></span>
-    {{end}}
     </td>
 </tr>
 {{end}}

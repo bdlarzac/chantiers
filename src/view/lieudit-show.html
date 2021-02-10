@@ -1,5 +1,6 @@
 <h1>Lieu-dit {{.Details.Nom}}</h1>
 
+<div class="page-content">
 <table class="entities">
     
     <tr><th>Parcelle</th><th>Fermier(s)</th><th>Unités de gestion</th><th>Commune(s)</th></tr>
@@ -9,7 +10,7 @@
         <td><a href="/parcelle/{{.Id}}">{{.Code}}</a></td>
         <td>
             {{range .Fermiers}}
-                <a href="/fermier/liste">{{.Prenom}} {{.Nom}}</a>
+                <a href="/fermier/{{.Id}}">{{.Prenom}} {{.Nom}}</a>
             {{end}}
         </td>
         <td>
@@ -28,3 +29,4 @@
     {{end}}
     
 </table>
+</div>

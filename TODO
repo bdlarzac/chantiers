@@ -2,7 +2,11 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- uniformiser visualisation lieudit parcelle acteur
+  Prendre modèle sur parcelle
+
 - Finir de nettoyer le model (fonctions inutiles, jointures au lieu de plusieurs select)
+  surtout parcelle / ug / lieudit 
 
 - Sortir BDL, SCTL, GFA des acteurs ???
 

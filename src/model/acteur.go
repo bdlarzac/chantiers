@@ -56,15 +56,8 @@ type ActeurActivite struct {
 
 // ************************** Structure *******************************
 
-func (a *Acteur) IsFermier() bool {
-	return a.IdFermier != 0
-}
-
 // cf règles de gestion dans cahier des charges
 func (a *Acteur) IsDeletable(db *sqlx.DB) (bool, error) {
-	if a.IdFermier != 0 {
-		return false, nil
-	}
 	act, err := a.GetActivitesByDate(db)
 	if err != nil {
 		return false, werr.Wrapf(err, "Erreur appel GetActivitesByDate()")

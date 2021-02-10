@@ -2,25 +2,9 @@
 <div class="flex-wrap">
 {{with .Details.UG}}
     <div class="padding-right padding-left border-right">
-        <!-- ********************************************** -->
-        <h2>Données foncières</h2>
-        <table class="liste-carac">
-            <tr>
-                <td>Code</td>
-                <td>{{.Code}}</td>
-            </tr>
-        </table>
-        <div class="bold">Parcelles</div>
-        <ul>
-        {{range .Parcelles}}
-            <li>
-                <a href="/parcelle/{{.Id}}">{{.Code}}</a>
-                    {{range .Lieudits}}
-                        <div class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></div>
-                    {{end}}
-            </li>
-        {{end}}
-        </ul>
+    
+        <div class="bold big2">Code : {{.Code}}</div>
+        
         <!-- ********************************************** -->
         <h2>Données forestières</h2>
         <table class="liste-carac">
@@ -37,6 +21,20 @@
                 <td>{{.PrevisionnelCoupe}}</td>
             </tr>
         </table>
+        
+        <!-- ********************************************** -->
+        <h2>Données foncières</h2>
+        <div class="bold">Parcelles</div>
+        <ul>
+        {{range .Parcelles}}
+            <li>
+                <a href="/parcelle/{{.Id}}">{{.Code}}</a>
+                    {{range .Lieudits}}
+                        <div class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></div>
+                    {{end}}
+            </li>
+        {{end}}
+        </ul>
     </div>
 {{end}}
     

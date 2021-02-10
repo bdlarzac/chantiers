@@ -14,7 +14,7 @@ func ShowParcelle(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		// ERROR => show 404
+		// TODO show 404
 	}
 	parcelle, err := model.GetParcelle(ctx.DB, id)
 	if err != nil {

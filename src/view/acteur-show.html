@@ -6,14 +6,12 @@
     </a>
     
     {{with .Details.Acteur}}
-    {{if not .IsFermier}}
     <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
         <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/delete.png" title="Supprimer cet acteur">
     </a>
     <a href="/acteur/update/{{.Id}}">
         <img class="verybigicon vertical-align-bottom inline-block" src="../static/img/update.png" title="Modifier cet acteur">
     </a>
-    {{end}}
     {{end}}
     
 </h1>

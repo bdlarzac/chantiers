@@ -51,6 +51,7 @@ func CountFermiers(db *sqlx.DB) int {
 
 // ************************** Compute *******************************
 
+// Calcule le champ Parcelles d'un fermier
 func (f *Fermier) ComputeParcelles(db *sqlx.DB) error {
 	if len(f.Parcelles) != 0 {
 		return nil // déjà calculé

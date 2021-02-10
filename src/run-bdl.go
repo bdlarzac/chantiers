@@ -34,23 +34,23 @@ func main() {
 
 	r := mux.NewRouter()
 
-	// ajax acteurs
+	// ajax
 	r.HandleFunc("/ajax/autocomplete/acteur/{str}", Hajax(ajax.AutocompleteActeur))
-	r.HandleFunc("/ajax/check/acteur/{str}", Hajax(ajax.CheckNomActeur))
-	r.HandleFunc("/ajax/check/acteur/", Hajax(ajax.CheckNomActeur))
-	// ajax fermiers
+//	r.HandleFunc("/ajax/check/acteur/{str}", Hajax(ajax.CheckNomActeur))
+//	r.HandleFunc("/ajax/check/acteur/", Hajax(ajax.CheckNomActeur))
+	
 //	r.HandleFunc("/ajax/get/fermiers-from-lieudit/{id}", Hajax(ajax.GetFermiersFromLieudit))
 	r.HandleFunc("/ajax/get/fermiers-from-code-ug/{code}", Hajax(ajax.GetFermiersFromCodeUG))
-	// ajax lieux-dits
-	r.HandleFunc("/ajax/autocomplete/lieudit/{str}", Hajax(ajax.AutocompleteLieudit))
-	r.HandleFunc("/ajax/check/lieudit/{str}", Hajax(ajax.CheckNomLieudit))
+	
+//	r.HandleFunc("/ajax/autocomplete/lieudit/{str}", Hajax(ajax.AutocompleteLieudit))
+//	r.HandleFunc("/ajax/check/lieudit/{str}", Hajax(ajax.CheckNomLieudit))
 	r.HandleFunc("/ajax/get/lieudits-from-code-ug/{code}", Hajax(ajax.GetLieuditsFromCodeUG))
-	// ajax ug
-	r.HandleFunc("/ajax/get/ugs-from-lieudit/{id}", Hajax(ajax.GetUGsFromLieudit))
+	
+//	r.HandleFunc("/ajax/get/ugs-from-lieudit/{id}", Hajax(ajax.GetUGsFromLieudit))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
-	// ajax parcelles
-	r.HandleFunc("/ajax/get/parcelles-from-lieudit/{id}", Hajax(ajax.GetParcellesFromLieudit))
+	
+//	r.HandleFunc("/ajax/get/parcelles-from-lieudit/{id}", Hajax(ajax.GetParcellesFromLieudit))
 	r.HandleFunc("/ajax/get/parcelles-from-ug/{id}", Hajax(ajax.GetParcellesFromUG))
 
 	r.HandleFunc("/", H(control.Accueil))
@@ -69,7 +69,7 @@ func main() {
 	r.HandleFunc("/acteur/{id:[0-9]+}", H(control.ShowActeur))
 
 	r.HandleFunc("/fermier/liste", H(control.ListFermier))
-//	r.HandleFunc("/fermier/{id:[0-9]+}", H(control.ShowFermier))
+	r.HandleFunc("/fermier/{id:[0-9]+}", H(control.ShowFermier))
 
 	r.HandleFunc("/affacture/form/{id:[0-9]+}", H(control.FormAffacture))
 	r.HandleFunc("/affacture/show", HPDF(control.ShowAffacture))

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	//"fmt"
 )
-
+/* 
 func GetParcellesFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idLieudit, err := strconv.Atoi(vars["id"])
@@ -35,6 +35,7 @@ func GetParcellesFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.R
 	w.Write(json)
 	return nil
 }
+*/
 
 func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)

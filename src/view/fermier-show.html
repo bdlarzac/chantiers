@@ -1,0 +1,63 @@
+{{with .Details.Fermier}}
+
+<h1>Fermier SCTL : {{.String}}</h1>
+
+<div class="page-content">
+
+<table class="th-left">
+    
+    <tr>
+        <th>Adresse</th>
+        <td>
+            {{.Adresse}}
+            {{if or .Cp .Ville}}<br>{{end}}
+            {{.Cp}} {{.Ville}}
+        </td>
+    </tr>
+    
+    {{if .Tel}}
+    <tr>
+        <th>Téléphone</th>
+        <td>{{.Tel}}</td>
+    </tr>
+    {{end}}
+    
+    {{if .Email}}
+    <tr>
+        <th>Email</th>
+        <td>{{.Email}}</td>
+    </tr>
+    {{end}}
+    
+    <tr>
+        <th>Id SCTL</th>
+        <td>{{.Id}}</td>
+    </tr>
+    
+</table>
+
+
+<table class="entities">
+    
+    <tr><th>Parcelle</th><th>Unités de gestion</th><th>Lieu(x)-dit(s)</th></tr>
+
+    {{range .Parcelles}}
+    <tr>
+        <td><a href="/parcelle/{{.Id}}">{{.Code}}</a></td>
+        <td>
+            {{range .UGs}}
+                <a href="/ug/{{.Id}}">{{.Code}}</a>
+            {{end}}
+        </td>
+        <td>
+            {{range .Lieudits}}
+                <a href="/lieudit/{{.Id}}">{{.Nom}}</a>
+            {{end}}
+        </td>
+    </tr>
+    {{end}}
+    
+</table>
+</div>
+
+{{end}}

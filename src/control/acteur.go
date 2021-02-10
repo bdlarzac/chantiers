@@ -7,7 +7,6 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
 )
 
 type detailsActeurList struct {

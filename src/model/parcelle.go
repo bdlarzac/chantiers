@@ -54,6 +54,7 @@ func GetParcelle(db *sqlx.DB, id int) (*Parcelle, error) {
 // Renvoie des Parcelles à partir d'un lieu-dit.
 // Ne contient que les champs de la table parcelle.
 // Les autres champs ne sont pas remplis.
+/* 
 func GetParcellesFromLieudit(db *sqlx.DB, idLieudit int) ([]*Parcelle, error) {
 	parcelles := []*Parcelle{}
 	query := `select * from parcelle where id in(
@@ -65,6 +66,7 @@ func GetParcellesFromLieudit(db *sqlx.DB, idLieudit int) ([]*Parcelle, error) {
 	}
 	return parcelles, nil
 }
+*/
 
 // ************************** Compute *******************************
 
@@ -118,22 +120,9 @@ func (p *Parcelle) ComputeFermiers(db *sqlx.DB) error {
 
 // Remplit le champ UGs d'une parcelle
 func (p *Parcelle) ComputeUGs(db *sqlx.DB) error {
-	query := "select id_ug from parcelle_ug where id_parcelle=$1"
-	rows, err := db.Query(query, p.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	defer rows.Close()
-	var idUG int
-	for rows.Next() {
-		if err := rows.Scan(&idUG); err != nil {
-			return werr.Wrapf(err, "Erreur rows.Scan sur query : "+query)
-		}
-		ug, err := GetUG(db, idUG)
-		if err != nil {
-			return err
-		}
-		p.UGs = append(p.UGs, ug)
-	}
-	return nil
+	query := `
+	    select * from ug where id in(
+	        select id_ug from parcelle_ug where id_parcelle=$1
+	    ) order by code`
+	return werr.Wrapf(db.Select(&p.UGs, query, p.Id), "Erreur query : "+query)
 }
