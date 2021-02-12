@@ -49,14 +49,6 @@ h1{padding-left:1rem;}
     border:1px solid grey;
 }
 
-.acteur-show{
-    margin-left:1em;
-    padding:1em;
-    border:1px solid grey;
-    border-radius:10px;
-    background:#f2f2f2;
-}
-
 .help-button{
     cursor:pointer;
     font-weight:bold;
@@ -152,7 +144,6 @@ h1{padding-left:1rem;}
 }
 .grid2-pres>*:nth-child(even){
     font-weight:bold;
-    white-space:pre;
 }
 
 table.entities{
@@ -170,11 +161,6 @@ table.entities tr.total{
     font-size:1.2em;
 }
 
-table.liste-carac td:nth-child(1){
-    font-weight:bold;
-    padding-right:1em;
-}
-
 table.bordered{
     border-collapse:collapse;
     border:1px solid grey;
@@ -184,8 +170,6 @@ table.bordered th, table.bordered td{
     padding:4px;
 }
 
-table.border{border-collapse:collapse;}
-table.border td{border:1px solid #a2a9b1;}
 table.th-left th{text-align:left; padding-right:1em;}
 
 

@@ -9,7 +9,7 @@
     <h2>Total {{.}}</h2>
     
     {{$recap := index $.Details.UG.Recaps .}}
-    <table class="liste-carac bordered">
+    <table class="th-left bordered">
         <tr>
             <th>Produit</th>
             <th>Quantité</th>
@@ -19,7 +19,7 @@
         </tr>
         
         <tr>
-            <td class="key">Plaquettes</td>
+            <th>Plaquettes</th>
             <td>{{$recap.Plaquettes.Quantite}} maps</td>
             <td>{{$recap.Plaquettes.Superficie}} ha</td>
             <td>???</td>
@@ -27,7 +27,7 @@
         </tr>
     
         <tr>                                          
-            <td class="key">Bois de chauffage</td>
+            <th>Bois de chauffage</th>
             <td>{{$recap.Chauffage.Quantite}} maps</td>
             <td>???</td>
             <td>???</td>
@@ -35,7 +35,7 @@
         </tr>
     
         <tr>
-            <td class="key">Pâte à papier</td>
+            <th>Pâte à papier</th>
             <td>{{$recap.PateAPapier.Quantite}} maps</td>
             <td>???</td>
             <td>???</td>
@@ -43,7 +43,7 @@
         </tr>
     
         <tr>
-            <td class="key">Bois palette</td>
+            <th>Bois palette</th>
             <td>{{$recap.Palette.Quantite}} maps</td>
             <td>???</td>
             <td>???</td>
@@ -51,7 +51,7 @@
         </tr>
     
         <tr>
-            <td class="key">Bois d'oeuvre</td>
+            <th>Bois d'oeuvre</th>
             <td>{{$recap.BoisOeuvre.Quantite}} maps</td>
             <td>???</td>
             <td>???</td>
@@ -59,7 +59,7 @@
         </tr>
     
         <tr>
-            <td class="key">Plaquettes + Bois d'oeuvre</td>
+            <th>Plaquettes + Bois d'oeuvre</th>
             <td>{{$recap.PlaquettesEtBoisOeuvre.Quantite}} maps</td>
             <td>???</td>
             <td>???</td>

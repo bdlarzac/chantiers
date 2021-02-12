@@ -16,64 +16,70 @@
     
 </h1>
 
+<div class="page-content">
+
 <div class="flex-wrap">
 
-<div class="acteur-show margin-bottom">
+<div class="padding-right border-right">
 {{with .Details.Acteur}}
-    <div class="grid2-form">                  
 
-        <label>Nom / Dénomination</label>
-        <input readonly type="text" value="{{.Nom}}">
+<div class="grid2-pres">
     
-        <label>Prénom / Statut juridique</label>
-        <input readonly type="text" value="{{.Prenom}}">
+        <div>Nom / Dénomination</div>
+        <div>{{.Nom}}</div>
     
-        <label>Adresse 1 / Siège social</label>
-        <input readonly type="text" value="{{.Adresse1}}">
+        <div>Prénom / Statut juridique</div>
+        <div>{{.Prenom}}</div>
     
-        <label>Adresse 2</label>
-        <input readonly type="text" value="{{.Adresse2}}">
+        <div>Adresse 1 / Siège social</div>
+        <div>{{.Adresse1}}</div>
     
-        <label size="5">Code postal</label>
-        <div><input readonly type="text" size="5" value="{{.Cp}}"></div>
+        <div>Adresse 2</div>
+        <div>{{.Adresse2}}</div>
     
-        <label>Ville</label>
-        <input readonly type="text" value="{{.Ville}}">
-        
-        <label>Téléphone</label>
-        <div><input readonly type="text" size="14" value="{{.Tel}}"></div>
+        <div>Code postal</div>
+        <div>{{.Cp}}</div>
     
-        <label>Téléphone portable</label>
-        <div><input readonly type="text" size="14" value="{{.Mobile}}"></div>
+        <div>Ville</div>
+        <div>{{.Ville}}</div>
     
-        <label>Email</label>
-        <input readonly type="text" value="{{.Email}}">
+        <div>Téléphone</div>
+        <div>{{.Tel}}</div>
     
-        <label>BIC</label>
-        <input readonly type="text" value="{{.Bic}}">
+        <div>Téléphone portable</div>
+        <div>{{.Mobile}}</div>
     
-        <label>IBAN</label>
-        <input readonly type="text" value="{{.Iban}}">
+        <div>Email</div>
+        <div>{{.Email}}</div>
     
-        <label>Siret</label>
-        <input readonly type="text" value="{{.Siret}}">
+        <div>BIC</div>
+        <div>{{.Bic}}</div>
     
-        <label>Fournisseur plaquettes</label>
+        <div>IBAN</div>
+        <div>{{.Iban}}</div>
+    
+        <div>Siret</div>
+        <div>{{.Siret}}</div>
+    
+        <div>Fournisseur plaquettes</div>
         <div>{{if .Fournisseur}}Oui{{else}}Non{{end}}</div>
-        
-        <label>Propriétaire</label>
+    
+        <div>Propriétaire</div>
         <div>{{if .Proprietaire}}Oui{{else}}Non{{end}}</div>
-        
-        <label>Actif</label>
+    
+        <div>Actif</div>
         <div>{{if .Actif}}Oui{{else}}Non{{end}}</div>
         
-        <label>Commentaires</label>
-        <textarea readonly rows="6" cols="50">{{.Notes}}</textarea>
+</div> <!-- end class="grid2-pres" -->
+
+<hr>
+<div class="grid2-pres">
+    <div>Notes</div>
+    <div>{{.Notes | nl2br}}</div>
 </div>
 
-</div>
 {{end}}
-
+</div>
 
 <div class="padding-left">
     {{if .Details.Activites}}
@@ -97,6 +103,7 @@
 </div>
 
 </div><!-- end class="flex-wrap" -->
+</div><!-- end class="page-content" -->
 
 
 <script>

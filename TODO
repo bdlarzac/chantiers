@@ -2,14 +2,13 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- Compléter recap ug
+
 - sauvegarde des données - tester si config pas bonne ou pas remplie
 
 - Comment réagit l'appli pour des chantiers à cheval sur plusieurs années ?
 
 - Attention, il reste dans model/ des retours d'erreur sans werr.Wrapf : plaqtrans, plaqrange
-
-- uniformiser visualisation lieudit parcelle acteur
-  Prendre modèle sur parcelle
 
 - Finir de nettoyer le model (fonctions inutiles, jointures au lieu de plusieurs select)
   surtout parcelle / ug / lieudit 
@@ -73,9 +72,6 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 - voir bug DEVEZ GRAN / DEVEZ GRAND
 
 - html : remplacer scripts dans footer par scripts dans header avec attribut defer
-
-- css : unifier "entities" "liste-carac" par "th-left"
-- css : nottoyer table border et table bordered
 
 - read mdb / windows
 

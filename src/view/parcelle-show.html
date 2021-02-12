@@ -2,43 +2,38 @@
 
 <div class="page-content">
     <h2>Données foncières</h2>
-    <table class="liste-carac">
-        <tr>
-            <td>Superficie</td>
-            <td>
-                {{.Details.Surface}} ha
-            </td>
-        </tr>
-        <tr>
-            <td>Lieu-dit</td>
-            <td>
-                {{range .Details.Lieudits}}
-                <div>
-                    <a href="/lieudit/{{.Id}}">{{.Nom}}</a>
-                    ({{range .Communes}}
-                        {{.Nom}} 
-                    {{end}})
-                </div>
-                {{end}}
-            </td>
-        </tr>
-        <tr>
-            <td>Fermier</td>
-            <td>
-                {{range .Details.Fermiers}}
-                <div>
-                    <a href="/fermier/{{.Id}}">{{.String}}</a>
-                </div>
-                {{end}}
-            </td>
-        </tr>
-        <tr>
-            <td>Propriétaire</td>
-            <td>
-                <a href="/acteur/{{.Details.IdProprietaire}}">{{.Details.Proprietaire.String}}</a>
-            </td>
-        </tr>
-    </table>
+    
+    <div class="grid2-pres">
+    
+        <div>Superficie</div>
+        <div>{{.Details.Surface}} ha</div>
+    
+        <div>Lieu-dit</div>
+        <div>
+            {{range .Details.Lieudits}}
+            <div>
+                <a href="/lieudit/{{.Id}}">{{.Nom}}</a>
+                ({{range .Communes}}
+                    {{.Nom}} 
+                {{end}})
+            </div>
+            {{end}}
+        </div>
+    
+        <div>Fermier</div>
+        <div>
+            {{range .Details.Fermiers}}
+            <div>
+                <a href="/fermier/{{.Id}}">{{.String}}</a>
+            </div>
+            {{end}}
+        </div>
+    
+        <div>Propriétaire</div>
+        <div><a href="/acteur/{{.Details.IdProprietaire}}">{{.Details.Proprietaire.String}}</a></div>
+        
+    </div> <!-- end class="grid2-pres" -->
+    
     <h2>Unités de gestion</h2>
     {{if .Details.UGs}}
     <ul>
