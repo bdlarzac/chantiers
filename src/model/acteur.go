@@ -553,24 +553,6 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		res = append(res, new)
 	}
 	//
-	// Chantier chauffage fermier - fermier
-	//
-	list9 := []Chaufer{}
-	query = "select * from chaufer where id_fermier=$1"
-	err = db.Select(&list9, query, a.Id)
-	if err != nil {
-		return res, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, elt := range list9 {
-		elt.Fermier = a
-		new := &ActeurActivite{
-			Date:        elt.DateChantier,
-			Role:        "fermier",
-			URL:         "/chantier/chauffage-fermier/liste/" + strconv.Itoa(elt.DateChantier.Year()),
-			NomActivite: elt.FullString()}
-		res = append(res, new)
-	}
-	//
 	// mesures d'humidité - mesureur
 	//
 	list10 := []Humid{}

@@ -27,7 +27,7 @@ type Chaufer struct {
 	Unite        string // stères ou map
 	Notes        string
 	// Pas stocké dans la table
-	Fermier        *Acteur
+	Fermier        *Fermier
 	UG             *UG
 	LiensParcelles []*ChauferParcelle
 }
@@ -149,9 +149,9 @@ func (chantier *Chaufer) ComputeFermier(db *sqlx.DB) error {
 		return nil
 	}
 	var err error
-	chantier.Fermier, err = GetActeur(db, chantier.IdFermier)
+	chantier.Fermier, err = GetFermier(db, chantier.IdFermier)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetActeur()")
+		return werr.Wrapf(err, "Erreur appel GetFermier()")
 	}
 	return nil
 }

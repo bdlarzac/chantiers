@@ -72,14 +72,14 @@ func (f *Fermier) ComputeParcelles(db *sqlx.DB) error {
 // Ne contient que les champs de la table fermier.
 // Les autres champs ne sont pas remplis.
 func GetFermier(db *sqlx.DB, id int) (*Fermier, error) {
-	a := &Fermier{}
+	f := &Fermier{}
 	query := "select * from fermier where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(a)
+	err := row.StructScan(f)
 	if err != nil {
-		return a, werr.Wrapf(err, "Erreur query : "+query)
+		return f, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return a, err
+	return f, err
 }
 
 // ************************** Get many *******************************

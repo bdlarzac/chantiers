@@ -9,6 +9,7 @@ import (
 
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
@@ -37,7 +38,8 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		}
 		_, err = model.InsertPlaqTrans(ctx.DB, pt) // gère la modif du stock du tas
 		if err != nil {
-			return err
+			//return err
+			return werr.Wrapf(err, "Erreur appel model.InsertPlaqTrans()")
 		}
 		ctx.Redirect = "/chantier/plaquette/" + strconv.Itoa(pt.IdChantier) + "/chantiers"
 		return nil

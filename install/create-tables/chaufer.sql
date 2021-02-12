@@ -2,7 +2,7 @@
 -- chantier chauffage fermier
 create table chaufer (
     id                      serial primary key,
-    id_fermier              int not null references acteur(id),
+    id_fermier              int not null references fermier(id),
     id_ug                   int not null references ug(id),
     datechantier            date not null,
     exploitation            typexploitation not null,

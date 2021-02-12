@@ -2,6 +2,12 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- sauvegarde des données - tester si config pas bonne ou pas remplie
+
+- Comment réagit l'appli pour des chantiers à cheval sur plusieurs années ?
+
+- Attention, il reste dans model/ des retours d'erreur sans werr.Wrapf : plaqtrans, plaqrange
+
 - uniformiser visualisation lieudit parcelle acteur
   Prendre modèle sur parcelle
 

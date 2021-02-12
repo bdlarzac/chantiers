@@ -12,6 +12,7 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"time"
+"fmt"	 
 )
 
 type PlaqTrans struct {
@@ -104,6 +105,7 @@ func (pt *PlaqTrans) ComputeProprioutil(db *sqlx.DB) error {
 // ************************** CRUD *******************************
 
 func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
+fmt.Printf("%+v\n",pt)
 	// Mise à jour du stock du tas
 	err := pt.ComputeTas(db)
 	if err != nil {

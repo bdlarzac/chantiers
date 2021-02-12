@@ -36,7 +36,10 @@ func AddActeursInitiaux() {
 func addActeurZero() {
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-	_,_ = db.Exec("insert into acteur values(0,0,'','','','','','','','','','','','',false,false,false,'')")
+	_,err := db.Exec("insert into acteur values(0,'','','','','','','','','','','','',false,false,false,'')")
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("Créé l'acteur 0")
 }
 

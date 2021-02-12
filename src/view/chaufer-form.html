@@ -87,6 +87,8 @@ async function initialize(){
     }
     // form update
     else{
+        const idFermier = document.getElementById("id-fermier").value;
+        document.getElementById("fermier-" + idFermier).selected = "selected";
         await actionAfterChangeFermier();
         document.getElementById("ug-" + "{{.IdUG}}").checked = true;
         await afficheParcelles({{.IdUG}});
@@ -116,7 +118,6 @@ async function actionAfterChangeFermier(){
     let parcellesElt = document.getElementById("parcelles");
     ugsElt.innerHTML = "Choisissez d'abord un fermier";
     parcellesElt.innerHTML = "Choisissez d'abord une UG";
-console.log("idFermier", idFermier);
     if(idFermier == "CHOOSE_FERMIER"){
         return;
     }
@@ -338,11 +339,14 @@ function validateForm(){
     let msg = "", check;
     let i, elt;
     // vérifie fermier
-    check = checkActeur("fermier", "- Vous devez renseigner le fermier.\n");
-    document.getElementById("id-fermier").value = check[0];
-    msg += check[1];
-    // vérifie ug et parcelles que si fermier ok
-    if(check[0] != 0){
+    const fermierElt = document.getElementById("fermier");
+    if(fermierElt.selectedIndex == 0){
+        msg += "- Vous devez sélectionner un fermier.\n";
+    }
+    else{
+        const idFermier = fermierElt.children[fermierElt.selectedIndex].id.replace("fermier-", "");
+        document.getElementById("id-fermier").value = idFermier;
+        // vérifie ug et parcelles que si fermier ok
         // vérifie qu'une ug est sélectionnée
         let ugChecked = false;
         let idParcelle;

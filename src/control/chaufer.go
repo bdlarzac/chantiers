@@ -104,7 +104,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		// Affiche form
 		//
 		chantier := &model.Chaufer{}
-		chantier.Fermier = &model.Acteur{}
+		chantier.Fermier = &model.Fermier{}
 		chantier.UG = &model.UG{}
 		chantier.LiensParcelles = []*model.ChauferParcelle{}
 		weboFermier, err := WeboFermier(ctx)
@@ -176,6 +176,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
+		weboFermier, err := WeboFermier(ctx)
 		ctx.TemplateName = "chaufer-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -186,6 +187,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			},
 			Details: detailsChauferForm{
 				Chantier:            chantier,
+				FermierOptions:      webo.FmtOptions(weboFermier, "fermier-"+strconv.Itoa(chantier.IdFermier)),
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				UniteOptions:        webo.FmtOptions(WeboChauferUnite(), "unite-"+chantier.Unite),
