@@ -13,7 +13,6 @@ import (
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
-	//"fmt"
 )
 
 type detailsChautreForm struct {
@@ -82,10 +81,10 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		// Process form
 		//
 		chantier, err := chautreForm2var(r)
-		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		if err != nil {
 			return err
 		}
+		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertChautre()
 		var idsUG, idsLieudit, idsFermier []int
 		var id int
@@ -173,6 +172,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			return err
 		}
 		chantier.Id, err = strconv.Atoi(r.PostFormValue("id-chantier"))
+		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		if err != nil {
 			return err
 		}
