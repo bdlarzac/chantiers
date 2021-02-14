@@ -16,6 +16,10 @@ type detailsUGShow struct {
 	Tab       string
 }
 
+type detailsUGSearch struct {
+	AllUgs        [][]*model.UG
+}
+
 func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	tab := vars["tab"]
@@ -58,12 +62,20 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+// Affiche à la fois le formulaire et la liste des UGs
 func SearchUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+    allUgs, err := model.GetUGsSortedByCodeAndSeparated(ctx.DB)
+	if err != nil {
+		return err
+	}
 	ctx.TemplateName = "ug-search.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Recherche UG",
 			CSSFiles: []string{"/static/css/form.css"},
+		},
+		Details: detailsUGSearch{
+			AllUgs:        allUgs,
 		},
 		Menu: "accueil",
 	}

@@ -2,6 +2,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- check config paths:logiciel-foncier
+
 - Compléter recap ug
 
 - sauvegarde des données - tester si config pas bonne ou pas remplie
@@ -28,11 +30,6 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - ré-écrire model.GetUGsFromLieudit() avec jointures (?)
 
-- js : possible de mettre en commun, entre chautre et bspied
-    getActeursPossibles() => attention à url, parfois se termine par "fermier"
-    getLDPossibles()
-    checkLD()
-
 - revoir les fonctions String() de transport, rangement, chargement, livraison :
 Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 + spécifier le nom dans le cdc
@@ -56,10 +53,6 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 - Faire en sorte que les acteurs BDL et GFA ne soient pas supprimables ?
 - (a *Acteur) GetActivitesByDate et GetAffactureActivitesByDate() : trier par date
 
-- js : faire des promesses pour remplacer async=true
-- js : remplacer partout var par let ou const qd c'est possible
-- js : dans form bspied, initialize() : remplacer setTimeout() par une promesse
-- js : getActeursPossibles() et getLDPossibles() peuvent être factorisés
 - js : factoriser code de calcul de id acteur dans validateForm()
 - Autocomplete LD : bug lorsqu'il y a une apostrophe
 - trier alpha autocomplete sur nom acteur

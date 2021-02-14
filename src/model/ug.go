@@ -10,6 +10,7 @@ package model
 import (
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"bdl.local/bdl/generic/tiglib"
@@ -95,12 +96,27 @@ func GetUGFull(db *sqlx.DB, id int) (*UG, error) {
 	return ug, nil
 }
 
-// ************************ Get pour ajax *********************************
+// Renvoie une UG à partir de son code, ou nil si aucune UG ne correspond au code
+// Ne contient que les champs de la table ug.
+// Les autres champs ne sont pas remplis.
+// Utilisé par ajax
+func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
+	ug := UG{}
+	query := "select * from ug where code=$1"
+	err := db.Get(&ug, query, code)
+	if err != nil {
+		return nil, nil
+	}
+	return &ug, nil
+}
+
+// ************************ Get many *********************************
 
 // Renvoie des UGs à partir d'un lieu-dit.
 // Utilise les parcelles pour faire le lien
 // Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
+// Utilisé par ajax
 func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) ([]*UG, error) {
 	ugs := []*UG{}
 	// parcelles
@@ -134,23 +150,11 @@ func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) ([]*UG, error) {
 	return ugs, nil
 }
 
-// Renvoie une UG à partir de son code, ou nil si aucune UG ne correspond au code
-// Ne contient que les champs de la table ug.
-// Les autres champs ne sont pas remplis.
-func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
-	ug := UG{}
-	query := "select * from ug where code=$1"
-	err := db.Get(&ug, query, code)
-	if err != nil {
-		return nil, nil
-	}
-	return &ug, nil
-}
-
 // Renvoie des UGs à partir d'un fermier.
 // Utilise les parcelles pour faire le lien
 // Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
+// Utilisé par ajax
 func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
 	ugs := []*UG{}
 	query := `
@@ -166,6 +170,90 @@ func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
 		return ugs, werr.Wrapf(db.Select(&ugs, query, idFermier), "Erreur query : "+query)
 	}
 	return ugs, nil
+}
+
+// Renvoie les ugs triées par code (nombre romain) et par numéro au sein d'un code (nombres arabes)
+// en respectant l'ordre des chiffres romains et arabes.
+func GetUGsSortedByCode(db *sqlx.DB) ([]*UG, error) {
+    romans := []string {
+        "I",
+        "II",
+        "III",
+        "IV",
+        "V",
+        "VI",
+        "VII",
+        "VIII",
+        "IX",
+        "X",
+        "XI",
+        "XII",
+        "XIII",
+        "XIV",
+        "XV",
+        "XVI",
+        "XVII",
+        "XVIII",
+        "XIX",
+    }
+    res := []*UG{}
+	query := `select * from ug`
+	err := db.Select(&res, query)
+    sort.Slice(res, func(i, j int) bool {
+        ug1 := res[i]
+        ug2 := res[j]
+        code1 := strings.Replace(ug1.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
+        tmp1 := strings.Split(code1, "-")
+        code2 := strings.Replace(ug2.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
+        tmp2 := strings.Split(code2, "-")
+        // teste chiffres romains
+        idx1 := tiglib.ArraySearchString(romans, tmp1[0])
+        idx2 := tiglib.ArraySearchString(romans, tmp2[0])
+        if idx1 < idx2 {
+            return true
+        }
+        if idx1 > idx2 {
+            return false
+        }
+        // idx1 = idx2 - chiffres romains identiques
+        n1, _ := strconv.Atoi(tmp1[1])
+        n2, _ := strconv.Atoi(tmp2[1])
+        return n1 < n2
+    })
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query : "+query)
+	}
+    return res, err
+}
+
+// Renvoie les ugs triées par code (nombre romain) et par numéro au sein d'un code (nombres arabes)
+// en respectant l'ordre des chiffres romains et arabes.
+// Renvoie un tableau de tableaux d'UGs dont le code commence par le même nombre romain.
+// res[0] : ugs avec code commençant par I-
+// res[1] : ugs avec code commençant par II-
+// etc.
+func GetUGsSortedByCodeAndSeparated(db *sqlx.DB) ([][]*UG, error) {
+    res := [][]*UG{}
+    ugs, err := GetUGsSortedByCode(db)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur appel GetUGsSortedByCode()")
+	}
+    curRoman := "I"
+    cur := []*UG{}
+    for _, ug := range(ugs){
+        code := strings.Replace(ug.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
+	    roman := ug.Code[: strings.Index(code, "-")]
+	    if roman == curRoman {
+	        cur = append(cur, ug)
+	    } else {
+	        // nombre romain différent
+            curRoman = roman
+            res = append(res, cur)
+            cur = []*UG{}
+	    }
+	}
+    res = append(res, cur)
+    return res, err
 }
 
 // ************************** Compute *******************************

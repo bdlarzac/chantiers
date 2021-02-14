@@ -16,6 +16,19 @@ Recherche UG par code
 
 </form>
 
+<div class="big4 bold padding-top padding-left">Accès direct</div>
+
+<div class="">
+{{ range $ugs := .Details.AllUgs }}
+    <div class="float-left padding-left">
+    {{ range $ug := $ugs}}
+        <div><a href="/ug/{{$ug.Id}}">{{$ug.Code}}</a></div>
+    {{end}}
+    </div>
+{{end}}
+
+</div>
+
 
 <script>
 
