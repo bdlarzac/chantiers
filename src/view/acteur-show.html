@@ -70,13 +70,12 @@
         <div>Actif</div>
         <div>{{if .Actif}}Oui{{else}}Non{{end}}</div>
         
+        <div>Notes</div>
+        <div>{{.Notes | nl2br}}</div>
+    
 </div> <!-- end class="grid2-pres" -->
 
 <hr>
-<div class="grid2-pres">
-    <div>Notes</div>
-    <div>{{.Notes | nl2br}}</div>
-</div>
 
 {{end}}
 </div>
