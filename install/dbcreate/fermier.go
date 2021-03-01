@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-08 08:45:03+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
-package initialize
+package dbcreate
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func FillFermier(versionSCTL string) {
 	
 	ctx := ctxt.NewContext()
 	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Exploita.csv")
 	records, err := tiglib.CsvMap(filename, ';')
 
@@ -97,7 +97,7 @@ func FillLiensParcelleFermier(versionSCTL string) {
 	
 	ctx := ctxt.NewContext()
 	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Subdivision.csv")
 
 	records, err := tiglib.CsvMap(filename, ';') // N = 2844

@@ -7,7 +7,7 @@
     @history    2019-12-05 16:54:53+01:00, Thierry Graff : Creation
     @history    2020-09-29 14:46:44+02:00, Thierry Graff : Change de fixture à initialize
 ********************************************************************************/
-package initialize
+package dbcreate
 
 import (
 	"bdl.local/bdl/ctxt"

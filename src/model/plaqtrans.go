@@ -12,7 +12,6 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"time"
-"fmt"	 
 )
 
 type PlaqTrans struct {
@@ -24,6 +23,7 @@ type PlaqTrans struct {
 	IdProprioutil  int `db:"id_proprioutil"`
 	DateTrans      time.Time
 	Qte            float64
+	PourcentPerte  float64 // différence bois sec / bois vert
 	TypeCout       string // G (global) C (camion) ou T (tracteur)
 	// Coût global
 	GlPrix    float64 // prix total
@@ -105,13 +105,15 @@ func (pt *PlaqTrans) ComputeProprioutil(db *sqlx.DB) error {
 // ************************** CRUD *******************************
 
 func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
-fmt.Printf("%+v\n",pt)
 	// Mise à jour du stock du tas
 	err := pt.ComputeTas(db)
 	if err != nil {
 		return 0, err
 	}
-	err = pt.Tas.ModifierStock(db, pt.Qte) // Ajoute plaquettes au tas
+	// Ajoute plaquettes au tas
+	// Attention, transport en map vert et tas en map sec
+	// => qté pour le tas = qté du transport - pourcentage de perte
+	err = pt.Tas.ModifierStock(db, pt.Qte)
 	if err != nil {
 		return 0, err
 	}

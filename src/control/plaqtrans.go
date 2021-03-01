@@ -36,6 +36,7 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
+		pt.PourcentPerte = ctx.Config.PourcentagePerte
 		_, err = model.InsertPlaqTrans(ctx.DB, pt) // gère la modif du stock du tas
 		if err != nil {
 			//return err

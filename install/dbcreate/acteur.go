@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-08 08:45:03+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
-package initialize
+package dbcreate
 
 import (
 	"fmt"
@@ -151,7 +151,7 @@ func addActeurGFA() {
 func AddActeursFromCSV() {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"
-	dirCsv := getPrivateDir()
+	dirCsv := GetPrivateDir()
 	filename := path.Join(dirCsv, csvfile)
 	// conversion utf8
     file, err := os.Open(filename)

@@ -3,7 +3,7 @@
     @license    GPL
     @history    2019-09-26 16:04:00+02:00, Thierry Graff : Creation
 ********************************************************************************/
-package initialize
+package dbcreate
 
 import (
 	"bdl.local/bdl/ctxt"
@@ -32,7 +32,7 @@ func CreateTable(table string) {
 		}
 	}()
 
-	dirSql := getCreateTableDir()
+	dirSql := GetCreateTableDir()
 
 	filename := path.Join(dirSql, table) + ".sql"
 	tmp, err := ioutil.ReadFile(filename)

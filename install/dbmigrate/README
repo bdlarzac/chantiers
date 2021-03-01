@@ -1,0 +1,10 @@
+
+dbmigrate/ contient les migrations (changements dans la structure de la base)
+
+Le nom du fichier .go contenant une migration commence par sa date au format YYYY-MMM-DD (pour ordre alphabétique)
+Le nom de la fonction contenant la migration doit être du type Migrate_YYYY_MM_DD (pour être identifiée comme migration possible par install-bdl.go)
+ex: Migrate_2021_03_01()
+
+Pour ajouter une migration, rajouter un case dans le switch de la fonction handleMigration() dans install-bdl.go
+
+

@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-07 07:54:17+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
-package initialize
+package dbcreate
 
 import (
 	"bdl.local/bdl/ctxt"
@@ -28,7 +28,7 @@ func FillParcelle(versionSCTL string) {
 	
 	ctx := ctxt.NewContext()
 	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, csvname)
 
 	records, err := tiglib.CsvMap(filename, ';')
@@ -49,7 +49,7 @@ func FillParcelle(versionSCTL string) {
 	// 2 propriétaires possibles : SCTL ou GFA
 	// ATTENTION : les ids de SCTL et GFA sont récupérés à partir du nom
 	// Si le nom change, ce code plante
-	// Voir appli/install/initialize/acteur.go, AddActeurBDL() et AddActeurSCTL()
+	// Voir appli/install/dbcreate/acteur.go, AddActeurBDL() et AddActeurSCTL()
 	var idSCTL, idGFA int // colonne id
 	query := "select id from acteur where nom=$1"
 	err = db.QueryRow(query, "SCTL").Scan(&idSCTL)
@@ -94,7 +94,7 @@ func FillLiensParcelleLieudit(versionSCTL string) {
 	
 	ctx := ctxt.NewContext()
 	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Parcelle.csv")
 	
 	// pour lire le csv, on ne peut pas utiliser du code générique tiglib.CsvMap()

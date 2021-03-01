@@ -2,7 +2,7 @@
 Code servant à initialiser la base de prod.
 Pas utilisé en fonctionnement normal
 
-Remplit avec des valeurs de prod.
+Initialise la base avec des valeurs de prod.
 Pour des valeurs de test, voir rep fixtures/
 
 Va chercher des données à différents endroits (voir paths.go)

@@ -1,8 +1,16 @@
 /******************************************************************************
     Initialisation de l'environnement nécessaire au fonctionnement de l'application.
+    - Installation de la base (package dbcreate)
+    - Modifications de la base (package dbmigrate)
+    
     Code pas utilisé en fonctionnement normal.
     
-    L'option -s est utilisée en lien avec la config (dev / sctl-data).
+    Utilisation :
+    -i : install
+    -f : fixture
+    -m : migrate
+    
+    -s est utilisée en lien avec la config (dev / sctl-data).
     Correspond à un sous-répertoire de la valeur de la config.
     Ex: Si la config contient
     dev:
@@ -11,7 +19,7 @@
     Alors les exports de la base Access doivent se trouver dans /path/to/db-sctl/csv-2020-12-23
     Ces exports sont des fichiers csv obtenus avec mdb-export
     
-    Ex de commande à exécuter depuis /path/to/db-sctl :
+    Ex de commande mdb-export à exécuter depuis /path/to/db-sctl :
     mdb-export -d ';' -Q Sctl-Gfa-2020-02-27.mdb LieuDit > csv-2020-03-06/LieuDit.csv
     
     Pour installer mdb-export :
@@ -24,30 +32,39 @@
 package main
 
 import (
+	"bdl.local/bdl/ctxt"
 	"bdl.local/install/fixture"
-	"bdl.local/install/initialize"
+	"bdl.local/install/dbcreate"
+	"bdl.local/install/dbmigrate"
+	"bdl.local/bdl/generic/tiglib"
 	"flag"
 	"fmt"
 	"strings"
+	"os"
+	"os/exec"
+	"regexp"
 )
 
 var errorMsg string
-var flagInstall, flagFixture, flagSctlDataSource *string
+var flagInstall, flagFixture, flagMigrate, flagSctlDataSource *string
+
+var possibleMigrations []string
 
 // *********************************************************
 // toujours appelé par go au chargement du package
 func init() {
     errorMsg = "COMMANDE INVALIDE\n"
-    errorMsg += "Utiliser avec -i (install) ou -f (fixture)\n"
+    errorMsg += "Utiliser avec -i (install) ou -m (migration) ou -f (fixture)\n"
     errorMsg += "Certaines commandes ont aussi besoin de -s (source des données SCTL) :\n"
     errorMsg += "  -i fermier\n"
     errorMsg += "  -i commune\n"
     errorMsg += "  -i parcelle\n"
     errorMsg += "  -i all\n"
     errorMsg += "Exemples :\n"
+    errorMsg += "  go run install-bdl.go -i all -s 2020-12-16\n"
     errorMsg += "  go run install-bdl.go -i chantier\n"
     errorMsg += "  go run install-bdl.go -f stockage\n"
-    errorMsg += "  go run install-bdl.go -i commune -s 2020-12-23\n"
+    errorMsg += "  go run install-bdl.go -i commune -s 2020-12-16\n"
     
 	possibleInstall := []string{
 		"all",
@@ -74,10 +91,16 @@ func init() {
     strFixture := strings.Join(possibleFixture, ", ")
 	errorMsg += strFixture + "\n"
 	
+	possibleMigrations = computeMigrations()
+    errorMsg += "Valeurs possibles pour -m :\n  "
+    strMigrate := strings.Join(possibleMigrations, ", ")
+	errorMsg += strMigrate + "\n"
+	
 	strSctlDataSource := "Répertoire contenant les dumps SCTL"
 	
 	flagInstall = flag.String("i", "", strInstall)
 	flagFixture = flag.String("f", "", strFixture)
+	flagMigrate = flag.String("m", "", strMigrate)
 	flagSctlDataSource = flag.String("s", "", strSctlDataSource)
 }
 
@@ -85,25 +108,41 @@ func init() {
 func main() {
 
 	flag.Parse()
-
-	if (*flagInstall == "" && *flagFixture == "") || (*flagInstall != "" && *flagFixture != "") {
+	
+	// check que un seul flag est utilisé
+	i := (*flagInstall != "")
+	f := (*flagFixture != "")
+	m := (*flagMigrate != "")
+    // si aucun flag ou 2 flags sont utilisés
+	if ( (!i && !f && !m) || (i && f) || (i && m) || (f && m) ) {
 		fmt.Println(errorMsg)
 		return
 	}
 	
 	// options ayant besoin de la version de la base SCTL utilisée
-	if *flagInstall == "fermier" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all" {
+	needFlagS := *flagInstall == "fermier" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all"
+	if needFlagS {
 	    if *flagSctlDataSource == "" {
             fmt.Println(errorMsg)
             fmt.Println("PARAMETRE MANQUANT : -s")
             return
 	    }
+	    // check que le répertoire existe
+        ctx := ctxt.NewContext()
+        dirCsv := dbcreate.GetSCTLDataDir(ctx, *flagSctlDataSource)
+        _, err := os.Stat(dirCsv)
+        if os.IsNotExist(err) {
+            fmt.Println("REPERTOIRE SCTL INEXISTANT :", dirCsv)
+            return
+        }
 	}
 	
 	if *flagInstall != "" {
 		handleInstall()
 	} else if *flagFixture != "" {
 		handleFixture()
+	} else if *flagMigrate != "" {
+		handleMigration()
 	}
 
 }
@@ -146,80 +185,80 @@ func handleInstall() {
 	}
 }
 func installTypes() {
-	initialize.CreateTable("typessence")
-	initialize.CreateTable("typexploitation")
-	initialize.CreateTable("typeop")
-	initialize.CreateTable("typeunite")
-	initialize.CreateTable("typevalorisation")
-	initialize.CreateTable("typegranulo")
-	initialize.CreateTable("typestockfrais")
+	dbcreate.CreateTable("typessence")
+	dbcreate.CreateTable("typexploitation")
+	dbcreate.CreateTable("typeop")
+	dbcreate.CreateTable("typeunite")
+	dbcreate.CreateTable("typevalorisation")
+	dbcreate.CreateTable("typegranulo")
+	dbcreate.CreateTable("typestockfrais")
 }
 func installCommune() {
-	initialize.CreateTable("commune")
-	initialize.CreateTable("lieudit")
-	initialize.CreateTable("commune_lieudit")
-	initialize.FillCommune()
-	initialize.FillLieudit(*flagSctlDataSource)
-	initialize.FillLiensCommuneLieudit(*flagSctlDataSource)
-	initialize.CreateTable("lieudit_mot")
-	initialize.FillLieuditMot()
+	dbcreate.CreateTable("commune")
+	dbcreate.CreateTable("lieudit")
+	dbcreate.CreateTable("commune_lieudit")
+	dbcreate.FillCommune()
+	dbcreate.FillLieudit(*flagSctlDataSource)
+	dbcreate.FillLiensCommuneLieudit(*flagSctlDataSource)
+	dbcreate.CreateTable("lieudit_mot")
+	dbcreate.FillLieuditMot()
 }
 func installActeur() {
-	initialize.CreateTable("acteur")
-	initialize.AddActeursInitiaux()
-	initialize.AddActeursFromCSV()
+	dbcreate.CreateTable("acteur")
+	dbcreate.AddActeursInitiaux()
+	dbcreate.AddActeursFromCSV()
 }
 func installFermier(){
-	initialize.CreateTable("fermier")
-	initialize.FillFermier(*flagSctlDataSource)
+	dbcreate.CreateTable("fermier")
+	dbcreate.FillFermier(*flagSctlDataSource)
 }
 func installParcelle() {
-	initialize.CreateTable("parcelle")
-	initialize.CreateTable("parcelle_lieudit")
-	initialize.CreateTable("parcelle_fermier")
-	initialize.FillParcelle(*flagSctlDataSource)
-	initialize.FillLiensParcelleFermier(*flagSctlDataSource)
-	initialize.FillLiensParcelleLieudit(*flagSctlDataSource)
+	dbcreate.CreateTable("parcelle")
+	dbcreate.CreateTable("parcelle_lieudit")
+	dbcreate.CreateTable("parcelle_fermier")
+	dbcreate.FillParcelle(*flagSctlDataSource)
+	dbcreate.FillLiensParcelleFermier(*flagSctlDataSource)
+	dbcreate.FillLiensParcelleLieudit(*flagSctlDataSource)
 }
 func installUG() {
-	initialize.CreateTable("ug")
-	initialize.CreateTable("parcelle_ug")
-	initialize.FillUG()
-	initialize.FillLiensParcelleUG()
+	dbcreate.CreateTable("ug")
+	dbcreate.CreateTable("parcelle_ug")
+	dbcreate.FillUG()
+	dbcreate.FillLiensParcelleUG()
 }
 func installStockage() {
-	initialize.CreateTable("stockage")
-	initialize.CreateTable("stockfrais")
-	initialize.CreateTable("plaq")
-	initialize.CreateTable("tas")
-	initialize.CreateTable("humid")
-	initialize.CreateTable("humid_acteur")
-	initialize.FillHangarsInitiaux()
+	dbcreate.CreateTable("stockage")
+	dbcreate.CreateTable("stockfrais")
+	dbcreate.CreateTable("plaq")
+	dbcreate.CreateTable("tas")
+	dbcreate.CreateTable("humid")
+	dbcreate.CreateTable("humid_acteur")
+	dbcreate.FillHangarsInitiaux()
 }
 func installChantier() {
     // liens pour plaq, bspied, chautre
-	initialize.CreateTable("chantier_ug")
-	initialize.CreateTable("chantier_fermier")
-	initialize.CreateTable("chantier_lieudit")
+	dbcreate.CreateTable("chantier_ug")
+	dbcreate.CreateTable("chantier_fermier")
+	dbcreate.CreateTable("chantier_lieudit")
     // plaquettes
-	initialize.CreateTable("plaqop")
-	initialize.CreateTable("plaqtrans")
-	initialize.CreateTable("plaqrange")
+	dbcreate.CreateTable("plaqop")
+	dbcreate.CreateTable("plaqtrans")
+	dbcreate.CreateTable("plaqrange")
 	// bois sur pied
-	initialize.CreateTable("bspied")
+	dbcreate.CreateTable("bspied")
 	// autres valorisations
-	initialize.CreateTable("chautre")
+	dbcreate.CreateTable("chautre")
 	// chauffage fermier
-	initialize.CreateTable("chaufer")
-	initialize.CreateTable("chaufer_parcelle")
+	dbcreate.CreateTable("chaufer")
+	dbcreate.CreateTable("chaufer_parcelle")
 }
 func installVente() {
-	initialize.CreateTable("venteplaq")
-	initialize.CreateTable("ventelivre")
-	initialize.CreateTable("ventecharge")
+	dbcreate.CreateTable("venteplaq")
+	dbcreate.CreateTable("ventelivre")
+	dbcreate.CreateTable("ventecharge")
 }
 func installRecent() {
-	initialize.CreateTable("recent")
+	dbcreate.CreateTable("recent")
 }
 
 // *********************************************************
@@ -231,4 +270,35 @@ func handleFixture() {
 	} else {
 		fmt.Println(errorMsg)
 	}
+}
+
+// *********************************************************
+func handleMigration() {
+    // check que la migration existe
+    if !tiglib.InArrayString(*flagMigrate, possibleMigrations){
+        fmt.Println("MIGRATION INEXISTANTE : " + *flagMigrate)
+        fmt.Println("Migrations possibles : " + strings.Join(possibleMigrations, ", "))
+    }
+    switch(*flagMigrate){
+    case "Migrate_2021_03_01":
+        dbmigrate.Migrate_2021_03_01()
+    }
+}
+
+
+// *********************************************************
+// Renvoie la liste des migrations possibles 
+// = liste des fonctions du package dbmigrate commençant par Migrate_
+// Ça n'a pas l'air possible avec reflect => bidouille avec regex
+func computeMigrations() (res []string) {
+    out, err := exec.Command("grep", "-rn", "func Migrate_", "/home/thierry/dev/jobs/bdl/appli/install/dbmigrate").Output()
+    if err != nil {
+        panic(err)
+    }
+    r := regexp.MustCompile(`func (Migrate_.*?)\s*\(`)
+    for _, line := range(strings.Split(strings.TrimSpace(string(out)), "\n")) {
+        m := r.FindStringSubmatch(line)
+        res = append(res, m[1])
+    }
+    return res
 }

@@ -22,7 +22,10 @@
         <input type="date" name="datetrans" id="datetrans" value="{{.DateTrans | dateIso}}" class="width20">
         
         <label for="qte">Quantité</label>
-        <div><input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5"> maps (secs)</div>
+        <div>
+            <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5">
+            maps <a title="Quantité brute sans déduire le coefficient de perte lié au séchage">(bois vert)</a>
+        </div>
         
         <!-- ****************** Coût global ******************* -->
         <div class="big5 bold">

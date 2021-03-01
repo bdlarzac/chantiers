@@ -5,7 +5,7 @@
     @license    GPL
     @history    2019-11-05 05:50:37+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
-package initialize
+package dbcreate
                                                                                                                                  
 import (
 	"path"
@@ -13,31 +13,31 @@ import (
 	"bdl.local/bdl/ctxt"
 )
 
-// getCreateTableDir renvoie le chemin absolu vers le répertoire contenant
+// GetCreateTableDir renvoie le chemin absolu vers le répertoire contenant
 // les scripts de création des tables
-func getCreateTableDir() string {
+func GetCreateTableDir() string {
 	_, filename, _, _ := runtime.Caller(0) // path to current go file
 	return path.Join(path.Dir(path.Dir(filename)), "create-tables")
 }
 
-// getDataDir renvoie le chemin absolu vers le répertoire contenant
+// GetDataDir renvoie le chemin absolu vers le répertoire contenant
 // des fichiers csv pour remplir certaines tables
 // (tables "fixes", qui ne vont plus évoluer après remplissage initial).
-func getDataDir() string {
+func GetDataDir() string {
 	_, filename, _, _ := runtime.Caller(0) // path to current go file
 	return path.Join(path.Dir(path.Dir(filename)), "data")
 }
 
-// getPrivateDir renvoie le chemin absolu vers le répertoire contenant
+// GetPrivateDir renvoie le chemin absolu vers le répertoire contenant
 // des fichiers contenant des données personnelles
-func getPrivateDir() string {
+func GetPrivateDir() string {
 	_, filename, _, _ := runtime.Caller(0) // path to current go file
 	return path.Join(path.Dir(path.Dir(filename)), "data-private")
 }
 
-// getSCTLDataDir renvoie le chemin absolu vers le répertoire contenant
+// GetSCTLDataDir renvoie le chemin absolu vers le répertoire contenant
 // des exports de la base SCTL
-func getSCTLDataDir(ctx *ctxt.Context, versionSCTL string) string {
+func GetSCTLDataDir(ctx *ctxt.Context, versionSCTL string) string {
     basedir := ctx.Config.Dev.SCTLData
 	return path.Join(basedir, "csv-" + versionSCTL)
 }

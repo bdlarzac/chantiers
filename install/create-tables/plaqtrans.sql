@@ -9,6 +9,7 @@ create table plaqtrans (
     id_proprioutil          int not null references acteur(id),
     datetrans               date not null,
     qte                     numeric not null,
+--    pourcentperte           numeric not null, -- différence bois sec - bois vert
     typecout                char(1) not null, -- G (global) ou C (camion) ou T (tracteur+benne)
     -- coût global
     glprix                  numeric,

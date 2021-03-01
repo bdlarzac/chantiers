@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-14 10:08:26+01:00, Thierry Graff : Creation
 ********************************************************************************/
-package initialize
+package dbcreate
 
 import (
 	"bdl.local/bdl/ctxt"
@@ -23,7 +23,7 @@ func FillUG() {
 	table := "ug"
 	csvname := "ug.csv"
 	fmt.Println("Remplit table " + table + " à partir de " + csvname)
-	dirCsv := getDataDir()
+	dirCsv := GetDataDir()
 	filename := path.Join(dirCsv, csvname)
 
 	records, err := tiglib.CsvMap(filename, ',')
@@ -93,7 +93,7 @@ func FillUG() {
 func FillLiensParcelleUG() {
 	table := "parcelle_ug"
 	fmt.Println("Remplit table " + table + " à partir de ug.csv")
-	dirCsv := getDataDir()
+	dirCsv := GetDataDir()
 	filename := path.Join(dirCsv, "ug.csv")
 
 	records, err := tiglib.CsvMap(filename, ',')

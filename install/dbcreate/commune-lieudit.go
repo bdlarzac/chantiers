@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-05 06:06:04+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
-package initialize
+package dbcreate
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ import (
 // commune.csv est versionné (car modifié, ajout de colonne nom_court)
 func FillCommune() {
 	fmt.Println("Remplit table commune à partir de commune.csv")
-	dirCsv := getDataDir()
+	dirCsv := GetDataDir()
 	filename := path.Join(dirCsv, "commune.csv")
 	records, err := tiglib.CsvMap(filename, ';')
 	// insert db
@@ -48,7 +48,7 @@ func FillLieudit(versionSCTL string) {
 	
 	ctx := ctxt.NewContext()
 	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "LieuDit.csv")
 	records, err := tiglib.CsvMap(filename, ';')
 	if err != nil {
@@ -73,7 +73,7 @@ func FillLiensCommuneLieudit(versionSCTL string) {
 
 	ctx := ctxt.NewContext()
 	
-	dirCsv := getSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "SubdivCadastre.csv")
 	//
 	records, err := tiglib.CsvMap(filename, ';') // N = 2844 pour base 2018
