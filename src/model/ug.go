@@ -27,6 +27,7 @@ type UG struct {
 	TypePeuplement    string `db:"type_peuplement"`
 	// pas stocké en base
 	Parcelles        []*Parcelle
+	Fermiers         []*Fermier
 	Recaps           map[string]RecapUG
 	SortedRecapYears []string // années contenant de l'activité prise en compte dans Recaps
 }
@@ -42,11 +43,13 @@ type UGActivite struct {
 type RecapUG struct {
 	Annee                  string // YYYY
 	Plaquettes             LigneRecapUG
+	ChauffageFermier       LigneRecapUG
 	Chauffage              LigneRecapUG
 	PateAPapier            LigneRecapUG
 	Palette                LigneRecapUG
+	Piquets                LigneRecapUG
 	BoisOeuvre             LigneRecapUG
-	PlaquettesEtBoisOeuvre LigneRecapUG
+	BoisSurPied            LigneRecapUG
 }
 
 type LigneRecapUG struct {
@@ -92,6 +95,10 @@ func GetUGFull(db *sqlx.DB, id int) (*UG, error) {
 		if err != nil {
 			return ug, werr.Wrapf(err, "Erreur appel Parcelle.ComputeLieudits()")
 		}
+	}
+	err = ug.ComputeFermiers(db)
+	if err != nil {
+		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
 	}
 	return ug, nil
 }
@@ -270,13 +277,33 @@ func (ug *UG) ComputeParcelles(db *sqlx.DB) error {
 	return db.Select(&ug.Parcelles, query, ug.Id)
 }
 
+func (ug *UG) ComputeFermiers(db *sqlx.DB) error {
+	if len(ug.Fermiers) != 0 {
+		return nil // déjà calculé
+	}
+	query := `
+        select * from fermier where id in(
+            select id_fermier from parcelle_fermier where id_parcelle in(
+                select id_parcelle from parcelle_ug where id_ug=$1
+            )
+        ) order by nom`
+	err := db.Select(&ug.Fermiers, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+
+// ************************** Recap *******************************
+
 // Pas inclus dans GetUGFull()
 func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 	var query string
 	var err error
 	ug.Recaps = make(map[string]RecapUG)
 	//
-	// chantiers plaquettes
+	// Chantiers plaquettes
 	//
 	ids := []int{}
 	query = `select id from plaq where id in(
@@ -296,10 +323,33 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
 		myrecap.Plaquettes.Quantite += chantier.Volume
 		myrecap.Plaquettes.Superficie += chantier.Surface
-		myrecap.PlaquettesEtBoisOeuvre.Quantite += chantier.Volume
-		myrecap.PlaquettesEtBoisOeuvre.Superficie += chantier.Surface
 		// TODO myrecap.Plaquettes.CoutExploitation
 		// TODO myrecap.Plaquettes.Benefice
+		ug.Recaps[y] = myrecap
+	}
+	//
+	// Chantiers chauffage fermier
+	//
+	ids = []int{}
+	query = `select id from chaufer where id in(
+	    select id_chantier from chantier_ug where type_chantier='chaufer' and id_ug =$1
+    )`
+	err = db.Select(&ids, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, idChantier := range ids {
+		chantier, err := GetChauferFull(db, idChantier)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel GetChauferFull()")
+		}
+		y := strconv.Itoa(chantier.DateChantier.Year())
+		myrecap := ug.Recaps[y] // à cause de pb "cannot assign"
+		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
+		myrecap.ChauffageFermier.Quantite += chantier.Volume
+		// TODO myrecap.ChauffageFermier.Superficie
+		myrecap.ChauffageFermier.CoutExploitation = 0
+		myrecap.ChauffageFermier.Benefice = 0
 		ug.Recaps[y] = myrecap
 	}
 	//
@@ -324,7 +374,6 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		switch chantier.TypeValo {
 		case "BO":
 			myrecap.BoisOeuvre.Quantite += chantier.Volume
-			myrecap.PlaquettesEtBoisOeuvre.Quantite += chantier.Volume
 		case "CH":
 			myrecap.Chauffage.Quantite += chantier.Volume
 		case "PL":
