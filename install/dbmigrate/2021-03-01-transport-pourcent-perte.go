@@ -21,5 +21,5 @@ func Migrate_2021_03_01() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("OK, effectué " + query)
+	fmt.Println("Migration effectuée : 2021-03-01-transport-pourcent-perte")
 }

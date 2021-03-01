@@ -113,7 +113,7 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
 	// Ajoute plaquettes au tas
 	// Attention, transport en map vert et tas en map sec
 	// => qté pour le tas = qté du transport - pourcentage de perte
-	err = pt.Tas.ModifierStock(db, pt.Qte)
+	err = pt.Tas.ModifierStock(db, Vert2sec(pt.Qte, pt.PourcentPerte))
 	if err != nil {
 		return 0, err
 	}
@@ -125,6 +125,7 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
         id_proprioutil,
         datetrans,
         qte,
+        pourcentperte,
         typecout,
         glprix,
         gltva,
@@ -143,7 +144,7 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
         tbtva,
         tbdatepay,
         notes)
-        values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25) returning id`
+        values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26) returning id`
 	id := int(0)
 	err = db.QueryRow(
 		query,
@@ -154,6 +155,7 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
 		pt.IdProprioutil,
 		pt.DateTrans,
 		pt.Qte,
+		pt.PourcentPerte,
 		pt.TypeCout,
 		pt.GlPrix,
 		pt.GlTVA,
@@ -189,7 +191,7 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 	if err != nil {
 		return err
 	}
-	err = ptAvant.Tas.ModifierStock(db, -ptAvant.Qte) // Retire des plaquettes au tas
+	err = ptAvant.Tas.ModifierStock(db, -Vert2sec(ptAvant.Qte, ptAvant.PourcentPerte)) // Retire des plaquettes au tas
 	if err != nil {
 		return err
 	}
@@ -198,25 +200,10 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 	if err != nil {
 		return err
 	}
-	err = pt.Tas.ModifierStock(db, pt.Qte) // Ajoute des plaquettes au tas
+	err = pt.Tas.ModifierStock(db, Vert2sec(pt.Qte, pt.PourcentPerte)) // Ajoute des plaquettes au tas
 	if err != nil {
 		return err
 	}
-	// clés étrangères pouvant être nulles
-	/*
-		var idTransporteur interface{}
-		if pt.IdTransporteur != 0{
-		    idTransporteur = pt.IdTransporteur
-		}
-		var idConducteur interface{}
-		if pt.IdConducteur != 0{
-		    idConducteur = pt.IdConducteur
-		}
-		var idProprioutil interface{}
-		if pt.IdProprioutil != 0{
-		    idProprioutil = pt.IdProprioutil
-		}
-	*/
 	//
 	query := `update plaqtrans set(
         id_chantier,
@@ -226,6 +213,7 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
         id_proprioutil,
         datetrans,
         qte,
+        pourcentperte,
         typecout,
         glprix,
         gltva,
@@ -244,7 +232,7 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
         tbtva,
         tbdatepay,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25) where id=$26`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26) where id=$27`
 	_, err = db.Exec(
 		query,
 		pt.IdChantier,
@@ -254,6 +242,7 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 		pt.IdProprioutil,
 		pt.DateTrans,
 		pt.Qte,
+		pt.PourcentPerte,
 		pt.TypeCout,
 		pt.GlPrix,
 		pt.GlTVA,
@@ -290,7 +279,7 @@ func DeletePlaqTrans(db *sqlx.DB, id int) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ComputeTas()")
 	}
-	err = pt.Tas.ModifierStock(db, -pt.Qte) // Retire des plaquettes au tas
+	err = pt.Tas.ModifierStock(db, -Vert2sec(pt.Qte, pt.PourcentPerte)) // Retire des plaquettes au tas
 	if err != nil {
 		return err
 	}

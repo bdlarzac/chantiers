@@ -117,6 +117,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		pt.PourcentPerte = ctx.Config.PourcentagePerte
 		err = model.UpdatePlaqTrans(ctx.DB, pt) // gère la modif du stock du tas
 		if err != nil {
 			return err

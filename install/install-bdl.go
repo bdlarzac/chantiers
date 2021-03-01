@@ -142,7 +142,7 @@ func main() {
 	} else if *flagFixture != "" {
 		handleFixture()
 	} else if *flagMigrate != "" {
-		handleMigration()
+		handleMigration(*flagMigrate)
 	}
 
 }
@@ -160,6 +160,10 @@ func handleInstall() {
 		installChantier()
 		installVente()
 		installRecent()
+		for _, migration := range(possibleMigrations){
+fmt.Printf("possibleMigrations %+v\n", migration)
+		    handleMigration(migration)
+		}
 	} else if *flagInstall == "type" {
 		installTypes()
 	} else if *flagInstall == "commune" {
@@ -273,13 +277,15 @@ func handleFixture() {
 }
 
 // *********************************************************
-func handleMigration() {
+//  @param migration Nom de la migration = nom de la fonction de dbmigrate à exécuter 
+//                   pour effectuer la migration
+func handleMigration(migration string) {
     // check que la migration existe
-    if !tiglib.InArrayString(*flagMigrate, possibleMigrations){
-        fmt.Println("MIGRATION INEXISTANTE : " + *flagMigrate)
+    if !tiglib.InArrayString(migration, possibleMigrations){
+        fmt.Println("MIGRATION INEXISTANTE : " + migration)
         fmt.Println("Migrations possibles : " + strings.Join(possibleMigrations, ", "))
     }
-    switch(*flagMigrate){
+    switch(migration){
     case "Migrate_2021_03_01":
         dbmigrate.Migrate_2021_03_01()
     }
