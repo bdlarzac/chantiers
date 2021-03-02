@@ -61,7 +61,7 @@ func (vp *VentePlaq) FullString() string {
 	return "Vente " + vp.String()
 }
 
-// ************************** Get *******************************
+// ************************** Get one *******************************
 
 func GetVentePlaq(db *sqlx.DB, id int) (*VentePlaq, error) {
 	vp := &VentePlaq{}
@@ -102,9 +102,12 @@ func GetVentePlaqFull(db *sqlx.DB, id int) (*VentePlaq, error) {
 	return vp, nil
 }
 
+// ************************** Get many *******************************
+
 // Renvoie la liste des années ayant des ventes de plaquettes,
 // triées par ordre chronologique inverse.
-// @param exclude   Année à exclure du résultat
+// @param   exclude   Année à exclure du résultat
+// @return  Liste de string au format YYYY
 func GetVentePlaqDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	res := []string{}
 	list := []time.Time{}
@@ -122,7 +125,7 @@ func GetVentePlaqDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	return res, nil
 }
 
-// Renvoie la liste des chantiers plaquettes pour une année donnée,
+// Renvoie la liste des ventes de plaquettes pour une année donnée,
 // triés par ordre chronologique inverse.
 // Chaque chantier contient les mêmes champs que ceux renvoyés par GetVentePlaqFull()
 func GetVentePlaqsOfYear(db *sqlx.DB, annee string) ([]*VentePlaq, error) {
@@ -144,6 +147,25 @@ func GetVentePlaqsOfYear(db *sqlx.DB, annee string) ([]*VentePlaq, error) {
 			return res, werr.Wrapf(err, "Erreur appel GetVentePlaqFull()")
 		}
 		res = append(res, chantier)
+	}
+	return res, nil
+}
+
+// Renvoie la liste des ventes de plaquettes pour un client donné, situé entre 2 dates,
+// triés par ordre chronologique inverse.
+// Chaque chantier contient les mêmes champs que ceux renvoyés par GetVentePlaqFull()
+func GetVentePlaqsOfClient(db *sqlx.DB, idClient int, dateDebut, dateFin time.Time) ([]*VentePlaq, error) {
+	res := []*VentePlaq{}
+	query := "select * from venteplaq where id_client=$1 and datevente>=$2 and datevente<=$3 order by datevente desc"
+	err := db.Select(&res, query, idClient, dateDebut, dateFin)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, vp := range res {
+		err := vp.ComputeQte(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel vp.ComputeQte()")
+		}
 	}
 	return res, nil
 }

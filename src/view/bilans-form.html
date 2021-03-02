@@ -46,10 +46,10 @@
             </div>
             
             <div class="padding-top">
-                <input type="radio" name="type-bilan" id="clients-plaquettes" value="clients-plaquettes" onclick="changeChoixBilan(this);">
-                <label for="clients-plaquettes">Achats plaquettes par client</label>
+                <input type="radio" name="type-bilan" id="client-plaquettes" value="client-plaquettes" onclick="changeChoixBilan(this);">
+                <label for="client-plaquettes">Achats plaquettes par client</label>
                 <div class="padding-top05 padding-left2">
-                    <select name="liste-clients-plaquettes" id="liste-clients-plaquettes" class="width15">
+                    <select name="liste-client-plaquettes" id="liste-client-plaquettes" class="width15">
                         {{.ClientsPlaquettesOptions}}
                     </select>
                 </div>
@@ -175,7 +175,6 @@ window.addEventListener("load", function(){
 
 // ***************************************
 function initialize(){
-//    document.getElementById("liste-clients-plaquettes").disabled = true;
     // Crée un tableau javascript avec les dates de périodes
     // Besoin pour periodChanged() : il faut mettre dans date-debut / date-fin les dates de la période sélectionnée.
     // Donc faire qqchose du genre :
@@ -195,8 +194,8 @@ function initialize(){
 }
 
 function changeChoixBilan(theRadio){
-    document.getElementById("liste-clients-plaquettes").disabled
-        = (theRadio.value == "clients-plaquettes" ? false : true);
+    document.getElementById("liste-client-plaquettes").disabled
+        = (theRadio.value == "client-plaquettes" ? false : true);
 }
 
 // ***************************************
@@ -229,10 +228,10 @@ function validateForm(){
         msg += "- La date de fin doit se situer après la date de début.\n";
     }
     //
-    if(
-        !document.getElementById("clients-plaquettes").checked
-    ){
-        msg += "- Vous devez choisir un type de bilan.\n";
+    if(document.getElementById("client-plaquettes").checked){
+        if(document.getElementById("CHOOSE_CLIENT").selected == true){
+            msg += "- Pour les achats plaquettes par client,\n  vous devez choisir un client.\n";
+        }
     }
     //
     if(msg != ""){

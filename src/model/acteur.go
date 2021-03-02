@@ -372,7 +372,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetVentePlaq()")
 		}
-		err = vp.ComputeClient(db)
+		err = vp.ComputeClient(db) // besoin de client pour calculer vp.FullString()
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
 		}
