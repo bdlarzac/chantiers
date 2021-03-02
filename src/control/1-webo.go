@@ -151,6 +151,21 @@ func WeboFournisseur(ctx *ctxt.Context) []webo.OptionString {
 	return res
 }
 
+// Renvoie la liste des clients plaquettes
+// dans un format utilisable par webo
+func WeboClientsPlaquettes(ctx *ctxt.Context) []webo.OptionString {
+	res := []webo.OptionString{}
+	clients, err := model.GetClientsPlaquettes(ctx.DB)
+	if err != nil {
+		panic(err)
+	}
+	res = append(res, webo.OptionString{OptionValue: "CHOOSE_CLIENT", OptionLabel: "--- Choisir ---"})
+	for _, fournisseur := range clients {
+		res = append(res, webo.OptionString{OptionValue: strconv.Itoa(fournisseur.Id), OptionLabel: fournisseur.Nom})
+	}
+	return res
+}
+
 // Renvoie la liste des lieux de stockage possibles
 // dans un format utilisable par webo
 func WeboStockage(ctx *ctxt.Context) ([]webo.OptionString, error) {

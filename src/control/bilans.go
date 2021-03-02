@@ -3,12 +3,15 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
+	"bdl.local/bdl/generic/wilk/webo"
+	"html/template"
 	"net/http"
 	"time"
 )
 
 type detailsBilansForm struct {
 	Periods   [][2]time.Time
+	ClientsPlaquettesOptions        template.HTML
 	UrlAction string
 }
 
@@ -52,6 +55,7 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Details: detailsBilansForm{
 				Periods:   periods,
 				UrlAction: "/bilans",
+				ClientsPlaquettesOptions: webo.FmtOptions(WeboClientsPlaquettes(ctx), "CHOOSE_CLIENT"),
 			},
 			Menu: "bilans",
 			Footer: ctxt.Footer{

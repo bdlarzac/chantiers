@@ -148,6 +148,18 @@ func GetFournisseurs(db *sqlx.DB) ([]*Acteur, error) {
 	return acteurs, err
 }
 
+// Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
+func GetClientsPlaquettes(db *sqlx.DB) ([]*Acteur, error) {
+	acteurs := []*Acteur{}
+	query := `select * from acteur where id in(
+                select id_client from venteplaq
+	        ) order by nom,prenom`
+	err := db.Select(&acteurs, query)
+	return acteurs, err
+}
+
 // Renvoie des Acteurs à partir du début de leurs noms.
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
