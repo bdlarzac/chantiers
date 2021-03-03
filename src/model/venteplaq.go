@@ -127,7 +127,7 @@ func GetVentePlaqDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 
 // Renvoie la liste des ventes de plaquettes pour une année donnée,
 // triés par ordre chronologique inverse.
-// Chaque chantier contient les mêmes champs que ceux renvoyés par GetVentePlaqFull()
+// Chaque vente contient les mêmes champs que ceux renvoyés par GetVentePlaqFull()
 func GetVentePlaqsOfYear(db *sqlx.DB, annee string) ([]*VentePlaq, error) {
 	res := []*VentePlaq{}
 	type ligne struct {
@@ -142,11 +142,31 @@ func GetVentePlaqsOfYear(db *sqlx.DB, annee string) ([]*VentePlaq, error) {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, tmp2 := range tmp1 {
-		chantier, err := GetVentePlaqFull(db, tmp2.Id)
+		v, err := GetVentePlaqFull(db, tmp2.Id)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetVentePlaqFull()")
 		}
-		res = append(res, chantier)
+		res = append(res, v)
+	}
+	return res, nil
+}
+
+// Renvoie la liste des ventes de plaquettes de date 1 à date 2,
+// triés par ordre chronologique.
+// Chaque vente contient les mêmes champs que ceux renvoyés par GetVentePlaqFull()
+func GetVentePlaqsOfPeriod(db *sqlx.DB, date1, date2 time.Time) ([]*VentePlaq, error) {
+	res := []*VentePlaq{}
+	query := "select * from venteplaq where datevente>=$1 and datevente<=$2 order by datevente"
+	err := db.Select(&res, query, date1, date2)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for i, tmp := range res {
+		v, err := GetVentePlaqFull(db, tmp.Id)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetVentePlaqFull()")
+		}
+		res[i] = v
 	}
 	return res, nil
 }

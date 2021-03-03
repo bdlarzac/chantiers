@@ -17,10 +17,18 @@ type detailsBilansForm struct {
 	UrlAction string
 }
 
+// ventes d'un seul client
 type detailsBilanClientPlaquettes struct {
 	DateDebut time.Time
 	DateFin   time.Time
     Client    *model.Acteur
+    Ventes    []*model.VentePlaq
+}
+
+// ventes de tous les clients
+type detailsBilanVentesPlaquettes struct {
+	DateDebut time.Time
+	DateFin   time.Time
     Ventes    []*model.VentePlaq
 }
 
@@ -35,7 +43,12 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		// Process form
 		//
 		if r.PostFormValue("type-bilan") == "client-plaquettes" {
-            err = showBilanClientlaquettes(ctx, r.PostForm)
+            err = showBilanClientPlaquettes(ctx, r.PostForm)
+            if err != nil {
+                return err
+            }
+		} else if r.PostFormValue("type-bilan") == "ventes-plaquettes" {
+            err = showBilanVentesPlaquettes(ctx, r.PostForm)
             if err != nil {
                 return err
             }
@@ -73,7 +86,8 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 }
 
 // *********************************************************
-func showBilanClientlaquettes(ctx *ctxt.Context, formValues url.Values) error {
+// Bilan ventes pour un client donné
+func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	dateDebut, err := time.Parse("2006-01-02", formValues.Get("date-debut"))
 	if err != nil {
 		return err
@@ -91,11 +105,14 @@ func showBilanClientlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		return err
 	}
 	ventes, err := model.GetVentePlaqsOfClient(ctx.DB, idClient, dateDebut, dateFin)
+	if err != nil {
+		return err
+	}
 	//
 	ctx.TemplateName = "bilan-client-plaquettes-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    "Bilan vente plaquettes",
+			Title:    "Bilan ventes plaquettes",
 			CSSFiles: []string{},
 			JSFiles:  []string{
 				"/static/js/round.js"},
@@ -108,6 +125,46 @@ func showBilanClientlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 			DateDebut: dateDebut,
 			DateFin:   dateFin,
 		    Client:    client,
+		    Ventes:    ventes,
+		},
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// *********************************************************
+// Bilan ventes pour tous clients confondus
+func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
+	dateDebut, err := time.Parse("2006-01-02", formValues.Get("date-debut"))
+	if err != nil {
+		return err
+	}
+	dateFin, err := time.Parse("2006-01-02", formValues.Get("date-fin"))
+	if err != nil {
+		return err
+	}
+	ventes, err := model.GetVentePlaqsOfPeriod(ctx.DB, dateDebut, dateFin)
+	if err != nil {
+		return err
+	}
+	//
+	ctx.TemplateName = "bilan-ventes-plaquettes-show.html"
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title:    "Bilan ventes plaquettes",
+			CSSFiles: []string{},
+			JSFiles:  []string{
+				"/static/js/round.js"},
+		},
+		Menu: "bilans",
+		Footer: ctxt.Footer{
+			JSFiles: []string{},
+		},
+		Details: detailsBilanVentesPlaquettes{
+			DateDebut: dateDebut,
+			DateFin:   dateFin,
 		    Ventes:    ventes,
 		},
 	}
