@@ -48,7 +48,7 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	// PGPASSWORD='bdl2019-09-29' pg_dump --file bdl.pgsql.dump -h localhost -n public -p 5432 -U bdl  bdlbois
 	var err error
 	dirname := ctx.Config.Database.Backup.Directory
-	filename := "bdl-" + time.Now().Format(time.RFC3339)[:19] + ".pgdump"
+	filename := "bdl-" + time.Now().Format("2006-02-15-150405") + ".pgdump"
 	filepath := dirname + string(os.PathSeparator) + filename
 	//
 	// 1 - pg_dump

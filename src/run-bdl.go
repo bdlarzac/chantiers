@@ -14,7 +14,6 @@ import (
 	"path/filepath"
 	"time"
 
-	//	"bdl.local/bdl/statik" // pour genesis - TODO remove avec go 1.16 embed
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
 	"bdl.local/bdl/ctxt"
@@ -158,11 +157,6 @@ func main() {
 	r.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir(filepath.Join("..", "docs")))))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	r.PathPrefix("/view/common/").Handler(http.StripPrefix("/view/common/", http.FileServer(http.Dir(filepath.Join("view", "common")))))
-
-	// pour genesis TODO remove avec go 1.16 embed
-	// r.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(statik.FileSystem())))
-	// r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	// r.PathPrefix("/view/common/").Handler(http.StripPrefix("/view/common/", http.FileServer(http.Dir(filepath.Join("view", "common")))))
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
 

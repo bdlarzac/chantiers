@@ -36,7 +36,7 @@ pourcentage-perte: 10
 
 # Date utilisée comme début de saison pour les bilans
 # Format JJ/MM (ex: 01/09 = 1er septembre)
-debut-saison: 01/09
+debut-saison: 01/10
 
 # Taux de TVA possibles pour les opérations facturées à BDL par des opérateurs extérieurs
 tva-ext:
