@@ -6,9 +6,12 @@
     <div class="grid2-form">
 
         <label for="fermier">Fermier</label>
-        <select name="fermier" id="fermier">
-            {{$.Details.FermierOptions}}
-        </select>
+        {{/* div pour éviter que le select devienne trop large qd la liste des parcelle devient large */}}
+        <div>
+            <select name="fermier" id="fermier">
+                {{$.Details.FermierOptions}}
+            </select>
+        </div>
         
         <label for="ugs">UG</label>
         <div id="ugs"></div>

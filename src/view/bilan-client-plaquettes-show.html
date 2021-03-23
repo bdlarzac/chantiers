@@ -12,14 +12,18 @@
 
 <script>
     let totalPrix = totalQte = 0;
+    let prixOp = prixOpParMap = 0; // Op = opération de livraison ou de chargement
 </script>
 
 <table class="entities">
     <tr>
-        <th>Vente</th>         
+        <th>Vente</th>
         <th>Quantité livrée</th>    
         <th>Prix / map</th>
         <th>Prix total</th>
+        <th>Livraisons</th>
+        <th>Chargements</th>
+        <th>Facture</th>
     </tr>
     
     {{range .Ventes}}
@@ -32,6 +36,84 @@
                 totalPrix += {{.Qte}}*{{.PUHT}};
                 totalQte += {{.Qte}};
             </script>
+            <td class="vertical-align-top">
+                {{range .Livraisons}}
+                    <div>
+                        {{if eq .TypeCout "G"}}
+                            <a href="/acteur/{{.IdLivreur}}">{{.Livreur.String}}</a>
+                            <br>(
+                            <script>
+                                prixOp = prixTTC({{.GlPrix}}, {{.GlTVA}});
+                                document.write(round(prixOp, 2) + " &euro;");
+                                if({{.Qte}} != 0){
+                                    prixOpParMap = prixOp / {{.Qte}};
+                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                }
+                            </script>
+                            )
+                        {{else}}
+                            <span title="Conducteur"><b>C :</b></span> <a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a>
+                            -
+                            <span title="Propriétaire outil"><b>P :</b></span> <a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a>
+                            <br>(
+                            <script>
+                                prixOp = prixTTC({{.MoNHeure}}*{{.MoPrixH}}, {{.MoTVA}})
+                                       + prixTTC({{.OuPrix}}, {{.OuTVA}});
+                                document.write(round(prixOp, 2) + " &euro;");
+                                if({{.Qte}} != 0){
+                                    prixOpParMap = prixOp / {{.Qte}};
+                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                }
+                            </script>
+                            )
+                        {{end}}
+                    </div>
+                {{end}}
+            </td>
+            <td class="vertical-align-top">
+                {{range .Livraisons}}
+                {{range .Chargements}}
+                    <div>
+                        {{if eq .TypeCout "G"}}
+                            <a href="/acteur/{{.IdChargeur}}">{{.Chargeur.String}}</a>
+                            <br>(
+                            <script>
+                                prixOp = prixTTC({{.GlPrix}}, {{.GlTVA}});
+                                document.write(round(prixOp, 2) + " &euro;");
+                                if({{.Qte}} != 0){
+                                    prixOpParMap = prixOp / {{.Qte}};
+                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                }
+                            </script>
+                            )
+                        {{else}}
+                            <span title="Conducteur"><b>C :</b></span> <a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a>
+                            -
+                            <span title="Propriétaire outil"><b>P :</b></span> <a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a>
+                            <br>(
+                            <script>
+                                prixOp = prixTTC({{.MoNHeure}}*{{.MoPrixH}}, {{.MoTVA}})
+                                       + prixTTC({{.OuPrix}}, {{.OuTVA}});
+                                document.write(round(prixOp, 2) + " &euro;");
+                                if({{.Qte}} != 0){
+                                    prixOpParMap = prixOp / {{.Qte}};
+                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                }
+                            </script>
+                            )
+                        {{end}}
+                    </div>
+                {{end}}
+                {{end}}
+            </td>
+            <td>
+                {{if (or (eq (.DateFacture | dateFr) "") (eq .NumFacture "") )}}
+                    <b>NON</b>
+                {{else}}
+                    {{.DateFacture | dateFr}}
+                    <br>{{.NumFacture}}
+                {{end}}
+            </td>
         </tr>
     {{end}}
     
@@ -40,6 +122,7 @@
         <td><script>document.write(totalQte);</script> maps</td>
         <td></td>
         <td><script>document.write(round(totalPrix, 2));</script> &euro;</td>
+        <td colspan="3"></td>
     </tr>
     
 </table>

@@ -35,13 +35,13 @@ type detailsBilanVentesPlaquettes struct {
 func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
 	case "POST":
+		//
+		// Process form
+		//
 		var err error
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-		//
-		// Process form
-		//
 		if r.PostFormValue("type-bilan") == "client-plaquettes" {
             err = showBilanClientPlaquettes(ctx, r.PostForm)
             if err != nil {
@@ -115,7 +115,8 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 			Title:    "Bilan ventes plaquettes",
 			CSSFiles: []string{},
 			JSFiles:  []string{
-				"/static/js/round.js"},
+				"/static/js/round.js",
+				"/view/common/prix.js"},
 		},
 		Menu: "bilans",
 		Footer: ctxt.Footer{

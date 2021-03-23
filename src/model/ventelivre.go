@@ -41,7 +41,7 @@ type VenteLivre struct {
 	//
 	Notes string
 	// Pas stocké en base
-	Quantite    float64
+	Qte         float64 // somme des quantités des chargements
 	Livreur     *Acteur
 	Conducteur  *Acteur
 	Proprioutil *Acteur
@@ -133,7 +133,11 @@ func (vl *VenteLivre) ComputeProprioutil(db *sqlx.DB) error {
 	return nil
 }
 
+// Calcule à la fois les chargements et la quantité de la livraison
 func (vl *VenteLivre) ComputeChargements(db *sqlx.DB) error {
+	if vl.Chargements != nil {
+		return nil
+	}
 	query := "select id from ventecharge where id_livraison=$1 order by datecharge desc"
 	idsCharge := []int{}
 	err := db.Select(&idsCharge, query, &vl.Id)
@@ -146,6 +150,7 @@ func (vl *VenteLivre) ComputeChargements(db *sqlx.DB) error {
 			return werr.Wrapf(err, "Erreur appel GetVenteChargeFull()")
 		}
 		vl.Chargements = append(vl.Chargements, vc)
+		vl.Qte += vc.Qte // ICI, calcule aussi la quantité de la livraison
 	}
 	return nil
 }
