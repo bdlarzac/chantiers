@@ -238,7 +238,7 @@ async function afficheParcelles(idUG){
     //
     let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
     let i = 1;
-    let curCommune, tmp;
+    let curCommune, curSurfaceTotale, tmp;
     response.forEach(function(item){
         curdiv = document.createElement("div");
         //
@@ -291,7 +291,7 @@ async function afficheParcelles(idUG){
         // entière - label
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
-        label.innerHTML = "Entière";
+        label.innerHTML = "Entière (" + round(item.surface, 2) + " ha)";
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
