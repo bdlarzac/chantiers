@@ -97,7 +97,7 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, er
 	return res, nil
 }
 
-func ComputeBilanValorisations(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error) {
+func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error) {
 	essenceCodes := AllEssenceCodes()
 	valoCodes := AllValorisationCodes()
 	valos = make(Valorisations)

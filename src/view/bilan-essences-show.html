@@ -5,70 +5,55 @@
 <div class="page-content">
 
 <script>
-let totaux = new Map();
 let unites = new Map();
 let k1, k2;
 {{range .ValoCodes}}
     k1 = "{{.}}" + "-vol";
     k2 = "{{.}}" + "-ca";
-    totaux.set(k1, 0);
-    totaux.set(k2, 0);
     unites.set(k1, "{{. | valorisation2uniteLabel}}")
     unites.set(k2, "&euro;")
 {{end}}
-
 </script>
 
 <table class="bordered entities">
     <tr>
         <th></th>
-        {{range .ValoCodes}}
-            <th colspan="2">{{. | labelValorisation}}</th>
+        {{range .EssenceCodes}}
+            <th colspan="2">{{. | labelEssence}}</th>
         {{end}}
     </tr>
     <tr>
         <th></th>
-        {{range .ValoCodes}}
+        {{range .EssenceCodes}}
             <th>Vol.</th><th>C.A.</th>
         {{end}}
     </tr>
-    {{range .EssenceCodes}}                                                                                                 
+    {{range .ValoCodes}}
     <tr>
-        <th>{{. | labelEssence}}</th>
-        {{$essenceCode := .}}
-        {{range $.Details.ValoCodes}}
+        <th>{{. | labelValorisation}}</th>
+        {{$valoCode := .}}
+        {{range $.Details.EssenceCodes}}
             <td class="right">
-                {{$key := printf "%s-%s-vol" . $essenceCode}}
+                {{$key := printf "%s-%s-vol" $valoCode .}}
                 {{$val := index $.Details.Valorisations $key}}
                 {{$val}}
-                {{$key_totaux := printf "%s-vol" .}}
+                {{$key_totaux := printf "%s-vol" $valoCode}}
                 <script>
                     document.write(unites.get({{$key_totaux}}));
-                    totaux.set("{{$key_totaux}}", totaux.get("{{$key_totaux}}") + {{$val}});
                 </script>
             </td>
             <td class="right">
-                {{$key := printf "%s-%s-ca" . $essenceCode}}
+                {{$key := printf "%s-%s-ca" $valoCode .}}
                 {{$val := index $.Details.Valorisations $key}}
                 {{$val}}
-                {{$key_totaux := printf "%s-ca" .}}
+                {{$key_totaux := printf "%s-ca" $valoCode}}
                 <script>
                     document.write(unites.get({{$key_totaux}}));
-                    totaux.set("{{$key_totaux}}", totaux.get("{{$key_totaux}}") + {{$val}});
                 </script>
             </td>
         {{end}}
     </tr>
     {{end}}
-    <tr>
-        <th>TOTAL</th>
-        <script>
-        for(let [key, value] of totaux) {
-            document.write("<td class=\"right\"><b>" + value + "</b> " + unites.get(key) + "</td>");
-        }
-        
-        </script>
-    </tr>
 </table>
 
 Note: "Chauffage" inclut à la fois les chantiers chauffage fermier et les chantiers autres valorisations.

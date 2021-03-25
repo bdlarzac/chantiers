@@ -61,7 +61,12 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				return err
 			}
 		} else if r.PostFormValue("type-bilan") == "valorisations" {
-			err = showBilanValorisations(ctx, r.PostForm)
+			err = showBilanValoEssences(ctx, r.PostForm, "valorisations")
+			if err != nil {
+				return err
+			}
+		} else if r.PostFormValue("type-bilan") == "essences" {
+			err = showBilanValoEssences(ctx, r.PostForm, "essences")
 			if err != nil {
 				return err
 			}
@@ -189,8 +194,10 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 }
 
 // *********************************************************
-// Bilan par valorisation
-func showBilanValorisations(ctx *ctxt.Context, formValues url.Values) error {
+// Bilan par valorisation et par essences
+// (les deux sont presuqe identiques)
+// @param  what "valorisations" ou "essences"
+func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string) error {
 	dateDebut, err := time.Parse("2006-01-02", formValues.Get("date-debut"))
 	if err != nil {
 		return err
@@ -199,15 +206,23 @@ func showBilanValorisations(ctx *ctxt.Context, formValues url.Values) error {
 	if err != nil {
 		return err
 	}
-	valos, err := model.ComputeBilanValorisations(ctx.DB, dateDebut, dateFin)
+	valos, err := model.ComputeBilanValoEssences(ctx.DB, dateDebut, dateFin)
 	if err != nil {
 		return err
 	}
+	var titre, templateName string
+	if what == "valorisations" {
+	    titre = "Bilan valorisations"
+	    templateName = "bilan-valorisations-show.html"
+	} else {
+	    titre = "Bilan essences"
+	    templateName = "bilan-essences-show.html"
+	}
 	//
-	ctx.TemplateName = "bilan-valorisations-show.html"
+	ctx.TemplateName = templateName
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    "Bilan valorisations",
+			Title:    titre,
 			CSSFiles: []string{},
 			JSFiles:  []string{},
 		},
