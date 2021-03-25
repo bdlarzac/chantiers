@@ -127,7 +127,7 @@ func GetChaufersOfYear(db *sqlx.DB, annee string) ([]*Chaufer, error) {
 	}
 	tmp1 := []*ligne{}
 	// select aussi datecontrat au lieu de seulement id pour pouvoir faire le order by
-	query := "select id,datechantier from chaufer where extract(year from datechantier)=$1 order by datechantier desc"
+	query := "select id,datechantier from chaufer where extract(year from datechantier)=$1 order by datechantier"
 	err := db.Select(&tmp1, query, annee)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)

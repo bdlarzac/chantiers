@@ -105,13 +105,12 @@ func GetVentePlaqFull(db *sqlx.DB, id int) (*VentePlaq, error) {
 // ************************** Get many *******************************
 
 // Renvoie la liste des années ayant des ventes de plaquettes,
-// triées par ordre chronologique inverse.
 // @param   exclude   Année à exclure du résultat
 // @return  Liste de string au format YYYY
 func GetVentePlaqDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	res := []string{}
 	list := []time.Time{}
-	query := "select datevente from venteplaq order by datevente desc"
+	query := "select datevente from venteplaq order by datevente"
 	err := db.Select(&list, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -136,7 +135,7 @@ func GetVentePlaqsOfYear(db *sqlx.DB, annee string) ([]*VentePlaq, error) {
 	}
 	tmp1 := []*ligne{}
 	// select aussi datevente au lieu de seulement id pour pouvoir faire le order by
-	query := "select id,datevente from venteplaq where extract(year from datevente)=$1 order by datevente desc"
+	query := "select id,datevente from venteplaq where extract(year from datevente)=$1 order by datevente"
 	err := db.Select(&tmp1, query, annee)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -172,11 +171,10 @@ func GetVentePlaqsOfPeriod(db *sqlx.DB, date1, date2 time.Time) ([]*VentePlaq, e
 }
 
 // Renvoie la liste des ventes de plaquettes pour un client donné, situé entre 2 dates,
-// triés par ordre chronologique inverse.
 // Chaque chantier contient les mêmes champs que ceux renvoyés par GetVentePlaqFull()
 func GetVentePlaqsOfClient(db *sqlx.DB, idClient int, dateDebut, dateFin time.Time) ([]*VentePlaq, error) {
 	res := []*VentePlaq{}
-	query := "select * from venteplaq where id_client=$1 and datevente>=$2 and datevente<=$3 order by datevente desc"
+	query := "select * from venteplaq where id_client=$1 and datevente>=$2 and datevente<=$3 order by datevente"
 	err := db.Select(&res, query, idClient, dateDebut, dateFin)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -231,7 +229,7 @@ func (vp *VentePlaq) ComputeFournisseur(db *sqlx.DB) error {
 }
 
 func (vp *VentePlaq) ComputeLivraisons(db *sqlx.DB) error {
-	query := "select id from ventelivre where id_vente=$1 order by datelivre desc"
+	query := "select id from ventelivre where id_vente=$1 order by datelivre"
 	idsLivraison := []int{}
 	err := db.Select(&idsLivraison, query, &vp.Id)
 	if err != nil {

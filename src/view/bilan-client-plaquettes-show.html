@@ -28,9 +28,9 @@
     {{range .Ventes}}
         <tr>
             <td><a href="/vente/{{.Id}}">{{.DateVente | dateFr}}</a></td>
-            <td>{{.Qte}} maps</td>
-            <td>{{.PUHT}} &euro;</td>
-            <td><script>document.write(round({{.Qte}}*{{.PUHT}}, 2));</script> &euro;</td>
+            <td class="right">{{.Qte}} maps</td>
+            <td class="right"><script>document.write(round({{.PUHT}}, 2));</script> &euro;</td>
+            <td class="right"><script>document.write(round({{.Qte}}*{{.PUHT}}, 2));</script> &euro;</td>
             <script>
                 totalPrix += {{.Qte}}*{{.PUHT}};
                 totalQte += {{.Qte}};
@@ -118,9 +118,9 @@
     
     <tr class="total">
         <td>TOTAL</td>
-        <td><script>document.write(totalQte);</script> maps</td>
+        <td class="right"><script>document.write(totalQte);</script> maps</td>
         <td></td>
-        <td><script>document.write(round(totalPrix, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round(totalPrix, 2));</script> &euro;</td>
         <td colspan="3"></td>
     </tr>
     

@@ -105,7 +105,7 @@ func GetHumidsOfYear(db *sqlx.DB, annee string) ([]*Humid, error) {
 		DateMesure time.Time
 	}
 	tmp1 := []*ligne{}
-	query := "select id,datemesure from humid where extract(year from datemesure)=$1 order by datemesure desc"
+	query := "select id,datemesure from humid where extract(year from datemesure)=$1 order by datemesure"
 	err := db.Select(&tmp1, query, annee)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)

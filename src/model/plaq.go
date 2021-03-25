@@ -179,7 +179,6 @@ func GetPlaqDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 }
 
 // Renvoie la liste des chantiers plaquettes pour une année donnée,
-// triés par ordre chronologique inverse.
 // Chaque chantier contient les mêmes champs que ceux renvoyés par GetPlaqFull()
 func GetPlaqsOfYear(db *sqlx.DB, annee string) ([]*Plaq, error) {
 	res := []*Plaq{}
@@ -189,7 +188,7 @@ func GetPlaqsOfYear(db *sqlx.DB, annee string) ([]*Plaq, error) {
 	}
 	tmp1 := []*ligne{}
 	// select aussi datedeb au lieu de seulement id pour pouvoir faire le order by
-	query := "select id,datedeb from plaq where extract(year from datedeb)=$1 order by datedeb desc"
+	query := "select id,datedeb from plaq where extract(year from datedeb)=$1 order by datedeb"
 	err := db.Select(&tmp1, query, annee)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -266,7 +265,7 @@ func (ch *Plaq) ComputeOperations(db *sqlx.DB) error {
 	if len(ch.Operations) != 0 {
 		return nil
 	}
-	query := "select * from plaqop where id_chantier=$1 order by datedeb desc"
+	query := "select * from plaqop where id_chantier=$1 order by datedeb"
 	err := db.Select(&ch.Operations, query, &ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -281,7 +280,7 @@ func (ch *Plaq) ComputeTransports(db *sqlx.DB) error {
 	if len(ch.Transports) != 0 {
 		return nil
 	}
-	query := "select * from plaqtrans where id_chantier=$1 order by datetrans desc"
+	query := "select * from plaqtrans where id_chantier=$1 order by datetrans"
 	err := db.Select(&ch.Transports, query, &ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -299,7 +298,7 @@ func (ch *Plaq) ComputeRangements(db *sqlx.DB) error {
 	if len(ch.Rangements) != 0 {
 		return nil
 	}
-	query := "select * from plaqrange where id_chantier=$1 order by daterange desc"
+	query := "select * from plaqrange where id_chantier=$1 order by daterange"
 	err := db.Select(&ch.Rangements, query, &ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

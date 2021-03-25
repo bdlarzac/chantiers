@@ -138,7 +138,7 @@ func (vl *VenteLivre) ComputeChargements(db *sqlx.DB) error {
 	if vl.Chargements != nil {
 		return nil
 	}
-	query := "select id from ventecharge where id_livraison=$1 order by datecharge desc"
+	query := "select id from ventecharge where id_livraison=$1 order by datecharge"
 	idsCharge := []int{}
 	err := db.Select(&idsCharge, query, &vl.Id)
 	if err != nil {

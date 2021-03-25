@@ -157,7 +157,7 @@ func GetChautresOfYear(db *sqlx.DB, annee string) ([]*Chautre, error) {
 		DateContrat time.Time
 	}
 	tmp1 := []*ligne{}
-	query := "select id,datecontrat from chautre where extract(year from datecontrat)=$1 order by datecontrat desc"
+	query := "select id,datecontrat from chautre where extract(year from datecontrat)=$1 order by datecontrat"
 	err := db.Select(&tmp1, query, annee)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)

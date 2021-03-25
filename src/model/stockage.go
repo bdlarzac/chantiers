@@ -129,7 +129,7 @@ func GetStockagesFull(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
 // ************************** Compute *******************************
 
 func (s *Stockage) ComputeFrais(db *sqlx.DB) error {
-	query := "select * from stockfrais where id_stockage=$1 order by datedeb desc"
+	query := "select * from stockfrais where id_stockage=$1 order by datedeb"
 	frais := []*StockFrais{}
 	err := db.Select(&frais, query, s.Id)
 	if err != nil {
