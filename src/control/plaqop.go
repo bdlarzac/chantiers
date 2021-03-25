@@ -65,7 +65,7 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		ctx.TemplateName = "plaqop-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Nouvelle opération",
+				Title: "Nouvelle opération chantier plaquettes",
 				CSSFiles: []string{
 					"/static/css/form.css",
 					"/static/autocomplete/autocomplete.css"},

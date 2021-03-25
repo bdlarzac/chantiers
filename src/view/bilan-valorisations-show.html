@@ -1,0 +1,74 @@
+<h1>{{.Header.Title}} du {{.Details.DateDebut | dateFr}} au {{.Details.DateFin | dateFr}}</h1>
+
+{{with .Details}}
+
+<div class="page-content">
+
+<script>
+let totaux = new Map();
+let unites = new Map();
+let k1, k2;
+{{range .ValoCodes}}
+    k1 = "{{.}}" + "-vol";
+    k2 = "{{.}}" + "-ca";
+    totaux.set(k1, 0);
+    totaux.set(k2, 0);
+    unites.set(k1, "???")
+    unites.set(k2, "&euro;")
+{{end}}
+
+</script>
+
+<table class="bordered entities">
+    <tr>
+        <th></th>
+        {{range .ValoCodes}}
+            <th colspan="2">{{. | labelValorisation}}</th>
+        {{end}}
+    </tr>
+    <tr>
+        <th></th>
+        {{range .ValoCodes}}
+            <th>Vol.</th><th>C.A.</th>
+        {{end}}
+    </tr>
+    {{range .EssenceCodes}}                                                                                                 
+    <tr>
+        <th>{{. | labelEssence}}</th>
+        {{$essenceCode := .}}
+        {{range $.Details.ValoCodes}}
+            <td>
+                {{$key := printf "%s-%s-vol" . $essenceCode}}
+                {{$val := index $.Details.Valorisations $key}}
+                {{$val}}
+                {{$key_totaux := printf "%s-vol" .}}
+                <script>
+                    document.write(unites.get({{$key_totaux}}));
+                    totaux.set("{{$key_totaux}}", totaux.get("{{$key_totaux}}") + {{$val}});
+                </script>
+            </td>
+            <td>
+                {{$key := printf "%s-%s-ca" . $essenceCode}}
+                {{$val := index $.Details.Valorisations $key}}
+                {{$val}}
+                {{$key_totaux := printf "%s-ca" .}}
+                <script>
+                    document.write(unites.get({{$key_totaux}}));
+                    totaux.set("{{$key_totaux}}", totaux.get("{{$key_totaux}}") + {{$val}});
+                </script>
+            </td>
+        {{end}}
+    </tr>
+    {{end}}
+    <tr>
+        <th>TOTAL</th>
+        <script>
+        for(let [key, value] of totaux) {
+            document.write("<td>" + value + " " + unites.get(key) + "</td>");
+        }
+        
+        </script>
+    </tr>
+</table>
+</div>
+{{end}}

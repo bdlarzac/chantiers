@@ -2,7 +2,7 @@
 -- chantier autres valorisations
 create table chautre (
     id                      serial primary key,
-    id_client               int not null references acteur(id),
+    id_acheteur             int not null references acteur(id),
     typevalo                typevalorisation not null,
     datecontrat             date not null,
     exploitation            typexploitation not null,

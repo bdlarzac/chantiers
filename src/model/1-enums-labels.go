@@ -46,7 +46,7 @@ func LabelActivite(abbrev string) string {
 // ************************** Essences (= espèces d'arbres) *******************************
 // cf type postgres typessence
 
-// @return  Tous les codes des opérations simples
+// @return  Tous les codes des essences
 func AllEssenceCodes() []string {
 	return []string{"PS", "CN", "CT", "GV"}
 }
@@ -101,6 +101,11 @@ func LabelUniteHTML(abbrev string) string {
 
 // ************************** Type de valorisation *******************************
 // cf type postgres typevalo
+
+// @return  Tous les codes des essences
+func AllValorisationCodes() []string {
+	return []string{"BO", "CH", "PI", "PL", "PP"}
+}
 
 // Labels du type de valorisation (pour Chautre)
 // @param abbrev : valorisation telle que stockée en base

@@ -32,6 +32,14 @@ type detailsBilanVentesPlaquettes struct {
     Ventes    []*model.VentePlaq
 }
 
+type detailsBilanValorisations struct {
+	DateDebut time.Time
+	DateFin   time.Time
+    Valorisations    model.Valorisations
+    EssenceCodes    []string
+    ValoCodes []string
+}
+
 func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
 	case "POST":
@@ -49,6 +57,11 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
             }
 		} else if r.PostFormValue("type-bilan") == "ventes-plaquettes" {
             err = showBilanVentesPlaquettes(ctx, r.PostForm)
+            if err != nil {
+                return err
+            }
+		} else if r.PostFormValue("type-bilan") == "valorisations" {
+            err = showBilanValorisations(ctx, r.PostForm)
             if err != nil {
                 return err
             }
@@ -174,3 +187,45 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	}
 	return nil
 }
+
+// *********************************************************
+// Bilan par valorisation
+func showBilanValorisations(ctx *ctxt.Context, formValues url.Values) error {
+	dateDebut, err := time.Parse("2006-01-02", formValues.Get("date-debut"))
+	if err != nil {
+		return err
+	}
+	dateFin, err := time.Parse("2006-01-02", formValues.Get("date-fin"))
+	if err != nil {
+		return err
+	}
+	valos, err := model.ComputeBilanValorisations(ctx.DB, dateDebut, dateFin)
+	if err != nil {
+		return err
+	}
+	//
+	ctx.TemplateName = "bilan-valorisations-show.html"
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title:    "Bilan valorisations",
+			CSSFiles: []string{},
+			JSFiles:  []string{},
+		},
+		Menu: "bilans",
+		Footer: ctxt.Footer{
+			JSFiles: []string{},
+		},
+		Details: detailsBilanValorisations{
+			DateDebut: dateDebut,
+			DateFin:   dateFin,
+		    Valorisations:    valos,
+            EssenceCodes: model.AllEssenceCodes(),
+            ValoCodes: model.AllValorisationCodes(),
+		},
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+

@@ -15,6 +15,16 @@ import (
 	"time"
 )
 
+// Structure de données adaptée au bilan par valorisation
+// normalement, aurait dû être :
+// type Valorisation map[string]map[string][2]float64
+// "BO":
+//     "CH": {<volume>, <chiffe affaire>}
+// mais pas été foutu de faire fonctionner ça, donc fait une map du style :
+// "BO-CH-vol": <volume>,
+// "BO-CH-ca": <chiffe affaire>
+type Valorisations map[string]float64
+
 // Renvoie un tableau contenant les dates de début / fin des "saisons"
 // Les saisons encadrent tous les chantiers plaquettes stockés en base.
 // Une saison dure un an
@@ -86,3 +96,43 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, er
 	}
 	return res, nil
 }
+
+func ComputeBilanValorisations(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error){
+    essenceCodes := AllEssenceCodes()
+    valoCodes := AllValorisationCodes()
+    valos = make(Valorisations)
+    for _, valoCode := range(valoCodes){
+        for _, essenceCode := range(essenceCodes){
+            valos[valoCode + "-" + essenceCode + "-vol"] = 0
+            valos[valoCode + "-" + essenceCode + "-ca"] = 0
+        }
+    }
+    //
+    // chautre
+    //
+	chautres := []*Chautre{}
+	query := "select * from chautre where datecontrat>=$1 and datecontrat<=$2"
+	err = db.Select(&chautres, query, dateDeb, dateFin)
+	if err != nil {
+		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, chautre := range(chautres){
+	    valos[chautre.TypeValo + "-" + chautre.Essence + "-vol"] += chautre.Volume
+	    valos[chautre.TypeValo + "-" + chautre.Essence + "-ca"] += chautre.PUHT * chautre.Volume
+	}
+	//
+	// chaufer
+	//
+	chaufers := []*Chaufer{}
+	query = "select * from chaufer where datechantier>=$1 and datechantier<=$2"
+	err = db.Select(&chaufers, query, dateDeb, dateFin)
+	if err != nil {
+		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, chaufer := range(chaufers){
+	    valos["CH-" + chaufer.Essence + "-vol"] += chaufer.Volume // CH car chaufer = toujours chauffage
+	}
+	//
+    return valos, err
+}
+
