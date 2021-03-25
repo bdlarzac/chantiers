@@ -463,22 +463,22 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	// Stockage
 	//
 	/*
-		// TODO commenté car besoin de trouver le mode de calcul
-	    var tas *Tas
-	    cout = 0
-	    // s'il y a au moins un transport et un chargement
-		if j1 != DATE_MAX && j2 != DATE_MIN {
-		    // vérifie que tous les tas du chantier ont été déclarés vides
-		    vides := true
-		    for _, tas = range(ch.Tas){
-		        if tas.Actif {
-		            vides = false
-		        }
-		    }
-		    if vides == true {
+			// TODO commenté car besoin de trouver le mode de calcul
+		    var tas *Tas
+		    cout = 0
+		    // s'il y a au moins un transport et un chargement
+			if j1 != DATE_MAX && j2 != DATE_MIN {
+			    // vérifie que tous les tas du chantier ont été déclarés vides
+			    vides := true
+			    for _, tas = range(ch.Tas){
+			        if tas.Actif {
+			            vides = false
+			        }
+			    }
+			    if vides == true {
 
-		    }
-		}
+			    }
+			}
 	*/
 	//
 	return nil

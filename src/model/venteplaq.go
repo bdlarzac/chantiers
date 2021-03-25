@@ -186,10 +186,10 @@ func GetVentePlaqsOfClient(db *sqlx.DB, idClient int, dateDebut, dateFin time.Ti
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel vp.ComputeQte()")
 		}
-        err = vp.ComputeLivraisons(db)
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeLivraisons()")
-        }
+		err = vp.ComputeLivraisons(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeLivraisons()")
+		}
 	}
 	return res, nil
 }

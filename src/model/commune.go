@@ -13,7 +13,7 @@ import (
 )
 
 type Commune struct {
-	Id       int    // IdCommune de la base SCTL
+	Id       int // IdCommune de la base SCTL
 	Nom      string
 	NomCourt string
 	Lieudits []*Lieudit

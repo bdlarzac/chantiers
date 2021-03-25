@@ -1,11 +1,11 @@
 package control
 
 import (
+	"html/template"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"html/template"
-	"net/http"
 
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"

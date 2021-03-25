@@ -57,7 +57,7 @@ func AddRecent(db *sqlx.DB, conf *Config, r *Recent) error {
 			return werr.Wrapf(err, "Erreur query : "+query)
 		}
 	} else {
-	    // update aussi le label en cas d'update d'une activité
+		// update aussi le label en cas d'update d'une activité
 		query := `update recent set (datevisite,label)=($1,$2) where url=$3`
 		_, err = db.Exec(query, now, r.Label, r.URL)
 		if err != nil {

@@ -97,28 +97,28 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, er
 	return res, nil
 }
 
-func ComputeBilanValorisations(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error){
-    essenceCodes := AllEssenceCodes()
-    valoCodes := AllValorisationCodes()
-    valos = make(Valorisations)
-    for _, valoCode := range(valoCodes){
-        for _, essenceCode := range(essenceCodes){
-            valos[valoCode + "-" + essenceCode + "-vol"] = 0
-            valos[valoCode + "-" + essenceCode + "-ca"] = 0
-        }
-    }
-    //
-    // chautre
-    //
+func ComputeBilanValorisations(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error) {
+	essenceCodes := AllEssenceCodes()
+	valoCodes := AllValorisationCodes()
+	valos = make(Valorisations)
+	for _, valoCode := range valoCodes {
+		for _, essenceCode := range essenceCodes {
+			valos[valoCode+"-"+essenceCode+"-vol"] = 0
+			valos[valoCode+"-"+essenceCode+"-ca"] = 0
+		}
+	}
+	//
+	// chautre
+	//
 	chautres := []*Chautre{}
 	query := "select * from chautre where datecontrat>=$1 and datecontrat<=$2"
 	err = db.Select(&chautres, query, dateDeb, dateFin)
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
-	for _, chautre := range(chautres){
-	    valos[chautre.TypeValo + "-" + chautre.Essence + "-vol"] += chautre.Volume
-	    valos[chautre.TypeValo + "-" + chautre.Essence + "-ca"] += chautre.PUHT * chautre.Volume
+	for _, chautre := range chautres {
+		valos[chautre.TypeValo+"-"+chautre.Essence+"-vol"] += chautre.Volume
+		valos[chautre.TypeValo+"-"+chautre.Essence+"-ca"] += chautre.PUHT * chautre.Volume
 	}
 	//
 	// chaufer
@@ -129,10 +129,9 @@ func ComputeBilanValorisations(db *sqlx.DB, dateDeb, dateFin time.Time) (valos V
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
-	for _, chaufer := range(chaufers){
-	    valos["CH-" + chaufer.Essence + "-vol"] += chaufer.Volume // CH car chaufer = toujours chauffage
+	for _, chaufer := range chaufers {
+		valos["CH-"+chaufer.Essence+"-vol"] += chaufer.Volume // CH car chaufer = toujours chauffage
 	}
 	//
-    return valos, err
+	return valos, err
 }
-

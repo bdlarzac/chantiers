@@ -35,7 +35,7 @@ type Chautre struct {
 	UGs      []*UG
 	Lieudits []*Lieudit
 	Fermiers []*Fermier
-	Acheteur   *Acteur
+	Acheteur *Acteur
 }
 
 // ************************** Nom *******************************
@@ -49,6 +49,38 @@ func (ch *Chautre) String() string {
 
 func (ch *Chautre) FullString() string {
 	return "Chantier autre valorisation " + ch.String()
+}
+
+// **************************************************************
+//Mapping valorisation - unité associée
+/* 
+func ValorisationUnite() map[string]string {
+	return map[string]string {
+        "PP": "TO",
+        "CH": "ST",
+        "PL": "ST",
+        "PI": "ST",
+        "BO": "M3",
+	}
+}
+*/
+
+// **************************************************************
+// Renvoie le code de l'unité correspondant à une valorisation, tel que stocké en base
+func Valorisation2unite(codeValo string) string{
+	switch codeValo {
+	case "PP":
+		return "TO"
+	case "CH":
+		return "ST"
+	case "PL":
+		return "ST"
+	case "PI":
+		return "ST"
+	case "BO":
+		return "M3"
+	}
+	return "??? Code inconnu dans Valorisation2unite() ???"
 }
 
 // ************************** Get *******************************

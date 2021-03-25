@@ -20,7 +20,7 @@ func AutocompleteActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	var resp []respElement
 
 	var err error
-    acteurs, err := model.GetActeursAutocomplete(ctx.DB, str)
+	acteurs, err := model.GetActeursAutocomplete(ctx.DB, str)
 	if err != nil {
 		return err
 	}
@@ -62,4 +62,3 @@ func CheckNomActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 	w.Write(json)
 	return nil
 }
-

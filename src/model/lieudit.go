@@ -13,7 +13,7 @@ import (
 )
 
 type Lieudit struct {
-	Id        int    // IdLieuDit de la base SCTL
+	Id        int // IdLieuDit de la base SCTL
 	Nom       string
 	Parcelles []*Parcelle
 	Communes  []*Commune

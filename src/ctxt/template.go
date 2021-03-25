@@ -36,6 +36,8 @@ func init() {
 		"safeHTML":          safeHTML,
 		"twoDigits":         twoDigits,
 		"ucFirst":           ucFirst,
+		"valorisation2unite":valorisation2unite,
+		"valorisation2uniteLabel":valorisation2uniteLabel,
 		"year":              year,
 		"zero2empty":        zero2empty,
 	}
@@ -88,6 +90,16 @@ func labelExploitation(str string) template.HTML {
 // Type de valorisation (palette, pâte à papier...), à partir de son code
 func labelValorisation(str string) template.HTML {
 	return template.HTML(model.LabelValorisation(str))
+}
+
+// Renvoie le code unité correspondant à un type de valorisation (palette, pâte à papier...)
+func valorisation2unite(str string) template.HTML {
+	return template.HTML(model.Valorisation2unite(str))
+}
+
+// Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
+func valorisation2uniteLabel(str string) template.HTML {
+	return template.HTML(model.LabelUnite(model.Valorisation2unite(str)))
 }
 
 // Type d'opération simple (abattage, débardage...) à partir de son code

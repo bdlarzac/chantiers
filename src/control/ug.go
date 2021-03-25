@@ -17,7 +17,7 @@ type detailsUGShow struct {
 }
 
 type detailsUGSearch struct {
-	AllUgs        [][]*model.UG
+	AllUgs [][]*model.UG
 }
 
 func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -64,7 +64,7 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 
 // Affiche à la fois le formulaire et la liste des UGs
 func SearchUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-    allUgs, err := model.GetUGsSortedByCodeAndSeparated(ctx.DB)
+	allUgs, err := model.GetUGsSortedByCodeAndSeparated(ctx.DB)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func SearchUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			CSSFiles: []string{"/static/css/form.css"},
 		},
 		Details: detailsUGSearch{
-			AllUgs:        allUgs,
+			AllUgs: allUgs,
 		},
 		Menu: "accueil",
 	}

@@ -88,14 +88,15 @@ func WeboExploitation() []webo.OptionString {
 // Renvoie la liste des valorisations possibles
 // dans un format utilisable par webo
 // Utilisé uniquement dans le contrôleur de Chautre
+// L'ordre des valorisations correspond à la demande de BDL
 func WeboChautreValo() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_VALORISATION", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "valorisation-BO", OptionLabel: model.LabelValorisation("BO")},
+		webo.OptionString{OptionValue: "valorisation-PP", OptionLabel: model.LabelValorisation("PP")},
 		webo.OptionString{OptionValue: "valorisation-CH", OptionLabel: model.LabelValorisation("CH")},
 		webo.OptionString{OptionValue: "valorisation-PL", OptionLabel: model.LabelValorisation("PL")},
-		webo.OptionString{OptionValue: "valorisation-PP", OptionLabel: model.LabelValorisation("PP")},
 		webo.OptionString{OptionValue: "valorisation-PI", OptionLabel: model.LabelValorisation("PI")},
+		webo.OptionString{OptionValue: "valorisation-BO", OptionLabel: model.LabelValorisation("BO")},
 	}
 }
 
@@ -200,7 +201,7 @@ func WeboTas(ctx *ctxt.Context) ([]webo.OptionString, error) {
 // dans un format utilisable par webo
 func WeboFermier(ctx *ctxt.Context) ([]webo.OptionString, error) {
 	res := []webo.OptionString{}
-    fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
+	fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 	if err != nil {
 		return res, err
 	}

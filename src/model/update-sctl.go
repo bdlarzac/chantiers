@@ -97,9 +97,9 @@ func loadOldActeurs(db *sqlx.DB) (map[int]Acteur, error) {
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query : "+query)
 	}
-//	for _, a := range acteurs {
-//		res[a.IdFermier] = *a
-//	}
+	//	for _, a := range acteurs {
+	//		res[a.IdFermier] = *a
+	//	}
 	return res, nil
 }
 
@@ -124,7 +124,7 @@ func loadNewActeurs(conf *Config) (map[int]Acteur, error) {
 			cp = cp[:5] // fix une typo dans la base SCTL
 		}
 		res[idExploitant] = Acteur{
-//			IdFermier:   idExploitant,
+			//			IdFermier:   idExploitant,
 			Nom:      record["NOMEXP"],
 			Prenom:   record["Prenom"],
 			Adresse1: record["AdresseExp"],

@@ -24,7 +24,7 @@ type PlaqTrans struct {
 	DateTrans      time.Time
 	Qte            float64
 	PourcentPerte  float64 // différence bois sec / bois vert
-	TypeCout       string // G (global) C (camion) ou T (tracteur)
+	TypeCout       string  // G (global) C (camion) ou T (tracteur)
 	// Coût global
 	GlPrix    float64 // prix total
 	GlTVA     float64

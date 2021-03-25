@@ -16,7 +16,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-//"fmt"
+	//"fmt"
 )
 
 type UG struct {
@@ -41,15 +41,15 @@ type UGActivite struct {
 }
 
 type RecapUG struct {
-	Annee                  string // YYYY
-	Plaquettes             LigneRecapUG
-	ChauffageFermier       LigneRecapUG
-	Chauffage              LigneRecapUG
-	PateAPapier            LigneRecapUG
-	Palette                LigneRecapUG
-	Piquets                LigneRecapUG
-	BoisOeuvre             LigneRecapUG
-	BoisSurPied            LigneRecapUG
+	Annee            string // YYYY
+	Plaquettes       LigneRecapUG
+	PateAPapier      LigneRecapUG
+	ChauffageFermier LigneRecapUG
+	Chauffage        LigneRecapUG
+	Palette          LigneRecapUG
+	Piquets          LigneRecapUG
+	BoisOeuvre       LigneRecapUG
+	BoisSurPied      LigneRecapUG
 }
 
 type LigneRecapUG struct {
@@ -182,55 +182,55 @@ func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
 // Renvoie les ugs triées par code (nombre romain) et par numéro au sein d'un code (nombres arabes)
 // en respectant l'ordre des chiffres romains et arabes.
 func GetUGsSortedByCode(db *sqlx.DB) ([]*UG, error) {
-    romans := []string {
-        "I",
-        "II",
-        "III",
-        "IV",
-        "V",
-        "VI",
-        "VII",
-        "VIII",
-        "IX",
-        "X",
-        "XI",
-        "XII",
-        "XIII",
-        "XIV",
-        "XV",
-        "XVI",
-        "XVII",
-        "XVIII",
-        "XIX",
-    }
-    res := []*UG{}
+	romans := []string{
+		"I",
+		"II",
+		"III",
+		"IV",
+		"V",
+		"VI",
+		"VII",
+		"VIII",
+		"IX",
+		"X",
+		"XI",
+		"XII",
+		"XIII",
+		"XIV",
+		"XV",
+		"XVI",
+		"XVII",
+		"XVIII",
+		"XIX",
+	}
+	res := []*UG{}
 	query := `select * from ug`
 	err := db.Select(&res, query)
-    sort.Slice(res, func(i, j int) bool {
-        ug1 := res[i]
-        ug2 := res[j]
-        code1 := strings.Replace(ug1.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
-        tmp1 := strings.Split(code1, "-")
-        code2 := strings.Replace(ug2.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
-        tmp2 := strings.Split(code2, "-")
-        // teste chiffres romains
-        idx1 := tiglib.ArraySearchString(romans, tmp1[0])
-        idx2 := tiglib.ArraySearchString(romans, tmp2[0])
-        if idx1 < idx2 {
-            return true
-        }
-        if idx1 > idx2 {
-            return false
-        }
-        // idx1 = idx2 - chiffres romains identiques
-        n1, _ := strconv.Atoi(tmp1[1])
-        n2, _ := strconv.Atoi(tmp2[1])
-        return n1 < n2
-    })
+	sort.Slice(res, func(i, j int) bool {
+		ug1 := res[i]
+		ug2 := res[j]
+		code1 := strings.Replace(ug1.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
+		tmp1 := strings.Split(code1, "-")
+		code2 := strings.Replace(ug2.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
+		tmp2 := strings.Split(code2, "-")
+		// teste chiffres romains
+		idx1 := tiglib.ArraySearchString(romans, tmp1[0])
+		idx2 := tiglib.ArraySearchString(romans, tmp2[0])
+		if idx1 < idx2 {
+			return true
+		}
+		if idx1 > idx2 {
+			return false
+		}
+		// idx1 = idx2 - chiffres romains identiques
+		n1, _ := strconv.Atoi(tmp1[1])
+		n2, _ := strconv.Atoi(tmp2[1])
+		return n1 < n2
+	})
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query : "+query)
 	}
-    return res, err
+	return res, err
 }
 
 // Renvoie les ugs triées par code (nombre romain) et par numéro au sein d'un code (nombres arabes)
@@ -240,27 +240,27 @@ func GetUGsSortedByCode(db *sqlx.DB) ([]*UG, error) {
 // res[1] : ugs avec code commençant par II-
 // etc.
 func GetUGsSortedByCodeAndSeparated(db *sqlx.DB) ([][]*UG, error) {
-    res := [][]*UG{}
-    ugs, err := GetUGsSortedByCode(db)
+	res := [][]*UG{}
+	ugs, err := GetUGsSortedByCode(db)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur appel GetUGsSortedByCode()")
 	}
-    curRoman := "I"
-    cur := []*UG{}
-    for _, ug := range(ugs){
-        code := strings.Replace(ug.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
-	    roman := ug.Code[: strings.Index(code, "-")]
-	    if roman == curRoman {
-	        cur = append(cur, ug)
-	    } else {
-	        // nombre romain différent
-            curRoman = roman
-            res = append(res, cur)
-            cur = []*UG{}
-	    }
+	curRoman := "I"
+	cur := []*UG{}
+	for _, ug := range ugs {
+		code := strings.Replace(ug.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
+		roman := ug.Code[:strings.Index(code, "-")]
+		if roman == curRoman {
+			cur = append(cur, ug)
+		} else {
+			// nombre romain différent
+			curRoman = roman
+			res = append(res, cur)
+			cur = []*UG{}
+		}
 	}
-    res = append(res, cur)
-    return res, err
+	res = append(res, cur)
+	return res, err
 }
 
 // ************************** Compute *******************************
@@ -293,7 +293,6 @@ func (ug *UG) ComputeFermiers(db *sqlx.DB) error {
 	}
 	return nil
 }
-
 
 // ************************** Recap *******************************
 
@@ -407,8 +406,8 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		y := strconv.Itoa(chantier.DateContrat.Year())
 		myrecap := ug.Recaps[y] // à cause de pb "cannot assign"
 		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
-        myrecap.BoisSurPied.Quantite += chantier.NStereCoupees
-        myrecap.BoisSurPied.Benefice += chantier.NStereCoupees * chantier.PrixStere
+		myrecap.BoisSurPied.Quantite += chantier.NStereCoupees
+		myrecap.BoisSurPied.Benefice += chantier.NStereCoupees * chantier.PrixStere
 		ug.Recaps[y] = myrecap
 	}
 	//

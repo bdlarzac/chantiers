@@ -9,7 +9,8 @@ import (
 	"strconv"
 	//"fmt"
 )
-/* 
+
+/*
 func GetParcellesFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idLieudit, err := strconv.Atoi(vars["id"])

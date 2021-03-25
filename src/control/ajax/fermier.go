@@ -36,27 +36,27 @@ func GetFermiersFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Req
 }
 
 func GetFermiersFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-    vars := mux.Vars(r)
-    idLieudit, err := strconv.Atoi(vars["id"])
-    if err != nil {
-        return err
-    }
-    type respElement struct {
-        Id   int    `json:"id"`
-        Name string `json:"name"`
-    }
-    var resp []respElement
-    fermiers, err := model.GetFermiersFromLieudit(ctx.DB, idLieudit)
-    if err != nil {
-        return err
-    }
-    for _, f := range fermiers {
-        resp = append(resp, respElement{f.Id, f.String()})
-    }
-    json, err := json.Marshal(resp)
-    if err != nil {
-        return err
-    }
-    w.Write(json)
-    return nil
+	vars := mux.Vars(r)
+	idLieudit, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return err
+	}
+	type respElement struct {
+		Id   int    `json:"id"`
+		Name string `json:"name"`
+	}
+	var resp []respElement
+	fermiers, err := model.GetFermiersFromLieudit(ctx.DB, idLieudit)
+	if err != nil {
+		return err
+	}
+	for _, f := range fermiers {
+		resp = append(resp, respElement{f.Id, f.String()})
+	}
+	json, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	w.Write(json)
+	return nil
 }

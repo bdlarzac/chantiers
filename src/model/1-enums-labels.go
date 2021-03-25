@@ -102,25 +102,26 @@ func LabelUniteHTML(abbrev string) string {
 // ************************** Type de valorisation *******************************
 // cf type postgres typevalo
 
-// @return  Tous les codes des essences
+// L'ordre des valorisations correspond à la demande de BDL
+// @return  Tous les codes des valorisations
 func AllValorisationCodes() []string {
-	return []string{"BO", "CH", "PI", "PL", "PP"}
+	return []string{"PP", "CH", "PL", "PI", "BO"}
 }
 
 // Labels du type de valorisation (pour Chautre)
 // @param abbrev : valorisation telle que stockée en base
 func LabelValorisation(abbrev string) string {
 	switch abbrev {
-	case "BO":
-		return "Bois d'oeuvre"
-	case "CH":
-		return "Chauffage"
-	case "PI":
-		return "Piquets"
-	case "PL":
-		return "Palette"
 	case "PP":
 		return "Pâte à papier"
+	case "CH":
+		return "Chauffage"
+	case "PL":
+		return "Palette"
+	case "PI":
+		return "Piquets"
+	case "BO":
+		return "Bois d'oeuvre"
 	}
 	return "??? BUG LabelValorisation ???"
 }

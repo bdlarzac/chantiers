@@ -13,7 +13,7 @@ let k1, k2;
     k2 = "{{.}}" + "-ca";
     totaux.set(k1, 0);
     totaux.set(k2, 0);
-    unites.set(k1, "???")
+    unites.set(k1, "{{. | valorisation2uniteLabel}}")
     unites.set(k2, "&euro;")
 {{end}}
 
@@ -37,7 +37,7 @@ let k1, k2;
         <th>{{. | labelEssence}}</th>
         {{$essenceCode := .}}
         {{range $.Details.ValoCodes}}
-            <td>
+            <td class="right">
                 {{$key := printf "%s-%s-vol" . $essenceCode}}
                 {{$val := index $.Details.Valorisations $key}}
                 {{$val}}
@@ -47,7 +47,7 @@ let k1, k2;
                     totaux.set("{{$key_totaux}}", totaux.get("{{$key_totaux}}") + {{$val}});
                 </script>
             </td>
-            <td>
+            <td class="right">
                 {{$key := printf "%s-%s-ca" . $essenceCode}}
                 {{$val := index $.Details.Valorisations $key}}
                 {{$val}}
@@ -64,7 +64,7 @@ let k1, k2;
         <th>TOTAL</th>
         <script>
         for(let [key, value] of totaux) {
-            document.write("<td>" + value + " " + unites.get(key) + "</td>");
+            document.write("<td class=\"right\"><b>" + value + "</b> " + unites.get(key) + "</td>");
         }
         
         </script>

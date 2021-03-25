@@ -2,42 +2,42 @@ package control
 
 import (
 	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/model"
 	"bdl.local/bdl/generic/wilk/webo"
-	"time"
-	"strconv"
+	"bdl.local/bdl/model"
 	"html/template"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 )
 
 type detailsBilansForm struct {
-	Periods   [][2]time.Time
-	ClientsPlaquettesOptions        template.HTML
-	UrlAction string
+	Periods                  [][2]time.Time
+	ClientsPlaquettesOptions template.HTML
+	UrlAction                string
 }
 
 // ventes d'un seul client
 type detailsBilanClientPlaquettes struct {
 	DateDebut time.Time
 	DateFin   time.Time
-    Client    *model.Acteur
-    Ventes    []*model.VentePlaq
+	Client    *model.Acteur
+	Ventes    []*model.VentePlaq
 }
 
 // ventes de tous les clients
 type detailsBilanVentesPlaquettes struct {
 	DateDebut time.Time
 	DateFin   time.Time
-    Ventes    []*model.VentePlaq
+	Ventes    []*model.VentePlaq
 }
 
 type detailsBilanValorisations struct {
-	DateDebut time.Time
-	DateFin   time.Time
-    Valorisations    model.Valorisations
-    EssenceCodes    []string
-    ValoCodes []string
+	DateDebut     time.Time
+	DateFin       time.Time
+	Valorisations model.Valorisations
+	EssenceCodes  []string
+	ValoCodes     []string
 }
 
 func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -51,20 +51,20 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		if r.PostFormValue("type-bilan") == "client-plaquettes" {
-            err = showBilanClientPlaquettes(ctx, r.PostForm)
-            if err != nil {
-                return err
-            }
+			err = showBilanClientPlaquettes(ctx, r.PostForm)
+			if err != nil {
+				return err
+			}
 		} else if r.PostFormValue("type-bilan") == "ventes-plaquettes" {
-            err = showBilanVentesPlaquettes(ctx, r.PostForm)
-            if err != nil {
-                return err
-            }
+			err = showBilanVentesPlaquettes(ctx, r.PostForm)
+			if err != nil {
+				return err
+			}
 		} else if r.PostFormValue("type-bilan") == "valorisations" {
-            err = showBilanValorisations(ctx, r.PostForm)
-            if err != nil {
-                return err
-            }
+			err = showBilanValorisations(ctx, r.PostForm)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	default:
@@ -83,8 +83,8 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 					"/static/css/form.css"},
 			},
 			Details: detailsBilansForm{
-				Periods:   periods,
-				UrlAction: "/bilans",
+				Periods:                  periods,
+				UrlAction:                "/bilans",
 				ClientsPlaquettesOptions: webo.FmtOptions(WeboClientsPlaquettes(ctx), "CHOOSE_CLIENT"),
 			},
 			Menu: "bilans",
@@ -109,7 +109,7 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	if err != nil {
 		return err
 	}
-    idClient, err := strconv.Atoi(formValues.Get("liste-client-plaquettes"))
+	idClient, err := strconv.Atoi(formValues.Get("liste-client-plaquettes"))
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		Header: ctxt.Header{
 			Title:    "Bilan ventes plaquettes",
 			CSSFiles: []string{},
-			JSFiles:  []string{
+			JSFiles: []string{
 				"/static/js/round.js",
 				"/view/common/prix.js"},
 		},
@@ -138,8 +138,8 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		Details: detailsBilanClientPlaquettes{
 			DateDebut: dateDebut,
 			DateFin:   dateFin,
-		    Client:    client,
-		    Ventes:    ventes,
+			Client:    client,
+			Ventes:    ventes,
 		},
 	}
 	if err != nil {
@@ -169,7 +169,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		Header: ctxt.Header{
 			Title:    "Bilan ventes plaquettes",
 			CSSFiles: []string{},
-			JSFiles:  []string{
+			JSFiles: []string{
 				"/static/js/round.js"},
 		},
 		Menu: "bilans",
@@ -179,7 +179,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		Details: detailsBilanVentesPlaquettes{
 			DateDebut: dateDebut,
 			DateFin:   dateFin,
-		    Ventes:    ventes,
+			Ventes:    ventes,
 		},
 	}
 	if err != nil {
@@ -216,11 +216,11 @@ func showBilanValorisations(ctx *ctxt.Context, formValues url.Values) error {
 			JSFiles: []string{},
 		},
 		Details: detailsBilanValorisations{
-			DateDebut: dateDebut,
-			DateFin:   dateFin,
-		    Valorisations:    valos,
-            EssenceCodes: model.AllEssenceCodes(),
-            ValoCodes: model.AllValorisationCodes(),
+			DateDebut:     dateDebut,
+			DateFin:       dateFin,
+			Valorisations: valos,
+			EssenceCodes:  model.AllEssenceCodes(),
+			ValoCodes:     model.AllValorisationCodes(),
 		},
 	}
 	if err != nil {
@@ -228,4 +228,3 @@ func showBilanValorisations(ctx *ctxt.Context, formValues url.Values) error {
 	}
 	return nil
 }
-

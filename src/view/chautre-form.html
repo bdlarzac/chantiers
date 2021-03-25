@@ -110,7 +110,7 @@ function initialize(){
     // form new
     if({{.Id}} == 0){
         // unité la plus courante sélectionnée par défaut
-        document.getElementById("unite-ST").selected = true;
+        document.getElementById("CHOOSE_UNITE").selected = true;
     }
     // form update
     else{
@@ -130,19 +130,19 @@ function valorisationChanged(){
         document.getElementById("CHOOSE_UNITE").selected = true;
     }
     else if(document.getElementById("valorisation-BO").selected){
-        document.getElementById("unite-M3").selected = true;
+        document.getElementById("unite-{{"BO" | valorisation2unite}}").selected = true;
     }
     else if(document.getElementById("valorisation-CH").selected){
-        document.getElementById("unite-ST").selected = true;
+        document.getElementById("unite-{{"CH" | valorisation2unite}}").selected = true;
     }
     else if(document.getElementById("valorisation-PL").selected){
-        document.getElementById("unite-ST").selected = true;
+        document.getElementById("unite-{{"PL" | valorisation2unite}}").selected = true;
     }
     else if(document.getElementById("valorisation-PP").selected){
-        document.getElementById("unite-TO").selected = true;
+        document.getElementById("unite-{{"PP" | valorisation2unite}}").selected = true;
     }
     else if(document.getElementById("valorisation-PI").selected){
-        document.getElementById("unite-ST").selected = true;
+        document.getElementById("unite-{{"PI" | valorisation2unite}}").selected = true;
     }
 }
 

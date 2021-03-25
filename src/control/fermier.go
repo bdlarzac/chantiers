@@ -1,11 +1,11 @@
 package control
 
 import (
-	"net/http"
-	"strconv"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
+	"net/http"
+	"strconv"
 )
 
 type detailsFermierList struct {
@@ -14,7 +14,7 @@ type detailsFermierList struct {
 }
 
 type detailsFermierShow struct {
-	Fermier    *model.Fermier
+	Fermier *model.Fermier
 }
 
 // *********************************************************
@@ -58,20 +58,20 @@ func ShowFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	if err != nil {
 		return err
 	}
-    err = fermier.ComputeParcelles(ctx.DB)
+	err = fermier.ComputeParcelles(ctx.DB)
 	if err != nil {
 		return err
 	}
-    // UGs et Lieudits des parcelles
+	// UGs et Lieudits des parcelles
 	for _, p := range fermier.Parcelles {
-	    err = p.ComputeUGs(ctx.DB)
-        if err != nil {
-            return err
-        }
-	    err = p.ComputeLieudits(ctx.DB)
-        if err != nil {
-            return err
-        }
+		err = p.ComputeUGs(ctx.DB)
+		if err != nil {
+			return err
+		}
+		err = p.ComputeLieudits(ctx.DB)
+		if err != nil {
+			return err
+		}
 	}
 
 	ctx.TemplateName = "fermier-show.html"
@@ -83,9 +83,8 @@ func ShowFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 		Menu: "acteurs",
 		Details: detailsFermierShow{
-			Fermier:    fermier,
+			Fermier: fermier,
 		},
 	}
 	return nil
 }
-

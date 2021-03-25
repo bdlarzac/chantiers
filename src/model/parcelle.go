@@ -54,7 +54,7 @@ func GetParcelle(db *sqlx.DB, id int) (*Parcelle, error) {
 // Renvoie des Parcelles à partir d'un lieu-dit.
 // Ne contient que les champs de la table parcelle.
 // Les autres champs ne sont pas remplis.
-/* 
+/*
 func GetParcellesFromLieudit(db *sqlx.DB, idLieudit int) ([]*Parcelle, error) {
 	parcelles := []*Parcelle{}
 	query := `select * from parcelle where id in(
