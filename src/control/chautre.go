@@ -127,7 +127,7 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		// Affiche form
 		//
 		chantier := &model.Chautre{}
-		chantier.Client = &model.Acteur{}
+		chantier.Acheteur = &model.Acteur{}
 		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
@@ -289,7 +289,7 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 		return ch, err
 	}
 	//
-	ch.IdClient, err = strconv.Atoi(r.PostFormValue("id-client"))
+	ch.IdAcheteur, err = strconv.Atoi(r.PostFormValue("id-acheteur"))
 	if err != nil {
 		return ch, err
 	}
@@ -361,7 +361,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	//
 	pdf.SetXY(60, 70)
 	pdf.SetFont("Arial", "", 12)
-	pdf.MultiCell(100, 7, tr(StringActeurFacture(ch.Client)), "1", "C", false)
+	pdf.MultiCell(100, 7, tr(StringActeurFacture(ch.Acheteur)), "1", "C", false)
 	//
 	// Date  + n° facture
 	//

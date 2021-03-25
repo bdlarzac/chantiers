@@ -543,23 +543,23 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 		res = append(res, new)
 	}
 	//
-	// Chantier autres valorisations - client
+	// Chantier autres valorisations - acheteur
 	//
 	list8 := []Chautre{}
-	query = "select * from chautre where id_client=$1"
+	query = "select * from chautre where id_acheteur=$1"
 	err = db.Select(&list8, query, a.Id)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, elt := range list8 {
-		elt.Client = a
+		elt.Acheteur = a
 		err = elt.ComputeLieudits(db)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel Chautre.ComputeLieudit()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateContrat,
-			Role:        "client bois sur pied",
+			Role:        "acheteur chantier autres valorisations",
 			URL:         "/chantier/autre/liste/" + strconv.Itoa(elt.DateContrat.Year()),
 			NomActivite: elt.FullString()}
 		res = append(res, new)

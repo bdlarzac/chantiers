@@ -33,14 +33,14 @@
             <a href="/chantier/autre/update/{{.Id}}" class="padding-left05">
                 <img src="/static/img/update.png" title="Modifier ce chantier" />
             </a>
-            <a href="#" onclick="deleteChantier({{.Id}}, {{.Client.String}}, {{.DateContrat | dateFr}});" class="padding-left05">
+            <a href="#" onclick="deleteChantier({{.Id}}, {{.Acheteur.String}}, {{.DateContrat | dateFr}});" class="padding-left05">
                 <img src="/static/img/delete.png" title="Supprimer ce chantier">     
             </a>
         </td>
         <td class="vertical-align-top">
             <div class="grid2-pres">
-                <div>Client</div>
-                <div><a href="/acteur/{{.IdClient}}">{{.Client.String}}</a></div>
+                <div>Acheteur</div>
+                <div><a href="/acteur/{{.IdAcheteur}}">{{.Acheteur.String}}</a></div>
                 
                 <div>Valorisation</div>
                 <div>{{.TypeValo | labelValorisation}}</div>

@@ -19,7 +19,7 @@ import (
 
 type Chautre struct {
 	Id           int
-	IdClient     int `db:"id_client"`
+	IdAcheteur   int `db:"id_acheteur"`
 	TypeValo     string
 	DateContrat  time.Time
 	Exploitation string
@@ -35,16 +35,16 @@ type Chautre struct {
 	UGs      []*UG
 	Lieudits []*Lieudit
 	Fermiers []*Fermier
-	Client   *Acteur
+	Acheteur   *Acteur
 }
 
 // ************************** Nom *******************************
 
 func (ch *Chautre) String() string {
-	if ch.Client == nil {
-		panic("Erreur dans le code - Le client d'un chantier autre valorisation doit être calculé avant d'appeler String()")
+	if ch.Acheteur == nil {
+		panic("Erreur dans le code - L'acheteur d'un chantier autre valorisation doit être calculé avant d'appeler String()")
 	}
-	return LabelValorisation(ch.TypeValo) + " " + ch.Client.String() + " " + tiglib.DateFr(ch.DateContrat)
+	return LabelValorisation(ch.TypeValo) + " " + ch.Acheteur.String() + " " + tiglib.DateFr(ch.DateContrat)
 }
 
 func (ch *Chautre) FullString() string {
@@ -68,7 +68,7 @@ func GetChautre(db *sqlx.DB, idChantier int) (*Chautre, error) {
 
 // Renvoie un chantier bois sur pied contenant :
 //      - les données stockées dans la table
-//      - Client
+//      - Acheteur
 //      - les lieux-dits
 //      - les UGs
 //      - les fermiers
@@ -77,9 +77,9 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre()")
 	}
-	err = ch.ComputeClient(db)
+	err = ch.ComputeAcheteur(db)
 	if err != nil {
-		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeClient()")
+		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeAcheteur()")
 	}
 	err = ch.ComputeLieudits(db)
 	if err != nil {
@@ -142,12 +142,12 @@ func GetChautresOfYear(db *sqlx.DB, annee string) ([]*Chautre, error) {
 
 // ************************** Compute *******************************
 
-func (ch *Chautre) ComputeClient(db *sqlx.DB) error {
-	if ch.Client != nil {
+func (ch *Chautre) ComputeAcheteur(db *sqlx.DB) error {
+	if ch.Acheteur != nil {
 		return nil
 	}
 	var err error
-	ch.Client, err = GetActeur(db, ch.IdClient)
+	ch.Acheteur, err = GetActeur(db, ch.IdAcheteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
@@ -200,7 +200,7 @@ func (ch *Chautre) ComputeFermiers(db *sqlx.DB) error {
 
 func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (int, error) {
 	query := `insert into chautre(
-        id_client,
+        id_acheteur,
         typevalo,
         datecontrat,
         exploitation,
@@ -216,7 +216,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 	id := int(0)
 	err := db.QueryRow(
 		query,
-		ch.IdClient,
+		ch.IdAcheteur,
 		ch.TypeValo,
 		ch.DateContrat,
 		ch.Exploitation,
@@ -288,7 +288,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 
 func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) error {
 	query := `update chautre set(
-        id_client,
+        id_acheteur,
         typevalo,
         datecontrat,
         exploitation,
@@ -303,7 +303,7 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) where id=$13`
 	_, err := db.Exec(
 		query,
-		ch.IdClient,
+		ch.IdAcheteur,
 		ch.TypeValo,
 		ch.DateContrat,
 		ch.Exploitation,

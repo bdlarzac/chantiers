@@ -11,16 +11,16 @@
         <div id="empty-lieudit1"></div><div id="empty-lieudit2"></div>
         <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
         
-        <label for="client">Acheteur</label>
+        <label for="acheteur">Acheteur</label>
         <div class="autocomplete">
-            <input type="text" name="client" id="client" value="" autocomplete="off" class="width20">
+            <input type="text" name="acheteur" id="acheteur" value="" autocomplete="off" class="width20">
         </div>
         
         <label for="datecontrat">Date contrat</label>
         <div><input type="date" name="datecontrat" id="datecontrat" value="{{.DateContrat | dateIso}}"></div>
         
         <label for="typevalo">Valorisation</label>
-        <select name="typevalo" id="typevalo" class="width10">
+        <select name="typevalo" id="typevalo" class="width10" onchange="valorisationChanged();">
             {{$.Details.ValorisationOptions}}
         </select>
 
@@ -37,7 +37,7 @@
         <label for="volume">Volume</label>
         <div>
             <input type="number" name="volume" id="volume" step="0.01" min="0" value="{{.Volume | zero2empty}}" class="width5">
-            <select name="unite" id="unite" class="width8">
+            <select name="unite" id="unite" class="width8" disabled>
                 {{$.Details.UniteOptions}}
             </select>
         </div>
@@ -76,7 +76,7 @@
     </div>
     
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
-    <input type="hidden" name="id-client" id="id-client" value="{{.IdClient}}">
+    <input type="hidden" name="id-acheteur" id="id-acheteur" value="{{.IdAcheteur}}">
     
 </form>
 
@@ -96,9 +96,9 @@
 
 <script>
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById("client"), getActeursPossibles);
-    // Pour vérifier que le client affiché correspond à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("client")
+    autocomplete(document.getElementById("acheteur"), getActeursPossibles);
+    // Pour vérifier que l'acheteur affiché correspond à une personne existant en base.
+    // on ne peut pas se fier uniquement à getElementById("acheteur")
     // car l'utilisateur peut modifier le nom
     window.globalPersons = [];
     initialize();
@@ -114,10 +114,38 @@ function initialize(){
     }
     // form update
     else{
-        document.getElementById("client").value = "{{.Client.NomAutocomplete}}";
-        window.globalPersons[{{.IdClient}}] = "{{.Client.NomAutocomplete}}";
+        document.getElementById("acheteur").value = "{{.Acheteur.NomAutocomplete}}";
+        window.globalPersons[{{.IdAcheteur}}] = "{{.Acheteur.NomAutocomplete}}";
+        valorisationChanged();
     }
 }
+
+// ***************************************
+/**
+    Déclenché lorsqu'on change le choix de la valorisation
+    => le champ unite change
+**/
+function valorisationChanged(){
+    if(document.getElementById("CHOOSE_VALORISATION").selected){
+        document.getElementById("CHOOSE_UNITE").selected = true;
+    }
+    else if(document.getElementById("valorisation-BO").selected){
+        document.getElementById("unite-M3").selected = true;
+    }
+    else if(document.getElementById("valorisation-CH").selected){
+        document.getElementById("unite-ST").selected = true;
+    }
+    else if(document.getElementById("valorisation-PL").selected){
+        document.getElementById("unite-ST").selected = true;
+    }
+    else if(document.getElementById("valorisation-PP").selected){
+        document.getElementById("unite-TO").selected = true;
+    }
+    else if(document.getElementById("valorisation-PI").selected){
+        document.getElementById("unite-ST").selected = true;
+    }
+}
+
 
 // ***************************************
 function validateForm(){
@@ -125,8 +153,8 @@ function validateForm(){
     //
     msg += validateFormChantierLien(); // dans view/common/chantier-lien.html
     //
-    const check = checkActeur("client", "- Vous devez renseigner le client.\n");
-    document.getElementById("id-client").value = check[0];
+    const check = checkActeur("acheteur", "- Vous devez renseigner l'acheteur.\n");
+    document.getElementById("id-acheteur").value = check[0];
     msg += check[1];
     //
     if(document.getElementById("datecontrat").value == ""){
