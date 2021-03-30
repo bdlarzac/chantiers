@@ -20,6 +20,7 @@ import (
 type Chautre struct {
 	Id           int
 	IdAcheteur   int `db:"id_acheteur"`
+	TypeVente    string
 	TypeValo     string
 	DateContrat  time.Time
 	Exploitation string
@@ -201,6 +202,7 @@ func (ch *Chautre) ComputeFermiers(db *sqlx.DB) error {
 func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (int, error) {
 	query := `insert into chautre(
         id_acheteur,
+        typevente,
         typevalo,
         datecontrat,
         exploitation,
@@ -212,11 +214,12 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         datefacture,
         numfacture,
         notes    
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
 		ch.IdAcheteur,
+		ch.TypeVente,
 		ch.TypeValo,
 		ch.DateContrat,
 		ch.Exploitation,
@@ -289,6 +292,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) error {
 	query := `update chautre set(
         id_acheteur,
+        typevente,
         typevalo,
         datecontrat,
         exploitation,
@@ -300,10 +304,11 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         datefacture,
         numfacture,
         notes    
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) where id=$13`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) where id=$14`
 	_, err := db.Exec(
 		query,
 		ch.IdAcheteur,
+		ch.TypeVente,
 		ch.TypeValo,
 		ch.DateContrat,
 		ch.Exploitation,

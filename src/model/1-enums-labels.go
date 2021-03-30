@@ -72,7 +72,7 @@ func LabelEssence(abbrev string) string {
 
 // Renvoie le code de l'unité correspondant à une valorisation, tel que stocké en base
 // Comprend les valos pour chautre + CF pour chauffage fermier
-func Valorisation2unite(codeValo string) string{
+func Valorisation2unite(codeValo string) string {
 	switch codeValo {
 	case "PP":
 		return "TO"
@@ -129,7 +129,7 @@ func AllValorisationCodes() []string {
 	return []string{"PP", "CH", "PL", "PI", "BO"}
 }
 
-// Pareil qye AllValorisationCodes(), avec CF en plus (chauffage fermier)
+// Pareil que AllValorisationCodes(), avec CF en plus (chauffage fermier)
 func AllValorisationCodesAvecChaufer() []string {
 	return []string{"PP", "CH", "CF", "PL", "PI", "BO"}
 }
@@ -158,11 +158,27 @@ func LabelValorisation(abbrev string) string {
 func LabelValorisationAvecChaufer(abbrev string) string {
 	switch abbrev {
 	case "CF":
-        return "Chauffage fermier"
+		return "Chauffage fermier"
 	case "CH":
 		return "Chauffage client"
 	}
 	return LabelValorisation(abbrev)
+}
+
+// Labels du type de vente (pour Chautre)
+// @param abbrev : type de vente tel que stockée en base
+func LabelTypeVente(abbrev string) string {
+	switch abbrev {
+	case "NON":
+		return "Non spécifié"
+	case "BSP":
+		return "Bois-sur-pied"
+	case "BDR":
+		return "Bord-de-route"
+	case "LIV":
+		return "Livré"
+	}
+	return "??? BUG LabelTypeVente ???"
 }
 
 // ************************** Type d'exploitation *******************************

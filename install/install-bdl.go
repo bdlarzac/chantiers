@@ -194,6 +194,7 @@ func installTypes() {
 	dbcreate.CreateTable("typeop")
 	dbcreate.CreateTable("typeunite")
 	dbcreate.CreateTable("typevalorisation")
+	dbcreate.CreateTable("typevente")
 	dbcreate.CreateTable("typegranulo")
 	dbcreate.CreateTable("typestockfrais")
 }

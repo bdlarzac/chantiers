@@ -16,6 +16,26 @@
             <input type="text" name="acheteur" id="acheteur" value="" autocomplete="off" class="width20">
         </div>
         
+        <label>Type de vente</label>
+        <div>
+            <div>
+                <input type="radio" name="typevente" id="typevente-NON" value="typevente-NON">
+                <label class="normal" for="typevente-NON">Non spécifié</label>
+            </div>
+            <div>
+                <input type="radio" name="typevente" id="typevente-BSP" value="typevente-BSP">
+                <label class="normal" for="typevente-BSP">Bois-sur-pied</label>
+            </div>
+            <div>
+                <input type="radio" name="typevente" id="typevente-BDR" value="typevente-BDR">
+                <label class="normal" for="typevente-BDR">Bord-de-route</label>
+            </div>
+            <div>
+                <input type="radio" name="typevente" id="typevente-LIV" value="typevente-LIV">
+                <label class="normal" for="typevente-LIV">Livré</label>
+            </div>
+        </div>
+        
         <label for="datecontrat">Date contrat</label>
         <div><input type="date" name="datecontrat" id="datecontrat" value="{{.DateContrat | dateIso}}"></div>
         
@@ -111,12 +131,14 @@ function initialize(){
     if({{.Id}} == 0){
         // unité la plus courante sélectionnée par défaut
         document.getElementById("CHOOSE_UNITE").selected = true;
+        document.getElementById("typevente-NON").checked = true;
     }
     // form update
     else{
         document.getElementById("acheteur").value = "{{.Acheteur.NomAutocomplete}}";
         window.globalPersons[{{.IdAcheteur}}] = "{{.Acheteur.NomAutocomplete}}";
         valorisationChanged();
+        document.getElementById("typevente-{{.TypeVente}}").checked = true;
     }
 }
 

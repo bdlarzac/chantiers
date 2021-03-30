@@ -24,23 +24,24 @@ var tmpl *template.Template
 
 func init() {
 	var fmap = template.FuncMap{
-		"dateFr":            dateFr,
-		"dateIso":           dateIso,
-		"labelEssence":      labelEssence,
-		"labelUnite":        labelUnite,
-		"labelExploitation": labelExploitation,
-		"labelValorisation": labelValorisation,
+		"dateFr":                       dateFr,
+		"dateIso":                      dateIso,
+		"labelActivite":                labelActivite,
+		"labelEssence":                 labelEssence,
+		"labelExploitation":            labelExploitation,
+		"labelStockFrais":              labelStockFrais,
+		"labelTypeVente":               labelTypeVente,
+		"labelUnite":                   labelUnite,
+		"labelValorisation":            labelValorisation,
 		"labelValorisationAvecChaufer": labelValorisationAvecChaufer,
-		"labelActivite":     labelActivite,
-		"labelStockFrais":   labelStockFrais,
-		"nl2br":             nl2br,
-		"safeHTML":          safeHTML,
-		"twoDigits":         twoDigits,
-		"ucFirst":           ucFirst,
-		"valorisation2unite":valorisation2unite,
-		"valorisation2uniteLabel":valorisation2uniteLabel,
-		"year":              year,
-		"zero2empty":        zero2empty,
+		"nl2br":                        nl2br,
+		"safeHTML":                     safeHTML,
+		"twoDigits":                    twoDigits,
+		"ucFirst":                      ucFirst,
+		"valorisation2unite":           valorisation2unite,
+		"valorisation2uniteLabel":      valorisation2uniteLabel,
+		"year":                         year,
+		"zero2empty":                   zero2empty,
 	}
 	tmpl = template.
 		Must(template.
@@ -108,6 +109,11 @@ func valorisation2unite(str string) template.HTML {
 // Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
 func valorisation2uniteLabel(str string) template.HTML {
 	return template.HTML(model.LabelUnite(model.Valorisation2unite(str)))
+}
+
+// Type de vente (pour chautre) à partir de son code
+func labelTypeVente(str string) template.HTML {
+	return template.HTML(model.LabelTypeVente(str))
 }
 
 // Type d'opération simple (abattage, débardage...) à partir de son code

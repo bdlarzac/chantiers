@@ -277,8 +277,8 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 }
 
 // *********************************************************
-// Fabrique un BSPied à partir des valeurs d'un formulaire.
-// Auxiliaire de NewBSPied() et UpdateBSPied()
+// Fabrique un Chautre à partir des valeurs d'un formulaire.
+// Auxiliaire de NewChautre() et UpdateChautre()
 // Ne gère pas le champ Id
 // Ne gère pas le champ TVA (tiré de la config)
 // Ne gère pas liens vers UGs, lieux-dits, fermiers
@@ -293,6 +293,8 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	if err != nil {
 		return ch, err
 	}
+	//
+	ch.TypeVente = strings.Replace(r.PostFormValue("typevente"), "typevente-", "", -1)
 	//
 	ch.DateContrat, err = time.Parse("2006-01-02", r.PostFormValue("datecontrat"))
 	if err != nil {
@@ -311,7 +313,7 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	}
 	ch.Volume = tiglib.Round(ch.Volume, 2)
 	//
-	ch.Unite = strings.Replace(r.PostFormValue("unite"), "unite-", "", -1)
+	ch.Unite = model.Valorisation2unite(ch.TypeValo)
 	//
 	ch.PUHT, err = strconv.ParseFloat(r.PostFormValue("puht"), 32)
 	if err != nil {

@@ -212,11 +212,11 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 	}
 	var titre, templateName string
 	if what == "valorisations" {
-	    titre = "Bilan valorisations"
-	    templateName = "bilan-valorisations-show.html"
+		titre = "Bilan valorisations"
+		templateName = "bilan-valorisations-show.html"
 	} else {
-	    titre = "Bilan essences"
-	    templateName = "bilan-essences-show.html"
+		titre = "Bilan essences"
+		templateName = "bilan-essences-show.html"
 	}
 	//
 	ctx.TemplateName = templateName
