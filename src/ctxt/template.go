@@ -30,6 +30,7 @@ func init() {
 		"labelUnite":        labelUnite,
 		"labelExploitation": labelExploitation,
 		"labelValorisation": labelValorisation,
+		"labelValorisationAvecChaufer": labelValorisationAvecChaufer,
 		"labelActivite":     labelActivite,
 		"labelStockFrais":   labelStockFrais,
 		"nl2br":             nl2br,
@@ -90,6 +91,13 @@ func labelExploitation(str string) template.HTML {
 // Type de valorisation (palette, pâte à papier...), à partir de son code
 func labelValorisation(str string) template.HTML {
 	return template.HTML(model.LabelValorisation(str))
+}
+
+// Même chose que labelValorisation(), avec :
+// "CH" renvoie "Chauffage client"
+// "CF" renvoie " Chauffage fermier"
+func labelValorisationAvecChaufer(str string) template.HTML {
+	return template.HTML(model.LabelValorisationAvecChaufer(str))
 }
 
 // Renvoie le code unité correspondant à un type de valorisation (palette, pâte à papier...)

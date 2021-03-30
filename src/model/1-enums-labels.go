@@ -70,6 +70,26 @@ func LabelEssence(abbrev string) string {
 // ************************** Unités *******************************
 // cf type postgres typeunite
 
+// Renvoie le code de l'unité correspondant à une valorisation, tel que stocké en base
+// Comprend les valos pour chautre + CF pour chauffage fermier
+func Valorisation2unite(codeValo string) string{
+	switch codeValo {
+	case "PP":
+		return "TO"
+	case "CH":
+		return "ST"
+	case "CF":
+		return "ST"
+	case "PL":
+		return "ST"
+	case "PI":
+		return "ST"
+	case "BO":
+		return "M3"
+	}
+	return "??? Code inconnu dans Valorisation2unite() ???"
+}
+
 // Labels des unités manipulées par l'appli - format adapté à select html (à cause de m3)
 // @param abbrev : unité telle que stockée en base
 func LabelUnite(abbrev string) string {
@@ -103,9 +123,15 @@ func LabelUniteHTML(abbrev string) string {
 // cf type postgres typevalo
 
 // L'ordre des valorisations correspond à la demande de BDL
-// @return  Tous les codes des valorisations
+// @return  Tous les codes des valorisations de chautre
+// Correspond au type typevalo en base
 func AllValorisationCodes() []string {
 	return []string{"PP", "CH", "PL", "PI", "BO"}
+}
+
+// Pareil qye AllValorisationCodes(), avec CF en plus (chauffage fermier)
+func AllValorisationCodesAvecChaufer() []string {
+	return []string{"PP", "CH", "CF", "PL", "PI", "BO"}
 }
 
 // Labels du type de valorisation (pour Chautre)
@@ -124,6 +150,19 @@ func LabelValorisation(abbrev string) string {
 		return "Bois d'oeuvre"
 	}
 	return "??? BUG LabelValorisation ???"
+}
+
+// Labels du type de valorisation
+// Utilisé par bilans, où "Chauffage" doit être séparé en 2 :
+// chauffage fermier ( de chaufer) et chauffage client (de chautre)
+func LabelValorisationAvecChaufer(abbrev string) string {
+	switch abbrev {
+	case "CF":
+        return "Chauffage fermier"
+	case "CH":
+		return "Chauffage client"
+	}
+	return LabelValorisation(abbrev)
 }
 
 // ************************** Type d'exploitation *******************************

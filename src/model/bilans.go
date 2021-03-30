@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-// Structure de données adaptée au bilan par valorisation
+// Structure de données adaptée au bilan par valorisation et par essence
 // normalement, aurait dû être :
 // type Valorisation map[string]map[string][2]float64
 // "BO":
@@ -100,6 +100,7 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, er
 func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error) {
 	essenceCodes := AllEssenceCodes()
 	valoCodes := AllValorisationCodes()
+	valoCodes = append(valoCodes, "CF") // ajoute type valo pour séparer chaffage fermier / chauffage client
 	valos = make(Valorisations)
 	for _, valoCode := range valoCodes {
 		for _, essenceCode := range essenceCodes {
@@ -130,7 +131,7 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Va
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, chaufer := range chaufers {
-		valos["CH-"+chaufer.Essence+"-vol"] += chaufer.Volume // CH car chaufer = toujours chauffage
+		valos["CF-"+chaufer.Essence+"-vol"] += chaufer.Volume // CF = chauffage fermier
 	}
 	//
 	return valos, err

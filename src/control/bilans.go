@@ -32,7 +32,7 @@ type detailsBilanVentesPlaquettes struct {
 	Ventes    []*model.VentePlaq
 }
 
-type detailsBilanValorisations struct {
+type detailsBilanValoEssences struct {
 	DateDebut     time.Time
 	DateFin       time.Time
 	Valorisations model.Valorisations
@@ -195,7 +195,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 
 // *********************************************************
 // Bilan par valorisation et par essences
-// (les deux sont presuqe identiques)
+// (les deux sont presque identiques)
 // @param  what "valorisations" ou "essences"
 func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string) error {
 	dateDebut, err := time.Parse("2006-01-02", formValues.Get("date-debut"))
@@ -230,12 +230,12 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 		Footer: ctxt.Footer{
 			JSFiles: []string{},
 		},
-		Details: detailsBilanValorisations{
+		Details: detailsBilanValoEssences{
 			DateDebut:     dateDebut,
 			DateFin:       dateFin,
 			Valorisations: valos,
 			EssenceCodes:  model.AllEssenceCodes(),
-			ValoCodes:     model.AllValorisationCodes(),
+			ValoCodes:     model.AllValorisationCodesAvecChaufer(),
 		},
 	}
 	if err != nil {

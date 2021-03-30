@@ -30,7 +30,7 @@ let k1, k2;
     </tr>
     {{range .ValoCodes}}
     <tr>
-        <th>{{. | labelValorisation}}</th>
+        <th>{{. | labelValorisationAvecChaufer}}</th>
         {{$valoCode := .}}
         {{range $.Details.EssenceCodes}}
             <td class="right">
@@ -56,6 +56,5 @@ let k1, k2;
     {{end}}
 </table>
 
-Note: "Chauffage" inclut à la fois les chantiers chauffage fermier et les chantiers autres valorisations.
 </div>
 {{end}}
