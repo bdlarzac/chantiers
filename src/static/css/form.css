@@ -16,3 +16,7 @@
     text-align:right;
     font-weight:bold;
 }
+.grid2-form label.optional{
+    font-weight:normal;
+    color:green;
+}

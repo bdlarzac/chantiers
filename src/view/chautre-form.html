@@ -50,17 +50,17 @@
         <label>Taux TVA</label>
         <div>{{.TVA}} %</div>
         
-        <label for="datefacture">Date facturation</label>
+        <label class="optional" for="datefacture">Date facturation</label>
         <div>
             <input type="date" name="datefacture" id="datefacture" value="{{.DateFacture | dateIso}}">
         </div>
         
-        <label for="numfacture">Numéro facture</label>
+        <label class="optional" for="numfacture">Numéro facture</label>
         <div>
             <input type="text" name="numfacture" id="numfacture" value="{{.NumFacture}}">
         </div>
         
-        <label for="notes">Notes</label>
+        <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
         
     </div>

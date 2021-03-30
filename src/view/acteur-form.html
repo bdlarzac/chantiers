@@ -7,57 +7,57 @@
     <div class="grid2-form">
         
         <label for="nom">Nom / Dénomination</label>
-        <input type="text" name="nom" id="nom" value="{{.Nom}}" required>
+        <input type="text" name="nom" id="nom" value="{{.Nom}}">
         
-        <label for="prenom">Prénom / Statut juridique</label>
+        <label class="optional" for="prenom">Prénom / Statut juridique</label>
         <input type="text" name="prenom" id="prenom" value="{{.Prenom}}">
         
-        <label for="adresse1">Adresse 1 / Siège social</label>
+        <label class="optional" for="adresse1">Adresse 1 / Siège social</label>
         <input type="text" name="adresse1" id="adresse1" value="{{.Adresse1}}">
         
-        <label for="adresse2">Adresse 2</label>
+        <label class="optional" for="adresse2">Adresse 2</label>
         <input type="text" name="adresse2" id="adresse2" value="{{.Adresse2}}">
         
-        <label for="cp">Code postal</label>
+        <label class="optional" for="cp">Code postal</label>
         <div><input type="text" name="cp" id="cp" size="5" value="{{.Cp}}"></div>
         
-        <label for="ville">Ville</label>
+        <label class="optional" for="ville">Ville</label>
         <input type="text" name="ville" id="ville" value="{{.Ville}}">
         
-        <label for="tel">Téléphone</label>
+        <label class="optional" for="tel">Téléphone</label>
         <div><input type="text" name="tel" id="tel" size="14" value="{{.Tel}}"></div>
         
-        <label for="mobile">Téléphone portable</label>
+        <label class="optional" for="mobile">Téléphone portable</label>
         <div><input type="text" name="mobile" id="mobile" size="14" value="{{.Mobile}}"></div>
         
-        <label for="email">Email</label>
+        <label class="optional" for="email">Email</label>
         <input type="text" name="email" id="email" value="{{.Email}}">
         
-        <label for="bic">BIC</label>
+        <label class="optional" for="bic">BIC</label>
         <input type="text" name="bic" id="bic" value="{{.Bic}}">
         
-        <label for="iban">IBAN</label>
+        <label class="optional" for="iban">IBAN</label>
         <input type="text" name="iban" id="iban" value="{{.Iban}}">
         
-        <label for="siret">Siret</label>
+        <label class="optional" for="siret">Siret</label>
         <input type="text" name="siret" id="siret" value="{{.Siret}}">
         
-        <label for="fournisseur">Fournisseur plaquettes</label>
+        <label class="optional" for="fournisseur">Fournisseur plaquettes</label>
         <div>
             <input type="checkbox" name="fournisseur" id="fournisseur" {{if .Fournisseur}} checked{{end}}>
         </div>
         
-        <label for="proprietaire">Propriétaire</label>
+        <label class="optional" for="proprietaire">Propriétaire</label>
         <div>
             <input type="checkbox" name="proprietaire" id="proprietaire" {{if .Proprietaire}} checked{{end}}>
         </div>
         
-        <label for="actif">Actif</label>
+        <label class="optional" for="actif">Actif</label>
         <div>
             <input type="checkbox" name="actif" id="actif" {{if .Actif}} checked{{end}}>
         </div>
         
-        <label for="notes">Notes</label>
+        <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
 
     </div>
@@ -93,6 +93,15 @@
 <script>
 
 function validateForm(){
+    let msg = "";
+    if(document.getElementById("nom").value.trim() == ""){
+        msg += "- Vous devez renseigner le nom.\n";
+    }
+    if(msg != ""){
+        alert("Impossible de valider ce formulaire : \n" + msg);
+        return false;
+    }
+    return true;
 }
 </script>
 

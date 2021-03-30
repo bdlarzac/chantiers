@@ -33,28 +33,28 @@
     
     <div class="grid2-form">
         
-        <label for="numfacture">Numéro Facture</label>
+        <label class="optional" for="numfacture">Numéro Facture</label>
         <input type="text" name="numfacture" id="numfacture" value="{{.NumFacture}}" class="width15">
         
-        <label for="datefacture">Date Facture</label>
+        <label class="optional" for="datefacture">Date Facture</label>
         <input type="date" name="datefacture" id="datefacture" value="{{.DateFacture | dateIso}}" class="width15">
         
         <div class="right"><input type="checkbox" id="facturelivraison" name="facturelivraison"></div>
         <div>
-            <label for="facturelivraison">Faire apparaître (les) livraison(s) dans la facture</label>
+            <label class="optional" for="facturelivraison">Faire apparaître (les) livraison(s) dans la facture</label>
             <div class=" margin-left2">
                 <div class="padding-top05">
-                    <label for="facturelivraisonpuht">PU HT livraison</label>
+                    <label class="optional" for="facturelivraisonpuht">PU HT livraison</label>
                     <input type="number" name="facturelivraisonpuht" id="facturelivraisonpuht" step="0.01" min="0" value="{{.FactureLivraisonPUHT | zero2empty}}" class="width5"> &euro; / map
                 </div>
-                <div class="padding-top05"><b>TVA livraison</b> : {{.FactureLivraisonTVA}} %</div>
+                <div class="padding-top05 optional">TVA livraison : {{.FactureLivraisonTVA}} %</div>
             </div>
         </div>
        
         <div class="right"><input type="checkbox" id="facturenotes" name="facturenotes"></div>
-        <div class="left"><label for="facturenotes">Faire apparaître les notes dans la facture</label></div>
+        <div class="left"><label class="optional" for="facturenotes">Faire apparaître les notes dans la facture</label></div>
                                                                                  
-        <label for="notes">Notes</label>
+        <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
 
     </div>

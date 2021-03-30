@@ -47,7 +47,7 @@
             {{$.Details.GlTVAOptions}}
         </select>
         
-        <label for="gldatepay">Date Paiement</label>
+        <label class="optional" for="gldatepay">Date Paiement</label>
         <input type="date" name="gldatepay" id="gldatepay" value="{{.GlDatePay | dateIso}}" class="width20">
     
         <!-- ****************** Coût détaillé ******************* -->
@@ -76,7 +76,7 @@
             {{$.Details.CoTVAOptions}}
         </select>
         
-        <label for="codatepay">Date Paiement</label>
+        <label class="optional" for="codatepay">Date Paiement</label>
         <input type="date" name="codatepay" id="codatepay" value="{{.CoDatePay | dateIso}}" class="width20">
         
         <!-- ******************* Outil ****************** -->
@@ -105,7 +105,7 @@
             {{$.Details.CaTVAOptions}}
         </select>
         
-        <label for="cadatepay">Date Paiement</label>
+        <label class="optional" for="cadatepay">Date Paiement</label>
         <input type="date" name="cadatepay" id="cadatepay" value="{{.CaDatePay | dateIso}}" class="width20">
         
         <!-- ****************** Tracteur + benne ******************* -->
@@ -132,10 +132,10 @@
             {{$.Details.TbTVAOptions}}
         </select>
         
-        <label for="tbdatepay">Date Paiement</label>
+        <label class="optional" for="tbdatepay">Date Paiement</label>
         <input type="date" name="tbdatepay" id="tbdatepay" value="{{.TbDatePay | dateIso}}" class="width20">
         
-        <label for="notes">Notes</label>
+        <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
         
     </div>

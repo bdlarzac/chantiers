@@ -34,7 +34,7 @@
             {{$.Details.GlTVAOptions}}
         </select>
         
-        <label for="gldatepay">Date Paiement</label>
+        <label class="optional" for="gldatepay">Date Paiement</label>
         <input type="date" name="gldatepay" id="gldatepay" value="{{.GlDatePay | dateIso}}" class="width20">
         
     </div>
@@ -66,7 +66,7 @@
             {{$.Details.MoTVAOptions}}
         </select>
         
-        <label for="modatepay">Date Paiement</label>
+        <label class="optional" for="modatepay">Date Paiement</label>
         <input type="date" name="modatepay" id="modatepay" value="{{.MoDatePay | dateIso}}" class="width20">
         
     </div>
@@ -89,14 +89,14 @@
             {{$.Details.OuTVAOptions}}
         </select>
         
-        <label for="oudatepay">Date Paiement</label>
+        <label class="optional" for="oudatepay">Date Paiement</label>
         <input type="date" name="oudatepay" id="oudatepay" value="{{.OuDatePay | dateIso}}" class="width20">
         
     </div>
     
     <div class="grid2-form margin-top2">
     
-        <label for="notes">Notes</label>
+        <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
         
     </div>

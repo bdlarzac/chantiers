@@ -34,8 +34,11 @@
             {{end}}
         </div>
         
-        <label for="surface">Surface concernée (ha)</label>
-        <input type="number" name="surface" id="surface" step="0.1" value="{{.Surface | zero2empty}}" class="width5">
+        <label for="surface">Surface concernée</label>
+        <div>
+            <input type="number" name="surface" id="surface" step="0.1" value="{{.Surface | zero2empty}}" class="width5">
+            ha
+        </div>
         
         <label for="granulo">Granulométrie</label>
         <select name="granulo" id="granulo" class="width8">
@@ -52,11 +55,17 @@
             {{$.Details.EssenceOptions}}
         </select>
         
-        <label for="frais-repas">Frais repas (&euro;)</label>
-        <input type="number" name="frais-repas" id="frais-repas" step="0.01" min="0" value="{{.FraisRepas | zero2empty}}" class="width5">
+        <label class="optional" for="frais-repas">Frais repas</label>
+        <div>
+            <input type="number" name="frais-repas" id="frais-repas" step="0.01" min="0" value="{{.FraisRepas | zero2empty}}" class="width5">
+             &euro;
+        </div>
         
-        <label for="frais-reparation">Frais réparation (&euro;)</label>
-        <input type="number" name="frais-reparation" id="frais-reparation" step="0.01" min="0" value="{{.FraisReparation | zero2empty}}" class="width5">
+        <label class="optional" for="frais-reparation">Frais réparation</label>
+        <div>
+            <input type="number" name="frais-reparation" id="frais-reparation" step="0.01" min="0" value="{{.FraisReparation | zero2empty}}" class="width5">
+             &euro;
+         </div>
         
     </div>                                                                   
     

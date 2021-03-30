@@ -87,10 +87,10 @@
             {{$.Details.OuTVAOptions}}
         </select>
         
-        <label for="oudatepay">Date Paiement</label>
+        <label class="optional" for="oudatepay">Date Paiement</label>
         <input type="date" name="oudatepay" id="oudatepay" value="{{.OuDatePay | dateIso}}" class="width20">
         
-        <label for="notes">Notes</label>
+        <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
         
     </div>

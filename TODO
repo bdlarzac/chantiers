@@ -2,6 +2,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- form acteur : revoir validation
+
 - control/bilans : factoriser le calcul date debut / date fin
 
 - check config paths:logiciel-foncier

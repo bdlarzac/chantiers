@@ -49,10 +49,10 @@
             {{$.Details.TVAOptions}}
         </select>
 
-        <label for="date-pay">Date Paiement</label>
+        <label class="optional" for="date-pay">Date Paiement</label>
         <input type="date" name="date-pay" id="date-pay" value="{{.DatePay | dateIso}}" class="width15">
         
-        <label for="notes">Notes</label>
+        <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
         
     </div>                                                                   
