@@ -130,7 +130,7 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	ctx.TemplateName = "bilan-client-plaquettes-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    "Bilan ventes plaquettes",
+			Title:    "Bilan client plaquettes",
 			CSSFiles: []string{},
 			JSFiles: []string{
 				"/static/js/round.js",

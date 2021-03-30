@@ -168,7 +168,7 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 // *********************************************************
 func DeletePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
-	idOp, err := strconv.Atoi(vars["id"])
+	idOp, err := strconv.Atoi(vars["id-op"])
 	if err != nil {
 		return err
 	}
