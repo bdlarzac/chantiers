@@ -388,29 +388,6 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		ug.Recaps[y] = myrecap
 	}
 	//
-	// Chantier bois sur pied
-	//
-	ids = []int{}
-	query = `select id from bspied where id in(
-	    select id_chantier from chantier_ug where type_chantier='bspied' and id_ug =$1
-    )`
-	err = db.Select(&ids, query, ug.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	for _, idChantier := range ids {
-		chantier, err := GetBSPiedFull(db, idChantier)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur appel GetBSPiedFull()")
-		}
-		y := strconv.Itoa(chantier.DateContrat.Year())
-		myrecap := ug.Recaps[y] // à cause de pb "cannot assign"
-		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
-		myrecap.BoisSurPied.Quantite += chantier.NStereCoupees
-		myrecap.BoisSurPied.Benefice += chantier.NStereCoupees * chantier.PrixStere
-		ug.Recaps[y] = myrecap
-	}
-	//
 	ug.SortedRecapYears = make([]string, 0, len(ug.Recaps))
 	for k, _ := range ug.Recaps {
 		ug.SortedRecapYears = append(ug.SortedRecapYears, k)
@@ -449,32 +426,6 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 			Date:        elt.DateDebut,
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.Id),
 			NomActivite: "Chantier plaquettes " + elt.String()}
-		res = append(res, new)
-	}
-	//
-	// Chantiers bois sur pied
-	//
-	list2 := []BSPied{}
-	query = `select * from bspied where id in(
-	    select id_chantier from chantier_ug where type_chantier='bspied' and id_ug =$1
-    )`
-	err = db.Select(&list2, query, u.Id)
-	if err != nil {
-		return res, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, elt := range list2 {
-		err = elt.ComputeLieudits(db)
-		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel BSPied.ComputeLieudits()")
-		}
-		err = elt.ComputeAcheteur(db)
-		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel BSPied.ComputeAcheteur()")
-		}
-		new := &UGActivite{
-			Date:        elt.DateContrat,
-			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.Id),
-			NomActivite: "Chantier bois sur pied " + elt.String()}
 		res = append(res, new)
 	}
 	//

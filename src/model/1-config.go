@@ -37,7 +37,6 @@ type Config struct {
 	TVABDL           struct {
 		Livraison         float64 `yaml:"livraison"`
 		VentePlaquettes   float64 `yaml:"vente-plaquettes"`
-		BoisSurPied       float64 `yaml:"bois-sur-pied"`
 		AutreValorisation float64 `yaml:"autre-valorisation"`
 	} `yaml:"tva-bdl"`
 	Facture struct {

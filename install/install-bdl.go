@@ -241,7 +241,7 @@ func installStockage() {
 	dbcreate.FillHangarsInitiaux()
 }
 func installChantier() {
-    // liens pour plaq, bspied, chautre
+    // liens pour plaq, chautre
 	dbcreate.CreateTable("chantier_ug")
 	dbcreate.CreateTable("chantier_fermier")
 	dbcreate.CreateTable("chantier_lieudit")
@@ -249,8 +249,6 @@ func installChantier() {
 	dbcreate.CreateTable("plaqop")
 	dbcreate.CreateTable("plaqtrans")
 	dbcreate.CreateTable("plaqrange")
-	// bois sur pied
-	dbcreate.CreateTable("bspied")
 	// autres valorisations
 	dbcreate.CreateTable("chautre")
 	// chauffage fermier

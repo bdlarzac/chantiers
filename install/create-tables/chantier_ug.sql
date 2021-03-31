@@ -1,8 +1,8 @@
 
--- Table de liens utilisé par plaq, bspied, chautre
+-- Table de liens utilisé par plaq, chautre
 
 create table chantier_ug (
-    type_chantier           varchar(7), -- "plaq" ou "bspied" ou "chautre"
+    type_chantier           varchar(7), -- "plaq" ou "chautre"
     id_chantier             int not null,
     id_ug                   int not null references ug(id),
     primary key(type_chantier, id_chantier, id_ug)

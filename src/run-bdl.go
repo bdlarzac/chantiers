@@ -58,7 +58,6 @@ func main() {
 	r.HandleFunc("/update-sctl", H(control.UpdateSCTL))
 
 	r.HandleFunc("/facture/vente-plaquette/{id:[0-9]+}", HPDF(control.ShowFactureVentePlaq))
-	r.HandleFunc("/facture/bois-sur-pied/{id:[0-9]+}", HPDF(control.ShowFactureBSPied))
 	r.HandleFunc("/facture/autre/{id:[0-9]+}", HPDF(control.ShowFactureChautre))
 
 	r.HandleFunc("/acteur/liste", H(control.ListActeur))
@@ -84,12 +83,6 @@ func main() {
 	r.HandleFunc("/chantier/chauffage-fermier/new", H(control.NewChaufer))
 	r.HandleFunc("/chantier/chauffage-fermier/update/{id:[0-9]+}", H(control.UpdateChaufer))
 	r.HandleFunc("/chantier/chauffage-fermier/delete/{id:[0-9]+}", H(control.DeleteChaufer))
-
-	r.HandleFunc("/chantier/bois-sur-pied/liste/{annee:[0-9]+}", H(control.ListBspied))
-	r.HandleFunc("/chantier/bois-sur-pied/liste", H(control.ListBspied))
-	r.HandleFunc("/chantier/bois-sur-pied/new", H(control.NewBSPied))
-	r.HandleFunc("/chantier/bois-sur-pied/update/{id:[0-9]+}", H(control.UpdateBSPied))
-	r.HandleFunc("/chantier/bois-sur-pied/delete/{id:[0-9]+}", H(control.DeleteBSPied))
 
 	r.HandleFunc("/chantier/plaquette/liste", H(control.ListPlaq))
 	r.HandleFunc("/chantier/plaquette/liste/{annee:[0-9]+}", H(control.ListPlaq))
