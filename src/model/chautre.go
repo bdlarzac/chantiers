@@ -25,7 +25,8 @@ type Chautre struct {
 	DateContrat  time.Time
 	Exploitation string
 	Essence      string
-	Volume       float64
+	VolumeContrat       float64
+	VolumeRealise       float64
 	Unite        string
 	PUHT         float64
 	TVA          float64
@@ -207,14 +208,15 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         datecontrat,
         exploitation,
         essence,
-        volume,
+        volumecontrat,
+        volumerealise,
         unite,
         puht,
         tva,
         datefacture,
         numfacture,
-        notes    
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`
+        notes
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
@@ -224,7 +226,8 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		ch.DateContrat,
 		ch.Exploitation,
 		ch.Essence,
-		ch.Volume,
+		ch.VolumeContrat,
+		ch.VolumeRealise,
 		ch.Unite,
 		ch.PUHT,
 		ch.TVA,
@@ -297,14 +300,15 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         datecontrat,
         exploitation,
         essence,
-        volume,
+        volumecontrat,
+        volumerealise,
         unite,
         puht,
         tva,
         datefacture,
         numfacture,
         notes    
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) where id=$14`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) where id=$15`
 	_, err := db.Exec(
 		query,
 		ch.IdAcheteur,
@@ -313,7 +317,8 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		ch.DateContrat,
 		ch.Exploitation,
 		ch.Essence,
-		ch.Volume,
+		ch.VolumeContrat,
+		ch.VolumeRealise,
 		ch.Unite,
 		ch.PUHT,
 		ch.TVA,

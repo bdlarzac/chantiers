@@ -48,8 +48,13 @@
                 <div>Type de vente</div>
                 <div>{{.TypeVente | labelTypeVente}}</div>
                 
-                <div>Date contrat</div>    
+                <div>Date contrat</div>
                 <div>{{.DateContrat | dateFr}}</div>
+                
+                {{if .VolumeContrat}}
+                    <div>Volume contrat</div>
+                    <div>{{.VolumeContrat}} {{.Unite | labelUnite}}</div>
+                {{end}}
                 
                 <div>Essence</div>
                 <div>{{.Essence | labelEssence}}</div>
@@ -69,20 +74,20 @@
         </td>
         <td class="vertical-align-top">
             <div class="grid2-pres">
-                <div>Volume</div>
-                <div>{{.Volume}} {{.Unite | labelUnite}}</div>
+                <div>Volume réalisé</div>
+                <div>{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
                 
                 <div>PU HT</div>
                 <div><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>
                 
                 <div>Total HT</div>
-                <div><script>document.write(round(prixHT({{.PUHT}}, {{.Volume}}), 2));</script></span> &euro;</div>
+                <div><script>document.write(round(prixHT({{.PUHT}}, {{.VolumeRealise}}), 2));</script></span> &euro;</div>
                 
                 <div>TVA</div>
                 <div>{{.TVA}}</span> %</div>
                 
                 <div>Total TTC</div>
-                <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Volume}}), {{.TVA}}), 2));</script></span> &euro;</div>
+                <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.VolumeRealise}}), {{.TVA}}), 2));</script></span> &euro;</div>
             </div>
         </td>
         <td class="vertical-align-top">

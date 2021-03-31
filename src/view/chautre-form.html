@@ -44,6 +44,18 @@
             {{$.Details.ValorisationOptions}}
         </select>
 
+        <label class="optional" for="volume">Volume contrat</label>
+        <div>
+            <input type="number" name="volume-contrat" id="volume-contrat" step="0.01" min="0" value="{{.VolumeContrat | zero2empty}}" class="width5">
+            <span class="unite padding-left05"></span>
+        </div>
+        
+        <label for="volume-realise">Volume realisé</label>
+        <div>
+            <input type="number" name="volume-realise" id="volume-realise" step="0.01" min="0" value="{{.VolumeRealise | zero2empty}}" class="width5">
+            <span class="unite padding-left05"></span>
+        </div>
+        
         <label for="exploitation">Exploitation</label>
         <select name="exploitation" id="exploitation" class="width8">
             {{$.Details.ExploitationOptions}}
@@ -53,14 +65,6 @@
         <select name="essence" id="essence" class="width10">
             {{$.Details.EssenceOptions}}
         </select>
-        
-        <label for="volume">Volume</label>
-        <div>
-            <input type="number" name="volume" id="volume" step="0.01" min="0" value="{{.Volume | zero2empty}}" class="width5">
-            <select name="unite" id="unite" class="width8" disabled>
-                {{$.Details.UniteOptions}}
-            </select>
-        </div>
         
         <label for="puht">PU HT</label>
         <div>
@@ -110,6 +114,11 @@
         <div class="section">
             <b>Taux TVA</b> : le taux de TVA est le même pour tous les chantiers autres valorisations. Il peut être modifié dans le fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>autre-valorisation</code>.
         </div>
+        
+        <div class="section">
+            <b>Volume contrat</b> : Volume décidé avec l'acheteur en faisant le contrat de vente.
+            <br><b>Volume réalisé</b> : Volume effectivement vendu à l'acheteur.
+        </div>
     </div>
 </div>
 
@@ -130,7 +139,6 @@ function initialize(){
     // form new
     if({{.Id}} == 0){
         // unité la plus courante sélectionnée par défaut
-        document.getElementById("CHOOSE_UNITE").selected = true;
         document.getElementById("typevente-NON").checked = true;
     }
     // form update
@@ -149,22 +157,28 @@ function initialize(){
 **/
 function valorisationChanged(){
     if(document.getElementById("CHOOSE_VALORISATION").selected){
-        document.getElementById("CHOOSE_UNITE").selected = true;
+        document.getElementsByClassName("unite")[0].innerHTML = "";
+        document.getElementsByClassName("unite")[1].innerHTML = "";
     }
     else if(document.getElementById("valorisation-BO").selected){
-        document.getElementById("unite-{{"BO" | valorisation2unite}}").selected = true;
+        document.getElementsByClassName("unite")[0].innerHTML = "{{"BO" | valorisation2uniteLabel}}";
+        document.getElementsByClassName("unite")[1].innerHTML = "{{"BO" | valorisation2uniteLabel}}";
     }
     else if(document.getElementById("valorisation-CH").selected){
-        document.getElementById("unite-{{"CH" | valorisation2unite}}").selected = true;
+        document.getElementsByClassName("unite")[0].innerHTML = "{{"CH" | valorisation2uniteLabel}}";
+        document.getElementsByClassName("unite")[1].innerHTML = "{{"CH" | valorisation2uniteLabel}}";
     }
     else if(document.getElementById("valorisation-PL").selected){
-        document.getElementById("unite-{{"PL" | valorisation2unite}}").selected = true;
+        document.getElementsByClassName("unite")[0].innerHTML = "{{"PL" | valorisation2uniteLabel}}";
+        document.getElementsByClassName("unite")[1].innerHTML = "{{"PL" | valorisation2uniteLabel}}";
     }
     else if(document.getElementById("valorisation-PP").selected){
-        document.getElementById("unite-{{"PP" | valorisation2unite}}").selected = true;
+        document.getElementsByClassName("unite")[0].innerHTML = "{{"PP" | valorisation2uniteLabel}}";
+        document.getElementsByClassName("unite")[1].innerHTML = "{{"PP" | valorisation2uniteLabel}}";
     }
     else if(document.getElementById("valorisation-PI").selected){
-        document.getElementById("unite-{{"PI" | valorisation2unite}}").selected = true;
+        document.getElementsByClassName("unite")[0].innerHTML = "{{"PI" | valorisation2uniteLabel}}";
+        document.getElementsByClassName("unite")[1].innerHTML = "{{"PI" | valorisation2uniteLabel}}";
     }
 }
 
@@ -195,12 +209,8 @@ function validateForm(){
         msg += "- Vous devez choisir une essence.\n";                                           
     }
     //
-    if(document.getElementById("volume").value == ""){
-        msg += "- Vous devez renseigner le volume.\n";
-    }
-    //
-    if(document.getElementById("CHOOSE_UNITE").selected == true){
-        msg += "- Vous devez choisir une unité.\n";
+    if(document.getElementById("volume-realise").value == ""){
+        msg += "- Vous devez renseigner le volume réalisé.\n";
     }
     //
     if(document.getElementById("puht").value == ""){

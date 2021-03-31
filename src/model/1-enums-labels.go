@@ -99,7 +99,7 @@ func LabelUnite(abbrev string) string {
 	case "JO":
 		return "jours"
 	case "M3":
-		return "m3"
+		return "m<sup>3</sup>"
 	case "MA":
 		return "maps"
 	case "ST":

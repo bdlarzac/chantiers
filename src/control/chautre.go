@@ -22,7 +22,6 @@ type detailsChautreForm struct {
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
 	ValorisationOptions template.HTML
-	UniteOptions        template.HTML
 }
 
 type detailsChautreList struct {
@@ -142,7 +141,6 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "CHOOSE_VALORISATION"),
-				UniteOptions:        webo.FmtOptions(WeboChautreUnite(), "CHOOSE_UNITE"),
 				UrlAction:           "/chantier/autre/new",
 			},
 			Menu: "chantiers",
@@ -248,7 +246,6 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "valorisation-"+chantier.TypeValo),
-				UniteOptions:        webo.FmtOptions(WeboChautreUnite(), "unite-"+chantier.Unite),
 				UrlAction:           "/chantier/autre/update/" + vars["id"],
 			},
 		}
@@ -307,11 +304,22 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	//
 	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
 	//
-	ch.Volume, err = strconv.ParseFloat(r.PostFormValue("volume"), 32)
-	if err != nil {
-		return ch, err
-	}
-	ch.Volume = tiglib.Round(ch.Volume, 2)
+	if r.PostFormValue("volume-contrat") == "" {
+	    ch.VolumeContrat = 0 // car optionnel
+	} else {
+        ch.VolumeContrat, err = strconv.ParseFloat(r.PostFormValue("volume-contrat"), 32)
+        if err != nil {
+            return ch, err
+        }
+    }
+	ch.VolumeContrat = tiglib.Round(ch.VolumeContrat, 2)
+	//
+    ch.VolumeRealise, err = strconv.ParseFloat(r.PostFormValue("volume-realise"), 32)
+    if err != nil {
+        return ch, err
+    }
+	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
+	
 	//
 	ch.Unite = model.Valorisation2unite(ch.TypeValo)
 	//
@@ -427,7 +435,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w2
-	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.Volume, 'f', 2, 64), "RB", "C", false)
+	pdf.MultiCell(wi, he, strconv.FormatFloat(ch.VolumeRealise, 'f', 2, 64), "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w3
@@ -439,7 +447,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w5
-	prixHT := ch.Volume * ch.PUHT
+	prixHT := ch.VolumeRealise * ch.PUHT
 	pdf.MultiCell(wi, he, strconv.FormatFloat(prixHT, 'f', 2, 64), "RB", "C", false)
 	//
 	pdf.SetFont("Arial", "B", 10)

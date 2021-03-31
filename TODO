@@ -2,6 +2,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- recents (page accueil) : remove doublon "chautre liste" et "chautre liste 2021"
+
 - form acteur : revoir validation
 
 - control/bilans : factoriser le calcul date debut / date fin
@@ -19,11 +21,9 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 - Finir de nettoyer le model (fonctions inutiles, jointures au lieu de plusieurs select)
   surtout parcelle / ug / lieudit 
 
-- Sortir BDL, SCTL, GFA des acteurs
+- Sortir BDL, SCTL, GFA des acteurs ???
 
 - supprimer GetFermiersFromCodeUG si inutilisé - dans run-bdl, ajax et model
-
-- Voir bspied Parcelles et IdsParcelles => ???
 
 - Dans toutes les fonctions model.Compute*, faire un test au début pour return si déjà calculé
 

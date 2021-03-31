@@ -118,8 +118,8 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Va
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, chautre := range chautres {
-		valos[chautre.TypeValo+"-"+chautre.Essence+"-vol"] += chautre.Volume
-		valos[chautre.TypeValo+"-"+chautre.Essence+"-ca"] += chautre.PUHT * chautre.Volume
+		valos[chautre.TypeValo+"-"+chautre.Essence+"-vol"] += chautre.VolumeRealise
+		valos[chautre.TypeValo+"-"+chautre.Essence+"-ca"] += chautre.PUHT * chautre.VolumeRealise
 	}
 	//
 	// chaufer

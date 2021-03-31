@@ -370,20 +370,20 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 		myrecap.Annee = y       // au cas où on l'utilise pour la 1e fois
 		switch chantier.TypeValo {
 		case "BO":
-			myrecap.BoisOeuvre.Quantite += chantier.Volume
-			myrecap.BoisOeuvre.Benefice += chantier.Volume * chantier.PUHT
+			myrecap.BoisOeuvre.Quantite += chantier.VolumeRealise
+			myrecap.BoisOeuvre.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "CH":
-			myrecap.Chauffage.Quantite += chantier.Volume
-			myrecap.Chauffage.Benefice += chantier.Volume * chantier.PUHT
+			myrecap.Chauffage.Quantite += chantier.VolumeRealise
+			myrecap.Chauffage.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "PI":
-			myrecap.Piquets.Quantite += chantier.Volume
-			myrecap.Piquets.Benefice += chantier.Volume * chantier.PUHT
+			myrecap.Piquets.Quantite += chantier.VolumeRealise
+			myrecap.Piquets.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "PL":
-			myrecap.Palette.Quantite += chantier.Volume
-			myrecap.Palette.Benefice += chantier.Volume * chantier.PUHT
+			myrecap.Palette.Quantite += chantier.VolumeRealise
+			myrecap.Palette.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "PP":
-			myrecap.PateAPapier.Quantite += chantier.Volume
-			myrecap.PateAPapier.Benefice += chantier.Volume * chantier.PUHT
+			myrecap.PateAPapier.Quantite += chantier.VolumeRealise
+			myrecap.PateAPapier.Benefice += chantier.VolumeRealise * chantier.PUHT
 		}
 		ug.Recaps[y] = myrecap
 	}
