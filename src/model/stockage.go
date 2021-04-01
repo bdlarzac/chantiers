@@ -89,7 +89,6 @@ func GetStockages(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
 	} else {
 		query += "TRUE"
 	}
-	query += " order by nom"
 	err := db.Select(&stockages, query)
 	if err != nil {
 		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -103,27 +102,20 @@ func GetStockages(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
 //          true => ne renvoie que les stockages actifs (pas archivés)
 //          false => ne renvoie que les stockages archivés
 func GetStockagesFull(db *sqlx.DB, actifs bool) ([]*Stockage, error) {
-	stockages := []*Stockage{}
-	query := "select id from stockage where archived="
-	if actifs {
-		query += "FALSE"
-	} else {
-		query += "TRUE"
-	}
-	query += " order by nom"
-	ids := []int{}
-	err := db.Select(&ids, query)
-	if err != nil {
-		return stockages, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, id := range ids {
-		s, err := GetStockageFull(db, id)
+	res := []*Stockage{}
+	var err error
+	stockages, err := GetStockages(db, actifs)
+    if err != nil {
+        return res, werr.Wrapf(err, "Erreur appel GetStockages()")
+    }
+	for _, stockage := range stockages {
+		s, err := GetStockageFull(db, stockage.Id)
 		if err != nil {
-			return stockages, werr.Wrapf(err, "Erreur appel GetStockageFull()")
+			return res, werr.Wrapf(err, "Erreur appel GetStockageFull()")
 		}
-		stockages = append(stockages, s)
+		res = append(res, s)
 	}
-	return stockages, nil
+	return res, nil
 }
 
 // ************************** Compute *******************************

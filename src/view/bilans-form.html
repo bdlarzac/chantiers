@@ -1,9 +1,14 @@
 
 <h1>Choix bilan</h1>
 
+{{if not .Details.HasChantier}}
+    <div><div class="error">
+        Impossible d'afficher les bilans car la base de données ne contient aucun chantier.
+    </div></div>
+{{else}}
 {{with .Details}}
 
-<form class="form margin-left2" action="{{.UrlAction}}" onsubmit="return validateForm();" method="post">
+<form class="form margin-left2" action="{{.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
     
     <div class="grid2-form">
         
@@ -169,4 +174,5 @@ function validateForm(){
 
 </script>
 
-{{end}}
+{{end}}{{/* en with .Details */}}
+{{end}} {{/* end else ZeroChantier */}}

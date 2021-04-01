@@ -31,6 +31,10 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			if err != nil {
 				return err
 			}
+			err = t.ComputeEvolutionStock(ctx.DB)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	archives, err := model.GetStockagesFull(ctx.DB, false)

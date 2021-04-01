@@ -5,6 +5,10 @@
     </a>
 </h1>
 
+<script>
+    let stock = 0;
+</script>
+
 <!-- ********************************** Stockages actifs ************************************* -->
 {{range .Details.Actifs}}
     <hr>
@@ -54,7 +58,32 @@
                     </li>
                 {{end}}
                 {{if .MesuresHumidite}}</ul></div>{{end}}
-                
+                <!-- **************** Evolution stock ********************* -->
+                {{if .EvolutionStock}}
+                    <script>stock = 0;</script>
+                    <div class="margin-left4">
+                    <div class="bold">Evolution du stock</div>
+                    <table class="bordered">
+                        <tr><th>Date</th><th>Opération</th><th>Delta</th><th>Stock</th></tr>
+                {{end}}
+                {{range .EvolutionStock}}
+                    <script>stock += {{.Delta}};</script>
+                    <tr>
+                        <td>{{.Date | dateFr}}</td>
+                        <td>
+                            {{.Label}}
+<!-- todo url -->
+                        </td>
+                        <td class="right">{{printf "%+.2f" .Delta}}</td>
+                        <td>
+                            <script>document.write(round(stock, 2));</script>
+                        </td>
+                    </tr>
+                {{end}}
+                {{if .EvolutionStock}}
+                    </table>
+                    </div>
+                {{end}}
             </li>
         {{end}}
         {{if .TasActifs}}</ul>{{end}}

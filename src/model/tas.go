@@ -11,7 +11,9 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"errors"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+	"time"
+	"strconv"
+	"sort"
 )
 
 type Tas struct {
@@ -19,12 +21,23 @@ type Tas struct {
 	IdStockage int `db:"id_stockage"`
 	IdChantier int `db:"id_chantier"`
 	Stock      float64
+	DateVidage time.Time
 	Actif      bool
 	// pas stocké en base
 	Nom             string
 	Chantier        *Plaq
 	Stockage        *Stockage
 	MesuresHumidite []*Humid
+	EvolutionStock  []*MouvementStock
+}
+
+// MouvementStock = opération qui fait changer le stock du tas :
+// transports, chargements, vidage
+type MouvementStock struct{
+    Date    time.Time
+    Label   string
+    URL     string
+    Delta   float64
 }
 
 func NewTas(idStockage, idChantier int, stock float64, actif bool) *Tas {
@@ -158,6 +171,85 @@ func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
 	}
 	return nil
 }
+
+// pas inclus par défaut dans GetTasFull()
+// note : en théorie, l'url des mouvements ne devrait pas être calculée dans le model mais dans le controller
+func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) error {
+	var err error
+	res := []*MouvementStock{}
+	// transports
+	var tmp1 = []*struct{
+		Id int
+		Id_chantier int
+		Qte float64
+		PourcentPerte float64
+		DateTrans  time.Time
+	}{}
+	query := "select id,id_chantier,qte,pourcentperte,datetrans from plaqtrans where id_tas=$1"
+	err = db.Select(&tmp1, query, t.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, line := range(tmp1){
+	    mvt := MouvementStock{
+	        Date: line.DateTrans,
+	        Label: "Transport",
+	        URL: "/chantier/plaquette/" + strconv.Itoa(line.Id_chantier) + "/chantiers",
+	        Delta: line.Qte*(1-line.PourcentPerte/100),
+	    }
+	    res = append(res, &mvt)
+	}
+	// chargements (utilise GetVenteCharge() pour récupérer id vente)
+    idsCharge := []int{}
+	query = "select id from ventecharge where id_tas=$1"
+	err = db.Select(&idsCharge, query, t.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, idCharge := range(idsCharge){
+	    vc, err := GetVenteCharge(db, idCharge)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel GetVenteCharge()")
+        }
+        err = vc.ComputeIdVente(db)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel ComputeIdVente()")
+        }
+	    mvt := MouvementStock{
+	        Date: vc.DateCharge,
+	        Label: "Chargement",
+	        URL: "/vente/plaquette/" + strconv.Itoa(vc.IdVente),
+	        Delta: -vc.Qte,
+	    }
+	    res = append(res, &mvt)
+	}
+	// vidage
+// TODO 
+	// tri par date
+	sortedRes := make(mouvementStockSlice, 0, len(res))
+	for _, elt := range res {
+		sortedRes = append(sortedRes, elt)
+	}
+	sort.Sort(sortedRes)
+	t.EvolutionStock = sortedRes
+	//
+	return nil
+}
+
+// Auxiliaires de ComputeEvolutionStock() pour trier par date
+type mouvementStockSlice []*MouvementStock
+
+func (m mouvementStockSlice) Len() int {
+	return len(m)
+}
+func (m mouvementStockSlice) Less(i, j int) bool {
+	return m[i].Date.After(m[j].Date)
+}
+func (m mouvementStockSlice) Swap(i, j int) {
+	m[i], m[j] = m[j], m[i]
+}
+
+
 
 // ************************** CRUD *******************************
 

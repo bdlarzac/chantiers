@@ -2,7 +2,7 @@
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details}}
-<form class="form margin-left2" action="{{.UrlAction}}" onsubmit="return validateForm();" method="post">
+<form class="form margin-left2" action="{{.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
     <div class="grid2-form">
         <label>Lieu de stockage</label>
         <input type="text" value="{{.Stockage.Nom}}" class="width20" readonly>

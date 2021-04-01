@@ -5,6 +5,7 @@ create table tas (
     id_stockage             int not null references stockage(id),
     id_chantier             int not null references plaq(id),
     stock                   numeric,
+    datevidage              date,
     actif                   boolean not null default true
 );
 create index tas_id_chantier_idx on tas(id_chantier);

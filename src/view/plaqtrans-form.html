@@ -3,7 +3,7 @@
 </h1>
 
 {{with .Details.Transport}}
-<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post">
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
 
     <div class="grid2-form">
         
@@ -419,11 +419,8 @@ function validateForm(){
         msg += "- Vous devez spécifier la date de transport.\n";
     }
     //
-    if(document.getElementById("qte").value == ""){
-        msg += "- Vous devez spécifier la quantité transportée.\n";
-    }
     if(document.getElementById("qte").value == 0){
-        msg += "- La quantité transportée ne peut être nulle.\n";
+        msg += "- La quantité transportée doit être un nombre différent de 0.\n";
     }
     //
     if(document.getElementById("cout-global").checked){
@@ -435,7 +432,7 @@ function validateForm(){
         msg += check[1];
         //
         if(document.getElementById("glprix").value == ""){
-            msg += "- Vous devez choisir un prix HT (coût global).\n";
+            msg += "- Le prix HT (coût global) doit être un nombre différent de 0.\n";
         }
         //
         if(document.getElementById("gl-CHOOSE_TVA_GL").selected == true){
@@ -472,11 +469,11 @@ function validateForm(){
         if(document.getElementById("camion").checked){
             // 2.2.1 - Camion
             if(document.getElementById("cankm").value == ""){
-                msg += "- Vous devez choisir un nombre de km (camion).\n";
+                msg += "- Le nombre de km (camion) doit être un nombre différent de 0.\n";
             }
             //
             if(document.getElementById("caprixkm").value == ""){
-                msg += "- Vous devez choisir un prix au km (camion).\n";
+                msg += "- Le prix au km (camion) doit être un nombre différent de 0.\n";
             }
             //
             if(document.getElementById("ca-CHOOSE_TVA_CA").selected == true){
@@ -486,19 +483,19 @@ function validateForm(){
         else{
             // 2.2.2 Tracteur + benne
             if(document.getElementById("tbnbenne").value == ""){                      
-                msg += "- Vous devez choisir un nombre de bennes (tracteur).\n";
+                msg += "- Le nombre de bennes (tracteur) doit être un nombre différent de 0.\n";
             }
             //
             if(document.getElementById("tbduree").value == ""){
-                msg += "- Vous devez choisir une durée par benne (tracteur).\n";
+                msg += "- La durée par benne (tracteur) doit être un nombre différent de 0.\n";
             }
             //
             if(document.getElementById("tbprixh").value == ""){
-                msg += "- Vous devez choisir un prix / heure (tracteur).\n";
+                msg += "- Le prix / heure (tracteur) doit être un nombre différent de 0.\n";
             }
             //
             if(document.getElementById("tb-CHOOSE_TVA_TB").selected == true){
-                msg += "- Vous devez choisir un taux de TVA (tracteur).\n";
+                msg += "- Le taux de TVA (tracteur) doit être un nombre différent de 0.\n";
             }
         }
     }

@@ -13,6 +13,7 @@ import (
 
 type detailsBilansForm struct {
 	Periods                  [][2]time.Time
+	HasChantier              bool
 	ClientsPlaquettesOptions template.HTML
 	UrlAction                string
 }
@@ -76,10 +77,10 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		// Affiche form
 		//
-		periods, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
-		if err != nil {
-			return err
-		}
+		periods, hasChantier, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
+        if err != nil {
+            return err
+        }
 		ctx.TemplateName = "bilans-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -89,6 +90,7 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			},
 			Details: detailsBilansForm{
 				Periods:                  periods,
+				HasChantier:              hasChantier,
 				UrlAction:                "/bilans",
 				ClientsPlaquettesOptions: webo.FmtOptions(WeboClientsPlaquettes(ctx), "CHOOSE_CLIENT"),
 			},
