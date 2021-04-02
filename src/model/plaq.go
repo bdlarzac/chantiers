@@ -34,6 +34,8 @@ type Plaq struct {
 	Fermiers   []*Fermier
 	Volume     float64
 	Tas        []*Tas
+	TasVides   []*Tas
+	TasActifs  []*Tas
 	Operations []*PlaqOp
 	Transports []*PlaqTrans
 	Rangements []*PlaqRange
@@ -105,11 +107,10 @@ func GetPlaq(db *sqlx.DB, idChantier int) (*Plaq, error) {
 //      - les lieux-dits
 //      - les UGs
 //      - les fermiers
-//      - Tas
+//      - les Tas
 //      - les opérations simples (abattage...)
 //      - les transports vers le stockage
 //      - les opérations de rangement
-// Toutes les activités liées à ce chantier sont triées par ordre chronologique inverse
 func GetPlaqFull(db *sqlx.DB, idChantier int) (*Plaq, error) {
 	ch, err := GetPlaq(db, idChantier)
 	if err != nil {
@@ -203,6 +204,44 @@ func GetPlaqsOfYear(db *sqlx.DB, annee string) ([]*Plaq, error) {
 	return res, nil
 }
 
+// Renvoie la liste des chantiers plaquettes ayant des tas (stockage) vides
+func GetAllPlaqsVides(db *sqlx.DB) ([]*Plaq, error) {
+	res := []*Plaq{}
+	var err error
+	var idsChantier []int
+	query := "select id_chantier from tas where actif=false"
+	err = db.Select(&idsChantier, query)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, idChantier := range(idsChantier){
+	    ch, err := GetPlaq(db, idChantier)
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
+        }
+        err = ch.ComputeTas(db)
+        for _, tas := range(ch.TasVides){
+            err = tas.ComputeEvolutionStock(db)
+            if err != nil {
+                return res, werr.Wrapf(err, "Erreur appel Tas.ComputeEvolutionStock()")
+            }
+        }
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeTas()")
+        }
+        err = ch.ComputeVolume(db)
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeVolume()")
+        }
+        err = ch.ComputeLieudits(db) // nécessaire pour afficher le nom du chantier
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
+        }
+        res = append(res, ch)
+	}
+	return res, err
+}
+
 // ************************** Compute *******************************
 
 func (ch *Plaq) ComputeUGs(db *sqlx.DB) error {
@@ -247,6 +286,9 @@ func (ch *Plaq) ComputeFermiers(db *sqlx.DB) error {
 	return nil
 }
 
+// Attention, deux calculs possibles du volume vert :
+// - Somme des quantités déchiquetées (utilisée ici)
+// - Somme des quantités transportées dans les tas
 func (ch *Plaq) ComputeVolume(db *sqlx.DB) error {
 	var volumes []float64
 	query := "select qte from plaqop where id_chantier=$1 and typop='DC'" // déchiquetage
@@ -324,6 +366,11 @@ func (ch *Plaq) ComputeTas(db *sqlx.DB) error {
 		err = ch.Tas[i].ComputeNom(db)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel Tas.ComputeNom()")
+		}
+		if ch.Tas[i].Actif {
+		    ch.TasActifs = append(ch.TasActifs, ch.Tas[i])
+		} else {
+		    ch.TasVides = append(ch.TasVides, ch.Tas[i])
 		}
 	}
 	return nil

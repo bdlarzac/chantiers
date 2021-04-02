@@ -64,18 +64,19 @@
                     <div class="margin-left4">
                     <div class="bold">Evolution du stock</div>
                     <table class="bordered">
-                        <tr><th>Date</th><th>Opération</th><th>Delta</th><th>Stock</th></tr>
+                        <tr><th>Date</th><th>Opération</th><th>Delta (maps)</th><th>Stock (maps)</th></tr>
                 {{end}}
                 {{range .EvolutionStock}}
                     <script>stock += {{.Delta}};</script>
                     <tr>
                         <td>{{.Date | dateFr}}</td>
                         <td>
+                            {{if .URL}}<a href="{{.URL}}">{{end}}
                             {{.Label}}
-<!-- todo url -->
+                            {{if .URL}}</a>{{end}}
                         </td>
-                        <td class="right">{{printf "%+.2f" .Delta}}</td>
-                        <td>
+                        <td class="right">{{printf "%+.0f" .Delta}}</td>
+                        <td class="right">
                             <script>document.write(round(stock, 2));</script>
                         </td>
                     </tr>
@@ -164,8 +165,54 @@
 {{end}}
 
 
+<!-- ********************************** Modal vidage tas ************************************* -->
+<div id="modalTasVide" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        En cliquant sur OK, vous indiquez que le tas : <span class="bold" id="nom-du-tas"></span>
+        est vide.
+        <br>Il ne sera plus possible de l'utiliser pour des ventes.
+        <br><b>ATTENTION</b> : cette action ne peut pas être annulée.
+        <div class="margin-top">Date de vidage : <input type="date" name="datevide" id="date-vidage"></div>
+        <div class="margin-top">
+            <input type="button" id="cancel-vidage" value="Annuler" onClick="">
+            <input class="margin-left2" type="button" id="confirm-vidage" value="Confirmer" onClick="">
+        </div>
+    </div>
+</div>
+
+
 
 <script>
+
+window.addEventListener("load", function(){
+    let modal = document.getElementById("modalTasVide");
+    let close = document.getElementsByClassName("close")[0];
+    modal.style.display = "none";
+    close.onclick = function() {
+        modal.style.display = "none";
+    }
+    document.getElementById("cancel-vidage").onclick = function() {
+        modal.style.display = "none";
+    }
+});
+
+// *****************************************
+function signalerTasVide(id, nom){
+    let modal = document.getElementById("modalTasVide");
+    modal.style.display = "block";
+    document.getElementById("nom-du-tas").innerHTML = nom;
+    document.getElementById("confirm-vidage").onclick = function() {
+        const dateVidage = document.getElementById("date-vidage").value;
+        if(dateVidage == ""){
+            alert("Vous devez indiquer la date du vidage");
+        }
+        else{
+            window.location = "/tas/vider/" + id + "/" + dateVidage;
+        }
+    }
+}
+
 // *****************************************
 function deleteOrArchiveStockage(id, nom, archivable, deletable){
     let msg;
@@ -210,17 +257,6 @@ function deleteHumid(id, date, valeur){
             + "la mesure d'humidité du " + date + "\nsera définitivement supprimée.";
     if (confirm(msg) == true) {
         window.location = "/humidite/delete/" + id;
-    }
-}
-
-// *****************************************
-function signalerTasVide(id, nom){
-    let msg = "En cliquant sur OK, vous indiquez que le tas :\n"
-            + "\"" + nom + "\"\nest vide.\n"
-            + "Il ne sera plus possible de l'utiliser pour des ventes.\n"
-            + "ATTENTION : cette action ne peut pas être annulée.";
-    if (confirm(msg) == true) {
-        window.location = "/tas/empty/" + id;
     }
 }
 

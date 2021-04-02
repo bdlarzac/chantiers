@@ -2,7 +2,13 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- recents (page accueil) : remove doublon "chautre liste" et "chautre liste 2021"
+- bug autocomplete avec ' (GAEC Eygalieres)
+
+- recents (page accueil) :
+    - remove doublon "chautre liste" et "chautre liste 2021"
+    - remove doublon plaq et plaq/chantiers
+
+- cout exploitation chantier plaquettes : mettre coût total en plus de coût par map sèche.
 
 - form acteur : revoir validation
 

@@ -123,8 +123,10 @@ func main() {
 	r.HandleFunc("/stockage/new", H(control.NewStockage))
 	r.HandleFunc("/stockage/update/{id:[0-9]+}", H(control.UpdateStockage))
 	r.HandleFunc("/stockage/delete/{id:[0-9]+}", H(control.DeleteOrArchiveStockage))
-
-	r.HandleFunc("/tas/empty/{id:[0-9]+}", H(control.SignalerTasVide))
+	
+	r.HandleFunc("/tas-vides", H(control.ShowTasVides))
+//	r.HandleFunc("/tas/vider/{id:[0-9]+}/{date}", H(control.SignalerTasVide))
+	r.HandleFunc("/tas/vider/{id:[0-9]+}/{date:[0-9]{4}-[0-9]{2}-[0-9]{2}}", H(control.SignalerTasVide))
 
 	r.HandleFunc("/frais-stockage/new/{id-stockage:[0-9]+}", H(control.NewStockFrais))
 	r.HandleFunc("/frais-stockage/update/{id:[0-9]+}", H(control.UpdateStockFrais))

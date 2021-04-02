@@ -44,7 +44,9 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Stockage plaquettes",
-			CSSFiles: []string{"/static/css/form.css"},
+			CSSFiles: []string{
+			    "/static/css/form.css",
+                "/static/css/modal.css"},
 			JSFiles:  []string{"/static/js/round.js"},
 		},
 		Menu: "accueil",

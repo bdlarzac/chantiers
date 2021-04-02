@@ -61,12 +61,13 @@ func (t *Tas) ModifierStock(db *sqlx.DB, qte float64) error {
 }
 
 // Pour indiquer qu'un tas est vide
-func DesactiverTas(db *sqlx.DB, id int) error {
+func DesactiverTas(db *sqlx.DB, id int, date time.Time) error {
 	tas, err := GetTas(db, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTas()")
 	}
 	tas.Actif = false
+	tas.DateVidage = date
 	err = UpdateTas(db, tas)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel UpdateTas()")
@@ -155,7 +156,7 @@ func (t *Tas) ComputeChantier(db *sqlx.DB) error {
 	return err
 }
 
-// pas inclus par défaut dans GetTasFull()
+// Pas inclus par défaut dans GetTasFull()
 func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
 	var err error
 	query := "select * from humid where id_tas=$1"
@@ -172,8 +173,9 @@ func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
 	return nil
 }
 
-// pas inclus par défaut dans GetTasFull()
-// note : en théorie, l'url des mouvements ne devrait pas être calculée dans le model mais dans le controller
+// Pas inclus par défaut dans GetTasFull()
+// Note : en théorie, l'url des mouvements ne devrait pas
+// être calculée dans le model mais dans le controller
 func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) error {
 	var err error
 	res := []*MouvementStock{}
@@ -218,13 +220,11 @@ func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) error {
 	    mvt := MouvementStock{
 	        Date: vc.DateCharge,
 	        Label: "Chargement",
-	        URL: "/vente/plaquette/" + strconv.Itoa(vc.IdVente),
+	        URL: "/vente/" + strconv.Itoa(vc.IdVente),
 	        Delta: -vc.Qte,
 	    }
 	    res = append(res, &mvt)
 	}
-	// vidage
-// TODO 
 	// tri par date
 	sortedRes := make(mouvementStockSlice, 0, len(res))
 	for _, elt := range res {
@@ -235,21 +235,17 @@ func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) error {
 	//
 	return nil
 }
-
 // Auxiliaires de ComputeEvolutionStock() pour trier par date
 type mouvementStockSlice []*MouvementStock
-
 func (m mouvementStockSlice) Len() int {
 	return len(m)
 }
 func (m mouvementStockSlice) Less(i, j int) bool {
-	return m[i].Date.After(m[j].Date)
+	return m[i].Date.Before(m[j].Date)
 }
 func (m mouvementStockSlice) Swap(i, j int) {
 	m[i], m[j] = m[j], m[i]
 }
-
-
 
 // ************************** CRUD *******************************
 
@@ -258,14 +254,16 @@ func InsertTas(db *sqlx.DB, tas *Tas) (int, error) {
         id_stockage,                              
         id_chantier,
         stock,
+        datevidage,
         actif
-        ) values($1,$2,$3,$4) returning id`
+        ) values($1,$2,$3,$4,$5) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
 		tas.IdStockage,
 		tas.IdChantier,
 		tas.Stock,
+		tas.DateVidage,
 		tas.Actif).Scan(&id)
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
@@ -278,13 +276,15 @@ func UpdateTas(db *sqlx.DB, tas *Tas) error {
         id_stockage,
         id_chantier,
         stock,
+        datevidage,
         actif
-        ) = ($1,$2,$3,$4) where id=$5`
+        ) = ($1,$2,$3,$4,$5) where id=$6`
 	_, err := db.Exec(
 		query,
 		tas.IdStockage,
 		tas.IdChantier,
 		tas.Stock,
+		tas.DateVidage,
 		tas.Actif,
 		tas.Id)
 	if err != nil {

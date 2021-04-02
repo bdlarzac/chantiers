@@ -118,10 +118,12 @@
 
 <!-- *********************************************** -->
 <h2>
-    Transport plateforme
+    Transport plateforme     
+    {{if .TasActifs}}
     <a class="padding-left" href="/chantier/plaquette/{{.Id}}/transport/new">
         <img class="bigicon inline" src="/static/img/new.png" title="Ajouter un transport">
     </a>
+    {{end}}
 </h2>
 
 {{if .Transports}}
@@ -336,7 +338,9 @@
 <h2>
     Rangement
     <a class="padding-left" href="/chantier/plaquette/{{.Id}}/range/new">
+        {{if .TasActifs}}
         <img class="bigicon inline" src="/static/img/new.png" title="Ajouter un rangement">
+        {{end}}
     </a>
 </h2>
 

@@ -1,0 +1,69 @@
+<h1>
+    Stockage : tas vides
+</h1>
+
+<script>
+    let stock = 0;
+    let sommeChargement = 0;
+    let perteReelle = 0;
+</script>
+
+{{range .Details.Chantiers}}
+    {{$chantier := .}}
+    <h2><a href="/chantier/plaquette/{{.Id}}">Chantier {{.String}}</a></h2>
+    <div class="margin-left">
+    {{range .TasVides}}
+        <h3>Tas {{.Nom}}</h3>
+        <!-- **************** Evolution stock ********************* -->
+        <script>
+            stock = 0;
+            sommeChargement = 0;
+        </script>
+        <div class="bold">Evolution du stock</div>
+        <div class="margin-left">
+            <table class="bordered">
+                <tr><th>Date</th><th>Opération</th><th>Delta (maps)</th><th>Stock (maps)</th></tr>
+                {{range .EvolutionStock}}
+                <script>
+                    stock += {{.Delta}};
+                    // un peu limite de tester sur les labels...
+                    if("{{.Label}}" == "Chargement"){
+                        sommeChargement += {{.Delta}};
+                    }
+                </script>
+                <tr>
+                    <td>{{.Date | dateFr}}</td>
+                    <td>
+                        {{if .URL}}<a href="{{.URL}}">{{end}}
+                        {{.Label}}
+                        {{if .URL}}</a>{{end}}
+                    </td>
+                    <td class="right">{{printf "%+.0f" .Delta}}</td>
+                    <td class="right">
+                        <script>document.write(round(stock, 0));</script>
+                    </td>
+                </tr>
+                {{end}}
+                <tr>
+                    <td>{{.DateVidage | dateFr}}</td>
+                    <td>Tas déclaré vide</td>
+                    <td class="right"></td>
+                    <td class="right">0</td>
+                </tr>
+            </table>
+            <div>
+                Volume bois vert : {{$chantier.Volume}} maps (somme des quantités broyées dans le chantier)
+            </div>
+            <div>
+                Somme chargements : <script>document.write(round(-sommeChargement, 0));</script> maps
+            </div>
+            <script>perteReelle = 100 - (-sommeChargement * 100 / {{$chantier.Volume}});</script>
+            <div class="bold">
+                Perte réelle : <script>document.write(round(perteReelle, 2));</script> % (bois vert - bois sec)
+            </div>
+        </div>
+    {{end}}
+    </div>
+
+
+{{end}}
