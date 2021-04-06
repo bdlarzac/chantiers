@@ -6,55 +6,75 @@ Le coût d'exploitation d'un chantier ne peut être calculé que si le volume de
 
 {{else}}
 
-Calculs effectués avec 
-<script>let tmp = {{.Details.Chantier.Volume}}*(1 - {{.Details.PourcentagePerte}}/100); document.write(round(tmp, 2));</script>
+Coûts HT calculés avec 
+<script>
+    let tmp = {{.Details.Chantier.Volume}}*(1 - {{.Details.PourcentagePerte}}/100);
+    document.write(round(tmp, 2));
+</script>
 maps de matière sèche.
 
-
-{{with .Details.Chantier.Cout}}
-<table class="bordered">
-    <tr><th>Poste</th><th>Coût / MAP sèche</th></tr>
+{{ $coutParMap := .Details.Chantier.CoutParMap }}
+{{ $coutTotal := .Details.Chantier.CoutTotal }}
+<table class="entities">
+    <tr><th>Poste</th><th>Coût total</th><th>Coût / map sec</th></tr>
     <tr>
-        <td>Abattage</td>
-        <td><script>document.write(round({{.Abattage}}, 2));</script> &euro;</td>
+        <th class="left">Abattage</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Abattage}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Abattage}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Débardage</td>
-        <td><script>document.write(round({{.Debardage}}, 2));</script> &euro;</td>
+        <th class="left">Débardage</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Debardage}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Debardage}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Déchiquetage</td>
-        <td><script>document.write(round({{.Dechiquetage}}, 2));</script> &euro;</td>
+        <th class="left">Déchiquetage</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Dechiquetage}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Dechiquetage}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Broyage parcelle</td>
-        <td><script>document.write(round({{.Broyage}}, 2));</script> &euro;</td>
+        <th class="left">Broyage parcelle</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Broyage}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Broyage}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Repas + réparation</td>
-        <td><script>document.write(round({{.FauxFrais}}, 2));</script> &euro;</td>
+        <th class="left">Repas + réparation</th>
+        <td class="right"><script>document.write(round({{$coutTotal.FauxFrais}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.FauxFrais}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Transport</td>
-        <td><script>document.write(round({{.Transport}}, 2));</script> &euro;</td>
+        <th class="left">Transport</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Transport}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Transport}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Rangement</td>
-        <td><script>document.write(round({{.Rangement}}, 2));</script> &euro;</td>
+        <th class="left">Rangement</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Rangement}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Rangement}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Stockage</td>
-        <td>?</td>
+        <th class="left">Stockage</th>
+        <td class="right">?</td>
+        <td class="right">?</td>
     </tr>
     <tr>
-        <td>Chargement</td>
-        <td><script>document.write(round({{.Chargement}}, 2));</script> &euro;</td>
+        <th class="left">Chargement</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Chargement}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Chargement}}, 2));</script> &euro;</td>
     </tr>
     <tr>
-        <td>Livraison</td>
-        <td><script>document.write(round({{.Livraison}}, 2));</script> &euro;</td>
+        <th class="left">Livraison</th>
+        <td class="right"><script>document.write(round({{$coutTotal.Livraison}}, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(round({{$coutParMap.Livraison}}, 2));</script> &euro;</td>
+    </tr>
+    <tr>
+        <td colspan="3"><hr></td>
+    </tr>
+    <tr>
+        <th class="left">TOTAL</th>
+        <td class="right bold"><script>document.write(round({{$coutTotal.Total}}, 2));</script> &euro;</td>
+        <td class="right bold"><script>document.write(round({{$coutParMap.Total}}, 2));</script> &euro;</td>
     </tr>
 </table>
-{{end}}
 
 {{end}}{{/* else de if eq .Details.Chantier.Volume 0 */}}

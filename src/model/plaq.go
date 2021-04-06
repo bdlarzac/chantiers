@@ -40,12 +40,12 @@ type Plaq struct {
 	Transports []*PlaqTrans
 	Rangements []*PlaqRange
 	Ventes     []*VentePlaq
-	Cout       *CoutPlaq
+	CoutTotal  *CoutPlaq
+	CoutParMap *CoutPlaq
 }
 
 // Coût exploitation
 type CoutPlaq struct {
-	// poste - coût / map sèche
 	Abattage     float64
 	Debardage    float64
 	Dechiquetage float64
@@ -57,7 +57,7 @@ type CoutPlaq struct {
 	Chargement   float64
 	Livraison    float64
 	//
-	PrixParMap float64
+	Total        float64
 }
 
 // ************************** Manipulation Volume *******************************
@@ -152,7 +152,7 @@ func GetPlaqFull(db *sqlx.DB, idChantier int) (*Plaq, error) {
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Plaq.ComputeVentes()")
 	}
-	// inclure CoutPlaq ?
+	// ComputeCouts pas inclus
 	//
 	return ch, nil
 }
@@ -410,7 +410,8 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 		// valeurs par défaut, tous les coûts restent à 0
 		return nil
 	}
-	ch.Cout = &CoutPlaq{}
+	ch.CoutParMap = &CoutPlaq{}
+	ch.CoutTotal = &CoutPlaq{}
 	nMapSec := ch.Volume * (1 - config.PourcentagePerte/100)
 	var cout float64
 	// j1, j2, DATE_MIN, DATE_MAX utilisés pour coût stockage
@@ -424,22 +425,31 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	// Opérations simples
 	//
 	for _, op := range ch.Operations {
-		cout = op.PUHT * op.Qte / nMapSec
+		cout = op.PUHT * op.Qte
+        ch.CoutParMap.Total += cout / nMapSec
+        ch.CoutTotal.Total += cout
 		switch op.TypOp {
 		case "AB":
-			ch.Cout.Abattage += cout
+			ch.CoutParMap.Abattage += cout / nMapSec
+			ch.CoutTotal.Abattage += cout
 		case "DB":
-			ch.Cout.Debardage += cout
+			ch.CoutParMap.Debardage += cout / nMapSec
+			ch.CoutTotal.Debardage += cout
 		case "BR":
-			ch.Cout.Broyage += cout
+			ch.CoutParMap.Broyage += cout / nMapSec
+			ch.CoutTotal.Broyage += cout
 		case "DC":
-			ch.Cout.Dechiquetage += cout
+			ch.CoutParMap.Dechiquetage += cout / nMapSec
+			ch.CoutTotal.Dechiquetage += cout
 		}
 	}
 	//
 	// Faux frais
 	//
-	ch.Cout.FauxFrais = (ch.FraisReparation + ch.FraisRepas) / nMapSec
+	ch.CoutParMap.FauxFrais = (ch.FraisReparation + ch.FraisRepas) / nMapSec
+	ch.CoutParMap.Total += ch.CoutParMap.FauxFrais
+	ch.CoutTotal.FauxFrais = ch.FraisReparation + ch.FraisRepas
+	ch.CoutTotal.Total += ch.CoutTotal.FauxFrais
 	//
 	// Transport
 	//
@@ -458,7 +468,10 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 			j1 = t.DateTrans
 		}
 	}
-	ch.Cout.Transport = cout / nMapSec
+	ch.CoutParMap.Transport = cout / nMapSec
+	ch.CoutParMap.Total += ch.CoutParMap.Transport
+	ch.CoutTotal.Transport = cout
+	ch.CoutTotal.Total += ch.CoutTotal.Transport
 	//
 	// Rangement
 	//
@@ -471,7 +484,10 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 			cout += r.OuPrix               // outil
 		}
 	}
-	ch.Cout.Rangement = cout / nMapSec
+	ch.CoutParMap.Rangement = cout / nMapSec
+	ch.CoutParMap.Total += ch.CoutParMap.Rangement
+	ch.CoutTotal.Rangement = cout
+	ch.CoutTotal.Total += ch.CoutTotal.Rangement
 	//
 	// Chargement et livraisons
 	//
@@ -503,8 +519,14 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 			}
 		}
 	}
-	ch.Cout.Chargement = coutC / nMapSec
-	ch.Cout.Livraison = coutL / nMapSec
+	ch.CoutTotal.Chargement = coutC
+	ch.CoutTotal.Livraison = coutL
+	ch.CoutTotal.Total += ch.CoutTotal.Chargement
+	ch.CoutTotal.Total += ch.CoutTotal.Livraison
+	ch.CoutParMap.Chargement = coutC / nMapSec
+	ch.CoutParMap.Livraison = coutL / nMapSec
+	ch.CoutParMap.Total += ch.CoutParMap.Chargement
+	ch.CoutParMap.Total += ch.CoutParMap.Livraison
 	//
 	// Stockage
 	//
