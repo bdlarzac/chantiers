@@ -72,7 +72,9 @@
         </div>
         
         <label>Taux TVA</label>
-        <div>{{.TVA}} %</div>
+        <select name="tva" id="tva" class="width8">
+            {{$.Details.TVAOptions}}
+        </select>
         
         <label class="optional" for="datefacture">Date facturation</label>
         <div>
@@ -112,7 +114,7 @@
         {{template "chantier-lien-help.html"}}
         
         <div class="section">
-            <b>Taux TVA</b> : le taux de TVA est le même pour tous les chantiers autres valorisations. Il peut être modifié dans le fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>autre-valorisation</code>.
+            <b>Taux TVA</b> : Il s'agit du taux apparaissant sur la facture. La liste des valeurs possibles peut être modifiée dans le fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>autres-valorisations</code>.
         </div>
         
         <div class="section">
@@ -138,13 +140,13 @@ function initialize(){
     initializeLiensChantier(); // dans view/common/chantier-lien.html   
     // form new
     if({{.Id}} == 0){
-        // unité la plus courante sélectionnée par défaut
         document.getElementById("typevente-NON").checked = true;
     }
     // form update
     else{
         document.getElementById("acheteur").value = "{{.Acheteur.NomAutocomplete}}";
         window.globalPersons[{{.IdAcheteur}}] = "{{.Acheteur.NomAutocomplete}}";
+        document.getElementById("tva-{{.TVA}}").selected = true;
         valorisationChanged();
         document.getElementById("typevente-{{.TypeVente}}").checked = true;
     }
@@ -199,6 +201,10 @@ function validateForm(){
     //
     if(document.getElementById("typevalo").value == "CHOOSE_VALORISATION"){
         msg += "- Vous devez choisir une valorisation.\n";
+    }
+    //
+    if(document.getElementById("tva").value == "CHOOSE_TVA"){
+        msg += "- Vous devez choisir un taux de TVA.\n";
     }
     //
     if(document.getElementById("exploitation").value == "CHOOSE_EXPLOITATION"){

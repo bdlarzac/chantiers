@@ -100,6 +100,22 @@ func WeboChautreValo() []webo.OptionString {
 	}
 }
 
+// Renvoie la liste des taux de TVA utilisés pour facturer un chantier "autres valorisations"
+// dans un format utilisable par webo
+// @param  chooseId     Chaîne utilisée pour désigner l'id et la value de l'option "---Choisir ---"
+//                      Permet d'avoir plusieurs formulaires de choix de taux de TVA dans un même form
+// @param  idPrefix     l'attribut "id" de chaque option sera = idPrefix suivi de la valeur de l'option
+//                      Permet que chaque option soit unique dans tous les formulaires de TVA
+func WeboChautreTVA(ctx *ctxt.Context, chooseId, idPrefix string) []webo.OptionString {
+	res := []webo.OptionString{}
+	res = append(res, webo.OptionString{OptionValue: chooseId, OptionId: idPrefix + chooseId, OptionLabel: "--- Choisir ---"})
+	for _, taux := range ctx.Config.TVABDL.AutresValorisations {
+		tmp := strconv.FormatFloat(taux, 'f', -1, 64)
+		res = append(res, webo.OptionString{OptionValue: tmp, OptionId: idPrefix + tmp, OptionLabel: tmp + " %"})
+	}
+	return res
+}
+
 // Renvoie la liste des granulométries possibles
 // dans un format utilisable par webo
 func WeboGranulo() []webo.OptionString {

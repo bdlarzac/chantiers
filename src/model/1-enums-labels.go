@@ -119,7 +119,7 @@ func LabelUniteHTML(abbrev string) string {
 	return LabelUnite(abbrev)
 }
 
-// ************************** Type de valorisation *******************************
+// ************************** Chantiers autres valorisations *******************************
 // cf type postgres typevalo
 
 // L'ordre des valorisations correspond à la demande de BDL

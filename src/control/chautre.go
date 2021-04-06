@@ -22,6 +22,7 @@ type detailsChautreForm struct {
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
 	ValorisationOptions template.HTML
+	TVAOptions          template.HTML
 }
 
 type detailsChautreList struct {
@@ -83,7 +84,6 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertChautre()
 		var idsUG, idsLieudit, idsFermier []int
 		var id int
@@ -127,7 +127,6 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		chantier := &model.Chautre{}
 		chantier.Acheteur = &model.Acteur{}
-		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -141,6 +140,7 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "CHOOSE_VALORISATION"),
+				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "CHOOSE_TVA"),
 				UrlAction:           "/chantier/autre/new",
 			},
 			Menu: "chantiers",
@@ -170,7 +170,6 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			return err
 		}
 		chantier.Id, err = strconv.Atoi(r.PostFormValue("id-chantier"))
-		chantier.TVA = ctx.Config.TVABDL.AutreValorisation
 		if err != nil {
 			return err
 		}
@@ -246,6 +245,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "valorisation-"+chantier.TypeValo),
+				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "tva-"+ strconv.FormatFloat(chantier.TVA, 'f', -1, 64)),
 				UrlAction:           "/chantier/autre/update/" + vars["id"],
 			},
 		}
@@ -277,7 +277,6 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 // Fabrique un Chautre à partir des valeurs d'un formulaire.
 // Auxiliaire de NewChautre() et UpdateChautre()
 // Ne gère pas le champ Id
-// Ne gère pas le champ TVA (tiré de la config)
 // Ne gère pas liens vers UGs, lieux-dits, fermiers
 func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	ch := &model.Chautre{}
@@ -319,7 +318,6 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
         return ch, err
     }
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
-	
 	//
 	ch.Unite = model.Valorisation2unite(ch.TypeValo)
 	//
@@ -328,6 +326,11 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 		return ch, err
 	}
 	ch.PUHT = tiglib.Round(ch.PUHT, 2)
+	//
+	ch.TVA, err = strconv.ParseFloat(strings.ReplaceAll(r.PostFormValue("tva"), "tva-", ""), 32)
+	if err != nil {
+		return ch, err
+	}
 	//
 	if r.PostFormValue("datefacture") != "" {
 		ch.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
