@@ -25,6 +25,7 @@ type UG struct {
 	TypeCoupe         string `db:"type_coupe"`
 	PrevisionnelCoupe string `db:"previsionnel_coupe"`
 	TypePeuplement    string `db:"type_peuplement"`
+	SurfaceSIG        string `db:"surface_sig"`
 	// pas stocké en base
 	Parcelles        []*Parcelle
 	Fermiers         []*Fermier

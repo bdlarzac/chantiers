@@ -14,25 +14,23 @@ import (
 	"fmt"
 	"path"
 	"strings"
+	"strconv"
+	"math"
 )
 
-// *********************************************************
-// ATTENTION : code à remplacer
-// La maj doit inclure les changements de PSG
 func FillUG() {
 	table := "ug"
 	csvname := "ug.csv"
 	fmt.Println("Remplit table " + table + " à partir de " + csvname)
 	dirCsv := GetDataDir()
 	filename := path.Join(dirCsv, csvname)
-
 	records, err := tiglib.CsvMap(filename, ',')
 	if err != nil {
 		panic(err)
 	}
-
-	// records2 : contient type_coupe ; plusieurs types_coupes pour un code ug - sert à dédoublonner
-	// au sein d'un code ug
+	//
+	// records2 : contient type_coupe ; plusieurs types_coupes pour un code ug - sert à dédoublonner au sein d'un code ug
+	//
 	records2 := make(map[string]map[string]string)
 	// records 3 : previsionnel_coupe et type_peuplement toujours unique pour un code ug
 	records3 := make(map[string]map[string]string)
@@ -44,18 +42,21 @@ func FillUG() {
 		if _, ok := records2[code]; !ok {
 			records2[code] = make(map[string]string)
 		}
-		type_coupe := record["Coupe"] + " " + record["Annee_intervention"] // @todo voir si on garde info "0 0"
+		type_coupe := record["Coupe"] + " " + record["Annee_intervention"] // TODO voir si on garde info "0 0"
+        // Arrondit surface au m2 (4 chiffres après la virgule)
+		surface, _ := strconv.ParseFloat(record["Surf_SIG"], 64)
+        surface = math.Round(surface * 10000) / 10000
+        surfaceStr := strconv.FormatFloat(surface, 'f', -1, 64)
 		records2[code][type_coupe] = type_coupe
 		if _, ok := records3[code]; !ok {
 			records3[code] = make(map[string]string)
 			records3[code]["previsionnel_coupe"] = record["PSG_suivant"]
 			records3[code]["type_peuplement"] = record["Essence"]
+			records3[code]["surface_sig"] = surfaceStr
 		}
 	}
-
 	ctx := ctxt.NewContext()
 	db := ctx.DB
-
 	tx, err := db.Begin()
 	if err != nil {
 		panic(err)
@@ -67,7 +68,6 @@ func FillUG() {
 		}
 		err = tx.Commit()
 	}()
-
 	for code, record2 := range records2 {
 		// array_value() pour faire strings.Join()
 		var tmp []string
@@ -75,12 +75,13 @@ func FillUG() {
 			tmp = append(tmp, tmp2)
 		}
 		type_coupe := strings.Join(tmp, ", ")
-		sql := fmt.Sprintf("insert into %s(code,type_coupe,previsionnel_coupe,type_peuplement) values('%s', '%s', '%s', '%s')",
+		sql := fmt.Sprintf("insert into %s(code,type_coupe,previsionnel_coupe,type_peuplement,surface_sig) values('%s','%s','%s','%s',%s)",
 			table,
 			code,
 			records3[code]["previsionnel_coupe"],
 			type_coupe,
-			records3[code]["type_peuplement"])
+			records3[code]["type_peuplement"],
+			records3[code]["surface_sig"])
 		if _, err = tx.Exec(sql); err != nil {
 			panic(err)
 		}
