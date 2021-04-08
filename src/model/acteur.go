@@ -174,6 +174,21 @@ func GetActeursAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
 	return acteurs, nil
 }
 
+// Utilisé pour construire html datalist
+func GetListeActeurs(db *sqlx.DB) (map[int]string, error) {
+	res := map[int]string{}
+    acteurs := []*Acteur{}
+	query := "select id,prenom,nom from acteur"
+	err := db.Select(&acteurs, query)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, a := range(acteurs){
+	    res[a.Id] = a.String()
+	}
+	return res, nil
+}
+
 // ************************** Get activité *******************************
 
 // Renvoie les activités auxquelles un acteur a participé.

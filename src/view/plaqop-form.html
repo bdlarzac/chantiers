@@ -14,8 +14,13 @@
         </select>
 
         <label for="acteur" id ="lbl-acteur">Acteur</label>
-        <div class="autocomplete">
-            <input type="text" name="acteur" id="acteur" value="{{.Acteur.NomAutocomplete}}" autocomplete="off" class="width20">
+        <div>
+            <input list="liste-acteurs" name="acteur" id="acteur" class="width25">
+            <datalist id="liste-acteurs">
+                {{range $id, $nom := $.Details.ListeActeurs}}
+                    <option name="acteur-{{$id}}" value="{{$nom}}">
+                {{end}}
+            </datalist>
         </div>
 
         <label>Dates opération</label>
@@ -87,11 +92,6 @@
 
 <script>
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById("acteur"), getActeursPossibles);
-    // Pour vérifier que l'acteur affiché correspond à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("id-acteur")
-    // car l'utilisateur peut modifier le nom
-    window.globalPersons = [];
     initialize();
 });
 
@@ -104,8 +104,8 @@ function initialize(){
     }
     else{
         // form update
-        window.globalPersons[{{.IdActeur}}] = "{{.Acteur.NomAutocomplete}}";
         document.getElementById("typeop-{{.TypOp}}").setAttribute("selected", "selected");
+        document.getElementById("acteur").value = {{.Acteur.String}};
         typeOperationChanged();
     }
 }
@@ -149,16 +149,34 @@ function uniteChanges(){
 
 // ***************************************
 function validateForm(){
-    let msg = "", check;
+    let msg = "";
     //
     if(document.getElementById("type-op").value == "CHOOSE_TYPEOP"){
         msg += "- Vous devez renseigner un type d'opération.\n";
     }
     //
-    check = checkActeur("acteur", "- Vous devez renseigner l'acteur("
-            + document.getElementById("lbl-acteur").innerHTML.toLowerCase() + ").\n");
-    document.getElementById("id-acteur").value = check[0];
-    msg += check[1];
+    if(document.getElementById("acteur").value == ""){
+        msg += "- Vous devez renseigner l'acteur";
+        const tmp = document.getElementById("lbl-acteur").innerHTML.toLowerCase(); // "débardeur" ...
+        if(tmp != "acteur"){
+            msg += " (" + tmp + ")";
+        }
+        msg += ".\n";
+    }
+    else{
+        let found = false;
+        const nomSaisi = document.getElementById("acteur").value;
+        {{range $id, $nom := $.Details.ListeActeurs}}
+            if("{{$nom}}" == nomSaisi){
+                found = true;
+                document.getElementById("id-acteur").value = "{{$id}}";
+                // idéalement break go loop
+            }
+        {{end}}
+        if(!found){
+            msg += "- L'acteur saisi (" + nomSaisi + ") n'existe pas en base.\n"
+        }
+    }
     //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;
