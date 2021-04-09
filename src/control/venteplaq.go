@@ -210,7 +210,7 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 					"/static/js/toogle.js"},
 			},
 			Details: detailsVentePlaqForm{
-				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), strconv.Itoa(vente.IdFournisseur)),
+				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), "fournisseur-" + strconv.Itoa(vente.IdFournisseur)),
 				Vente:              vente,
 			    ListeActeurs:  listeActeurs,
 				UrlAction:          "/vente/update/" + vars["id-vente"],
@@ -256,7 +256,7 @@ func ventePlaqForm2var(r *http.Request) (*model.VentePlaq, error) {
 		return vente, err
 	}
 	//
-	vente.IdFournisseur, err = strconv.Atoi(r.PostFormValue("fournisseur"))
+	vente.IdFournisseur, err = strconv.Atoi(strings.TrimLeft(r.PostFormValue("fournisseur"), "fournisseur-"))
 	if err != nil {
 		return vente, err
 	}

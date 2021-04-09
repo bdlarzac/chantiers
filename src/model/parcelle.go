@@ -40,39 +40,21 @@ type ParcelleActivite struct {
 
 // Renvoie une Parcelle contenant Id, Nom et surface.
 // Les autres champs ne sont pas remplis.
-func GetParcelle(db *sqlx.DB, id int) (*Parcelle, error) {
-	p := &Parcelle{}
+func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
+	p = &Parcelle{}
 	query := "select * from parcelle where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(p)
+	err = row.StructScan(p)
 	if err != nil {
 		return p, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return p, err
+	return p, nil
 }
-
-// Renvoie des Parcelles à partir d'un lieu-dit.
-// Ne contient que les champs de la table parcelle.
-// Les autres champs ne sont pas remplis.
-/*
-func GetParcellesFromLieudit(db *sqlx.DB, idLieudit int) ([]*Parcelle, error) {
-	parcelles := []*Parcelle{}
-	query := `select * from parcelle where id in(
-	            select id_parcelle from parcelle_lieudit where id_lieudit=$1
-	        ) order by code`
-	err := db.Select(&parcelles, query, idLieudit)
-	if err != nil {
-		return parcelles, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return parcelles, nil
-}
-*/
 
 // ************************** Compute *******************************
 
 // Remplit le champ Proprietaire d'une parcelle
-func (p *Parcelle) ComputeProprietaire(db *sqlx.DB) error {
-	var err error
+func (p *Parcelle) ComputeProprietaire(db *sqlx.DB) (err error) {
 	p.Proprietaire, err = GetActeur(db, p.IdProprietaire)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -81,7 +63,7 @@ func (p *Parcelle) ComputeProprietaire(db *sqlx.DB) error {
 }
 
 // Remplit le champ Lieudits d'une parcelle
-func (p *Parcelle) ComputeLieudits(db *sqlx.DB) error {
+func (p *Parcelle) ComputeLieudits(db *sqlx.DB) (err error) {
 	if len(p.Lieudits) != 0 {
 		return nil // déjà calculé
 	}
@@ -89,11 +71,15 @@ func (p *Parcelle) ComputeLieudits(db *sqlx.DB) error {
 	    select * from lieudit where id in(
             select id_lieudit from parcelle_lieudit where id_parcelle=$1
         ) order by nom`
-	return werr.Wrapf(db.Select(&p.Lieudits, query, p.Id), "Erreur query : "+query)
+	err = db.Select(&p.Lieudits, query, p.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
 }
 
 // Remplit le champ Communes d'une parcelle
-func (p *Parcelle) ComputeCommunes(db *sqlx.DB) error {
+func (p *Parcelle) ComputeCommunes(db *sqlx.DB) (err error) {
 	if len(p.Communes) != 0 {
 		return nil // déjà calculé
 	}
@@ -103,11 +89,15 @@ func (p *Parcelle) ComputeCommunes(db *sqlx.DB) error {
                 select id_lieudit from parcelle_lieudit where id_parcelle=$1
             )
         ) order by nom`
-	return werr.Wrapf(db.Select(&p.Communes, query, p.Id), "Erreur query : "+query)
+	err = db.Select(&p.Communes, query, p.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
 }
 
 // Remplit le champ Fermiers d'une parcelle
-func (p *Parcelle) ComputeFermiers(db *sqlx.DB) error {
+func (p *Parcelle) ComputeFermiers(db *sqlx.DB) (err error) {
 	if len(p.Fermiers) != 0 {
 		return nil // déjà calculé
 	}
@@ -115,14 +105,22 @@ func (p *Parcelle) ComputeFermiers(db *sqlx.DB) error {
 	    select * from fermier where id in(
 	        select id_fermier from parcelle_fermier where id_parcelle=$1
 	    ) order by nom`
-	return werr.Wrapf(db.Select(&p.Fermiers, query, p.Id), "Erreur query : "+query)
+	err = db.Select(&p.Fermiers, query, p.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
 }
 
 // Remplit le champ UGs d'une parcelle
-func (p *Parcelle) ComputeUGs(db *sqlx.DB) error {
+func (p *Parcelle) ComputeUGs(db *sqlx.DB) (err error) {
 	query := `
 	    select * from ug where id in(
 	        select id_ug from parcelle_ug where id_parcelle=$1
 	    ) order by code`
-	return werr.Wrapf(db.Select(&p.UGs, query, p.Id), "Erreur query : "+query)
+	err = db.Select(&p.UGs, query, p.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
 }

@@ -61,7 +61,7 @@ func (t *Tas) ModifierStock(db *sqlx.DB, qte float64) error {
 }
 
 // Pour indiquer qu'un tas est vide
-func DesactiverTas(db *sqlx.DB, id int, date time.Time) error {
+func DesactiverTas(db *sqlx.DB, id int, date time.Time) (err error) {
 	tas, err := GetTas(db, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTas()")
@@ -77,19 +77,19 @@ func DesactiverTas(db *sqlx.DB, id int, date time.Time) error {
 
 // ************************** Get one *******************************
 
-func GetTas(db *sqlx.DB, idTas int) (*Tas, error) {
-	tas := &Tas{}
+func GetTas(db *sqlx.DB, idTas int) (tas *Tas, err error) {
+	tas = &Tas{}
 	query := "select * from tas where id=$1"
 	row := db.QueryRowx(query, idTas)
-	err := row.StructScan(tas)
+	err = row.StructScan(tas)
 	if err != nil {
 		return tas, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return tas, nil
 }
 
-func GetTasFull(db *sqlx.DB, idTas int) (*Tas, error) {
-	tas, err := GetTas(db, idTas)
+func GetTasFull(db *sqlx.DB, idTas int) (tas *Tas, err error) {
+	tas, err = GetTas(db, idTas)
 	if err != nil {
 		return tas, werr.Wrapf(err, "Erreur appel GetTas()")
 	}
@@ -112,11 +112,11 @@ func GetTasFull(db *sqlx.DB, idTas int) (*Tas, error) {
 
 // Utilisé pour select html
 // Obligé d'avoir tas full, car besoin du nom du tas, qui a besoin de chantier et stockage
-func GetAllTasActifsFull(db *sqlx.DB) ([]*Tas, error) {
-	tas := []*Tas{}
+func GetAllTasActifsFull(db *sqlx.DB) (tas []*Tas, err error) {
+	tas = []*Tas{}
 	ids := []int{}
 	query := "select id from tas where actif"
-	err := db.Select(&ids, query)
+	err = db.Select(&ids, query)
 	if err != nil {
 		return tas, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -132,11 +132,14 @@ func GetAllTasActifsFull(db *sqlx.DB) ([]*Tas, error) {
 
 // ************************** Compute *******************************
 
-func (t *Tas) ComputeNom(db *sqlx.DB) error {
+func (t *Tas) ComputeNom(db *sqlx.DB) (err error) {
+    if t.Nom != ""{
+        return nil // déjà calculé
+    }
 	if t.Chantier == nil || t.Stockage == nil {
 		return errors.New("Impossible de calculer le nom du tas - appeler d'abord ComputeStockage() et ComputeChantier()")
 	}
-	err := t.Chantier.ComputeLieudits(db) // Pour le nom du chantier
+	err = t.Chantier.ComputeLieudits(db) // Pour le nom du chantier
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel t.Chantier.ComputeLieudits()")
 	}
@@ -144,21 +147,33 @@ func (t *Tas) ComputeNom(db *sqlx.DB) error {
 	return nil
 }
 
-func (t *Tas) ComputeStockage(db *sqlx.DB) error {
-	var err error
+func (t *Tas) ComputeStockage(db *sqlx.DB) (err error) {
+    if t.Stockage != nil{
+        return nil // déjà calculé
+    }
 	t.Stockage, err = GetStockage(db, t.IdStockage)
-	return err
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel GetStockage()")
+    }
+	return nil
 }
 
-func (t *Tas) ComputeChantier(db *sqlx.DB) error {
-	var err error
+func (t *Tas) ComputeChantier(db *sqlx.DB) (err error) {
+    if t.Chantier != nil{
+        return nil // déjà calculé
+    }
 	t.Chantier, err = GetPlaq(db, t.IdChantier)
-	return err
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel GetPlaq()")
+    }
+	return nil
 }
 
 // Pas inclus par défaut dans GetTasFull()
-func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
-	var err error
+func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) (err error) {
+    if len(t.MesuresHumidite) != 0{
+        return nil // déjà calculé
+    }
 	query := "select * from humid where id_tas=$1"
 	err = db.Select(&t.MesuresHumidite, query, t.Id)
 	if err != nil {
@@ -176,8 +191,10 @@ func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) error {
 // Pas inclus par défaut dans GetTasFull()
 // Note : en théorie, l'url des mouvements ne devrait pas
 // être calculée dans le model mais dans le controller
-func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) error {
-	var err error
+func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) (err error) {
+    if len(t.EvolutionStock) != 0{
+        return nil // déjà calculé
+    }
 	res := []*MouvementStock{}
 	// transports
 	var tmp1 = []*struct{
@@ -237,19 +254,13 @@ func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) error {
 }
 // Auxiliaires de ComputeEvolutionStock() pour trier par date
 type mouvementStockSlice []*MouvementStock
-func (m mouvementStockSlice) Len() int {
-	return len(m)
-}
-func (m mouvementStockSlice) Less(i, j int) bool {
-	return m[i].Date.Before(m[j].Date)
-}
-func (m mouvementStockSlice) Swap(i, j int) {
-	m[i], m[j] = m[j], m[i]
-}
+func (m mouvementStockSlice) Len() int { return len(m) }
+func (m mouvementStockSlice) Less(i, j int) bool { return m[i].Date.Before(m[j].Date) }
+func (m mouvementStockSlice) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
 
 // ************************** CRUD *******************************
 
-func InsertTas(db *sqlx.DB, tas *Tas) (int, error) {
+func InsertTas(db *sqlx.DB, tas *Tas) (id int, err error) {
 	query := `insert into tas(
         id_stockage,                              
         id_chantier,
@@ -257,8 +268,7 @@ func InsertTas(db *sqlx.DB, tas *Tas) (int, error) {
         datevidage,
         actif
         ) values($1,$2,$3,$4,$5) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		tas.IdStockage,
 		tas.IdChantier,
@@ -271,7 +281,7 @@ func InsertTas(db *sqlx.DB, tas *Tas) (int, error) {
 	return id, nil
 }
 
-func UpdateTas(db *sqlx.DB, tas *Tas) error {
+func UpdateTas(db *sqlx.DB, tas *Tas) (err error) {
 	query := `update tas set(
         id_stockage,
         id_chantier,
@@ -279,7 +289,7 @@ func UpdateTas(db *sqlx.DB, tas *Tas) error {
         datevidage,
         actif
         ) = ($1,$2,$3,$4,$5) where id=$6`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		tas.IdStockage,
 		tas.IdChantier,
@@ -293,8 +303,7 @@ func UpdateTas(db *sqlx.DB, tas *Tas) error {
 	return nil
 }
 
-func DeleteTas(db *sqlx.DB, id int) error {
-	var err error
+func DeleteTas(db *sqlx.DB, id int) (err error) {
 	var query string
 	var ids []int
 	var deletedId int

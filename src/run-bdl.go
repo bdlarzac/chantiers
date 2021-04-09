@@ -32,7 +32,6 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/ajax/get/fermiers-from-code-ug/{code}", Hajax(ajax.GetFermiersFromCodeUG))
 	r.HandleFunc("/ajax/get/lieudits-from-code-ug/{code}", Hajax(ajax.GetLieuditsFromCodeUG))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))

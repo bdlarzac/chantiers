@@ -50,11 +50,11 @@ type PlaqRange struct {
 
 // ************************** Get *******************************
 
-func GetPlaqRange(db *sqlx.DB, id int) (*PlaqRange, error) {
-	pr := &PlaqRange{}
+func GetPlaqRange(db *sqlx.DB, id int) (pr *PlaqRange, err error) {
+	pr = &PlaqRange{}
 	query := "select * from plaqrange where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(pr)
+	err = row.StructScan(pr)
 	if err != nil {
 		return pr, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -63,39 +63,56 @@ func GetPlaqRange(db *sqlx.DB, id int) (*PlaqRange, error) {
 
 // ************************** Compute *******************************
 
-func (pr *PlaqRange) ComputeTas(db *sqlx.DB) error {
-	var err error
+func (pr *PlaqRange) ComputeTas(db *sqlx.DB) (err error) {
+    if pr.Tas != nil {
+        return nil // déjà calculé
+    }
 	pr.Tas, err = GetTasFull(db, pr.IdTas)
-	return err
-}
-
-func (pr *PlaqRange) ComputeRangeur(db *sqlx.DB) error {
-	if pr.IdRangeur == 0 {
-		return nil
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetTasFull()")
 	}
-	var err error
-	pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
-	return err
+	return nil
 }
 
-func (pr *PlaqRange) ComputeConducteur(db *sqlx.DB) error {
-	var err error
+func (pr *PlaqRange) ComputeRangeur(db *sqlx.DB) (err error) {
+	if pr.IdRangeur == 0 {
+		return nil // pas de rangeur (mais conducteur et proprioutil)
+	}
+    if pr.Rangeur != nil {
+        return nil // déjà calculé
+    }
+	pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
+}
+
+func (pr *PlaqRange) ComputeConducteur(db *sqlx.DB) (err error) {
+	if pr.IdConducteur == 0 {
+		return nil // pas de conducteur ni proprioutil (mais un rangeur)
+	}
+    if pr.Conducteur != nil {
+        return nil // déjà calculé
+    }
 	pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
 	return err
 }
 
-func (pr *PlaqRange) ComputeProprioutil(db *sqlx.DB) error {
+func (pr *PlaqRange) ComputeProprioutil(db *sqlx.DB) (err error) {
 	if pr.IdProprioutil == 0 {
-		return nil
+		return nil // pas de conducteur ni proprioutil (mais un rangeur)
 	}
-	var err error
+    if pr.Proprioutil != nil {
+        return nil // déjà calculé
+    }
 	pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
 	return err
 }
 
 // ************************** CRUD *******************************
 
-func InsertPlaqRange(db *sqlx.DB, pr *PlaqRange) (int, error) {
+func InsertPlaqRange(db *sqlx.DB, pr *PlaqRange) (id int, err error) {
 	query := `insert into plaqrange(
         id_chantier,
         id_tas,
@@ -116,8 +133,7 @@ func InsertPlaqRange(db *sqlx.DB, pr *PlaqRange) (int, error) {
         oudatepay,
         notes)
         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		pr.IdChantier,
 		pr.IdTas,
@@ -137,10 +153,13 @@ func InsertPlaqRange(db *sqlx.DB, pr *PlaqRange) (int, error) {
 		pr.OuTVA,
 		pr.OuDatePay,
 		pr.Notes).Scan(&id)
-	return id, err
+	if err != nil {
+		return 0, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return id, nil
 }
 
-func UpdatePlaqRange(db *sqlx.DB, pr *PlaqRange) error {
+func UpdatePlaqRange(db *sqlx.DB, pr *PlaqRange) (err error) {
 	query := `update plaqrange set(
         id_chantier,
         id_tas,
@@ -161,7 +180,7 @@ func UpdatePlaqRange(db *sqlx.DB, pr *PlaqRange) error {
         oudatepay,
         notes
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) where id=$19`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		pr.IdChantier,
 		pr.IdTas,
@@ -188,9 +207,9 @@ func UpdatePlaqRange(db *sqlx.DB, pr *PlaqRange) error {
 	return nil
 }
 
-func DeletePlaqRange(db *sqlx.DB, id int) error {
+func DeletePlaqRange(db *sqlx.DB, id int) (err error) {
 	query := "delete from plaqrange where id=$1"
-	_, err := db.Exec(query, id)
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

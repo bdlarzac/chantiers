@@ -75,8 +75,7 @@ func (a *Acteur) String() string {
 
 // ************************** Divers *******************************
 
-func CountActeurs(db *sqlx.DB) int {
-	var count int
+func CountActeurs(db *sqlx.DB) (count int) {
 	_ = db.QueryRow("select count(*) from acteur").Scan(&count)
 	return count
 }
@@ -86,11 +85,11 @@ func CountActeurs(db *sqlx.DB) int {
 // Renvoie un Acteur à partir de son id.
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
-func GetActeur(db *sqlx.DB, id int) (*Acteur, error) {
-	a := &Acteur{}
+func GetActeur(db *sqlx.DB, id int) (a *Acteur, err error) {
+	a = &Acteur{}
 	query := "select * from acteur where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(a)
+	err = row.StructScan(a)
 	if err != nil {
 		return a, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -101,45 +100,51 @@ func GetActeur(db *sqlx.DB, id int) (*Acteur, error) {
 
 // Renvoie une liste d'Acteurs triés en utilisant un champ de la table
 // @param field    Champ de la table acteur utilisé pour le tri
-func GetSortedActeurs(db *sqlx.DB, field string) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
+func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) {
+	acteurs = []*Acteur{}
 	query := "select * from acteur where id<>0 order by " + field
-	err := db.Select(&acteurs, query)
+	err = db.Select(&acteurs, query)
 	if err != nil {
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return acteurs, err
+	return acteurs, nil
 }
 
 // Renvoie les Acteurs dont le champ Fournisseur = true
 // ( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
-func GetFournisseurs(db *sqlx.DB) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
+func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
+	acteurs = []*Acteur{}
 	query := "select * from acteur where fournisseur"
-	err := db.Select(&acteurs, query)
-	return acteurs, err
+	err = db.Select(&acteurs, query)
+	if err != nil {
+		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return acteurs, nil
 }
 
 // Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
-func GetClientsPlaquettes(db *sqlx.DB) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
+func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
+	acteurs = []*Acteur{}
 	query := `select * from acteur where id in(
                 select id_client from venteplaq
 	        ) order by nom,prenom`
-	err := db.Select(&acteurs, query)
-	return acteurs, err
+	err = db.Select(&acteurs, query)
+	if err != nil {
+		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return acteurs, nil
 }
 
 // Utilisé pour construire html datalist
-func GetListeActeurs(db *sqlx.DB) (map[int]string, error) {
-	res := map[int]string{}
+func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
+	res = map[int]string{}
     acteurs := []*Acteur{}
 	query := "select id,prenom,nom from acteur"
-	err := db.Select(&acteurs, query)
+	err = db.Select(&acteurs, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -154,9 +159,8 @@ func GetListeActeurs(db *sqlx.DB) (map[int]string, error) {
 // Renvoie les activités auxquelles un acteur a participé.
 // Ordre chronologique inverse
 // Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
-func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
-	res := []*ActeurActivite{}
-	var err error
+func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err error) {
+	res = []*ActeurActivite{}
 	var query string
 	//
 	// Opérations simples pour chantiers plaquettes
@@ -541,23 +545,15 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) ([]*ActeurActivite, error) {
 	//
 	return sortedRes, nil
 }
-
 // Auxiliaires de GetActivitesByDate() pour trier par date
 type acteurActiviteSlice []*ActeurActivite
-
-func (p acteurActiviteSlice) Len() int {
-	return len(p)
-}
-func (p acteurActiviteSlice) Less(i, j int) bool {
-	return p[i].Date.After(p[j].Date)
-}
-func (p acteurActiviteSlice) Swap(i, j int) {
-	p[i], p[j] = p[j], p[i]
-}
+func (p acteurActiviteSlice) Len() int { return len(p) }
+func (p acteurActiviteSlice) Less(i, j int) bool { return p[i].Date.After(p[j].Date) }
+func (p acteurActiviteSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 // ************************** CRUD *******************************
 
-func InsertActeur(db *sqlx.DB, acteur *Acteur) (int, error) {
+func InsertActeur(db *sqlx.DB, acteur *Acteur) (id int, err error) {
 	query := `insert into acteur(
         nom,
         prenom,
@@ -576,8 +572,7 @@ func InsertActeur(db *sqlx.DB, acteur *Acteur) (int, error) {
         actif,
         notes
         ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		acteur.Nom,
 		acteur.Prenom,
@@ -596,12 +591,12 @@ func InsertActeur(db *sqlx.DB, acteur *Acteur) (int, error) {
 		acteur.Actif,
 		acteur.Notes).Scan(&id)
 	if err != nil {
-		return id, werr.Wrapf(err, "Erreur query : "+query)
+		return 0, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return id, nil
 }
 
-func UpdateActeur(db *sqlx.DB, acteur *Acteur) error {
+func UpdateActeur(db *sqlx.DB, acteur *Acteur) (err error) {
 	query := `update acteur set(
         nom,
         prenom,
@@ -620,7 +615,7 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) error {
         actif,
         notes
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) where id=$17`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		acteur.Nom,
 		acteur.Prenom,
@@ -645,11 +640,11 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) error {
 	return nil
 }
 
-func DeleteActeur(db *sqlx.DB, id int) error {
+func DeleteActeur(db *sqlx.DB, id int) (err error) {
 	// peut-être ici protection pour savoir si Deletable = true
 	// (la situation actuelle fait confiance à l'UI pour ne pas proposer delete sur acteur non deletable)
 	query := "delete from acteur where id=$1"
-	_, err := db.Exec(query, id)
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

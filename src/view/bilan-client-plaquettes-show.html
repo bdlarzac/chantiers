@@ -1,13 +1,14 @@
 {{with .Details}}
 
-<h1><a href="/acteur/{{.Client.Id}}">{{.Client.String}}</a></h1>
+<h1>
+    Client <a href="/acteur/{{.Client.Id}}">{{.Client.String}}</a>
+    <br>Bilan ventes plaquettes du {{.DateDebut | dateFr}} au {{.DateFin | dateFr}}
+</h1>
+<div class="padding-left big3 bold">
+</div>
 
 <div class="page-content">
 
-<div class="padding-left big3 bold">
-    
-    Ventes plaquettes du {{.DateDebut | dateFr}} au {{.DateFin | dateFr}}
-</div>
 
 <script>
     let totalPrix = totalQte = 0;

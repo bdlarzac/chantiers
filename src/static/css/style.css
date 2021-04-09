@@ -1,6 +1,5 @@
 
 /* en test - pour anchor qui se décale de la hauteur du menu */
-/* 
 :target{
    position: relative;
    border-top: 52px solid transparent;
@@ -14,7 +13,8 @@
    left: 0;
    right: 0;
 }
-*/
+/* solution de bootstrap - casse icon help dans form */
+/* 
 *[id]:before { 
   display: block; 
   content: " "; 
@@ -22,6 +22,7 @@
   height: 60px;
   visibility: hidden; 
 }
+*/
 
 /* ================ Normalization ================ */
 *{

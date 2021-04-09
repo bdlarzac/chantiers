@@ -163,7 +163,7 @@ func WeboFournisseur(ctx *ctxt.Context) []webo.OptionString {
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_FOURNISSEUR", OptionLabel: "--- Choisir ---"})
 	for _, fournisseur := range fournisseurs {
-		res = append(res, webo.OptionString{OptionValue: strconv.Itoa(fournisseur.Id), OptionLabel: fournisseur.Nom})
+		res = append(res, webo.OptionString{OptionValue: "fournisseur-" + strconv.Itoa(fournisseur.Id), OptionLabel: fournisseur.Nom})
 	}
 	return res
 }
@@ -177,25 +177,10 @@ func WeboClientsPlaquettes(ctx *ctxt.Context) []webo.OptionString {
 		panic(err)
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_CLIENT", OptionLabel: "--- Choisir ---"})
-	for _, fournisseur := range clients {
-		res = append(res, webo.OptionString{OptionValue: strconv.Itoa(fournisseur.Id), OptionLabel: fournisseur.Nom})
+	for _, client := range clients {
+		res = append(res, webo.OptionString{OptionValue: "acteur-" + strconv.Itoa(client.Id), OptionLabel: client.Nom})
 	}
 	return res
-}
-
-// Renvoie la liste des lieux de stockage possibles
-// dans un format utilisable par webo
-func WeboStockage(ctx *ctxt.Context) ([]webo.OptionString, error) {
-	res := []webo.OptionString{}
-	stockages, err := model.GetStockages(ctx.DB, true) // true => que les stockages actifs
-	if err != nil {
-		return res, err
-	}
-	res = append(res, webo.OptionString{OptionValue: "CHOOSE_STOCKAGE", OptionLabel: "--- Choisir ---"})
-	for _, s := range stockages {
-		res = append(res, webo.OptionString{OptionValue: strconv.Itoa(s.Id), OptionLabel: s.Nom})
-	}
-	return res, nil
 }
 
 // Renvoie la liste des tas actifs

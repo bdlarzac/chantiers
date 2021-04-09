@@ -51,11 +51,11 @@ func (op *PlaqOp) RoleName() string {
 
 // ************************** Get *******************************
 
-func GetPlaqOp(db *sqlx.DB, id int) (*PlaqOp, error) {
-	op := &PlaqOp{}
+func GetPlaqOp(db *sqlx.DB, id int) (op *PlaqOp, err error) {
+	op = &PlaqOp{}
 	query := "select * from plaqop where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(op)
+	err = row.StructScan(op)
 	if err != nil {
 		return op, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -65,18 +65,20 @@ func GetPlaqOp(db *sqlx.DB, id int) (*PlaqOp, error) {
 // ************************** Compute *******************************
 
 // Remplit le champ Acteur d'une opération
-func (op *PlaqOp) ComputeActeur(db *sqlx.DB) error {
-	var err error
+func (op *PlaqOp) ComputeActeur(db *sqlx.DB) (err error) {
+    if op.Acteur != nil {
+        return nil // déjà calculé
+    }
 	op.Acteur, err = GetActeur(db, op.IdActeur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
-	return err
+	return nil
 }
 
 // ************************** CRUD *******************************
 
-func InsertPlaqOp(db *sqlx.DB, op *PlaqOp) (int, error) {
+func InsertPlaqOp(db *sqlx.DB, op *PlaqOp) (id int, err error) {
 	query := `insert into plaqop(
 	    typop,
 	    id_chantier,
@@ -90,8 +92,7 @@ func InsertPlaqOp(db *sqlx.DB, op *PlaqOp) (int, error) {
 	    datepay,
 	    notes
 	    ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		op.TypOp,
 		op.IdChantier,
@@ -110,7 +111,7 @@ func InsertPlaqOp(db *sqlx.DB, op *PlaqOp) (int, error) {
 	return id, nil
 }
 
-func UpdatePlaqOp(db *sqlx.DB, op *PlaqOp) error {
+func UpdatePlaqOp(db *sqlx.DB, op *PlaqOp) (err error) {
 	query := `update plaqop set(
         typop,
         id_chantier,
@@ -124,7 +125,7 @@ func UpdatePlaqOp(db *sqlx.DB, op *PlaqOp) error {
         datepay,
         notes
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) where id=$12`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		op.TypOp,
 		op.IdChantier,
@@ -144,9 +145,9 @@ func UpdatePlaqOp(db *sqlx.DB, op *PlaqOp) error {
 	return nil
 }
 
-func DeletePlaqOp(db *sqlx.DB, id int) error {
+func DeletePlaqOp(db *sqlx.DB, id int) (err error) {
 	query := "delete from plaqop where id=$1"
-	_, err := db.Exec(query, id)
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

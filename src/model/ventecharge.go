@@ -65,19 +65,19 @@ func (vc *VenteCharge) FullString() string {
 
 // ************************** Get *******************************
 
-func GetVenteCharge(db *sqlx.DB, id int) (*VenteCharge, error) {
-	vc := &VenteCharge{}
+func GetVenteCharge(db *sqlx.DB, id int) (vc *VenteCharge, err error) {
+	vc = &VenteCharge{}
 	query := "select * from ventecharge where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(vc)
+	err = row.StructScan(vc)
 	if err != nil {
 		return vc, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return vc, nil
 }
 
-func GetVenteChargeFull(db *sqlx.DB, id int) (*VenteCharge, error) {
-	vc, err := GetVenteCharge(db, id)
+func GetVenteChargeFull(db *sqlx.DB, id int) (vc *VenteCharge, err error) {
+	vc, err = GetVenteCharge(db, id)
 	if err != nil {
 		return vc, werr.Wrapf(err, "Erreur appel GetVenteCharge()")
 	}
@@ -102,11 +102,13 @@ func GetVenteChargeFull(db *sqlx.DB, id int) (*VenteCharge, error) {
 
 // ************************** Compute *******************************
 
-func (vc *VenteCharge) ComputeChargeur(db *sqlx.DB) error {
-	if vc.Chargeur != nil {
-		return nil
+func (vc *VenteCharge) ComputeChargeur(db *sqlx.DB) (err error) {
+	if vc.IdChargeur == 0 {
+		return nil // pas de chargeur (mais conducteur et proprioutil)
 	}
-	var err error
+	if vc.Chargeur != nil {
+		return nil // déjà calculé
+	}
 	vc.Chargeur, err = GetActeur(db, vc.IdChargeur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -114,11 +116,13 @@ func (vc *VenteCharge) ComputeChargeur(db *sqlx.DB) error {
 	return nil
 }
 
-func (vc *VenteCharge) ComputeConducteur(db *sqlx.DB) error {
-	if vc.Conducteur != nil {
-		return nil
+func (vc *VenteCharge) ComputeConducteur(db *sqlx.DB) (err error) {
+	if vc.IdConducteur == 0 {
+		return nil // pas de conducteur ni proprioutil (mais un chargeur)
 	}
-	var err error
+	if vc.Conducteur != nil {
+		return nil // déjà calculé
+	}
 	vc.Conducteur, err = GetActeur(db, vc.IdConducteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -126,11 +130,13 @@ func (vc *VenteCharge) ComputeConducteur(db *sqlx.DB) error {
 	return nil
 }
 
-func (vc *VenteCharge) ComputeProprioutil(db *sqlx.DB) error {
-	if vc.Proprioutil != nil {
-		return nil
+func (vc *VenteCharge) ComputeProprioutil(db *sqlx.DB) (err error) {
+	if vc.IdProprioutil == 0 {
+		return nil // pas de conducteur ni proprioutil (mais un chargeur)
 	}
-	var err error
+	if vc.Proprioutil != nil {
+		return nil // déjà calculé
+	}
 	vc.Proprioutil, err = GetActeur(db, vc.IdProprioutil)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -138,11 +144,10 @@ func (vc *VenteCharge) ComputeProprioutil(db *sqlx.DB) error {
 	return nil
 }
 
-func (vc *VenteCharge) ComputeLivraison(db *sqlx.DB) error {
+func (vc *VenteCharge) ComputeLivraison(db *sqlx.DB) (err error) {
 	if vc.Livraison != nil {
-		return nil
+		return nil // déjà calculé
 	}
-	var err error
 	vc.Livraison, err = GetVenteLivre(db, vc.IdLivraison)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetVenteLivre()")
@@ -150,11 +155,10 @@ func (vc *VenteCharge) ComputeLivraison(db *sqlx.DB) error {
 	return nil
 }
 
-func (vc *VenteCharge) ComputeTas(db *sqlx.DB) error {
+func (vc *VenteCharge) ComputeTas(db *sqlx.DB) (err error) {
 	if vc.Tas != nil {
-		return nil
+		return nil // déjà calculé
 	}
-	var err error
 	vc.Tas, err = GetTasFull(db, vc.IdTas)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTasFull()")
@@ -162,11 +166,10 @@ func (vc *VenteCharge) ComputeTas(db *sqlx.DB) error {
 	return nil
 }
 
-func (vc *VenteCharge) ComputeIdVente(db *sqlx.DB) error {
+func (vc *VenteCharge) ComputeIdVente(db *sqlx.DB) (err error) {
 	if vc.IdVente != 0 {
-		return nil
+		return nil // déjà calculé
 	}
-	var err error
 	err = vc.ComputeLivraison(db)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel VenteCharge.ComputeLivraison()")
@@ -177,7 +180,7 @@ func (vc *VenteCharge) ComputeIdVente(db *sqlx.DB) error {
 
 // ************************** CRUD *******************************
 
-func InsertVenteCharge(db *sqlx.DB, vc *VenteCharge) (int, error) {
+func InsertVenteCharge(db *sqlx.DB, vc *VenteCharge) (id int, err error) {
 	query := `insert into ventecharge(
         id_livraison,
         id_chargeur,
@@ -199,8 +202,7 @@ func InsertVenteCharge(db *sqlx.DB, vc *VenteCharge) (int, error) {
         modatepay,
         notes
         ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		vc.IdLivraison,
 		vc.IdChargeur,
@@ -221,10 +223,13 @@ func InsertVenteCharge(db *sqlx.DB, vc *VenteCharge) (int, error) {
 		vc.MoTVA,
 		vc.MoDatePay,
 		vc.Notes).Scan(&id)
-	return id, err
+	if err != nil {
+		return 0, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return id, nil
 }
 
-func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) error {
+func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) (err error) {
 	query := `update ventecharge set(
         id_livraison,
         id_chargeur,
@@ -246,7 +251,7 @@ func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) error {
         modatepay,
         notes                          
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) where id=$20`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		vc.IdLivraison,
 		vc.IdChargeur,
@@ -274,7 +279,7 @@ func UpdateVenteCharge(db *sqlx.DB, vc *VenteCharge) error {
 	return nil
 }
 
-func DeleteVenteCharge(db *sqlx.DB, id int) error {
+func DeleteVenteCharge(db *sqlx.DB, id int) (err error) {
 	// rétablit le stock du tas concerné par le chargement
 	// avant de supprimer le chargement
 	vc, err := GetVenteCharge(db, id)

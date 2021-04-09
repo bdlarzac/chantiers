@@ -26,8 +26,8 @@ type UpdatedItem struct {
 }
 
 // Calcule les entités qui seront mises à jour si l'utilisateur effectue la maj.
-func ComputeUpdateSCTL(db *sqlx.DB, conf *Config) ([]*UpdatedItem, error) {
-	res := []*UpdatedItem{}
+func ComputeUpdateSCTL(db *sqlx.DB, conf *Config) (res []*UpdatedItem, err error) {
+	res = []*UpdatedItem{}
 	newActeurs, err := loadNewActeurs(conf)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur appel loadNewActeurs()")
@@ -89,11 +89,11 @@ func ComputeUpdateSCTL(db *sqlx.DB, conf *Config) ([]*UpdatedItem, error) {
 
 // Charge les acteurs de la base BDL
 // Clé dans la map renvoyée = id sctl
-func loadOldActeurs(db *sqlx.DB) (map[int]Acteur, error) {
-	res := map[int]Acteur{}
+func loadOldActeurs(db *sqlx.DB) (res map[int]Acteur, err error) {
+	res = map[int]Acteur{}
 	acteurs := []*Acteur{}
 	query := "select * from acteur where id_fermier<>0 order by id_fermier"
-	err := db.Select(&acteurs, query)
+	err = db.Select(&acteurs, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -108,8 +108,8 @@ func loadOldActeurs(db *sqlx.DB) (map[int]Acteur, error) {
 //
 // @todo Changer le code pour lire dans le .mdb, au lieu du .csv
 //
-func loadNewActeurs(conf *Config) (map[int]Acteur, error) {
-	res := map[int]Acteur{}
+func loadNewActeurs(conf *Config) (res map[int]Acteur, err error) {
+	res = map[int]Acteur{}
 	records, err := tiglib.CsvMap(conf.Paths.LogicielFoncier, ';')
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur appel tiglib.CsvMap()")

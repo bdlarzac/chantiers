@@ -71,19 +71,19 @@ func (ug *UG) String() string {
 // Renvoie une UG à partir de son id.
 // Ne contient que les champs de la table lieudit.
 // Les autres champs ne sont pas remplis.
-func GetUG(db *sqlx.DB, id int) (*UG, error) {
-	ug := &UG{}
+func GetUG(db *sqlx.DB, id int) (ug *UG, err error) {
+	ug = &UG{}
 	query := "select * from ug where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(ug)
+	err = row.StructScan(ug)
 	if err != nil {
 		return ug, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return ug, err
+	return ug, nil
 }
 
-func GetUGFull(db *sqlx.DB, id int) (*UG, error) {
-	ug, err := GetUG(db, id)
+func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
+	ug, err = GetUG(db, id)
 	if err != nil {
 		return ug, werr.Wrapf(err, "Erreur appel GetUG()")
 	}
@@ -125,12 +125,12 @@ func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
 // Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
 // Utilisé par ajax
-func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) ([]*UG, error) {
-	ugs := []*UG{}
+func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) (ugs []*UG, err error) {
+	ugs = []*UG{}
 	// parcelles
 	idsParcelles := []int{}
 	query := "select id_parcelle from parcelle_lieudit where id_lieudit=$1"
-	err := db.Select(&idsParcelles, query, idLieudit)
+	err = db.Select(&idsParcelles, query, idLieudit)
 	if err != nil {
 		return ugs, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -163,8 +163,8 @@ func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) ([]*UG, error) {
 // Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
 // Utilisé par ajax
-func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
-	ugs := []*UG{}
+func GetUGsFromFermier(db *sqlx.DB, idFermier int) (ugs []*UG, err error) {
+	ugs = []*UG{}
 	query := `
         select * from ug where id in(
             select id_ug from parcelle_ug where id_parcelle in(
@@ -173,7 +173,7 @@ func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
                 )
             )
         ) order by code`
-	err := db.Select(&ugs, query, idFermier)
+	err = db.Select(&ugs, query, idFermier)
 	if err != nil {
 		return ugs, werr.Wrapf(db.Select(&ugs, query, idFermier), "Erreur query : "+query)
 	}
@@ -182,7 +182,7 @@ func GetUGsFromFermier(db *sqlx.DB, idFermier int) ([]*UG, error) {
 
 // Renvoie les ugs triées par code (nombre romain) et par numéro au sein d'un code (nombres arabes)
 // en respectant l'ordre des chiffres romains et arabes.
-func GetUGsSortedByCode(db *sqlx.DB) ([]*UG, error) {
+func GetUGsSortedByCode(db *sqlx.DB) (ugs []*UG, err error) {
 	romans := []string{
 		"I",
 		"II",
@@ -204,12 +204,12 @@ func GetUGsSortedByCode(db *sqlx.DB) ([]*UG, error) {
 		"XVIII",
 		"XIX",
 	}
-	res := []*UG{}
+	ugs = []*UG{}
 	query := `select * from ug`
-	err := db.Select(&res, query)
-	sort.Slice(res, func(i, j int) bool {
-		ug1 := res[i]
-		ug2 := res[j]
+	err = db.Select(&ugs, query)
+	sort.Slice(ugs, func(i, j int) bool {
+		ug1 := ugs[i]
+		ug2 := ugs[j]
 		code1 := strings.Replace(ug1.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
 		tmp1 := strings.Split(code1, "-")
 		code2 := strings.Replace(ug2.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
@@ -229,9 +229,9 @@ func GetUGsSortedByCode(db *sqlx.DB) ([]*UG, error) {
 		return n1 < n2
 	})
 	if err != nil {
-		return res, werr.Wrapf(err, "Erreur query : "+query)
+		return ugs, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return res, err
+	return ugs, nil
 }
 
 // Renvoie les ugs triées par code (nombre romain) et par numéro au sein d'un code (nombres arabes)
@@ -483,13 +483,6 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 
 // Auxiliaires de GetActivitesByDate() pour trier par date
 type ugActiviteSlice []*UGActivite
-
-func (p ugActiviteSlice) Len() int {
-	return len(p)
-}
-func (p ugActiviteSlice) Less(i, j int) bool {
-	return p[i].Date.After(p[j].Date)
-}
-func (p ugActiviteSlice) Swap(i, j int) {
-	p[i], p[j] = p[j], p[i]
-}
+func (p ugActiviteSlice) Len() int { return len(p) }
+func (p ugActiviteSlice) Less(i, j int) bool { return p[i].Date.After(p[j].Date) }
+func (p ugActiviteSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }

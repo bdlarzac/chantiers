@@ -25,11 +25,11 @@ type StockFrais struct {
 }
 
 // *********************************************************
-func GetStockFrais(db *sqlx.DB, id int) (*StockFrais, error) {
-	sf := &StockFrais{}
+func GetStockFrais(db *sqlx.DB, id int) (sf *StockFrais, err error) {
+	sf = &StockFrais{}
 	query := "select * from stockfrais where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(sf)
+	err = row.StructScan(sf)
 	if err != nil {
 		return sf, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -37,7 +37,7 @@ func GetStockFrais(db *sqlx.DB, id int) (*StockFrais, error) {
 }
 
 // *********************************************************
-func InsertStockFrais(db *sqlx.DB, sf *StockFrais) (int, error) {
+func InsertStockFrais(db *sqlx.DB, sf *StockFrais) (id int, err error) {
 	query := `insert into stockfrais(
 	    id_stockage,
 	    typefrais,
@@ -46,8 +46,7 @@ func InsertStockFrais(db *sqlx.DB, sf *StockFrais) (int, error) {
 	    datefin,
 	    notes
 	    ) values($1,$2,$3,$4,$5,$6) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		sf.IdStockage,
 		sf.TypeFrais,
@@ -55,11 +54,14 @@ func InsertStockFrais(db *sqlx.DB, sf *StockFrais) (int, error) {
 		sf.DateDebut,
 		sf.DateFin,
 		sf.Notes).Scan(&id)
-	return id, err
+	if err != nil {
+		return 0, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return id, nil
 }
 
 // *********************************************************
-func UpdateStockFrais(db *sqlx.DB, sf *StockFrais) error {
+func UpdateStockFrais(db *sqlx.DB, sf *StockFrais) (err error) {
 	query := `update stockfrais set(
 	    typefrais,
         montant,
@@ -67,7 +69,7 @@ func UpdateStockFrais(db *sqlx.DB, sf *StockFrais) error {
         datefin,
         notes
         ) = ($1,$2,$3,$4,$5) where id=$6`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		sf.TypeFrais,
 		sf.Montant,
@@ -75,13 +77,16 @@ func UpdateStockFrais(db *sqlx.DB, sf *StockFrais) error {
 		sf.DateFin,
 		sf.Notes,
 		sf.Id)
-	return err
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
 }
 
 // *********************************************************
-func DeleteStockFrais(db *sqlx.DB, id int) error {
+func DeleteStockFrais(db *sqlx.DB, id int) (err error) {
 	query := "delete from stockfrais where id=$1"
-	_, err := db.Exec(query, id)
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

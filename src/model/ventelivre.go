@@ -60,19 +60,19 @@ func (vl *VenteLivre) String() string {
 
 // ************************** Get *******************************
 
-func GetVenteLivre(db *sqlx.DB, id int) (*VenteLivre, error) {
-	vl := &VenteLivre{}
+func GetVenteLivre(db *sqlx.DB, id int) (vl *VenteLivre, err error) {
+	vl = &VenteLivre{}
 	query := "select * from ventelivre where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(vl)
+	err = row.StructScan(vl)
 	if err != nil {
 		return vl, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return vl, nil
 }
 
-func GetVenteLivreFull(db *sqlx.DB, id int) (*VenteLivre, error) {
-	vl, err := GetVenteLivre(db, id)
+func GetVenteLivreFull(db *sqlx.DB, id int) (vl *VenteLivre, err error) {
+	vl, err = GetVenteLivre(db, id)
 	if err != nil {
 		return vl, werr.Wrapf(err, "Erreur appel GetVenteLivre()")
 	}
@@ -97,11 +97,10 @@ func GetVenteLivreFull(db *sqlx.DB, id int) (*VenteLivre, error) {
 
 // ************************** Compute *******************************
 
-func (vl *VenteLivre) ComputeLivreur(db *sqlx.DB) error {
+func (vl *VenteLivre) ComputeLivreur(db *sqlx.DB) (err error) {
 	if vl.Livreur != nil {
 		return nil
 	}
-	var err error
 	vl.Livreur, err = GetActeur(db, vl.IdLivreur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -109,11 +108,10 @@ func (vl *VenteLivre) ComputeLivreur(db *sqlx.DB) error {
 	return nil
 }
 
-func (vl *VenteLivre) ComputeConducteur(db *sqlx.DB) error {
+func (vl *VenteLivre) ComputeConducteur(db *sqlx.DB) (err error) {
 	if vl.Conducteur != nil {
 		return nil
 	}
-	var err error
 	vl.Conducteur, err = GetActeur(db, vl.IdConducteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -121,11 +119,10 @@ func (vl *VenteLivre) ComputeConducteur(db *sqlx.DB) error {
 	return nil
 }
 
-func (vl *VenteLivre) ComputeProprioutil(db *sqlx.DB) error {
+func (vl *VenteLivre) ComputeProprioutil(db *sqlx.DB) (err error) {
 	if vl.Proprioutil != nil {
 		return nil
 	}
-	var err error
 	vl.Proprioutil, err = GetActeur(db, vl.IdProprioutil)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -134,13 +131,13 @@ func (vl *VenteLivre) ComputeProprioutil(db *sqlx.DB) error {
 }
 
 // Calcule à la fois les chargements et la quantité de la livraison
-func (vl *VenteLivre) ComputeChargements(db *sqlx.DB) error {
+func (vl *VenteLivre) ComputeChargements(db *sqlx.DB) (err error) {
 	if vl.Chargements != nil {
 		return nil
 	}
 	query := "select id from ventecharge where id_livraison=$1 order by datecharge"
 	idsCharge := []int{}
-	err := db.Select(&idsCharge, query, &vl.Id)
+	err = db.Select(&idsCharge, query, &vl.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -157,7 +154,7 @@ func (vl *VenteLivre) ComputeChargements(db *sqlx.DB) error {
 
 // ************************** CRUD *******************************
 
-func InsertVenteLivre(db *sqlx.DB, vl *VenteLivre) (int, error) {
+func InsertVenteLivre(db *sqlx.DB, vl *VenteLivre) (id int, err error) {
 	query := `insert into ventelivre(
         id_vente,
         id_livreur,
@@ -177,8 +174,7 @@ func InsertVenteLivre(db *sqlx.DB, vl *VenteLivre) (int, error) {
         modatepay,
         notes
         ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		vl.IdVente,
 		vl.IdLivreur,
@@ -197,10 +193,13 @@ func InsertVenteLivre(db *sqlx.DB, vl *VenteLivre) (int, error) {
 		vl.MoTVA,
 		vl.MoDatePay,
 		vl.Notes).Scan(&id)
-	return id, err
+	if err != nil {
+		return 0, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return id, nil
 }
 
-func UpdateVenteLivre(db *sqlx.DB, vl *VenteLivre) error {
+func UpdateVenteLivre(db *sqlx.DB, vl *VenteLivre) (err error) {
 	query := `update ventelivre set(
         id_vente,
         id_livreur,
@@ -220,7 +219,7 @@ func UpdateVenteLivre(db *sqlx.DB, vl *VenteLivre) error {
         modatepay,
         notes
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) where id=$18`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		vl.IdVente,
 		vl.IdLivreur,
@@ -246,11 +245,11 @@ func UpdateVenteLivre(db *sqlx.DB, vl *VenteLivre) error {
 	return nil
 }
 
-func DeleteVenteLivre(db *sqlx.DB, id int) error {
+func DeleteVenteLivre(db *sqlx.DB, id int) (err error) {
 	// delete les chargements dépendant de cette livraison
 	idsCharge := []int{}
 	query := "select id from ventecharge where id_livraison=$1"
-	err := db.Select(&idsCharge, query, id)
+	err = db.Select(&idsCharge, query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

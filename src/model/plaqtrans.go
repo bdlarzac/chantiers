@@ -56,11 +56,11 @@ type PlaqTrans struct {
 
 // ************************** Get *******************************
 
-func GetPlaqTrans(db *sqlx.DB, id int) (*PlaqTrans, error) {
-	pt := &PlaqTrans{}
+func GetPlaqTrans(db *sqlx.DB, id int) (pt *PlaqTrans, err error) {
+	pt = &PlaqTrans{}
 	query := "select * from plaqtrans where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(pt)
+	err = row.StructScan(pt)
 	if err != nil {
 		return pt, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -69,53 +69,73 @@ func GetPlaqTrans(db *sqlx.DB, id int) (*PlaqTrans, error) {
 
 // ************************** Compute *******************************
 
-func (pt *PlaqTrans) ComputeTas(db *sqlx.DB) error {
-	var err error
+func (pt *PlaqTrans) ComputeTas(db *sqlx.DB) (err error) {
+    if pt.Tas != nil {
+        return nil // déjà calculé
+    }
 	pt.Tas, err = GetTasFull(db, pt.IdTas)
-	return err
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetTasFull()")
+	}
+	return nil
 }
 
-func (pt *PlaqTrans) ComputeTransporteur(db *sqlx.DB) error {
+func (pt *PlaqTrans) ComputeTransporteur(db *sqlx.DB) (err error) {
 	if pt.IdTransporteur == 0 {
-		return nil
+		return nil // pas de transporteur (mais conducteur et proprioutil)
 	}
-	var err error
+    if pt.Transporteur != nil {
+        return nil // déjà calculé
+    }
 	pt.Transporteur, err = GetActeur(db, pt.IdTransporteur)
-	return err
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
 }
 
-func (pt *PlaqTrans) ComputeConducteur(db *sqlx.DB) error {
+func (pt *PlaqTrans) ComputeConducteur(db *sqlx.DB) (err error) {
 	if pt.IdConducteur == 0 {
-		return nil
+		return nil // pas de conducteur ni proprioutil (mais un transporteur)
 	}
-	var err error
+    if pt.Conducteur != nil {
+        return nil // déjà calculé                                                                                        
+    }
 	pt.Conducteur, err = GetActeur(db, pt.IdConducteur)
-	return err
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
 }
 
-func (pt *PlaqTrans) ComputeProprioutil(db *sqlx.DB) error {
+func (pt *PlaqTrans) ComputeProprioutil(db *sqlx.DB) (err error) {
 	if pt.IdProprioutil == 0 {
-		return nil
+		return nil // pas de conducteur ni proprioutil (mais un transporteur)
 	}
-	var err error
+    if pt.Proprioutil != nil {
+        return nil // déjà calculé                                                                                        
+    }
 	pt.Proprioutil, err = GetActeur(db, pt.IdProprioutil)
-	return err
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
 }
 
 // ************************** CRUD *******************************
 
-func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
+func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (id int, err error) {
 	// Mise à jour du stock du tas
-	err := pt.ComputeTas(db)
+	err = pt.ComputeTas(db)
 	if err != nil {
-		return 0, err
+		return 0, werr.Wrapf(err, "Erreur appel ComputeTas()")
 	}
 	// Ajoute plaquettes au tas
 	// Attention, transport en map vert et tas en map sec
 	// => qté pour le tas = qté du transport - pourcentage de perte
 	err = pt.Tas.ModifierStock(db, Vert2sec(pt.Qte, pt.PourcentPerte))
 	if err != nil {
-		return 0, err
+		return 0, werr.Wrapf(err, "Erreur appel PlaqTrans.Tas.ModifierStock()")
 	}
 	query := `insert into plaqtrans(
         id_chantier,
@@ -145,7 +165,6 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
         tbdatepay,
         notes)
         values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26) returning id`
-	id := int(0)
 	err = db.QueryRow(
 		query,
 		pt.IdChantier,
@@ -174,10 +193,13 @@ func InsertPlaqTrans(db *sqlx.DB, pt *PlaqTrans) (int, error) {
 		pt.TbTVA,
 		pt.TbDatePay,
 		pt.Notes).Scan(&id)
-	return id, err
+	if err != nil {
+		return 0, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return id, nil
 }
 
-func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
+func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) (err error) {
 	// Mise à jour du stock du tas
 	// Enlève la qté du transport avant update transport
 	// puis ajoute qté après update transport
@@ -185,15 +207,15 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 	// (cas où plusieurs tas pour un chantier plaquette et changement de tas lors de update transport)
 	ptAvant, err := GetPlaqTrans(db, pt.Id)
 	if err != nil {
-		return err
+		return werr.Wrapf(err, "Erreur appel GetPlaqTrans()")
 	}
 	err = ptAvant.ComputeTas(db)
 	if err != nil {
-		return err
+		return werr.Wrapf(err, "Erreur appel ptAvant.ComputeTas()")
 	}
 	err = ptAvant.Tas.ModifierStock(db, -Vert2sec(ptAvant.Qte, ptAvant.PourcentPerte)) // Retire des plaquettes au tas
 	if err != nil {
-		return err
+		return werr.Wrapf(err, "Erreur appel ptAvant.ModifierStock()")
 	}
 	//
 	err = pt.ComputeTas(db)
@@ -202,7 +224,7 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 	}
 	err = pt.Tas.ModifierStock(db, Vert2sec(pt.Qte, pt.PourcentPerte)) // Ajoute des plaquettes au tas
 	if err != nil {
-		return err
+		return werr.Wrapf(err, "Erreur appel PlaqTrans.ComputeTas()")
 	}
 	//
 	query := `update plaqtrans set(
@@ -268,7 +290,7 @@ func UpdatePlaqTrans(db *sqlx.DB, pt *PlaqTrans) error {
 	return nil
 }
 
-func DeletePlaqTrans(db *sqlx.DB, id int) error {
+func DeletePlaqTrans(db *sqlx.DB, id int) (err error) {
 	// Enlève le stock du tas concerné par le transport
 	// avant de supprimer le transport
 	pt, err := GetPlaqTrans(db, id)
@@ -281,7 +303,7 @@ func DeletePlaqTrans(db *sqlx.DB, id int) error {
 	}
 	err = pt.Tas.ModifierStock(db, -Vert2sec(pt.Qte, pt.PourcentPerte)) // Retire des plaquettes au tas
 	if err != nil {
-		return err
+		return werr.Wrapf(err, "Erreur appel PlaqTrans.Tas.ModifierStock()")
 	}
 	// delete le transport
 	query := "delete from plaqtrans where id=$1"

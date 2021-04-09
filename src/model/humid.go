@@ -34,11 +34,11 @@ type Humid struct {
 // - les données stockées en base
 // - les mesureurs
 // - le stockage
-func GetHumidFull(db *sqlx.DB, idMesure int) (*Humid, error) {
-	h := &Humid{}
+func GetHumidFull(db *sqlx.DB, idMesure int) (h *Humid, err error) {
+	h = &Humid{}
 	query := "select * from humid where id=$1"
 	row := db.QueryRowx(query, idMesure)
-	err := row.StructScan(h)
+	err = row.StructScan(h)
 	if err != nil {
 		return h, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -56,17 +56,22 @@ func GetHumidFull(db *sqlx.DB, idMesure int) (*Humid, error) {
 
 // ************************** Compute *******************************
 
-func (h *Humid) ComputeMesureurs(db *sqlx.DB) error {
+func (h *Humid) ComputeMesureurs(db *sqlx.DB) (err error) {
+    if len(h.Mesureurs) != 0 {
+        return nil // déjà calculé
+    }
 	query := "select * from acteur where id in(select id_acteur from humid_acteur where id_humid=$1)"
-	err := db.Select(&h.Mesureurs, query, &h.Id)
+	err = db.Select(&h.Mesureurs, query, &h.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	return nil
 }
 
-func (h *Humid) ComputeTas(db *sqlx.DB) error {
-	var err error
+func (h *Humid) ComputeTas(db *sqlx.DB) (err error) {
+    if h.Tas == nil {
+        return nil // déjà calculé
+    }
 	h.Tas, err = GetTasFull(db, h.IdTas)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTas()")
@@ -78,11 +83,11 @@ func (h *Humid) ComputeTas(db *sqlx.DB) error {
 
 // Renvoie la liste des années ayant des mesures d'humidité,
 // @param exclude   Année à exclure du résultat
-func GetHumidDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
-	res := []string{}
+func GetHumidDifferentYears(db *sqlx.DB, exclude string) (res []string, err error) {
+	res = []string{}
 	list := []time.Time{}
 	query := "select datemesure from humid order by datemesure desc"
-	err := db.Select(&list, query)
+	err = db.Select(&list, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -98,15 +103,15 @@ func GetHumidDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 // Renvoie la liste des mesures d'humidité pour une année donnée,
 // triés par ordre chronologique inverse.
 // Chaque mesure contient les mêmes champs que ceux renvoyés par GetHumidFull()
-func GetHumidsOfYear(db *sqlx.DB, annee string) ([]*Humid, error) {
-	res := []*Humid{}
+func GetHumidsOfYear(db *sqlx.DB, annee string) (res []*Humid, err error) {
+	res = []*Humid{}
 	type ligne struct {
 		Id         int
 		DateMesure time.Time
 	}
 	tmp1 := []*ligne{}
 	query := "select id,datemesure from humid where extract(year from datemesure)=$1 order by datemesure"
-	err := db.Select(&tmp1, query, annee)
+	err = db.Select(&tmp1, query, annee)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -122,15 +127,14 @@ func GetHumidsOfYear(db *sqlx.DB, annee string) ([]*Humid, error) {
 
 // ************************** CRUD *******************************
 
-func InsertHumid(db *sqlx.DB, humid *Humid) (int, error) {
+func InsertHumid(db *sqlx.DB, humid *Humid) (id int, err error) {
 	query := `insert into humid(
         id_tas,
         valeur,
         datemesure,
         notes
         ) values($1,$2,$3,$4) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	err = db.QueryRow(
 		query,
 		humid.IdTas,
 		humid.Valeur,
@@ -146,14 +150,14 @@ func InsertHumid(db *sqlx.DB, humid *Humid) (int, error) {
 	return id, nil
 }
 
-func UpdateHumid(db *sqlx.DB, humid *Humid) error {
+func UpdateHumid(db *sqlx.DB, humid *Humid) (err error) {
 	query := `update humid set(
         id_tas,
         valeur,
         datemesure,
         notes
         ) = ($1,$2,$3,$4) where id=$5`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		humid.IdTas,
 		humid.Valeur,
@@ -175,9 +179,9 @@ func UpdateHumid(db *sqlx.DB, humid *Humid) error {
 	return nil
 }
 
-func DeleteHumid(db *sqlx.DB, id int) error {
+func DeleteHumid(db *sqlx.DB, id int) (err error) {
 	query := "delete from humid_acteur where id_humid=$1"
-	_, err := db.Exec(query, id)
+	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

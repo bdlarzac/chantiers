@@ -26,23 +26,23 @@ const N_COMMUNES = 13
     Renvoie une Commune contenant Id et Nom.
     Les autres champs ne sont pas remplis.
 **/
-func GetCommune(db *sqlx.DB, id int) (*Commune, error) {
-	commune := &Commune{}
+func GetCommune(db *sqlx.DB, id int) (commune *Commune, err error) {
+	commune = &Commune{}
 	query := "select * from commune where id=$1"
 	row := db.QueryRowx(query, id)
-	err := row.StructScan(commune)
+	err = row.StructScan(commune)
 	if err != nil {
 		return commune, werr.Wrapf(err, "Incapable de fabriquer la commune")
 	}
-	return commune, err
+	return commune, nil
 }
 
 // *********************************************************
 /**
     Renvoie la liste de toutes les communes avec leurs lieux-dits
 **/
-func ListCommunesEtLieudits(db *sqlx.DB) ([]*Commune, error) {
-	communes := make([]*Commune, N_COMMUNES)
+func ListCommunesEtLieudits(db *sqlx.DB) (communes []*Commune, err error) {
+	communes = make([]*Commune, N_COMMUNES)
 	query := "select * from commune"
 	rows, err := db.Queryx(query)
 	if err != nil {

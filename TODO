@@ -2,12 +2,13 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- vente charge update - bug sur tas
+- Attention, on ne doit pas pouvoir supprimer l'acteur BDL
 
-- WeboStockage - rajouter préfixe "stockage-"
-  Vérifier toutes les fonctions webo
+- chaufer : l'unité doit être uniquement la stère
 
-- html : remplacer scripts dans footer par scripts dans header avec attribut defer
+- icon help cassé dans form acteur
+
+- vente charge update - bug sur tas => tas déclaré vide donc n'apparaît pas dans la liste des tas à choisir
 
 - form acteur : revoir validation
 
@@ -21,16 +22,12 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - Comment réagit l'appli pour des chantiers à cheval sur plusieurs années ?
 
-- Attention, il reste dans model/ des retours d'erreur sans werr.Wrapf : plaqtrans, plaqrange
-
 - Finir de nettoyer le model (fonctions inutiles, jointures au lieu de plusieurs select)
   surtout parcelle / ug / lieudit 
 
+- model : remplacer Scan par sqlx
+
 - Sortir BDL, SCTL, GFA des acteurs ???
-
-- supprimer GetFermiersFromCodeUG si inutilisé - dans run-bdl, ajax et model
-
-- Dans toutes les fonctions model.Compute*, faire un test au début pour return si déjà calculé
 
 - Vérifier tous les cas de response vide au lieu de null
     response = await response.json();
@@ -38,6 +35,7 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 => pas d'erreur si null ?
 
 - ré-écrire model.GetUGsFromLieudit() avec jointures (?)
+    aussi voir GetStockage() GetActeur()
 
 - revoir les fonctions String() de transport, rangement, chargement, livraison :
 Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
@@ -48,8 +46,6 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
   
 - vérifier convention utilisée pour uppercase suivant le N dans les noms des champs (toutes les tables)
-
-- model : remplacer Scan par sqlx
 
 - Tester évolution du stock sur les hangars à plaquette
 - tester delete ou update tas dans un Plaq

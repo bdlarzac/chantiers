@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -116,7 +117,7 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	if err != nil {
 		return err
 	}
-	idClient, err := strconv.Atoi(formValues.Get("liste-client-plaquettes"))
+	idClient, err := strconv.Atoi(strings.TrimLeft(formValues.Get("liste-client-plaquettes"), "acteur-"))
 	if err != nil {
 		return err
 	}

@@ -16,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	//"fmt"
 )
 
 // Contient les données nécessaires pour afficher le PDF
@@ -56,8 +55,7 @@ type AffactureColonne struct {
 	Valeur string
 }
 
-func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
-	var err error
+func (aff *Affacture) ComputeItems(db *sqlx.DB) (err error) {
 	for _, typeActivite := range aff.TypesActivites {
 		switch typeActivite {
 		// Opérations simples
@@ -142,24 +140,16 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) error {
 	//
 	return nil
 }
-
 // Auxiliaires de Affacture.ComputeItems() pour trier par date
 type affactureItemSlice []*AffactureItem
+func (p affactureItemSlice) Len() int { return len(p) }
+func (p affactureItemSlice) Less(i, j int) bool { return p[i].Date.Before(p[j].Date) }
+func (p affactureItemSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
-func (p affactureItemSlice) Len() int {
-	return len(p)
-}
-func (p affactureItemSlice) Less(i, j int) bool {
-	return p[i].Date.Before(p[j].Date)
-}
-func (p affactureItemSlice) Swap(i, j int) {
-	p[i], p[j] = p[j], p[i]
-}
-
-func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite string) error {
+func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite string) (err error) {
 	list := []PlaqOp{}
 	query := "select * from plaqop where id_acteur=$1 and typop=$2 and datedeb>=$3 and datedeb<=$4"
-	err := db.Select(&list, query, aff.IdActeur, typeActivite, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, typeActivite, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -212,10 +202,10 @@ func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite stri
 // Transport
 //
 
-func (aff *Affacture) computeItemsTransportGlobal(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsTransportGlobal(db *sqlx.DB) (err error) {
 	list := []PlaqTrans{}
 	query := "select * from plaqtrans where id_transporteur=$1 and datetrans>=$2 and datetrans<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -256,10 +246,10 @@ func (aff *Affacture) computeItemsTransportGlobal(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsTransportConducteur(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsTransportConducteur(db *sqlx.DB) (err error) {
 	list := []PlaqTrans{}
 	query := "select * from plaqtrans where id_conducteur=$1 and datetrans>=$2 and datetrans<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -308,10 +298,10 @@ func (aff *Affacture) computeItemsTransportConducteur(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsTransportProprioutil(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsTransportProprioutil(db *sqlx.DB) (err error) {
 	list := []PlaqTrans{}
 	query := "select * from plaqtrans where id_proprioutil=$1 and datetrans>=$2 and datetrans<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -410,10 +400,10 @@ func (aff *Affacture) computeItemsTransportProprioutil(db *sqlx.DB) error {
 // Rangement
 //
 
-func (aff *Affacture) computeItemsRangementGlobal(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsRangementGlobal(db *sqlx.DB) (err error) {
 	list := []PlaqRange{}
 	query := "select * from plaqtrange where id_rangeur=$1 and daterange>=$2 and daterange<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -455,10 +445,10 @@ func (aff *Affacture) computeItemsRangementGlobal(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsRangementConducteur(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsRangementConducteur(db *sqlx.DB) (err error) {
 	list := []PlaqRange{}
 	query := "select * from plaqtrange where id_conducteur=$1 and daterange>=$2 and daterange<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -508,10 +498,10 @@ func (aff *Affacture) computeItemsRangementConducteur(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsRangementProprioutil(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsRangementProprioutil(db *sqlx.DB) (err error) {
 	list := []PlaqRange{}
 	query := "select * from plaqtrange where id_proprioutil=$1 and daterange>=$2 and daterange<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -557,10 +547,10 @@ func (aff *Affacture) computeItemsRangementProprioutil(db *sqlx.DB) error {
 // Chargement
 //
 
-func (aff *Affacture) computeItemsChargementGlobal(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsChargementGlobal(db *sqlx.DB) (err error) {
 	list := []VenteCharge{}
 	query := "select * from ventecharge where id_chargeur=$1 and datecharge>=$2 and datecharge<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -602,10 +592,10 @@ func (aff *Affacture) computeItemsChargementGlobal(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsChargementConducteur(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsChargementConducteur(db *sqlx.DB) (err error) {
 	list := []VenteCharge{}
 	query := "select * from ventecharge where id_conducteur=$1 and datecharge>=$2 and datecharge<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -655,10 +645,10 @@ func (aff *Affacture) computeItemsChargementConducteur(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsChargementProprioutil(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsChargementProprioutil(db *sqlx.DB) (err error) {
 	list := []VenteCharge{}
 	query := "select * from ventecharge where id_proprioutil=$1 and datecharge>=$2 and datecharge<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -704,10 +694,10 @@ func (aff *Affacture) computeItemsChargementProprioutil(db *sqlx.DB) error {
 // Livraison
 //
 
-func (aff *Affacture) computeItemsLivraisonGlobal(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsLivraisonGlobal(db *sqlx.DB) (err error) {
 	list := []VenteLivre{}
 	query := "select * from ventelivre where id_livreur=$1 and datelivre>=$2 and datelivre<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -749,10 +739,10 @@ func (aff *Affacture) computeItemsLivraisonGlobal(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsLivraisonConducteur(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsLivraisonConducteur(db *sqlx.DB) (err error) {
 	list := []VenteLivre{}
 	query := "select * from ventelivre where id_conducteur=$1 and datelivre>=$2 and datelivre<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -805,10 +795,10 @@ func (aff *Affacture) computeItemsLivraisonConducteur(db *sqlx.DB) error {
 	return nil
 }
 
-func (aff *Affacture) computeItemsLivraisonOutil(db *sqlx.DB) error {
+func (aff *Affacture) computeItemsLivraisonOutil(db *sqlx.DB) (err error) {
 	list := []VenteLivre{}
 	query := "select * from ventelivre where id_proprioutil=$1 and datelivre>=$2 and datelivre<=$3"
-	err := db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
+	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
