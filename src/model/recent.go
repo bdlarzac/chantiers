@@ -32,11 +32,18 @@ func GetRecents(db *sqlx.DB) ([]*Recent, error) {
 }
 
 // Modifie l'historique
-// si le label est déjà en base, update la ligne en changeant la date de visite
+// si l'url est déjà en base, update la ligne en changeant la date de visite
 // sinon ajoute une ligne.
 // Ensuite efface les entrées les plus anciennes
-// NOTE : utilise url, mais url mène à des doublons
-// (ex : chantier/plaquette/1 et chantier/plaquette/1/chantiers)
+//
+// Attention, l'historique basée sur les urls peut mener à des doublons :
+// /chantier/plaquette/1
+// /chantier/plaquette/1/chantiers
+// ou 
+// /chantier/chauffage-fermier/liste
+// /chantier/chauffage-fermier/liste/2021
+// La logique de dédoublonnage n'est pas gérée ici,
+// mais dans les contrôleurs, dans le code qui appelle AddRecent() 
 func AddRecent(db *sqlx.DB, conf *Config, r *Recent) error {
 	var err error
 	var count int

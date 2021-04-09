@@ -1,0 +1,37 @@
+{{/*
+    Portion de template permettant de factoriser le code js vérifiant le nom d'un acteur dans une datalist.
+    Obligé de faire ça sous forme de template go,
+    car pas réussi à récupérer en js l'élément sélectionné dans la datalist.
+    Possible de récupérer la value de l'input lié à la datalist.
+    Mais besoin de récupérer l'option pour avoir son id ou data-id.
+*/}}
+
+/** 
+    Auxiliaire des formulaires pour vérifier les input contenant un nom d'acteur.
+    
+    @param  eltId       id de l'input type=text contenant le nom d'acteur
+    @param  msgEmpty    Message à afficher si le champ est vide
+    @return Tableau avec 2 éléments
+                - id de l'acteur en base, ou 0 si inexistant
+                - Message d'erreur à afficher, ou "" si vérification OK
+**/
+function checkActeur(eltId, msgEmpty){
+    let msg = "", idActeur = 0;
+    const nomSaisi = document.getElementById(eltId).value.trim();
+    if(nomSaisi == ""){
+        return [0, msgEmpty];
+    }
+    let found = false;
+    if(false){}
+{{range $id, $nom := .ListeActeurs}}
+    else if("{{$nom}}" == nomSaisi){
+        found = true;
+        idActeur = {{$id}};
+        // idéalement break go loop
+    }
+{{end}}
+    if(!found){
+        msg += "- L'acteur saisi (\"" + nomSaisi + "\") n'existe pas en base.\n"
+    }
+    return [idActeur, msg];
+}

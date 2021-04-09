@@ -30,11 +30,20 @@
     <span class="bold"><a href="/acteur/{{.IdFournisseur}}">{{.Fournisseur.Nom}}</a></span>
     
     <span>Date vente</span>
-    <span class="bold"><span>{{.DateVente | dateFr}}</span>
+    <span class="bold">{{.DateVente | dateFr}}</span>
+    
+    {{if .Chantiers}}
+        <div>Chantiers</div>
+        <div>
+        {{range .Chantiers}}
+            <div><a href="/chantier/plaquette/{{.Id}}">{{.FullString}}</a></div>
+        {{end}}
+        </div>
+    {{end}}
 </div>
 </div>
 
-<div class="grid2-pres padding-left padding-right border-right">
+<div class="grid2-pres padding-left">
     <span>Quantité</span>
     <span class="bold">{{.Qte}} maps</span>
     
@@ -54,57 +63,59 @@
 </div><!-- end class="flex-wrap" -->
 
 <!-- ************************************* -->
-{{if .Chantiers}}
-    <div class="big3 bold margin-top margin-bottom">Chantiers</div>
-    {{range .Chantiers}}
-        <div class=""><a href="/chantier/plaquette/{{.Id}}">{{.FullString}}</a></div>
-        
-    {{end}}
-    
-{{end}}
+<fieldset class="margin-top margin-bottom">
+    <legend class="big3 bold padding-right05 padding-left05">Facture</legend>
+
+    <div class="flex-wrap">
+        <div class="padding-right border-right margin-right">
+            <div class="grid2-pres">
+                <span>Date</span>
+                <span class="bold">
+                    {{if not .DateFacture.IsZero}}
+                        {{.DateFacture | dateFr}}
+                    {{else}}
+                        NON SPECIFIE
+                    {{end}}
+                </span>
+                
+                <span>Numéro</span>                                                                                          
+                <span class="bold">
+                    {{if .NumFacture}}
+                        {{.NumFacture}}
+                    {{else}}
+                        NON SPECIFIE
+                    {{end}}
+                </span>
+            </div>
+        </div>
+        <div>
+            <div>Sur la facture :</div>
+            <div class="grid2-pres">
+                <div>Faire apparaître un coût de livraison</div> 
+                <div class="bold">{{if .FactureLivraison}}Oui{{else}}Non{{end}}</div>
+                
+                {{if .FactureLivraison}}
+                <div>PU HT livraison facturée</div>
+                <div class="bold">{{.FactureLivraisonPUHT}} &euro; / map</div>
+                
+                <div>TVA livraison facturée</div>
+                <div class="bold">{{.FactureLivraisonTVA}} %</div>
+                {{end}}
+                
+                <div>Faire apparaître les notes</div> 
+                <div class="bold">{{if .FactureNotes}}Oui{{else}}Non{{end}}</div>
+            </div>
+        </div>
+    </div><!-- end class="flex-wrap" -->
+</fieldset>
 
 <!-- ************************************* -->
 {{if .Notes}}
-    <div class="big3 bold margin-top margin-bottom">Notes</div>
+<fieldset class="margin-top margin-bottom">
+    <legend class="big3 bold padding-right05 padding-left05">Notes</legend>
     {{.Notes | nl2br}}
+</fieldset>
 {{end}}
-
-
-
-<!-- ************************************* -->
-<div class="big3 bold margin-top margin-bottom">Facture</div>
-
-<div class="flex-wrap">
-<div class="padding-right border-right margin-right">
-<div class="grid2-pres">
-    <span>Date</span>
-    <span class="bold">{{.DateFacture | dateFr}}</span>
-    
-    <span>Numéro</span>                                                                                          
-    <span class="bold">{{.NumFacture}}</span>
-</div>
-</div>
-
-<div>
-Dans la facture :
-<div class="grid2-pres">
-    <div>Faire apparaître un coût de livraison :</div> 
-    <div class="bold">{{if .FactureLivraison}}Oui{{else}}Non{{end}}</div>
-    
-    {{if .FactureLivraison}}
-    <div>PU HT livraison facturée</div>
-    <div class="bold">{{.FactureLivraisonPUHT}} &euro;</div>
-    
-    <div>TVA livraison facturée</div>
-    <div class="bold">{{.FactureLivraisonTVA}} %</div>
-    {{end}}
-    
-    <div>Faire apparaître les notes :</div> 
-    <div class="bold">{{if .FactureNotes}}Oui{{else}}Non{{end}}</div>
-</div>
-</div>
-
-</div><!-- end class="flex-wrap" -->
 
 <!-- ***************** Livraisons ******************** -->
 <div class="big3 bold margin-top margin-bottom">

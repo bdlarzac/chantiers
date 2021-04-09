@@ -6,12 +6,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
-	//	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
 )
@@ -19,6 +17,7 @@ import (
 type detailsVentePlaqForm struct {
 	Vente              *model.VentePlaq
 	FournisseurOptions template.HTML
+    ListeActeurs       map[int]string
 	UrlAction          string
 }
 type detailsVentePlaqList struct {
@@ -129,25 +128,26 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		vente.Fournisseur = &model.Acteur{}
 		vente.TVA = ctx.Config.TVABDL.VentePlaquettes
 		vente.FactureLivraisonTVA = ctx.Config.TVABDL.Livraison
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "venteplaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Nouvelle vente de plaquettes",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "ventes",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsVentePlaqForm{
 				Vente:              vente,
 				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), "CHOOSE_FOURNISSEUR"),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:          "/vente/new",
 			},
 		}
@@ -193,25 +193,26 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "venteplaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier la vente : " + vente.String(),
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "ventes",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsVentePlaqForm{
 				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), strconv.Itoa(vente.IdFournisseur)),
 				Vente:              vente,
+			    ListeActeurs:  listeActeurs,
 				UrlAction:          "/vente/update/" + vars["id-vente"],
 			},
 		}

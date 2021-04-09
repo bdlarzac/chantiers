@@ -1,3 +1,7 @@
+
+<script>{{template "checkActeur.js.html" .Details}}</script>
+{{template "listeActeurs.html" .Details}}
+
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.Op}}
@@ -14,14 +18,7 @@
         </select>
 
         <label for="acteur" id ="lbl-acteur">Acteur</label>
-        <div>
-            <input list="liste-acteurs" name="acteur" id="acteur" class="width25">
-            <datalist id="liste-acteurs">
-                {{range $id, $nom := $.Details.ListeActeurs}}
-                    <option name="acteur-{{$id}}" value="{{$nom}}">
-                {{end}}
-            </datalist>
-        </div>
+        <input list="liste-acteurs" name="acteur" id="acteur" class="width25">
 
         <label>Dates opération</label>
         <div>                                                                                                                              
@@ -97,7 +94,6 @@ window.addEventListener("load", function(){
 
 // ***************************************
 function initialize(){
-    
     if({{.Acteur.Id}} == 0){
         // form new
         document.getElementById("CHOOSE_TYPEOP").setAttribute("selected", "selected");
@@ -155,28 +151,15 @@ function validateForm(){
         msg += "- Vous devez renseigner un type d'opération.\n";
     }
     //
-    if(document.getElementById("acteur").value == ""){
-        msg += "- Vous devez renseigner l'acteur";
-        const tmp = document.getElementById("lbl-acteur").innerHTML.toLowerCase(); // "débardeur" ...
-        if(tmp != "acteur"){
-            msg += " (" + tmp + ")";
-        }
-        msg += ".\n";
+    let msgEmpty = "- Vous devez renseigner l'acteur";
+    const tmp = document.getElementById("lbl-acteur").innerHTML.toLowerCase(); // "débardeur" ...
+    if(tmp != "acteur"){
+        msgEmpty += " (" + tmp + ")";
     }
-    else{
-        let found = false;
-        const nomSaisi = document.getElementById("acteur").value;
-        {{range $id, $nom := $.Details.ListeActeurs}}
-            if("{{$nom}}" == nomSaisi){
-                found = true;
-                document.getElementById("id-acteur").value = "{{$id}}";
-                // idéalement break go loop
-            }
-        {{end}}
-        if(!found){
-            msg += "- L'acteur saisi (" + nomSaisi + ") n'existe pas en base.\n"
-        }
-    }
+    msgEmpty += ".\n";
+    let check = checkActeur("acteur", msgEmpty);
+    document.getElementById("id-acteur").value = check[0];
+    msg += check[1];
     //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;

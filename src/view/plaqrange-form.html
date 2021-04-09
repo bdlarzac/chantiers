@@ -1,3 +1,7 @@
+
+<script>{{template "checkActeur.js.html" .Details}}</script>
+{{template "listeActeurs.html" .Details}}
+
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.Rangement}}
@@ -27,9 +31,7 @@
         <div></div>
         
         <label for="rangeur">Rangeur</label>
-        <div class="autocomplete">
-            <input type="text" name="rangeur" id="rangeur" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="rangeur" id="rangeur" class="width25">
 
         <label for="glprix">Prix HT</label>
         <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5">
@@ -53,9 +55,7 @@
         <div class="big3 bold">Conducteur</div><div></div>
         
         <label for="conducteur">Conducteur</label>
-        <div class="autocomplete">
-            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="conducteur" id="conducteur" class="width25">
 
         <label for="conheure">Nb heures</label>
         <input type="number" name="conheure" id="conheure" step="0.01" min="0" value="{{.CoNheure | zero2empty}}" class="width5">
@@ -75,9 +75,7 @@
         <div class="big3 bold">Outil</div><div></div>
         
         <label for="proprioutil">Propriétaire outil</label>
-        <div class="autocomplete">
-            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="proprioutil" id="proprioutil" class="width25">
 
         <label for="ouprix">Prix HT</label>
         <input type="number" name="ouprix" id="ouprix" step="0.01" min="0" value="{{.OuPrix | zero2empty}}" class="width5">
@@ -111,19 +109,10 @@
 
 <script>
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById("rangeur"), getActeursPossibles);
-    autocomplete(document.getElementById("conducteur"), getActeursPossibles);
-    autocomplete(document.getElementById("proprioutil"), getActeursPossibles);
-    // Pour vérifier que le conducteur affiché correspond à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("id-conducteur")
-    // car l'utilisateur peut modifier le nom
-    window.globalPersons = [];
-    
     let radios = document.getElementsByName("type-cout");
     for( i = 0; i < radios.length; i++ ){
         radios[i].onchange = changeTypeCout;
     }
-    
     initialize();
 });
 
@@ -146,12 +135,9 @@ function initialize(){
     else{
         document.getElementById("tas-{{.IdTas}}").setAttribute("selected", "selected");
         //
-        document.getElementById("rangeur").value = "{{.Rangeur.NomAutocomplete}}";
-        document.getElementById("conducteur").value = "{{.Conducteur.NomAutocomplete}}";
-        document.getElementById("proprioutil").value = "{{.Proprioutil.NomAutocomplete}}";
-        window.globalPersons[{{.IdRangeur}}] = "{{.Rangeur.NomAutocomplete}}";
-        window.globalPersons[{{.IdConducteur}}] = "{{.Conducteur.NomAutocomplete}}";
-        window.globalPersons[{{.IdProprioutil}}] = "{{.Proprioutil.NomAutocomplete}}";
+        document.getElementById("rangeur").value = "{{.Rangeur.String}}";
+        document.getElementById("conducteur").value = "{{.Conducteur.String}}";
+        document.getElementById("proprioutil").value = "{{.Proprioutil.String}}";
         //
         if("{{.TypeCout}}" == "G"){
             document.getElementById("cout-global").setAttribute("checked", true);
@@ -289,6 +275,7 @@ function validateForm(){
     }
     //
     if(msg != ""){
+        msg = "Impossible de valider ce formulaire :\n" + msg;
         alert(msg);
         return false;
     }

@@ -1,3 +1,7 @@
+
+<script>{{template "checkActeur.js.html" .Details}}</script>
+{{template "listeActeurs.html" .Details}}
+
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.VenteCharge}}
@@ -33,9 +37,7 @@
     <div class="grid2-form margin-top">
         
         <label for="chargeur">Chargeur</label>
-        <div class="autocomplete">
-            <input type="text" name="chargeur" id="chargeur" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="chargeur" id="chargeur" class="width25">
         
         <label for="glprix">Prix HT</label>
         <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5">
@@ -62,9 +64,7 @@
     <div class="grid2-form margin-top">
         
         <label for="conducteur">Conducteur</label>
-        <div class="autocomplete">
-            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="conducteur" id="conducteur" class="width25">
 
         <label for="monheure">Nombre d'heures</label>
         <input type="number" name="monheure" id="monheure" step="0.01" min="0" value="{{.MoNHeure | zero2empty}}" class="width5">
@@ -88,9 +88,7 @@
     <div class="grid2-form margin-top">
         
         <label for="proprioutil">Propriétaire outil</label>
-        <div class="autocomplete">
-            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="proprioutil" id="proprioutil" class="width25">
 
         <label for="ouprix">Prix HT</label>
         <input type="number" name="ouprix" id="ouprix" step="0.01" min="0" value="{{.OuPrix | zero2empty}}" class="width5">
@@ -129,19 +127,10 @@
 
 <script>
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById("chargeur"), getActeursPossibles);
-    autocomplete(document.getElementById("conducteur"), getActeursPossibles);
-    autocomplete(document.getElementById("proprioutil"), getActeursPossibles);
-    // Pour vérifier que le chargeur affiché correspond à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("id-chargeur")
-    // car l'utilisateur peut modifier le nom
-    window.globalPersons = [];
-    
     let radios = document.getElementsByName("type-cout");
     for( i = 0; i < radios.length; i++ ){
         radios[i].onchange = changeTypeCout;
     }
-    
     initialize();
 });
 
@@ -154,12 +143,9 @@ function initialize(){
     }
     // form update
     else{
-        window.globalPersons[{{.IdChargeur}}] = "{{.Chargeur.NomAutocomplete}}";
-        window.globalPersons[{{.IdConducteur}}] = "{{.Conducteur.NomAutocomplete}}";
-        window.globalPersons[{{.IdProprioutil}}] = "{{.Proprioutil.NomAutocomplete}}";
-        document.getElementById("chargeur").value = "{{.Chargeur.NomAutocomplete}}";
-        document.getElementById("conducteur").value = "{{.Conducteur.NomAutocomplete}}";
-        document.getElementById("proprioutil").value = "{{.Proprioutil.NomAutocomplete}}";
+        document.getElementById("chargeur").value = "{{.Chargeur.String}}";
+        document.getElementById("conducteur").value = "{{.Conducteur.String}}";
+        document.getElementById("proprioutil").value = "{{.Proprioutil.String}}";
         //
         if({{.TypeCout}} == "G"){
             document.getElementById("cout-global").setAttribute("checked", true);

@@ -48,9 +48,11 @@ func init() {
 			New("").
 			Funcs(fmap).
 			ParseGlob(filepath.Join("view", "*.html"))).
-		Option("missingkey=error")
+            Option("missingkey=error")
 	tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien.html"))
 	tmpl.New("chantier-lien-help").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien-help.html"))
+	tmpl.New("checkActeur").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "checkActeur.js.html"))
+	tmpl.New("listeActeurs").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "listeActeurs.html"))
 }
 
 // ************************* pipelines ********************************

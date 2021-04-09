@@ -1,3 +1,7 @@
+
+<script>{{template "checkActeur.js.html" .Details}}</script>
+{{template "listeActeurs.html" .Details}}
+
 <h1>
 {{.Header.Title}}
 </h1>
@@ -35,9 +39,7 @@
         <div></div>
         
         <label for="transporteur">Transporteur</label>
-        <div class="autocomplete">
-            <input type="text" name="transporteur" id="transporteur" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="transporteur" id="transporteur" class="width25">
 
         <label for="glprix">Prix HT</label>
         <div><input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5"> &euro;</div>
@@ -61,9 +63,7 @@
         <div class="big3 bold">1 - Coût conducteur</div><div></div>
         
         <label for="conducteur">Conducteur</label>
-        <div class="autocomplete">
-            <input type="text" name="conducteur" id="conducteur" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="conducteur" id="conducteur" class="width25">
 
         <label for="conheure">Nb heures</label>
         <input type="number" name="conheure" id="conheure" step="0.01" min="0" value="{{.CoNheure | zero2empty}}" class="width5">
@@ -83,9 +83,7 @@
         <div class="big3 bold">2 - Coût outil</div><div></div>
         
         <label for="proprioutil">Propriétaire outil</label>
-        <div class="autocomplete">
-            <input type="text" name="proprioutil" id="proprioutil" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="proprioutil" id="proprioutil" class="width25">
 
         <!-- ****************** Camion ******************* -->
         <div class="big2 bold">
@@ -171,15 +169,7 @@
 
 <script>
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById("transporteur"), getActeursPossibles);
-    autocomplete(document.getElementById("conducteur"), getActeursPossibles);
-    autocomplete(document.getElementById("proprioutil"), getActeursPossibles);
-    // Pour vérifier que le transporteur / conducteur / proprioutil affichés correspondent à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("id-transporteur") ou ("id-conducteur") ou ("id-proprioutil")
-    // car l'utilisateur peut modifier le nom après le retour de l'autocomplete
-    window.globalPersons = [];
     initialize();
-    
     let radios = document.getElementsByName("type-cout");
     for( i = 0; i < radios.length; i++ ){
         radios[i].onchange = changeTypeCout;
@@ -212,12 +202,9 @@ function initialize(){
     }
     // form update
     else{
-        document.getElementById("transporteur").value = "{{.Transporteur.NomAutocomplete}}";
-        document.getElementById("conducteur").value = "{{.Conducteur.NomAutocomplete}}";
-        document.getElementById("proprioutil").value = "{{.Proprioutil.NomAutocomplete}}";
-        window.globalPersons[{{.IdTransporteur}}] = "{{.Transporteur.NomAutocomplete}}";
-        window.globalPersons[{{.IdConducteur}}] = "{{.Conducteur.NomAutocomplete}}";
-        window.globalPersons[{{.IdProprioutil}}] = "{{.Proprioutil.NomAutocomplete}}";
+        document.getElementById("transporteur").value = "{{.Transporteur.String}}";
+        document.getElementById("conducteur").value = "{{.Conducteur.String}}";
+        document.getElementById("proprioutil").value = "{{.Proprioutil.String}}";
         //
         document.getElementById("tas-{{.IdTas}}").setAttribute("selected", "selected");
         //

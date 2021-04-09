@@ -98,34 +98,21 @@
         </td>
         
         <td class="vertical-align-top">
-            <div class="padding-bottom05">
-                {{if .Tas.Stockage.Archived}}
-                    <div>{{.Tas.Nom}}</div>
-                {{else}}
-                    <a href="/stockage/liste">{{.Tas.Nom}}</a>
-                {{end}}
-            </div>
             <div class="grid2-pres">
+                <div>Tas</div>
+                <div>
+                    {{if .Tas.Stockage.Archived}}
+                        <a href="/tas-vides">{{.Tas.Nom}}</a>
+                    {{else}}
+                        <a href="/stockage/liste">{{.Tas.Nom}}</a>
+                    {{end}}
+                </div>
+            
                 <div>Date</div>
                 <div class="bold">{{.DateTrans | dateFr}}</div>
                 
                 <div>Qté</div>
                 <div class="bold">{{.Qte}} maps <a title="Quantité brute sans déduire le coefficient de perte lié au séchage">(bois vert)</a></div>
-                
-                {{if .IdTransporteur}}
-                <div>Transporteur</div>
-                <div><a href="/acteur/{{.IdTransporteur}}">{{.Transporteur.String}}</a></div>
-                {{end}}
-                
-                {{if .IdConducteur}}
-                <div>Conducteur</div>
-                <div><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
-                {{end}}
-                
-                {{if .IdProprioutil}}
-                <div>Propriétaire outil</div>
-                <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
-                {{end}}
                 
             </div>
             {{if .Notes}}
@@ -144,6 +131,9 @@
         <td colspan="2" class="vertical-align-top">
             <div class="padding02 bg-ccc center margin-bottom05">Global</div>
             <div class="grid2-pres">
+                <div>Transporteur</div>
+                <div><a href="/acteur/{{.IdTransporteur}}">{{.Transporteur.String}}</a></div>
+                
                 <div>Prix HT</div>
                 <div class="bold">{{.GlPrix}} &euro;</div>
                 
@@ -168,6 +158,9 @@
         <td class="vertical-align-top">
             <div class="padding02 bg-ccc center margin-bottom05">Conducteur</div>
             <div class="grid2-pres">
+                <div>Conducteur</div>
+                <div><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
+                
                 <div>Nb heures</div>
                 <div class="bold">{{.CoNheure}}</div>
                 
@@ -198,6 +191,9 @@
             </script>
             <div class="padding02 bg-ccc center margin-bottom05">Camion</div>
             <div class="grid2-pres">
+                <div>Propriétaire</div>
+                <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
+                
                 <div>Nb km</div>                                                        
                 <div class="bold">{{.CaNkm}}</div>
                 
@@ -225,6 +221,9 @@
             </script>
             <div class="padding02 bg-ccc center margin-bottom05">Tracteur + benne</div>
             <div class="grid2-pres">
+                <div>Propriétaire</div>
+                <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
+                
                 <div>Nb bennes</div>
                 <div class="bold">{{.TbNbenne}}</div>
                 
@@ -315,37 +314,23 @@
         </td>
         
         <td class="vertical-align-top">
-            <div>
-                {{if .Tas.Stockage.Archived}}
-                    <div>{{.Tas.Nom}}</div>
-                {{else}}
-                    <a href="/stockage/liste">{{.Tas.Nom}}</a>
-                {{end}}
-            </div>
             <div class="grid2-pres">
+                <div>Tas</div>
+                <div>
+                    {{if .Tas.Stockage.Archived}}
+                        <a href="/tas-vides">{{.Tas.Nom}}</a>
+                    {{else}}
+                        <a href="/stockage/liste">{{.Tas.Nom}}</a>
+                    {{end}}
+                </div>
+                
                 <div>Date</div>
                 <div class="bold">{{.DateRange | dateFr}}</div>
-                
-                {{if .IdRangeur}}
-                <div>Rangeur</div>
-                <div><a href="/acteur/{{.IdRangeur}}">{{.Rangeur.String}}</a></div>
-                {{end}}
-                
-                {{if .IdConducteur}}
-                <div>Conducteur</div>
-                <div><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
-                {{end}}
-                
-                {{if .IdProprioutil}}
-                <div>Propriétaire outil</div>
-                <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
-                {{end}}
-                
-                {{if .Notes}}
-                <div>Notes</div>
-                <div>{{.Notes | nl2br}}</div>
-                {{end}}
             </div>
+            {{if .Notes}}
+                <div class="bold margin-top">Notes</div>
+                <div>{{.Notes | nl2br}}</div>
+            {{end}}
         </td>
         
         {{if eq .TypeCout "G"}}
@@ -357,6 +342,9 @@
         <td colspan="2">
             <div class="padding02 bg-ccc center margin-bottom05">Global</div>
             <div class="grid2-pres">
+                <div>Rangeur</div>
+                <div><a href="/acteur/{{.IdRangeur}}">{{.Rangeur.String}}</a></div>
+                
                 <div>Prix HT</div>
                 <div class="bold">{{.GlPrix}} &euro;</div>
                 
@@ -380,6 +368,9 @@
         <td class="vertical-align-top">
             <div class="padding02 bg-ccc center margin-bottom05">Conducteur</div>
             <div class="grid2-pres">
+                <div>Conducteur</div>
+                <div><a href="/acteur/{{.IdConducteur}}">{{.Conducteur.String}}</a></div>
+                
                 <div>Nb heures</div>
                 <div class="bold">{{.CoNheure}}</div>
                 
@@ -408,6 +399,9 @@
         <td class="vertical-align-top">
             <div class="padding02 bg-ccc center margin-bottom05">Outil</div>
             <div class="grid2-pres">
+                <div>Propriétaire</div>
+                <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
+                
                 <div>Prix HT</div>
                 <div class="bold">{{.OuPrix}} &euro;</div>
                 

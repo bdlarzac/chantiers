@@ -1,4 +1,7 @@
 
+<script>{{template "checkActeur.js.html" .Details}}</script>
+{{template "listeActeurs.html" .Details}}
+
 {{with .Details.Humid}}
 
 <form class="form margin-left2" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
@@ -20,9 +23,7 @@
         <label for="choix-personne">Personnes : </label>
         <div>
             <div class="grid2-form margin-bottom">
-                <div class="autocomplete">
-                    <input type="text" id="choix-personne" name="choix-personne" autocomplete="off" value="" class="width20">
-                </div>
+                <input list="liste-acteurs" name="choix-personne" id="choix-personne" class="width25">
                 <a id="ajout-personne" href="#" onclick="ajouterPersonne();">
                     <img class="inline bigicon" src="/static/img/validate.png" title="Ajouter cette personne" />
                 </a>
@@ -67,10 +68,6 @@
 
 // ***************************************
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById('choix-personne'), getActeursPossibles);         
-    // Utilisé pour conserver les ids des personnes ajoutées
-    // tableau id acteur => nom acteur
-    window.globalPersons = [];
     initialize();
 });
 
@@ -80,7 +77,6 @@ function initialize(){
         // form update
         // initialise les personnes choisies
         {{range .Mesureurs}}
-            window.globalPersons[{{.Id}}] = {{.String}};
             doAjouterPersonne({{.Id}}, {{.String}});
         {{end}}
     }

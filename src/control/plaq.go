@@ -115,7 +115,8 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	}
 	// Add recent - modifie URL pour éviter des doublons (même chantier mais urls différentes)
 	url := r.URL.String()
-	url = strings.TrimSuffix(url, "/chantier")
+	url = strings.TrimSuffix(url, "/general")
+	url = strings.TrimSuffix(url, "/chantiers")
 	url = strings.TrimSuffix(url, "/cout")
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.FullString()})
 	if err != nil {

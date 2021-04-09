@@ -19,6 +19,7 @@ type detailsVenteLivreForm struct {
 	GlTVAOptions template.HTML
 	MoTVAOptions template.HTML
 	OuTVAOptions template.HTML
+    ListeActeurs map[int]string
 	UrlAction    string
 }
 type detailsVenteLivreList struct {
@@ -62,27 +63,28 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "ventelivre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Nouvelle Livraison plaquettes",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "ventes",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsVenteLivreForm{
 				VenteLivre:   vl,
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), "CHOOSE_TVA_MO"),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), "CHOOSE_TVA_OU"),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/new",
 			},
 		}
@@ -130,27 +132,28 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "ventelivre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier la livraison : " + vl.String(),
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "ventes",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsVenteLivreForm{
 				VenteLivre:   vl,
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(vl.GlTVA, 'f', 1, 64)),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), strconv.FormatFloat(vl.MoTVA, 'f', 1, 64)),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(vl.OuTVA, 'f', 1, 64)),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/update/" + vars["id-livraison"],
 			},
 		}

@@ -1,3 +1,7 @@
+
+<script>{{template "checkActeur.js.html" .Details}}</script>
+{{template "listeActeurs.html" .Details}}
+
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.Chantier}}
@@ -12,9 +16,7 @@
         <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
         
         <label for="acheteur">Acheteur</label>
-        <div class="autocomplete">
-            <input type="text" name="acheteur" id="acheteur" value="" autocomplete="off" class="width20">
-        </div>
+        <input list="liste-acteurs" name="acheteur" id="acheteur" class="width25">
         
         <label>Type de vente</label>
         <div>
@@ -127,11 +129,6 @@
 
 <script>
 window.addEventListener("load", function(){
-    autocomplete(document.getElementById("acheteur"), getActeursPossibles);
-    // Pour vérifier que l'acheteur affiché correspond à une personne existant en base.
-    // on ne peut pas se fier uniquement à getElementById("acheteur")
-    // car l'utilisateur peut modifier le nom
-    window.globalPersons = [];
     initialize();
 });
 
@@ -144,8 +141,7 @@ function initialize(){
     }
     // form update
     else{
-        document.getElementById("acheteur").value = "{{.Acheteur.NomAutocomplete}}";
-        window.globalPersons[{{.IdAcheteur}}] = "{{.Acheteur.NomAutocomplete}}";
+        document.getElementById("acheteur").value = "{{.Acheteur.String}}";
         document.getElementById("tva-{{.TVA}}").selected = true;
         valorisationChanged();
         document.getElementById("typevente-{{.TypeVente}}").checked = true;

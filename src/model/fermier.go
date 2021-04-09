@@ -131,17 +131,3 @@ func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Fermier, error) {
 	err := db.Select(&fermiers, query, codeUG)
 	return fermiers, err
 }
-
-// Renvoie des Fermiers à partir du début de leurs noms.
-// Ne contient que les champs de la table fermier.
-// Les autres champs ne sont pas remplis.
-// Utilisé par ajax
-func GetFermiersAutocomplete(db *sqlx.DB, str string) ([]*Fermier, error) {
-	fermiers := []*Fermier{}
-	query := "select * from fermier where nom ilike '" + str + "%'"
-	err := db.Select(&fermiers, query)
-	if err != nil {
-		return fermiers, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return fermiers, nil
-}

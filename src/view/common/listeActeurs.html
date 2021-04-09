@@ -1,0 +1,7 @@
+{{/* datalist commune à tous les input pour saisir des acteurs */}}
+<datalist id="liste-acteurs">
+    {{range $id, $nom := .ListeActeurs}}
+        <option name="acteur-{{$id}}" value="{{$nom}}">
+    {{end}}
+</datalist>
+

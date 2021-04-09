@@ -2,13 +2,7 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- bug autocomplete avec ' (GAEC Eygalieres)
-
-- recents (page accueil) :
-    - remove doublon "chautre liste" et "chautre liste 2021"
-    - remove doublon plaq et plaq/chantiers
-
-- cout exploitation chantier plaquettes : mettre coût total en plus de coût par map sèche.
+- control/plaq.go : voir pk JSFiles dans header et dans footer
 
 - form acteur : revoir validation
 
@@ -47,7 +41,7 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure
   dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité d'abord ; modifier VenteCharge
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
-- + vérifier convention utilisée pour uppercase suivant le N dans les noms des chanps (toutes les tables)
+- + vérifier convention utilisée pour uppercase suivant le N dans les noms des champs (toutes les tables)
 
 - model : remplacer Scan par sqlx
 

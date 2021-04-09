@@ -20,6 +20,7 @@ type detailsPlaqRangeForm struct {
 	CoTVAOptions template.HTML
 	OuTVAOptions template.HTML
 	Rangement    *model.PlaqRange
+    ListeActeurs map[int]string
 	UrlAction    string
 }
 
@@ -68,26 +69,27 @@ func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "plaqrange-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Nouveau rangement plaquettes",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
-				JSFiles: []string{
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+				JSFiles: []string{},
 			},
 			Details: detailsPlaqRangeForm{
 				Rangement:    pr,
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), "CHOOSE_TVA_CO"),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), "CHOOSE_TVA_OU"),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/range/new",
 			},
 		}
@@ -158,26 +160,27 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "plaqrange-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier un rangement plaquette ",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
-				JSFiles: []string{
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+				JSFiles: []string{},
 			},
 			Details: detailsPlaqRangeForm{
 				Rangement:    pr,
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(pr.GlTVA, 'f', 1, 64)),
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), strconv.FormatFloat(pr.CoTVA, 'f', 1, 64)),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(pr.OuTVA, 'f', 1, 64)),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/range/update/" + vars["id-pr"],
 			},
 		}

@@ -73,7 +73,13 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			TotalParEssence: totalParEssence,
 		},
 	}
-	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
+	// Add recent - modifie URL pour éviter des doublons :
+	// Année non spécifiée dans URL = Année courante
+	url := r.URL.String()
+	if strings.HasSuffix(url, "/liste"){
+	    url += "/" + annee
+	}
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: titrePage})
 	if err != nil {
 		return err
 	}
@@ -131,10 +137,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/js/round.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/round.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -198,10 +201,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
-					"/static/js/round.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/round.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté

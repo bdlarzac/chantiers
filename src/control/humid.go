@@ -15,9 +15,10 @@ import (
 )
 
 type detailsHumidForm struct {
-	Humid      *model.Humid
-	TasOptions template.HTML
-	UrlAction  string
+	Humid        *model.Humid
+	TasOptions   template.HTML
+    ListeActeurs map[int]string
+	UrlAction    string
 }
 
 type detailsHumidList struct {
@@ -93,23 +94,24 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		if vars["id-tas"] != "" {
 			optionTas = vars["id-tas"]
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Créer une mesure d'humidité",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "accueil",
 			Footer: ctxt.Footer{
-				JSFiles: []string{
-					"/static/autocomplete/autocomplete.js",
-					"/static/js/toogle.js",
-					"/view/common/getActeurPossibles.js"},
+				JSFiles: []string{},
 			},
 			Details: detailsHumidForm{
 				Humid:      humid,
 				TasOptions: webo.FmtOptions(weboTas, optionTas),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:  "/humidite/new",
 			},
 		}
@@ -170,23 +172,24 @@ func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier une mesure d'humidité",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "accueil",
 			Footer: ctxt.Footer{
-				JSFiles: []string{
-					"/static/autocomplete/autocomplete.js",
-					"/static/js/toogle.js",
-					"/view/common/getActeurPossibles.js"},
+				JSFiles: []string{},
 			},
 			Details: detailsHumidForm{
 				Humid:      humid,
 				TasOptions: webo.FmtOptions(weboTas, strconv.Itoa(humid.IdTas)),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:  "/humidite/update/" + vars["id"],
 			},
 		}

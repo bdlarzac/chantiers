@@ -16,12 +16,13 @@ import (
 )
 
 type detailsPlaqTransForm struct {
-	UrlAction    string
 	GlTVAOptions template.HTML
 	CoTVAOptions template.HTML
 	CaTVAOptions template.HTML
 	TbTVAOptions template.HTML
 	Transport    *model.PlaqTrans
+    ListeActeurs map[int]string
+	UrlAction    string
 }
 
 // *********************************************************
@@ -72,21 +73,21 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "plaqtrans-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Créer un transport plaquette",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqTransForm{
 				Transport:    pt,
@@ -94,6 +95,7 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), "CHOOSE_TVA_CO"),
 				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA", "ca-"), "CHOOSE_TVA_CA"),
 				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB", "tb-"), "CHOOSE_TVA_TB"),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/transport/new",
 			},
 		}
@@ -162,21 +164,21 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "plaqtrans-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier un transport plaquette",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqTransForm{
 				Transport:    pt,
@@ -184,6 +186,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), strconv.FormatFloat(pt.CoTVA, 'f', 1, 64)),
 				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA", "ca-"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
 				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB", "tb-"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/transport/update/" + vars["id-pt"],
 			},
 		}

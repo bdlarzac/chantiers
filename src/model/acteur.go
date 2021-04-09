@@ -75,14 +75,6 @@ func (a *Acteur) String() string {
 	return a.Prenom + " " + a.Nom
 }
 
-// Renvoie Nom + Prenom, adapté aux besoins de autocomplete
-func (a *Acteur) NomAutocomplete() string {
-	if a.Prenom == "" {
-		return a.Nom
-	}
-	return a.Nom + " " + a.Prenom
-}
-
 // ************************** Divers *******************************
 
 func CountActeurs(db *sqlx.DB) int {
@@ -105,22 +97,6 @@ func GetActeur(db *sqlx.DB, id int) (*Acteur, error) {
 		return a, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return a, err
-}
-
-// Renvoie un Acteur à partir de son nom et de son prénom.
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-// Utilisé par ajax
-// @param  str Chaîne composée de nom + " " + prénom
-func GetActeurByNomAutocomplete(db *sqlx.DB, str string) (*Acteur, error) {
-	a := &Acteur{}
-	query := "select * from acteur where nom || ' ' || prenom=$1"
-	row := db.QueryRowx(query, str)
-	err := row.StructScan(a)
-	if err != nil {
-		return a, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return a, nil
 }
 
 // ************************** Get many *******************************
@@ -158,20 +134,6 @@ func GetClientsPlaquettes(db *sqlx.DB) ([]*Acteur, error) {
 	        ) order by nom,prenom`
 	err := db.Select(&acteurs, query)
 	return acteurs, err
-}
-
-// Renvoie des Acteurs à partir du début de leurs noms.
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
-// Utilisé par ajax
-func GetActeursAutocomplete(db *sqlx.DB, str string) ([]*Acteur, error) {
-	acteurs := []*Acteur{}
-	query := "select * from acteur where nom ilike '" + str + "%'"
-	err := db.Select(&acteurs, query)
-	if err != nil {
-		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return acteurs, nil
 }
 
 // Utilisé pour construire html datalist

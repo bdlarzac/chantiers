@@ -16,11 +16,11 @@ import (
 )
 
 type detailsPlaqOpForm struct {
-    ListeActeurs  map[int]string
 	TVAOptions    template.HTML
 	UniteOptions  template.HTML
 	TypeOpOptions template.HTML
 	Op            *model.PlaqOp
+    ListeActeurs  map[int]string
 	UrlAction     string
 }
 
@@ -80,11 +80,11 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqOpForm{
-			    ListeActeurs:  listeActeurs,
 				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA", "tva-"), "CHOOSE_TVA"),
 				UniteOptions:  webo.FmtOptions(WeboPlaqOpUnite(), "CHOOSE_UNITE"),
 				TypeOpOptions: webo.FmtOptions(WeboTypeOp(), "CHOOSE_TYPEOP"),
 				Op:            op,
+			    ListeActeurs:  listeActeurs,
 				UrlAction:     "/chantier/plaquette/" + idChantierStr + "/op/new",
 			},
 		}
@@ -156,11 +156,11 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqOpForm{
-			    ListeActeurs:  listeActeurs,
 				TVAOptions:    webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA", "tva-"), strconv.FormatFloat(op.TVA, 'f', 1, 64)),
 				UniteOptions:  webo.FmtOptions(WeboPlaqOpUnite(), "unite-"+op.Unite),
 				TypeOpOptions: webo.FmtOptions(WeboTypeOp(), "typeop-"+op.TypOp),
 				Op:            op,
+			    ListeActeurs:  listeActeurs,
 				UrlAction:     "/chantier/plaquette/" + vars["id-chantier"] + "/op/update/" + vars["id-op"],
 			},
 		}

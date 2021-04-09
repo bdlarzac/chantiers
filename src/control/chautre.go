@@ -22,6 +22,7 @@ type detailsChautreForm struct {
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
 	ValorisationOptions template.HTML
+    ListeActeurs        map[int]string
 	TVAOptions          template.HTML
 }
 
@@ -65,7 +66,13 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			Annees:    annees,
 		},
 	}
-	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: titrePage})
+	// Add recent - modifie URL pour éviter des doublons :
+	// Année non spécifiée dans URL = Année courante
+	url := r.URL.String()
+	if strings.HasSuffix(url, "/liste"){
+	    url += "/" + annee
+	}
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: titrePage})
 	if err != nil {
 		return err
 	}
@@ -127,13 +134,16 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		chantier := &model.Chautre{}
 		chantier.Acheteur = &model.Acteur{}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Nouveau chantier autres valorisations",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Details: detailsChautreForm{
 				Chantier:            chantier,
@@ -141,15 +151,13 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "CHOOSE_VALORISATION"),
 				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "CHOOSE_TVA"),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:           "/chantier/autre/new",
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -223,21 +231,21 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
+		listeActeurs, err := model.GetListeActeurs(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier un chantier autres valorisations",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js",
-					"/view/common/checkActeur.js",
-					"/view/common/getActeurPossibles.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsChautreForm{
 				Chantier:            chantier,
@@ -246,6 +254,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "valorisation-"+chantier.TypeValo),
 				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "tva-"+ strconv.FormatFloat(chantier.TVA, 'f', -1, 64)),
+			    ListeActeurs:  listeActeurs,
 				UrlAction:           "/chantier/autre/update/" + vars["id"],
 			},
 		}
