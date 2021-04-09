@@ -4,14 +4,13 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
 )
 
 type detailsVenteChargeForm struct {
@@ -202,7 +201,7 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 			},
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,
-				TasOptions:   webo.FmtOptions(weboTas, strconv.Itoa(vc.IdTas)),
+				TasOptions:   webo.FmtOptions(weboTas, "tas-" + strconv.Itoa(vc.IdTas)),
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(vc.GlTVA, 'f', 1, 64)),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), strconv.FormatFloat(vc.MoTVA, 'f', 1, 64)),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(vc.OuTVA, 'f', 1, 64)),
@@ -256,7 +255,7 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		return vc, err
 	}
 	//
-	vc.IdTas, err = strconv.Atoi(r.PostFormValue("tas"))
+	vc.IdTas, err = strconv.Atoi(strings.TrimLeft(r.PostFormValue("tas"), "tas-"))
 	if err != nil {
 		return vc, err
 	}

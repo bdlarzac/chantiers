@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"path/filepath"
 	"time"
-
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
 	"bdl.local/bdl/ctxt"
@@ -33,7 +32,6 @@ func main() {
 
 	r := mux.NewRouter()
 
-	// ajax
 	r.HandleFunc("/ajax/get/fermiers-from-code-ug/{code}", Hajax(ajax.GetFermiersFromCodeUG))
 	r.HandleFunc("/ajax/get/lieudits-from-code-ug/{code}", Hajax(ajax.GetLieuditsFromCodeUG))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id}", Hajax(ajax.GetUGsFromFermier))
@@ -48,6 +46,9 @@ func main() {
 	r.HandleFunc("/facture/vente-plaquette/{id:[0-9]+}", HPDF(control.ShowFactureVentePlaq))
 	r.HandleFunc("/facture/autre/{id:[0-9]+}", HPDF(control.ShowFactureChautre))
 
+	r.HandleFunc("/affacture/form/{id:[0-9]+}", H(control.FormAffacture))
+	r.HandleFunc("/affacture/show", HPDF(control.ShowAffacture))
+
 	r.HandleFunc("/acteur/liste", H(control.ListActeur))
 	r.HandleFunc("/acteur/new", H(control.NewActeur))
 	r.HandleFunc("/acteur/update/{id:[0-9]+}", H(control.UpdateActeur))
@@ -56,9 +57,6 @@ func main() {
 
 	r.HandleFunc("/fermier/liste", H(control.ListFermier))
 	r.HandleFunc("/fermier/{id:[0-9]+}", H(control.ShowFermier))
-
-	r.HandleFunc("/affacture/form/{id:[0-9]+}", H(control.FormAffacture))
-	r.HandleFunc("/affacture/show", HPDF(control.ShowAffacture))
 
 	r.HandleFunc("/chantier/autre/liste", H(control.ListChautre))
 	r.HandleFunc("/chantier/autre/liste/{annee:[0-9]+}", H(control.ListChautre))
@@ -113,7 +111,6 @@ func main() {
 	r.HandleFunc("/stockage/delete/{id:[0-9]+}", H(control.DeleteOrArchiveStockage))
 	
 	r.HandleFunc("/tas-vides", H(control.ShowTasVides))
-//	r.HandleFunc("/tas/vider/{id:[0-9]+}/{date}", H(control.SignalerTasVide))
 	r.HandleFunc("/tas/vider/{id:[0-9]+}/{date:[0-9]{4}-[0-9]{2}-[0-9]{2}}", H(control.SignalerTasVide))
 
 	r.HandleFunc("/frais-stockage/new/{id-stockage:[0-9]+}", H(control.NewStockFrais))
@@ -129,7 +126,6 @@ func main() {
 
 	r.HandleFunc("/bilans", H(control.FormBilans))
 
-	// *** geo ***
 	r.HandleFunc("/ug/search", H(control.SearchUG))
 	r.HandleFunc("/ug/{id:[0-9]+}", H(control.ShowUG))
 	r.HandleFunc("/ug/{id:[0-9]+}/{tab}", H(control.ShowUG))

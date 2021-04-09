@@ -269,8 +269,14 @@ Livraisons
                             <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
                             {{end}}
                             
-                            <div>Chantier</div>
-                            <div class="bold"><a href="/chantier/plaquette/{{.Tas.Chantier.Id}}">{{.Tas.Nom}}</a></div>
+                            <div>Tas</div>
+                            {{$href := ""}}
+                            {{if .Tas.Actif}}
+                                {{$href = printf "/stockage/liste#tas-%d" .Tas.Id}}
+                            {{else}}
+                                {{$href = printf "/tas-vides#tas-%d" .Tas.Id}}
+                            {{end}}
+                            <div class="bold"><a href="{{$href}}">{{.Tas.Nom}}</a></div>
                             
                             <div>Quantité</div>
                             <div class="bold">{{.Qte}} maps</div>

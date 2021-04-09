@@ -2,7 +2,12 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- control/plaq.go : voir pk JSFiles dans header et dans footer
+- vente charge update - bug sur tas
+
+- WeboStockage - rajouter préfixe "stockage-"
+  Vérifier toutes les fonctions webo
+
+- html : remplacer scripts dans footer par scripts dans header avec attribut defer
 
 - form acteur : revoir validation
 
@@ -41,7 +46,8 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 - uniformiser VenteCharge.MoNHeure et PlaqRange.CoNheure
   dans PlaqRange, conducteur est traité d'abord, dans VenteCharge, Outil est traité d'abord ; modifier VenteCharge
   Dans PlaqRange, remplacer le préfixe Co par Mo dans les noms des champs
-- + vérifier convention utilisée pour uppercase suivant le N dans les noms des champs (toutes les tables)
+  
+- vérifier convention utilisée pour uppercase suivant le N dans les noms des champs (toutes les tables)
 
 - model : remplacer Scan par sqlx
 
@@ -68,11 +74,9 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 
 - voir bug DEVEZ GRAN / DEVEZ GRAND
 
-- html : remplacer scripts dans footer par scripts dans header avec attribut defer
-
 - read mdb / windows
 
-- UG : Surf_Recalcul ou Surf_SIG ?
+- UG : Surf_Recalcul ou Surf_SIG ? Demander Jean Cullié
 
 - dans UG.type_coupe : garder 0 0 ?
 

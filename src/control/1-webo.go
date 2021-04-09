@@ -148,7 +148,7 @@ func WeboTVAExt(ctx *ctxt.Context, chooseId, idPrefix string) []webo.OptionStrin
 	res = append(res, webo.OptionString{OptionValue: chooseId, OptionId: idPrefix + chooseId, OptionLabel: "--- Choisir ---"})
 	for _, taux := range ctx.Config.TVAExt {
 		tmp := strconv.FormatFloat(taux, 'f', 1, 64)
-		res = append(res, webo.OptionString{OptionValue: tmp, OptionId: idPrefix + tmp, OptionLabel: tmp})
+		res = append(res, webo.OptionString{OptionValue: tmp, OptionId: idPrefix + tmp, OptionLabel: tmp + " %"})
 	}
 	return res
 }
@@ -200,6 +200,7 @@ func WeboStockage(ctx *ctxt.Context) ([]webo.OptionString, error) {
 
 // Renvoie la liste des tas actifs
 // dans un format utilisable par webo
+// les attributs value et id des options sont de la forme tas-<id du tas> (ex: tas-3)
 func WeboTas(ctx *ctxt.Context) ([]webo.OptionString, error) {
 	res := []webo.OptionString{}
 	tas, err := model.GetAllTasActifsFull(ctx.DB)
@@ -208,7 +209,7 @@ func WeboTas(ctx *ctxt.Context) ([]webo.OptionString, error) {
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_TAS", OptionLabel: "--- Choisir ---"})
 	for _, t := range tas {
-		res = append(res, webo.OptionString{OptionValue: strconv.Itoa(t.Id), OptionLabel: t.Nom})
+		res = append(res, webo.OptionString{OptionValue: "tas-" + strconv.Itoa(t.Id), OptionLabel: t.Nom})
 	}
 	return res, nil
 }

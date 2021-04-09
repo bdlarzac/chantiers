@@ -188,7 +188,7 @@ func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			},
 			Details: detailsHumidForm{
 				Humid:      humid,
-				TasOptions: webo.FmtOptions(weboTas, strconv.Itoa(humid.IdTas)),
+				TasOptions: webo.FmtOptions(weboTas, "tas-" + strconv.Itoa(humid.IdTas)),
 			    ListeActeurs:  listeActeurs,
 				UrlAction:  "/humidite/update/" + vars["id"],
 			},
@@ -224,10 +224,10 @@ func humidForm2var(r *http.Request) (*model.Humid, error) {
 	if err = r.ParseForm(); err != nil {
 		return humid, err
 	}
-	humid.IdTas, _ = strconv.Atoi(r.PostFormValue("tas"))
+	humid.IdTas, _ = strconv.Atoi(strings.TrimLeft(r.PostFormValue("tas"), "tas-"))
 	humid.Valeur, _ = strconv.ParseFloat(r.PostFormValue("valeur-mesure"), 32)
 	humid.DateMesure, _ = time.Parse("2006-01-02", r.PostFormValue("date-mesure"))
-	ids := strings.Split(r.PostFormValue("ids-personnes"), "-")
+	ids := strings.Split(r.PostFormValue("ids-mesureurs"), "-")
 	for _, id := range ids {
 		idMesureur, _ := strconv.Atoi(id)
 		humid.IdsMesureurs = append(humid.IdsMesureurs, idMesureur)

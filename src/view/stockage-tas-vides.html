@@ -13,7 +13,7 @@
     <h2><a href="/chantier/plaquette/{{.Id}}">Chantier {{.String}}</a></h2>
     <div class="margin-left">
     {{range .TasVides}}
-        <h3>Tas {{.Nom}}</h3>
+        <h3 id="tas-{{.Id}}">Tas {{.Nom}}</h3>
         <!-- **************** Evolution stock ********************* -->
         <script>
             stock = 0;

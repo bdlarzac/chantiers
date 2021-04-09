@@ -228,7 +228,7 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 		return pt, err
 	}
 	//
-	pt.IdTas, err = strconv.Atoi(strings.ReplaceAll(r.PostFormValue("tas"), "tas-", ""))
+	pt.IdTas, err = strconv.Atoi(strings.TrimLeft(r.PostFormValue("tas"), "tas-"))
 	if err != nil {
 		return pt, err
 	}

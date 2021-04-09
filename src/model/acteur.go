@@ -12,6 +12,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -69,10 +70,7 @@ func (a *Acteur) IsDeletable(db *sqlx.DB) (bool, error) {
 // ************************** Nom *******************************
 
 func (a *Acteur) String() string {
-	if a.Prenom == "" {
-		return a.Nom
-	}
-	return a.Prenom + " " + a.Nom
+	return strings.TrimSpace(a.Prenom + " " + a.Nom)
 }
 
 // ************************** Divers *******************************

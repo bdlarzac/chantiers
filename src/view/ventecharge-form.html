@@ -20,8 +20,11 @@
             {{$.Details.TasOptions}}
         </select>
 
-        <label for="qte">Quantité (maps)</label>
-        <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5">
+        <label for="qte">Quantité</label>
+        <div>
+            <input type="number" name="qte" id="qte" step="0.01" min="0" value="{{.Qte | zero2empty}}" class="width5">
+            maps
+        </div>
         
         <label for="datecharge">Date chargement</label>
         <input type="date" name="datecharge" id="datecharge" value="{{.DateCharge | dateIso}}" class="width20">
@@ -40,7 +43,10 @@
         <input list="liste-acteurs" name="chargeur" id="chargeur" class="width25">
         
         <label for="glprix">Prix HT</label>
-        <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5">
+        <div>
+            <input type="number" name="glprix" id="glprix" step="0.01" min="0" value="{{.GlPrix | zero2empty}}" class="width5">
+            &euro;
+        </div>
         
         <label for="gltva">Taux TVA</label>
         <select name="gltva" id="gltva" class="width8">
@@ -70,7 +76,10 @@
         <input type="number" name="monheure" id="monheure" step="0.01" min="0" value="{{.MoNHeure | zero2empty}}" class="width5">
         
         <label for="moprixh">Prix de l'heure HT</label>
-        <input type="number" name="moprixh" id="moprixh" step="0.01" min="0" value="{{.MoPrixH | zero2empty}}" class="width5">
+        <div>
+            <input type="number" name="moprixh" id="moprixh" step="0.01" min="0" value="{{.MoPrixH | zero2empty}}" class="width5">
+            &euro;
+        </div>
         
         <label for="motva">Taux TVA</label>
         <select name="motva" id="motva" class="width8">
@@ -91,7 +100,10 @@
         <input list="liste-acteurs" name="proprioutil" id="proprioutil" class="width25">
 
         <label for="ouprix">Prix HT</label>
-        <input type="number" name="ouprix" id="ouprix" step="0.01" min="0" value="{{.OuPrix | zero2empty}}" class="width5">
+        <div>
+            <input type="number" name="ouprix" id="ouprix" step="0.01" min="0" value="{{.OuPrix | zero2empty}}" class="width5">
+            &euro;
+        </div>
         
         <label for="outva">Taux TVA</label>
         <select name="outva" id="outva" class="width8">

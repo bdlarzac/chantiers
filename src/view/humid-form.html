@@ -12,24 +12,24 @@
             {{$.Details.TasOptions}}
         </select>
         
-        <label for="date-mesure">Date de la mesure : </label>
-        <input type="date" id="date-mesure" name="date-mesure" value="{{.DateMesure | dateIso}}">
+        <label for="date-mesure">Date de la mesure</label>
+        <input type="date" id="date-mesure" name="date-mesure" value="{{.DateMesure | dateIso}}" class="width10">
         
-        <label for="valeur-mesure">Humidité : </label>
+        <label for="valeur-mesure">Humidité</label>
         <span>
             <input type="number" class="width5" id="valeur-mesure" name="valeur-mesure" value="{{.Valeur | zero2empty}}" step="1" min="0" max="100"> (%)
         </span>
         
-        <label for="choix-personne">Personnes : </label>
+        <label for="choix-mesureur">Mesureurs</label>
         <div>
             <div class="grid2-form margin-bottom">
-                <input list="liste-acteurs" name="choix-personne" id="choix-personne" class="width25">
-                <a id="ajout-personne" href="#" onclick="ajouterPersonne();">
-                    <img class="inline bigicon" src="/static/img/validate.png" title="Ajouter cette personne" />
+                <input list="liste-acteurs" name="choix-mesureur" id="choix-mesureur" class="width25">
+                <a id="ajout-mesureur" href="#" onclick="ajouterMesureur();">
+                    <img class="inline bigicon" src="/static/img/validate.png" title="Ajouter ce mesureur" />
                 </a>
             </div>
             
-            <ul id="personnes-choisies" class="naked margin0 padding0">
+            <ul id="mesureurs-choisis" class="naked margin0 padding0">
             </ul>
         </div>
         
@@ -49,7 +49,7 @@
     </div>
 
     <input type="hidden" name="id-mesure" value="{{.Id}}">
-    <input type="hidden" name="ids-personnes" id="ids-personnes" value="">
+    <input type="hidden" name="ids-mesureurs" id="ids-mesureurs" value="">
 </form>
 
 <a name="help"></a>
@@ -57,7 +57,7 @@
     <div class="help-content">
         <div class="help-title">Aide</div>
         <div class="section">
-            <b>Personnes</b> : pour choisir les personnes effectuant la mesure, saisissez le nom d'une personne, puis cliquez sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png"> afin que cette personne soit prise en compte.
+            <b>Mesureurs</b> : pour choisir les personnes effectuant la mesure, saisissez le nom d'une personne, puis cliquez sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png"> afin que cette personne soit prise en compte.
             <br>Si vous souhaitez retirer un mesureur, cliquez sur <img class="inline vertical-align-middle bigicon" src="/static/img/delete.png">
         </div>
     </div>
@@ -77,54 +77,51 @@ function initialize(){
         // form update
         // initialise les personnes choisies
         {{range .Mesureurs}}
-            doAjouterPersonne({{.Id}}, {{.String}});
+            doAjouterMesureur({{.Id}}, {{.String}});
         {{end}}
     }
 }
 
 // ***************************************
-function ajouterPersonne(){
-    const personName = document.getElementById("choix-personne").value.trim();
+function ajouterMesureur(){
+    const personName = document.getElementById("choix-mesureur").value.trim();
     if(personName == ""){
         return;
     }
-    let newId = "";
-    for(let tmp in window.globalPersons){
-        if(window.globalPersons[tmp] == personName){
-            newId = tmp;
-            break;
-        }
-    }
-    if(newId == ""){
-        alert("Cette personne n'existe pas en base de données.\n(vérifiez son orthographe).");
+    let check = checkActeur("choix-mesureur", "");
+    if(check[1] != ""){ // msg erreur
+        alert(check[1]);
         return;
     }
     // teste si la personne est déjà dans la liste
-    const personnesChoisies = document.getElementById("personnes-choisies");
-    for(let li=personnesChoisies.firstChild; li!==null; li=li.nextSibling){
+    const newId = check[0];
+    const mesureursChoisis = document.getElementById("mesureurs-choisis");
+    for(let li=mesureursChoisis.firstChild; li!==null; li=li.nextSibling){
         if(li.id == newId){
             alert("Impossible d'ajouter deux fois la même personne");
             return;
         }
     }
     //
-    doAjouterPersonne(newId, personName);
-    document.getElementById("choix-personne").value = "";
+    doAjouterMesureur(newId, personName);
+    document.getElementById("choix-mesureur").value = "";
 }
 
 // ***************************************
 /** 
-    Ajoute une personne dans la liste "personnes-choisies"
-    Séparé de ajouterPersonne() car appelé par initialize() et par ajouterPersonne()
+    Ajoute une personne dans la liste "mesureurs-choisis"
+    Séparé de ajouterMesureur() car appelé par initialize() et par ajouterMesureur()
+    @param  id      Id de l'acteur en base
+    @param  name    Nom affiché de la personne
 **/
-function doAjouterPersonne(id, name){
+function doAjouterMesureur(id, name){
     const img = document.createElement("img");
     img.setAttribute("class", "inline vertical-align-middle bigicon");
     img.setAttribute("src", "/static/img/delete.png");
-    img.setAttribute("title", "Retirer cette personne");
+    img.setAttribute("title", "Retirer ce mesureur");
     const a = document.createElement("a");
     a.setAttribute("href", "#");
-    a.setAttribute("onclick", "retirerPersonne('" + id + "');");
+    a.setAttribute("onclick", "retirerMesureur('" + id + "');");
     a.setAttribute("class", "padding-right05");
     const li = document.createElement("li");
     li.setAttribute("id", id);
@@ -133,14 +130,14 @@ function doAjouterPersonne(id, name){
     a.appendChild(img);
     li.appendChild(a);
     li.appendChild(text);
-    document.getElementById("personnes-choisies").appendChild(li);
+    document.getElementById("mesureurs-choisis").appendChild(li);
 }
 
 // ***************************************
-function retirerPersonne(id){
-    const personnesChoisies = document.getElementById("personnes-choisies");
+function retirerMesureur(id){
+    const mesureursChoisis = document.getElementById("mesureurs-choisis");
     const elt = document.getElementById(id);
-    personnesChoisies.removeChild(elt);
+    mesureursChoisis.removeChild(elt);
 }
 
 // ***************************************
@@ -160,10 +157,18 @@ function validateForm(){
         msg += "- Vous devez indiquer la valeur de la mesure.\n";
     }
     //
-    const personnesChoisies = document.getElementById("personnes-choisies");
+    const tmp = document.getElementById("choix-mesureur").value.trim();
+    if(tmp != ""){
+        msg += "- La zone de saisie des mesureurs contient \"" + tmp + "\"\n"
+             + "  Cette zone doit être vide pour valider ce formulaire.\n"
+             + "  Vous devez donc valider ce mesureur ou bien vider cette zone de saisie.\n";
+        
+    }
+    //
+    const mesureursChoisis = document.getElementById("mesureurs-choisis");
     let n = 0;
     const ids = [];
-    for(let li=personnesChoisies.firstChild; li!==null; li=li.nextSibling){
+    for(let li=mesureursChoisis.firstChild; li!==null; li=li.nextSibling){
         if(li.id == null){
             continue;
         }
@@ -175,7 +180,7 @@ function validateForm(){
     }
     else{
         // remplit le champ hidden
-        document.getElementById("ids-personnes").value = ids.join("-");
+        document.getElementById("ids-mesureurs").value = ids.join("-");
     }
     //
     if(msg != ""){

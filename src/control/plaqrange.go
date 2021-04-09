@@ -218,7 +218,7 @@ func plaqRangeForm2var(r *http.Request) (*model.PlaqRange, error) {
 	if err != nil {
 		return pr, err
 	}
-	pr.IdTas, err = strconv.Atoi(strings.ReplaceAll(r.PostFormValue("tas"), "tas-", ""))
+	pr.IdTas, err = strconv.Atoi(strings.TrimLeft(r.PostFormValue("tas"), "tas-"))
 	if err != nil {
 		return pr, err
 	}

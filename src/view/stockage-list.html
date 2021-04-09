@@ -13,7 +13,7 @@
 {{range .Details.Actifs}}
     <hr>
     {{$idStockage := .Id}}
-    <h2>
+    <h2 id="stockage-{{$idStockage}}">
         {{.Nom}}
         <a class="padding-left" href="/stockage/update/{{.Id}}">
             <img class="bigicon inline" src="/static/img/update.png" title="Modifier ce lieu de stockage" />
@@ -32,7 +32,7 @@
         <div class="big2 bold margin-top margin-bottom">Tas courants</div>
         {{if .TasActifs}}<ul class="naked">{{end}}
         {{range .TasActifs}}
-            <li class="padding-bottom">
+            <li id="tas-{{.Id}}" class="padding-bottom">
                 <a href="/humidite/new/tas/{{.Id}}">
                     <img class="bigicon inline vertical-align-bottom"
                          src="/static/img/humid.png"
