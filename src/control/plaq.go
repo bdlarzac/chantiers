@@ -205,14 +205,12 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Header: ctxt.Header{
 				Title: "Nouveau chantier plaquettes",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqForm{
 				Chantier:            chantier,

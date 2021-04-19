@@ -6,8 +6,6 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - chaufer : l'unité doit être uniquement la stère
 
-- icon help cassé dans form acteur
-
 - vente charge update - bug sur tas => tas déclaré vide donc n'apparaît pas dans la liste des tas à choisir
 
 - form acteur : revoir validation
@@ -22,10 +20,9 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - Comment réagit l'appli pour des chantiers à cheval sur plusieurs années ?
 
+- model : remplacer Scan par sqlx
 - Finir de nettoyer le model (fonctions inutiles, jointures au lieu de plusieurs select)
   surtout parcelle / ug / lieudit 
-
-- model : remplacer Scan par sqlx
 
 - Sortir BDL, SCTL, GFA des acteurs ???
 
