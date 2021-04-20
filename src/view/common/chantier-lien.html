@@ -1,167 +1,125 @@
 {{/* 
-    Partie de formulaire utilisé par 3 formulaires :
+    Partie de formulaire utilisé par 2 formulaires :
     plaq-form.html, chautre-form.html
     
-    Cette template doit être appelée avec une struct contenant 2 champs :
+    Sert à définir les liens entre un chantier et les UGs, fermiers et lieux-dits
+    
+    Cette template doit être appelée avec une struct contenant plusieurs champs :
     - Chantier (de type Plaq ou Chautre)
     - TypeChantier (string pouvant valoir "plaq" ou "chautre")
+    - AllUGs, tel que renvoyé par model.GetUGsSortedByCode()
     
     Cette partie de formulaire est contenue dans un <div class="grid2-form">
     
-    Les formulaires doivent avoir ces divs :
-        <div id="empty-lieudit1"></div><div id="empty-lieudit2"></div>
-        <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
+    Les formulaires appelants doivent avoir ces divs :
+        <div id="empty-lieudit"></div>
+        <div id="empty-fermier"></div>
+    empty-lieudit contiendra la liste des lieux-dits avec les checkboxes
+    empty-fermier contiendra la liste des fermiers avec les checkboxes
     
+    Ils doivent aussi avoir les champs :
+    <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+    <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
+    <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
+    
+    Les chk-ug servent de variables globales pour stocker les ugs sélectionnées
 */}}
-
-{{with .Chantier}}
 
 <div>
     <label class="block margin-bottom">Unités de gestion</label>
+    <img 
+        class="float-right vertical-align-middle bigicon margin-right"
+        src="/static/img/new.png"
+        title="Associer ce chantier avec une UG"
+        onclick="showModalUG();"
+    />
 </div>
 <div>
     <div id="liste-ugs"></div>
-    <div class="margin-top">
-        <img 
-            class="inline vertical-align-middle bigicon margin-right"
-            src="/static/img/new.png"
-            title="Ajouter une UG"
-            onclick="addUG();"
-        />
-        <img
-            class="inline vertical-align-middle bigicon"
-            src="/static/img/validate.png"
-            title="Valider ces UGs et choisir fermiers et lieux-dits"
-            onclick="validateUGs();"
-        />
+</div>
+
+<!-- ********************************** Modal choix ug ************************************* -->
+<div id="modal-ug" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div class="bold margin-bottom margin-top">Sélectionnez les UGs concernées par le chantier.</div>
+        <table>
+        <tr>
+        {{range $i, $ug := .AllUGs}}
+            <td>
+                <input 
+                    type="checkbox"
+                    class="chk-ug"
+                    id="chk-ug-{{$ug.Code}}"
+                    data-ug-id="{{$ug.Id}}">
+                <label for="chk-ug-{{$ug.Code}}">{{$ug.Code}}<label>
+            </td>
+            {{if eq (modulo $i 9) 8}}
+            </tr>
+            <tr>
+            {{end}}
+        {{end}}
+        </tr>
+        </table>
+        <div class="margin-top">
+            <input type="button" id="cancel-modal-ug" value="Annuler">
+            <input class="margin-left2" type="button" id="validate-modal-ug" value="Valider">
+        </div>
     </div>
 </div>
 
 
+{{with .Chantier}}
 
 <script>
-//
-// variables globales
-//
-// pour passer à travers async
-window.lienChantierMsg = "";
 
-// Pour mémoriser les associations code ug => id ug lors de l'exec de checkUGs() 
-window.globalUGs = [];
-    
+/** Pour faire fonctionner le modal UG **/
+window.addEventListener("load", function(){
+    let modal = document.getElementById("modal-ug");
+    let close = document.getElementsByClassName("modal-close")[0];
+    modal.style.display = "none";
+    close.onclick = function() {
+        modal.style.display = "none";
+    }
+    document.getElementById("cancel-modal-ug").onclick = function() {
+        modal.style.display = "none";
+    }
+    document.getElementById("validate-modal-ug").onclick = function() {
+        modal.style.display = "none";
+        drawListUGs();
+    }
+});
+
+function showModalUG(){
+    let modal = document.getElementById("modal-ug");
+    modal.style.display = "block";
+}
+
 async function initializeLiensChantier() {
-    // form new
-    if({{not .Fermiers}}){
-        addUG();
-    }
-    // form update
-    else{
-        // restore UGs
-        const listeUgsElt = document.getElementById("liste-ugs");
-        let elt, elts, i, id;
-        {{range $i, $ug := .UGs}}
-            addUG();
-            elt = listeUgsElt.childNodes[{{$i}}];
-            elt.childNodes[0].value = "{{$ug.Code}}";
-        {{end}}
-        await validateUGs();
-        // restore lieux-dits
-        {{range .Lieudits}}
-            id = "lieudit-" + "{{.Id}}";
-            document.getElementById(id).setAttribute("checked", true);
-        {{end}}
-        // restore fermiers
-        {{range .Fermiers}}
-            id = "fermier-" + "{{.Id}}";
-            document.getElementById(id).setAttribute("checked", true);
-        {{end}}
-    }
+    // pour form new et update
+    {{range .UGs}}
+        document.getElementById("chk-ug-{{.Code}}").checked = true;
+    {{end}}
+    await drawListUGs();
+    {{range .Lieudits}}
+        document.getElementById("lieudit-{{.Id}}").checked = true;
+    {{end}}
+    {{range .Fermiers}}
+        document.getElementById("fermier-{{.Id}}").checked = true;
+    {{end}}
 }
 
-
-/**
-    Ajoute une ligne dans la div id="liste-ugs"
-    Ligne = Champ pour saisir UG + img pour supprimer la ligne
-    ATTENTION : si on modifie la structure d'une ligne, il faut :
-                - adapter la re-indexation dans removeUG()
-                - adapter validateUGs()
-                - adapter initializeLiensChantier(), partie update
-    En effet, ce code utilise elt = listeUgsElt.childNodes[x], qui dépend de la structure de la ligne
-**/
-function addUG(){
-    const listeUgsElt = document.getElementById("liste-ugs");
-    const idxNew = listeUgsElt.getElementsByTagName("div").length;
-    //
-    const divElt = document.createElement("div");
-    divElt.setAttribute("id", "ligne-ug-" + idxNew);
-    divElt.classList.add("padding-top05");
-    //
-    const inputElt = document.createElement("input");
-    inputElt.setAttribute("type", "text");
-    inputElt.setAttribute("id", "ug-" + idxNew);
-    inputElt.setAttribute("name", "ug-" + idxNew);
-    inputElt.classList.add("input-ug"); // utile seulement dans validateChantierLien()
-    //
-    const spanElt = document.createElement("span");
-    spanElt.innerHTML = " ";
-    spanElt.style.width = "1rem";
-    //
-    const aElt = document.createElement("a");
-    aElt.setAttribute("href", "#");                                                                                                    
-    aElt.setAttribute("onclick", "removeUG(" + idxNew + ");");
-    //
-    const imgElt = document.createElement("img");
-    imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
-    imgElt.setAttribute("src", "/static/img/delete.png");
-    imgElt.setAttribute("title", "Supprimer cette UG");
-    aElt.appendChild(imgElt);
-    //
-    divElt.appendChild(inputElt);
-    divElt.appendChild(spanElt);
-    divElt.appendChild(aElt);
-    listeUgsElt.appendChild(divElt);
-}
-
-/** 
-    Enlève une ligne {input text ug + img pour supprimer}
-**/
-function removeUG(idx){
-    document.getElementById("ligne-ug-" + idx).remove();
-    const listeUgsElt = document.getElementById("liste-ugs");
-    // re-index la valeur de l'attribut id
-    // - pour chaque elt de la liste
-    // - au sein d'un elt de la liste, pour chaque enfant dont id dépend du param idx
-    let elt;
-    for(let i=0; i < listeUgsElt.childNodes.length; i++){
-        elt = listeUgsElt.childNodes[i];
-        elt.setAttribute("id", "ligne-ug-" + i);
-        elt.childNodes[0].setAttribute("id", "ug-" + i);                    // input type = text
-        elt.childNodes[0].setAttribute("name", "ug-" + i);                  // input type = text
-        elt.childNodes[2].setAttribute("onclick", "removeUG(" + i + ");");  // a href de l'img
-    }
-}
-
-/**
-    Appelé quand on clique sur valider UGs
-    Remplit ou maj les zones
-    <div id="empty-lieudit1"></div><div id="empty-lieudit2"></div>
-    <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
-**/
-async function validateUGs(){
-    
-    window.lienChantierMsg = "";
-    await checkUGs();
-    if(window.lienChantierMsg != ""){
-        alert("Corrigez les UGS avant de continuer :\n" + window.lienChantierMsg);
-        return;
-    }
-    
-    let i;
+async function drawListUGs(){
+    let codeUG, idUG;
+    let i, elt, elts;
+    let baseURL, url, response, errorMsg="";
+    let idDB, nom, idDansForm;
+    let dbRows; // assoc array id => nom
+    let curCommune, tmp;
     
     // Mémorise ce qui est checked (pour réaffichage suite à nouveau clic sur valider UGs)
     const memoLieudit = [];
     const memoFermier = [];
-    let elts;
     elts = document.getElementsByClassName("chk-lieudit");
     for(i = 0; i < elts.length; i++) {
         if(elts[i].checked){
@@ -175,51 +133,85 @@ async function validateUGs(){
         }
     }
     
-    // Vide la zone
-    document.getElementById("empty-lieudit1").innerHTML = "";
-    document.getElementById("empty-lieudit2").innerHTML = "";
-    document.getElementById("empty-fermier1").innerHTML = "";
-    document.getElementById("empty-fermier2").innerHTML = "";
-    
-    // variables utiisées par affichage lieux-dits et fermiers
     const listeUgsElt = document.getElementById("liste-ugs");
-    let div1Elt, div2Elt; // enfants directs de grid2
-    let baseURL, url, codeUG;
-    let elt, response;
-    let idDB, nom, idDansForm, divElt, checkElt, labelElt;
-    let dbRows; // assoc array id => nom
-    let curCommune, tmp;
+    const listeLieuxditsElt = document.getElementById("empty-lieudit");
+    const listeFermiersElt = document.getElementById("empty-fermier");
+    // Vide les zones
+    listeUgsElt.innerHTML = "";
+    listeLieuxditsElt.innerHTML = "";
+    listeFermiersElt.innerHTML = "";
+    // calcule les ugs sélectionnées dans le modal
+    const selectedUGs = [];
+    elts = document.getElementsByClassName("chk-ug");
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            codeUG = elts[i].getAttribute("id").substring(7); // 7 pour "chk-ug-"
+            selectedUGs.push(codeUG);
+        }
+    }
+    if(selectedUGs.length == 0){
+        listeLieuxditsElt.innerHTML = "Sélectionnez d'abord une UG.";
+        listeFermiersElt.innerHTML = "Sélectionnez d'abord une UG.";
+        return;
+    }
+    
+    //
+    // Affiche UGs
+    //
+    for(i = 0; i < selectedUGs.length; i++) {
+        idUG = document.getElementById("chk-ug-" + selectedUGs[i]).getAttribute("data-ug-id");
+        codeUG = selectedUGs[i];
+        //
+        const imgElt = document.createElement("img");
+        imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
+        imgElt.setAttribute("src", "/static/img/delete.png");
+        imgElt.setAttribute("title", "Supprimer cette UG");
+        imgElt.style.cursor = "pointer";
+        //
+        const aElt = document.createElement("a");
+        aElt.setAttribute("href", "#");
+        aElt.setAttribute("onclick", "removeUG('" + codeUG + "');");
+        aElt.setAttribute("class", "padding-right");
+        aElt.appendChild(imgElt);
+        //
+        const spanElt = document.createElement("span");
+        spanElt.innerHTML = codeUG;
+        //
+        elt = document.createElement("div");
+        elt.setAttribute("class", "form-ug padding-top05"); // form-ug sert dans validateForm()
+        elt.setAttribute("data-ug-id", idUG);
+        elt.setAttribute("data-ug-code", codeUG);
+        elt.appendChild(aElt);
+        elt.appendChild(spanElt);
+        //
+        listeUgsElt.appendChild(elt);
+    }
+    
     //
     // Affiche lieux-dits
     //
-    window.lienChantierMsg = "";
-    baseURL = "/ajax/get/lieudits-from-code-ug/"
-    div1Elt = document.getElementById("empty-lieudit1");
-    div1Elt.style.fontWeight = "bold";
-    div1Elt.style.textAlign = "right";
-    div2Elt = document.getElementById("empty-lieudit2");
-    div1Elt.innerHTML = "Lieux-dits";
     // 1 - récup id, noms en ajax dans tableau assoc
     //     Permet de supprimer les doublons (arrive par ex. si UGs = XIX-54 et XIV-20)
+    baseURL = "/ajax/get/lieudits-from-code-ug/"
     dbRows = new Array();
     for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
-        codeUG = elt.childNodes[0].value;
+        codeUG = elt.getAttribute("data-ug-code");
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){
-            window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+            errorMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
                 + "Problème de récupération " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         response = await response.json();
         if(response == null){
-            window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+            errorMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
                 + "Mauvais format de retour de " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         if(response.length == 0){
-            window.lienChantierMsg += "- L'UG \"" + codeUG + "\" n'est associée à aucun lieu-dit.\n";
+            errorMsg += "- L'UG \"" + codeUG + "\" n'est associée à aucun lieu-dit.\n";
             continue;
         }
         // nom affiché = nom lieudit + nom(s) communes(s)
@@ -232,19 +224,16 @@ async function validateUGs(){
             dbRows[item.Id] = item.Nom + " (" + tmp.join(", ") + ")";
         });
     }
-    if(window.lienChantierMsg != ""){
-        alert("Corrigez les UGS avant de continuer :\n" + window.lienChantierMsg);
-        return;
-    }
     // 2 - Recrée la liste html
     for(idDB in dbRows){
         nom = dbRows[idDB];
         idDansForm = "lieudit-" + idDB
-        checkElt = document.createElement("input");
+        const checkElt = document.createElement("input");
         checkElt.setAttribute("type", "checkbox");
         checkElt.setAttribute("id", idDansForm);
-        checkElt.setAttribute("name", idDansForm);                                                                   
-        checkElt.setAttribute("class", "chk-lieudit"); // utile uniquement pour calcul de memoLieudit
+        checkElt.setAttribute("name", idDansForm);
+        checkElt.setAttribute("class", "chk-lieudit"); // utile pour calcul de memoLieudit
+        checkElt.setAttribute("data-lieudit-id", idDB);
         if(memoLieudit.indexOf(idDansForm) != -1){
             checkElt.setAttribute("checked", true);
         }
@@ -255,59 +244,51 @@ async function validateUGs(){
         divElt = document.createElement("div");
         divElt.appendChild(checkElt);
         divElt.appendChild(labelElt);
-        div2Elt.appendChild(divElt);
+        listeLieuxditsElt.appendChild(divElt);
     }
+    
     //
     // Affiche fermiers
     //
-    window.lienChantierMsg = "";
-    baseURL = "/ajax/get/fermiers-from-code-ug/"
-    div1Elt = document.getElementById("empty-fermier1");
-    div1Elt.style.fontWeight = "bold";
-    div1Elt.style.textAlign = "right";
-    div2Elt = document.getElementById("empty-fermier2");
-    div1Elt.innerHTML = "Fermiers";
     // 1 - récup id, noms en ajax dans tableau assoc
     //     Permet de supprimer les doublons (arrive par ex. si UGs = XIX-54 et XIV-20)
+    baseURL = "/ajax/get/fermiers-from-code-ug/"
     dbRows = new Array();
     for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
-        codeUG = elt.childNodes[0].value;
+        codeUG = elt.getAttribute("data-ug-code");
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){
-            window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+            errorMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
                 + "Problème de récupération " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         response = await response.json();
         if(response == null){
-            window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+            errorMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
                 + "Mauvais format de retour de " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
         if(response.length == 0){
-            window.lienChantierMsg += "- L'UG \"" + codeUG + "\" n'est associée à aucun lieu-dit.\n";
+            errorMsg += "- L'UG \"" + codeUG + "\" n'est associée à aucun lieu-dit.\n";
             continue;
         }
+        // nom affiché = nom lieudit + nom(s) communes(s)
         response.forEach(function(item){
             dbRows[item.id] = item.name;
         });
-    }
-    
-    if(window.lienChantierMsg != ""){
-        alert("Corrigez les UGS avant de continuer :\n" + window.lienChantierMsg);
-        return;
     }
     // 2 - Recrée la liste html
     for(idDB in dbRows){
         nom = dbRows[idDB];
         idDansForm = "fermier-" + idDB
-        checkElt = document.createElement("input");
+        const checkElt = document.createElement("input");
         checkElt.setAttribute("type", "checkbox");
         checkElt.setAttribute("id", idDansForm);
         checkElt.setAttribute("name", idDansForm);
-        checkElt.setAttribute("class", "chk-fermier"); // utile uniquement pour calcul de memoFermier
+        checkElt.setAttribute("class", "chk-fermier"); // utile pour calcul de memoFermier
+        checkElt.setAttribute("data-fermier-id", idDB);
         if(memoFermier.indexOf(idDansForm) != -1){
             checkElt.setAttribute("checked", true);
         }
@@ -318,74 +299,20 @@ async function validateUGs(){
         divElt = document.createElement("div");
         divElt.appendChild(checkElt);
         divElt.appendChild(labelElt);
-        div2Elt.appendChild(divElt);
+        listeFermiersElt.appendChild(divElt);
     }
+    
+    if(errorMsg != ""){
+        alert(errorMsg);
+    }
+    
 }
 
-/** 
-    Vérifie si les UGs saisies existent en base
-    Remplit la var globale window.globalUGs
-    (utilisée dans validateFormChantierLien() sans avoir à refaire d'ajax)
-    Remplit éventuellement la var globale window.lienChantierMsg
-**/
-async function checkUGs(){
-    
-    const listeUgsElt = document.getElementById("liste-ugs");
-    let elt, codeUG, i;
-    
-    // Check la cohérence des entrées - sans ajax
-    let codes = [];
-    let foundEmpty = false, foundDuplicate = false;
-    for(i=0; i < listeUgsElt.childNodes.length; i++){
-        elt = listeUgsElt.childNodes[i];
-        codeUG = elt.childNodes[0].value.trim();
-        if(codeUG == ""){
-            if(!foundEmpty){
-                window.lienChantierMsg = "- Une UG ne peut pas être vide.\n";
-                foundEmpty = true;
-            }
-            continue;
-        }
-        if(codes.indexOf(codeUG) != -1){
-            if(!foundDuplicate){
-                window.lienChantierMsg = "- Les UGs doivent être différentes.\n";
-                foundDuplicate = true;
-            }
-            continue;
-        }
-        codes.push(codeUG);
-    }
-    
-    if(window.lienChantierMsg != ""){
-        return;
-    }
-    
-    // Check que les UGs saisies existent en base - avec ajax
-    
-    const baseURL = "/ajax/get/ug-from-code/";
-    let url ="";
-    let response;
-    for(i=0; i < listeUgsElt.childNodes.length; i++){
-        elt = listeUgsElt.childNodes[i];
-        codeUG = elt.childNodes[0].value.trim();
-        url = baseURL + codeUG;
-        response = await fetch(url);
-        if(response == null){
-            window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
-                + "Problème de récupération " + url + " dans {{$.TypeChantier}}-form.html\n";
-            continue;
-        }
-        response = await response.json();
-        if(response == null){
-            window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
-                + "Mauvais format de retour de " + url + " dans {{$.TypeChantier}}-form.html\n";
-            continue;
-        }
-        if(response == 0){
-            window.lienChantierMsg += "- L'UG \"" + codeUG + "\" n'existe pas en base.\n";
-            continue;
-        }
-        window.globalUGs[codeUG] = response;
+async function removeUG(codeUG){
+    var ok = confirm("Voulez-vous vraiment enlever l'association avec l'UG " + codeUG + " ?");
+    if(ok){
+        document.getElementById("chk-ug-" + codeUG).checked = false;
+        drawListUGs();
     }
 }
 
@@ -393,22 +320,9 @@ async function checkUGs(){
     Valide la partie ugs, lieux-dits et fermiers.
     @return     Message d'erreur, chaîne vide si ok.
 **/
-function validateFormChantierLien(){
+function chantierLienValidateForm(){
     let msg = "";
     let i;
-    // UGs
-    let val;
-    const ugs = document.getElementsByClassName("input-ug");
-    for(i = 0; i < ugs.length; i++) {
-        val = ugs[i].value;
-        if(val == ""){
-            msg += "- Un champ pour saisir une UG ne peut pas être vide\n";
-            continue;
-        }
-        if(!(val in window.globalUGs)){
-            msg += "L'UG \"" + val + "\" n'existe pas en base\n";
-        }
-    }
     // lieux-dits
     let elts, nChecked;
     nChecked = 0;
@@ -436,18 +350,41 @@ function validateFormChantierLien(){
 }
 
 /** 
-    Fonction à appeler uniquement lorsque le formulaire est valide, juste avant de le poster.
-    Remplace les codes UG par les ids UG dans les inputs
-    Ex : remplace "XIX-11" par 6
-    Ça permet au controller qui traite le formulaire d'avoir directement les ids UG
+    Remplit l'attribut value des champs du formulaire appelant :
+    <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+    <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
+    <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
+    Chaque value est remplie par une chaîne contenant les ids séparés par une virgule. 
 **/
-function chantierLienUGCode2id(){
-    const ugs = document.getElementsByClassName("input-ug");
-    let val;
-    for(i = 0; i < ugs.length; i++) {
-        val = ugs[i].value;
-        ugs[i].value = window.globalUGs[val];
+function chantierLienFillHiddenFields(){
+    let elts, i, tmp;
+    //
+    elts = document.getElementsByClassName("chk-ug");
+    tmp = [];
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            tmp.push(elts[i].getAttribute("data-ug-id"));
+        }
     }
+    document.getElementById("ids-ugs").value = tmp.join(",");
+    //
+    elts = document.getElementsByClassName("chk-lieudit");
+    tmp = [];
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            tmp.push(elts[i].getAttribute("data-lieudit-id"));
+        }
+    }
+    document.getElementById("ids-lieudits").value = tmp.join(",");
+    //
+    elts = document.getElementsByClassName("chk-fermier");
+    tmp = [];
+    for(i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            tmp.push(elts[i].getAttribute("data-fermier-id"));
+        }
+    }
+    document.getElementById("ids-fermiers").value = tmp.join(",");
 }
 
 </script>

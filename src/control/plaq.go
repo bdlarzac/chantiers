@@ -23,6 +23,7 @@ type detailsPlaqForm struct {
 	ExploitationOptions template.HTML
 	GranuloOptions      template.HTML
 	AllStockages        []*model.Stockage
+	AllUGs              []*model.UG
 }
 
 type detailsPlaqList struct {
@@ -149,39 +150,15 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
-		var idsUG, idsLieudit, idsFermier []int
-		var id int
-		for key, val := range r.PostForm {
-			if strings.Index(key, "ug-") == 0 {
-				// ex : ug-0:[6] (6 est l'id UG)
-				id, err = strconv.Atoi(val[0])
-				if err != nil {
-					return err
-				}
-				idsUG = append(idsUG, id)
-			}
-			if strings.Index(key, "lieudit-") == 0 {
-				// ex : lieudit-164:[on] (164 est l'id lieudit)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsLieudit = append(idsLieudit, id)
-			}
-			if strings.Index(key, "fermier-") == 0 {
-				// ex : fermier-25:[on] (25 est l'id fermier)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsFermier = append(idsFermier, id)
-			}
-		}
+		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+        if err != nil {
+            return err
+        }
 		//
-		id, err = model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUG, idsLieudit, idsFermier)
+		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
-		}
+		}                                                                                                  
 		//
 		redirect := "/chantier/plaquette/" + strconv.Itoa(id)
 		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
@@ -200,12 +177,17 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		if err != nil {
 			return err
 		}
+		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "plaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Nouveau chantier plaquettes",
 				CSSFiles: []string{
-					"/static/css/form.css"},
+					"/static/css/form.css",
+				    "/static/css/modal.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
@@ -219,6 +201,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "CHOOSE_GRANULO"),
 				AllStockages:        allStockages,
+				AllUGs:              allUGs,
 				UrlAction:           "/chantier/plaquette/new",
 			},
 		}
@@ -254,37 +237,13 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
-		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdatePlaq()
-		var idsUG, idsLieudit, idsFermier []int
-		var id int
-		for key, val := range r.PostForm {
-			if strings.Index(key, "ug-") == 0 {
-				// ex : ug-0:[6] (6 est l'id UG)
-				id, err = strconv.Atoi(val[0])
-				if err != nil {
-					return err
-				}
-				idsUG = append(idsUG, id)
-			}
-			if strings.Index(key, "lieudit-") == 0 {
-				// ex : lieudit-164:[on] (164 est l'id lieudit)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsLieudit = append(idsLieudit, id)
-			}
-			if strings.Index(key, "fermier-") == 0 {
-				// ex : fermier-25:[on] (25 est l'id fermier)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsFermier = append(idsFermier, id)
-			}
-		}
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
+		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+        if err != nil {
+            return err
+        }
 		//
-		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUG, idsLieudit, idsFermier)
+		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -314,19 +273,22 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
+		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "plaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier " + chantier.FullString(),
 				CSSFiles: []string{
 					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+				    "/static/css/modal.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/toogle.js",
-					"/static/autocomplete/autocomplete.js"},
+					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
@@ -335,6 +297,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				GranuloOptions:      webo.FmtOptions(WeboGranulo(), "granulo-"+chantier.Granulo),
 				AllStockages:        allStockages,
+				AllUGs:              allUGs,
 				UrlAction:           "/chantier/plaquette/update/" + vars["id"],
 			},
 		}
@@ -358,12 +321,50 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	return nil
 }
 
+
+// *********************************************************
+// Code commun à NewPlaq() et UpdatePlaq()
+func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsLieudits, idsFermiers []int, err error) {
+    rien := []int{}
+    var tmp []string
+    var str string
+    var id int
+    //
+    tmp = strings.Split(r.PostFormValue("ids-ugs"), ",")
+    for _, str = range(tmp){
+        id, err = strconv.Atoi(str)
+        if err != nil {
+            return rien, rien, rien, err
+        }
+        idsUGs = append(idsUGs, id)
+    }
+    //
+    tmp = strings.Split(r.PostFormValue("ids-lieudits"), ",")
+    for _, str = range(tmp){
+        id, err = strconv.Atoi(str)
+        if err != nil {
+            return rien, rien, rien, err
+        }
+        idsLieudits = append(idsLieudits, id)
+    }
+    //
+    tmp = strings.Split(r.PostFormValue("ids-fermiers"), ",")
+    for _, str = range(tmp){
+        id, err = strconv.Atoi(str)
+        if err != nil {
+            return rien, rien, rien, err
+        }
+        idsFermiers = append(idsFermiers, id)
+    }
+    return idsUGs, idsLieudits, idsFermiers, nil
+}
+
 // *********************************************************
 // Fabrique un Plaq à partir des valeurs d'un formulaire.
 // Auxiliaire de NewPlaq() et UpdatePlaq()
 // Ne gère pas le champ Id
-// Ne gère pas les stockages (tas)
-// Ne gère pas liens vers UGs, lieux-dits, fermiers
+// Ne gère pas les stockages (tas) (parce que besoinde DB pour le calculer)
+// Ne gère pas liens vers UGs, lieux-dits, fermiers (parce que model.Plaq ne possède pas ces champs)
 func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 	ch := &model.Plaq{}
 	var err error

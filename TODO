@@ -2,6 +2,9 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- Erreur dans base SCTL : 
+    UG XIX.77 => lieux-dits SERRES DES ARETS et SERRE DES ARETS => sont vraiment différents ?
+
 - Attention, on ne doit pas pouvoir supprimer l'acteur BDL
 
 - chaufer : l'unité doit être uniquement la stère

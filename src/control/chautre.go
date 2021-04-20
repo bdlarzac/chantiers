@@ -286,7 +286,7 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 // Fabrique un Chautre à partir des valeurs d'un formulaire.
 // Auxiliaire de NewChautre() et UpdateChautre()
 // Ne gère pas le champ Id
-// Ne gère pas liens vers UGs, lieux-dits, fermiers
+// Ne gère pas liens vers UGs, lieux-dits, fermiers (parce que model.Chautre ne possède pas ces champs)
 func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	ch := &model.Chautre{}
 	var err error

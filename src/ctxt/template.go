@@ -34,6 +34,7 @@ func init() {
 		"labelUnite":                   labelUnite,
 		"labelValorisation":            labelValorisation,
 		"labelValorisationAvecChaufer": labelValorisationAvecChaufer,
+		"modulo":                       modulo,
 		"nl2br":                        nl2br,
 		"safeHTML":                     safeHTML,
 		"twoDigits":                    twoDigits,
@@ -56,6 +57,10 @@ func init() {
 }
 
 // ************************* pipelines ********************************
+
+func modulo(i, mod int) int {
+    return i % mod;
+}
 
 func nl2br(t string) template.HTML {
 	return template.HTML(strings.Replace(template.HTMLEscapeString(t), "\n", "<br>", -1))

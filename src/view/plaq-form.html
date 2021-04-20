@@ -8,9 +8,16 @@
         
         {{template "chantier-lien.html" $.Details}}
         
-        {{/* divs pour contenir lieux-dits et fermiers */}}
-        <div id="empty-lieudit1"></div><div id="empty-lieudit2"></div>
-        <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
+        {{/*
+            divs pour contenir lieux-dits et fermiers
+            empty-lieudit contiendra la liste des lieux-dits avec les checkboxes
+            empty-fermier contiendra la liste des fermiers avec les checkboxes
+        */}}
+        <label>Lieux-dits</label>
+        <div id="empty-lieudit"></div>
+        
+        <label>Fermiers</label>
+        <div id="empty-fermier"></div>
         
         <label>Dates déchiquetage</label>
         <div>                                                                                                                              
@@ -81,6 +88,9 @@
 
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
     <input type="hidden" name="ids-stockages" id="ids-stockages" value="">
+    <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+    <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
+    <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
     
 </form>
 
@@ -139,7 +149,7 @@ function initialize() {
 function validateForm(){
     let msg = "";
     //
-    msg += validateFormChantierLien(); // dans view/common/chantier-lien.html
+    msg += chantierLienValidateForm(); // dans view/common/chantier-lien.html
     //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;
@@ -180,7 +190,7 @@ function validateForm(){
         return false;
     }
     //
-    chantierLienUGCode2id();
+    chantierLienFillHiddenFields(); // dans view/common/chantier-lien.html
     //
     return true;
 }

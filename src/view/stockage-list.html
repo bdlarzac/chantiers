@@ -148,7 +148,7 @@
         <table class="bordered margin-left">
             <tr><th>Type</th><th>Début</th><th>Fin</th><th>Montant</th><th>Notes</th></tr>
         {{end}}
-        {{range .Frais}}                                         
+        {{range .Frais}}
             <tr>
                 <td>{{.TypeFrais | labelStockFrais}}</td>
                 <td>{{.DateDebut | dateFr}}</td>
@@ -168,7 +168,7 @@
 <!-- ********************************** Modal vidage tas ************************************* -->
 <div id="modalTasVide" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="modal-close">&times;</span>
         En cliquant sur OK, vous indiquez que le tas : <span class="bold" id="nom-du-tas"></span>
         est vide.
         <br>Il ne sera plus possible de l'utiliser pour des ventes.
@@ -187,7 +187,7 @@
 
 window.addEventListener("load", function(){
     let modal = document.getElementById("modalTasVide");
-    let close = document.getElementsByClassName("close")[0];
+    let close = document.getElementsByClassName("modal-close")[0];
     modal.style.display = "none";
     close.onclick = function() {
         modal.style.display = "none";
