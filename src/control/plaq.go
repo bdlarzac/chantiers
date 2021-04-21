@@ -237,7 +237,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
-		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
+		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdatePlaq()
 		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
         if err != nil {
             return err
@@ -319,44 +319,6 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	}
 	ctx.Redirect = "/chantier/plaquette/liste/" + strconv.Itoa(chantier.DateDebut.Year())
 	return nil
-}
-
-
-// *********************************************************
-// Code commun à NewPlaq() et UpdatePlaq()
-func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsLieudits, idsFermiers []int, err error) {
-    rien := []int{}
-    var tmp []string
-    var str string
-    var id int
-    //
-    tmp = strings.Split(r.PostFormValue("ids-ugs"), ",")
-    for _, str = range(tmp){
-        id, err = strconv.Atoi(str)
-        if err != nil {
-            return rien, rien, rien, err
-        }
-        idsUGs = append(idsUGs, id)
-    }
-    //
-    tmp = strings.Split(r.PostFormValue("ids-lieudits"), ",")
-    for _, str = range(tmp){
-        id, err = strconv.Atoi(str)
-        if err != nil {
-            return rien, rien, rien, err
-        }
-        idsLieudits = append(idsLieudits, id)
-    }
-    //
-    tmp = strings.Split(r.PostFormValue("ids-fermiers"), ",")
-    for _, str = range(tmp){
-        id, err = strconv.Atoi(str)
-        if err != nil {
-            return rien, rien, rien, err
-        }
-        idsFermiers = append(idsFermiers, id)
-    }
-    return idsUGs, idsLieudits, idsFermiers, nil
 }
 
 // *********************************************************

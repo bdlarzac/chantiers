@@ -95,7 +95,7 @@ function showModalUG(){
     modal.style.display = "block";
 }
 
-async function initializeLiensChantier() {
+async function chantierLienInitialize() {
     // pour form new et update
     {{range .UGs}}
         document.getElementById("chk-ug-{{.Code}}").checked = true;
@@ -165,7 +165,7 @@ async function drawListUGs(){
         const imgElt = document.createElement("img");
         imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
         imgElt.setAttribute("src", "/static/img/delete.png");
-        imgElt.setAttribute("title", "Supprimer cette UG");
+        imgElt.setAttribute("title", "Supprimer l'association avec cette UG");
         imgElt.style.cursor = "pointer";
         //
         const aElt = document.createElement("a");

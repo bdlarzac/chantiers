@@ -9,11 +9,19 @@
 
     <div class="grid2-form">
 
+        {{/* Affiche la zone des UGs */}}
         {{template "chantier-lien.html" $.Details}}
         
-        {{/* divs pour contenir lieux-dits et fermiers */}}
-        <div id="empty-lieudit1"></div><div id="empty-lieudit2"></div>
-        <div id="empty-fermier1"></div><div id="empty-fermier2"></div>
+        {{/*
+            divs pour contenir lieux-dits et fermiers
+            empty-lieudit contiendra la liste des lieux-dits avec les checkboxes
+            empty-fermier contiendra la liste des fermiers avec les checkboxes
+        */}}
+        <label>Lieux-dits</label>
+        <div id="empty-lieudit"></div>
+        
+        <label>Fermiers</label>
+        <div id="empty-fermier"></div>
         
         <label for="acheteur">Acheteur</label>
         <input list="liste-acteurs" name="acheteur" id="acheteur" class="width25">
@@ -105,6 +113,9 @@
     
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
     <input type="hidden" name="id-acheteur" id="id-acheteur" value="{{.IdAcheteur}}">
+    <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+    <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
+    <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
     
 </form>
 
@@ -134,7 +145,7 @@ window.addEventListener("load", function(){
 
 // ***************************************
 function initialize(){
-    initializeLiensChantier(); // dans view/common/chantier-lien.html   
+    chantierLienInitialize(); // dans view/common/chantier-lien.html   
     // form new
     if({{.Id}} == 0){
         document.getElementById("typevente-NON").checked = true;
@@ -185,7 +196,7 @@ function valorisationChanged(){
 function validateForm(){
     let msg = "";
     //
-    msg += validateFormChantierLien(); // dans view/common/chantier-lien.html
+    msg += chantierLienValidateForm(); // dans view/common/chantier-lien.html
     //
     const check = checkActeur("acheteur", "- Vous devez renseigner l'acheteur.\n");
     document.getElementById("id-acheteur").value = check[0];
@@ -225,7 +236,7 @@ function validateForm(){
         return false;
     }
     //
-    chantierLienUGCode2id();
+    chantierLienFillHiddenFields(); // dans view/common/chantier-lien.html
     //
     return true;
 }

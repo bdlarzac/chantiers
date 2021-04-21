@@ -24,6 +24,7 @@ type detailsChautreForm struct {
 	ValorisationOptions template.HTML
     ListeActeurs        map[int]string
 	TVAOptions          template.HTML
+	AllUGs              []*model.UG
 }
 
 type detailsChautreList struct {
@@ -92,36 +93,12 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertChautre()
-		var idsUG, idsLieudit, idsFermier []int
-		var id int
-		for key, val := range r.PostForm {
-			if strings.Index(key, "ug-") == 0 {
-				// ex : ug-0:[6] (6 est l'id UG)
-				id, err = strconv.Atoi(val[0])
-				if err != nil {
-					return err
-				}
-				idsUG = append(idsUG, id)
-			}
-			if strings.Index(key, "lieudit-") == 0 {
-				// ex : lieudit-164:[on] (164 est l'id lieudit)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsLieudit = append(idsLieudit, id)
-			}
-			if strings.Index(key, "fermier-") == 0 {
-				// ex : fermier-25:[on] (25 est l'id fermier)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsFermier = append(idsFermier, id)
-			}
-		}
+		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+        if err != nil {
+            return err
+        }
 		//
-		_, err = model.InsertChautre(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
+		_, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -138,12 +115,17 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
+		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Nouveau chantier autres valorisations",
 				CSSFiles: []string{
-					"/static/css/form.css"},
+					"/static/css/form.css",
+				    "/static/css/modal.css"},
 			},
 			Details: detailsChautreForm{
 				Chantier:            chantier,
@@ -151,7 +133,8 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "CHOOSE_VALORISATION"),
 				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "CHOOSE_TVA"),
-			    ListeActeurs:  listeActeurs,
+			    ListeActeurs:        listeActeurs,
+				AllUGs:              allUGs,
 				UrlAction:           "/chantier/autre/new",
 			},
 			Menu: "chantiers",
@@ -182,36 +165,12 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			return err
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdateChautre()
-		var idsUG, idsLieudit, idsFermier []int
-		var id int
-		for key, val := range r.PostForm {
-			if strings.Index(key, "ug-") == 0 {
-				// ex : ug-0:[6] (6 est l'id UG)
-				id, err = strconv.Atoi(val[0])
-				if err != nil {
-					return err
-				}
-				idsUG = append(idsUG, id)
-			}
-			if strings.Index(key, "lieudit-") == 0 {
-				// ex : lieudit-164:[on] (164 est l'id lieudit)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsLieudit = append(idsLieudit, id)
-			}
-			if strings.Index(key, "fermier-") == 0 {
-				// ex : fermier-25:[on] (25 est l'id fermier)
-				id, err = strconv.Atoi(key[8:])
-				if err != nil {
-					return err
-				}
-				idsFermier = append(idsFermier, id)
-			}
-		}
+		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+        if err != nil {
+            return err
+        }
 		//
-		err = model.UpdateChautre(ctx.DB, chantier, idsUG, idsLieudit, idsFermier)
+		err = model.UpdateChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -235,12 +194,17 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
+		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Modifier un chantier autres valorisations",
 				CSSFiles: []string{
-					"/static/css/form.css"},
+					"/static/css/form.css",
+				    "/static/css/modal.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
@@ -254,7 +218,8 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "valorisation-"+chantier.TypeValo),
 				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "tva-"+ strconv.FormatFloat(chantier.TVA, 'f', -1, 64)),
-			    ListeActeurs:  listeActeurs,
+			    ListeActeurs:        listeActeurs,
+				AllUGs:              allUGs,
 				UrlAction:           "/chantier/autre/update/" + vars["id"],
 			},
 		}

@@ -6,6 +6,7 @@
 
     <div class="grid2-form">
         
+        {{/* Affiche la zone des UGs */}}
         {{template "chantier-lien.html" $.Details}}
         
         {{/*
@@ -126,7 +127,7 @@ window.addEventListener("load", function(){
 
 // ***************************************
 function initialize() {
-    initializeLiensChantier(); // dans view/common/chantier-lien.html    
+    chantierLienInitialize(); // dans view/common/chantier-lien.html    
     // form new
     if({{.Id}} == 0){
         // essence initalisée à pin sylvestre car c'est le cas le plus fréquent
