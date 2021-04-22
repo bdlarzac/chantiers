@@ -127,6 +127,12 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 					"/static/css/form.css",
 				    "/static/css/modal.css"},
 			},
+			Menu: "chantiers",
+			Footer: ctxt.Footer{
+				JSFiles: []string{
+				    "/static/js/round.js",
+					"/static/js/toogle.js"},
+			},
 			Details: detailsChautreForm{
 				Chantier:            chantier,
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "CHOOSE_ESSENCE"),
@@ -136,11 +142,6 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			    ListeActeurs:        listeActeurs,
 				AllUGs:              allUGs,
 				UrlAction:           "/chantier/autre/new",
-			},
-			Menu: "chantiers",
-			Footer: ctxt.Footer{
-				JSFiles: []string{
-					"/static/js/toogle.js"},
 			},
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -209,6 +210,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
+				    "/static/js/round.js",
 					"/static/js/toogle.js"},
 			},
 			Details: detailsChautreForm{

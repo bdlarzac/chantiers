@@ -66,7 +66,7 @@ func (ug *UG) String() string {
 	return ug.Code + " -- " + ug.TypePeuplement
 }
 
-// ************************ Get *********************************
+// ************************ Get one *********************************
 
 // Renvoie une UG à partir de son id.
 // Ne contient que les champs de la table lieudit.

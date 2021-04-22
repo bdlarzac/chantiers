@@ -192,6 +192,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
+				    "/static/js/round.js",
 					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqForm{
@@ -288,6 +289,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
+				    "/static/js/round.js",
 					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqForm{

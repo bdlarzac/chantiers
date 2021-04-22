@@ -51,7 +51,9 @@
                     type="checkbox"
                     class="chk-ug"
                     id="chk-ug-{{$ug.Code}}"
-                    data-ug-id="{{$ug.Id}}">
+                    data-ug-id="{{$ug.Id}}"
+                    data-ug-surface="{{$ug.SurfaceSIG}}"
+                    >
                 <label for="chk-ug-{{$ug.Code}}">{{$ug.Code}}<label>
             </td>
             {{if eq (modulo $i 9) 8}}
@@ -70,7 +72,6 @@
 
 
 {{with .Chantier}}
-
 <script>
 
 /** Pour faire fonctionner le modal UG **/
@@ -110,14 +111,14 @@ async function chantierLienInitialize() {
 }
 
 async function drawListUGs(){
-    let codeUG, idUG;
+    let codeUG, idUG, surfaceUG;
     let i, elt, elts;
     let baseURL, url, response, errorMsg="";
     let idDB, nom, idDansForm;
     let dbRows; // assoc array id => nom
     let curCommune, tmp;
     
-    // Mémorise ce qui est checked (pour réaffichage suite à nouveau clic sur valider UGs)
+    // Mémorise ce qui est checked (pour réaffichage suite à nouveau clic sur valider dans modal UGs)
     const memoLieudit = [];
     const memoFermier = [];
     elts = document.getElementsByClassName("chk-lieudit");
@@ -159,8 +160,9 @@ async function drawListUGs(){
     // Affiche UGs
     //
     for(i = 0; i < selectedUGs.length; i++) {
-        idUG = document.getElementById("chk-ug-" + selectedUGs[i]).getAttribute("data-ug-id");
         codeUG = selectedUGs[i];
+        idUG = document.getElementById("chk-ug-" + codeUG).getAttribute("data-ug-id");
+        surfaceUG = round(document.getElementById("chk-ug-" + codeUG).getAttribute("data-ug-surface"), 2);
         //
         const imgElt = document.createElement("img");
         imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
@@ -175,7 +177,7 @@ async function drawListUGs(){
         aElt.appendChild(imgElt);
         //
         const spanElt = document.createElement("span");
-        spanElt.innerHTML = codeUG;
+        spanElt.innerHTML = codeUG + " (" + surfaceUG + " ha)";
         //
         elt = document.createElement("div");
         elt.setAttribute("class", "form-ug padding-top05"); // form-ug sert dans validateForm()
