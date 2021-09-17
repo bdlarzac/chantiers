@@ -97,10 +97,6 @@ bookmyname
 access : mattn/go-adodb
 https://www.microsoft.com/en-us/download/details.aspx?id=54920
 
-pour embarquer les static et templates dans l'exe : genesis
-(à utiliser éventuellement avec go generate)
-https://github.com/benbjohnson/genesis
-
 go mod vendor
 
 voir pyramid pour la philo middleware, acl

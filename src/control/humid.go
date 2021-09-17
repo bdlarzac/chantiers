@@ -11,7 +11,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
+//"fmt"
 )
 
 type detailsHumidForm struct {
@@ -92,7 +92,7 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		optionTas := "CHOOSE_TAS"
 		vars := mux.Vars(r)
 		if vars["id-tas"] != "" {
-			optionTas = vars["id-tas"]
+			optionTas = "tas-" + vars["id-tas"]
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
