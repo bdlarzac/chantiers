@@ -97,15 +97,15 @@ function showModalUG(){
 }
 
 async function chantierLienInitialize() {
-    // pour form new et update
+    // mêmes initialisations pour form new et form update
     {{range .UGs}}
         document.getElementById("chk-ug-{{.Code}}").checked = true;
     {{end}}
     await drawListUGs();
-    {{range .Lieudits}}
+    {{range .Lieudits}} // vide pour form new
         document.getElementById("lieudit-{{.Id}}").checked = true;
     {{end}}
-    {{range .Fermiers}}
+    {{range .Fermiers}} // vide pour form update
         document.getElementById("fermier-{{.Id}}").checked = true;
     {{end}}
 }
@@ -117,8 +117,9 @@ async function drawListUGs(){
     let idDB, nom, idDansForm;
     let dbRows; // assoc array id => nom
     let curCommune, tmp;
-    
+    //
     // Mémorise ce qui est checked (pour réaffichage suite à nouveau clic sur valider dans modal UGs)
+    //
     const memoLieudit = [];
     const memoFermier = [];
     elts = document.getElementsByClassName("chk-lieudit");
@@ -133,7 +134,7 @@ async function drawListUGs(){
             memoFermier.push(elts[i].getAttribute("id"));
         }
     }
-    
+    //
     const listeUgsElt = document.getElementById("liste-ugs");
     const listeLieuxditsElt = document.getElementById("empty-lieudit");
     const listeFermiersElt = document.getElementById("empty-fermier");
@@ -155,7 +156,6 @@ async function drawListUGs(){
         listeFermiersElt.innerHTML = "Sélectionnez d'abord une UG.";
         return;
     }
-    
     //
     // Affiche UGs
     //
@@ -188,7 +188,6 @@ async function drawListUGs(){
         //
         listeUgsElt.appendChild(elt);
     }
-    
     //
     // Affiche lieux-dits
     //
@@ -248,7 +247,6 @@ async function drawListUGs(){
         divElt.appendChild(labelElt);
         listeLieuxditsElt.appendChild(divElt);
     }
-    
     //
     // Affiche fermiers
     //
@@ -303,11 +301,10 @@ async function drawListUGs(){
         divElt.appendChild(labelElt);
         listeFermiersElt.appendChild(divElt);
     }
-    
+    //
     if(errorMsg != ""){
         alert(errorMsg);
     }
-    
 }
 
 async function removeUG(codeUG){

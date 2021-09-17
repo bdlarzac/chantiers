@@ -3,7 +3,6 @@ package control
 import (
 	"net/http"
 	"strconv"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"

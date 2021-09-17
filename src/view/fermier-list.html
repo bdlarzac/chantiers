@@ -4,23 +4,7 @@
 
 <div class="big3 padding-left">{{.Details.Count}} fermiers</div>
 
-<style>
-table.fermiers tbody tr:nth-child(4n+0),
-table.fermiers tbody tr:nth-child(4n+1){
-    background-color:#f2e6d9;
-}
-table.fermiers{
-    margin:1em;
-    border:1px solid grey;
-}
-table.fermiers td{
-    padding:.2rem;
-}
-a.parcelles{color:blue;}
-a.parcelles:hover{cursor:pointer;}
-</style>
-
-<table class="fermiers" style="width:100%;">
+<table class="entities" style="width:100%;">
 <tr>
     <th>Id SCTL</th>
     <th>Nom</th>
@@ -34,17 +18,12 @@ a.parcelles:hover{cursor:pointer;}
 {{range .Details.List}}
 <tr>
     <td>{{.Id}}</td>
-    <td><a class="parcelles" title="Voir les parcelles" onClick="toogleTR('parcelles-{{.Id}}');">{{.Nom}} {{.Prenom}}</a></td>
+    <td><a href="/fermier/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>
     <td>{{.Adresse}}</td>
     <td>{{.Cp}}</td>
     <td>{{.Ville}}</td>
     <td>{{.Tel}}</td>
     <td>{{.Email}}</td>
-</tr>
-<tr class="display-none" id="parcelles-{{.Id}}">
-    <td colspan="1"></td>
-    <td colspan="6">
-    </td>
 </tr>
 {{end}}
 

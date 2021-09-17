@@ -14,7 +14,7 @@ import (
 )
 
 type Fermier struct {
-	Id        int // IdExploitant de la base SCTL
+	Id        int     // IdExploitant de la base SCTL
 	Nom       string
 	Prenom    string
 	Adresse   string
@@ -47,7 +47,7 @@ func (f *Fermier) ComputeParcelles(db *sqlx.DB) (err error) {
 	}
 	query := `select * from parcelle where id in(
             select id_parcelle from parcelle_fermier where id_fermier=$1
-	    )`
+	    ) order by code`
 	err = db.Select(&f.Parcelles, query, f.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

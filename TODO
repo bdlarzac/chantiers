@@ -2,6 +2,9 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- en cours : bug plaq 2 - fermier 43 : comment un fermier inexistant a pu être associé au chantier
+    => dans table fermier, dissocier id et id_sctl ?
+
 - Erreur dans base SCTL : 
     UG XIX.77 => lieux-dits SERRES DES ARETS et SERRE DES ARETS => sont vraiment différents ?
 
@@ -26,6 +29,8 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 - model : remplacer Scan par sqlx
 - Finir de nettoyer le model (fonctions inutiles, jointures au lieu de plusieurs select)
   surtout parcelle / ug / lieudit 
+- ré-écrire model.GetUGsFromLieudit() avec jointures (?)
+    aussi voir GetStockage() GetActeur()
 
 - Sortir BDL, SCTL, GFA des acteurs ???
 
@@ -33,9 +38,6 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
     response = await response.json();
     if(response == null){
 => pas d'erreur si null ?
-
-- ré-écrire model.GetUGsFromLieudit() avec jointures (?)
-    aussi voir GetStockage() GetActeur()
 
 - revoir les fonctions String() de transport, rangement, chargement, livraison :
 Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable

@@ -13,7 +13,6 @@ import (
 func GetFermiersFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	codeUG := vars["code"]
-
 	type respElement struct {
 		Id   int    `json:"id"`
 		Name string `json:"name"`

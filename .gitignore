@@ -15,8 +15,7 @@ install/sctl-data/*
 z.*
 
 # temporary executables generated during development
-gin-bin
-run-bdl
+src/tmp
 
 # temporary stuff
 *.exe

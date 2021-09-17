@@ -49,7 +49,7 @@ func FillFermier(versionSCTL string) {
 			// Importer que les agricoles
 			continue
 		}
-        if PRIVACY{
+        if PRIVACY{ // voir PRIVACY.go
             adresse, cp, ville, tel, email = "", "", "", "", ""
         } else {
             adresse = strings.Replace(v["AdresseExp"], "'", `''`, -1)

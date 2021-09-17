@@ -8,8 +8,8 @@
 package ctxt
 
 import (
-	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/model"
+	"bdl.local/bdl/generic/tiglib"
 	"fmt"
 	"html/template"
 	"path/filepath"
@@ -48,6 +48,7 @@ func init() {
 		Must(template.
 			New("").
 			Funcs(fmap).
+//			ParseFS(embedded.ViewFiles, filepath.Join("view", "*.html"))).
 			ParseGlob(filepath.Join("view", "*.html"))).
             Option("missingkey=error")
 	tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien.html"))

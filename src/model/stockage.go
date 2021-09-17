@@ -12,7 +12,7 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"time"
-	//	"fmt"
+"fmt"
 )
 
 type Stockage struct {
@@ -193,6 +193,63 @@ func (s *Stockage) ComputeDeletableAndArchivable(db *sqlx.DB) (err error) {
 // Prend en compte tous les frais du hangar (loyer, elec, assurance)
 // Le coût est ramené à la période considérée.
 // Ex : pour un loyer de 6000 E / an, si j2 - j1 = 6 mois, va compter 3000
+// @param   jourD, jour2 jours de début / fin de la période au format YYYY-MM-DD
+// @return  Tableau contenant les coûts pour chaque jour de la période [jourD, jourF]
+//          res[0] = frais pour jourD, res[1] = frais pour jourD + 1, etc.
+func (s *Stockage) ComputeCout(db *sqlx.DB, jourD, jourF string) (res []float64, err error) {
+    res = []float64{}
+	jD, err := time.Parse("2006-01-02", jourD)
+	if err != nil {
+		return res, werr.Wrapf(err, "Format de date incorrect : "+jourD)
+	}
+	jF, err := time.Parse("2006-01-02", jourF)
+	if err != nil {
+		return res, werr.Wrapf(err, "Format de date incorrect : "+jourF)
+	}
+	if jF.Before(jD) {
+		return res, errors.New("ComputeCout() a besoin de jourD < jourF")
+	}
+	duree := jF.Sub(jD)
+fmt.Printf("duree = %+v\n",duree)
+	// Récupère les frais
+	// tels que datedeb ou datefin sont dans [jD, jF]
+	var frais []StockFrais
+	query := `select * from stockfrais where id_stockage=$1
+	    and ( (datedeb>=$2 and datedeb<=$3) or (datefin>=$2 and datefin<=$3) )`
+	err = db.Select(&frais, query, s.Id, &jD, &jF)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query : "+query)
+	}
+/* 
+	var debFrais, finFrais time.Time
+	var dureeFraisTotale time.Duration  // durée totale du frais, peut dépasser [jD, jF]
+	var dureeFraisPeriode time.Duration // durée du frais dans [jD, jF]
+	//
+	for _, f := range frais {
+		dureeFraisTotale = f.DateFin.Sub(f.DateDebut)
+		if jD.After(f.DateDebut) {
+			debFrais = jD
+		} else {
+			debFrais = f.DateDebut
+		}
+		if jF.Before(f.DateFin) {
+			finFrais = jF
+		} else {
+			finFrais = f.DateFin
+		}
+		dureeFraisPeriode = finFrais.Sub(debFrais)
+		// contribution du frais sur la période [jD, jF]
+//		total += (dureeFraisPeriode.Hours() * f.Montant / dureeFraisTotale.Hours())
+	}
+*/	
+	return res, nil
+}
+
+/* 
+// Calcule le coût du stockage pour une période donnée.
+// Prend en compte tous les frais du hangar (loyer, elec, assurance)
+// Le coût est ramené à la période considérée.
+// Ex : pour un loyer de 6000 E / an, si j2 - j1 = 6 mois, va compter 3000
 // @param j1, j2 jours de début / fin de la période au format YYYY-MM-DD
 func (s *Stockage) ComputeCout(db *sqlx.DB, jour1, jour2 string) (total float64, err error) {
 	j1, err := time.Parse("2006-01-02", jour1)
@@ -237,6 +294,7 @@ func (s *Stockage) ComputeCout(db *sqlx.DB, jour1, jour2 string) (total float64,
 	}
 	return total, nil
 }
+*/
 
 // ************************** CRUD *******************************
 

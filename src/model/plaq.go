@@ -15,7 +15,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+//"fmt"
 )
 
 type Plaq struct {
@@ -404,7 +404,7 @@ func (ch *Plaq) ComputeVentes(db *sqlx.DB) error {
 
 // Calcule les différents coûts d'exploitation
 // Doit être effectué sur un chantier obtenu par GetPlaqFull() - pas de vérification d'erreur
-func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
+func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
 	if ch.Volume == 0 {
 		// valeurs par défaut, tous les coûts restent à 0
 		return nil
@@ -413,13 +413,6 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	ch.CoutTotal = &CoutPlaq{}
 	nMapSec := ch.Volume * (1 - config.PourcentagePerte/100)
 	var cout float64
-	// j1, j2, DATE_MIN, DATE_MAX utilisés pour coût stockage
-	// j1 = date du premier transport
-	// j2 = date du dernier chargement
-	DATE_MAX, _ := time.Parse("2006-01-02", "2999-12-31")
-	DATE_MIN, _ := time.Parse("2006-01-02", "1999-12-31")
-	j1 := DATE_MAX
-	j2 := DATE_MIN
 	//
 	// Opérations simples
 	//
@@ -462,9 +455,6 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 		} else if t.TypeCout == "T" {
 			cout += t.CoNheure * t.CoPrixH                      // conducteur
 			cout += float64(t.TbNbenne) * t.TbDuree * t.TbPrixH // outil
-		}
-		if t.DateTrans.Before(j1) {
-			j1 = t.DateTrans
 		}
 	}
 	ch.CoutParMap.Transport = cout / nMapSec
@@ -512,12 +502,13 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 					coutC += c.OuPrix               // outil
 					coutC += c.MoNHeure * c.MoPrixH // main d'oeuvre
 				}
-				if c.DateCharge.After(j2) {
-					j2 = c.DateCharge
-				}
 			}
 		}
 	}
+	err = ch.computeCoutStockage(db)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel computeCoutStockage()")
+    }
 	ch.CoutTotal.Chargement = coutC
 	ch.CoutTotal.Livraison = coutL
 	ch.CoutTotal.Total += ch.CoutTotal.Chargement
@@ -526,30 +517,57 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) error {
 	ch.CoutParMap.Livraison = coutL / nMapSec
 	ch.CoutParMap.Total += ch.CoutParMap.Chargement
 	ch.CoutParMap.Total += ch.CoutParMap.Livraison
-	//
-	// Stockage
-	//
-	/*
-			// TODO commenté car besoin de trouver le mode de calcul
-		    var tas *Tas
-		    cout = 0
-		    // s'il y a au moins un transport et un chargement
-			if j1 != DATE_MAX && j2 != DATE_MIN {
-			    // vérifie que tous les tas du chantier ont été déclarés vides
-			    vides := true
-			    for _, tas = range(ch.Tas){
-			        if tas.Actif {
-			            vides = false
-			        }
-			    }
-			    if vides == true {
-
-			    }
-			}
-	*/
+	ch.CoutParMap.Total += ch.CoutParMap.Stockage
 	//
 	return nil
 }
+
+// Calcule ch.CoutParMap.Stockage
+// Auxiliaire de ComputeCouts(), donc ch est obtenu par GetPlaqFull()
+func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
+    //
+    // Calcule tous les hangars (Stockage) contenant des tas liés à ce chantier
+    //
+    var stockages []*Stockage
+    for _, t := range(ch.Tas){
+        s, err := GetStockage(db, t.Id)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel GetStockage()")
+        }
+        stockages = append(stockages, s)
+    }
+//fmt.Printf("%+v\n",stockages)
+    
+	// j1, j2, DATE_MIN, DATE_MAX utilisés pour coût stockage
+	// j1 = date du premier transport
+	// j2 = date du dernier chargement
+	/* 
+	DATE_MAX, _ := time.Parse("2006-01-02", "2999-12-31")
+	DATE_MIN, _ := time.Parse("2006-01-02", "1999-12-31")
+	j1 := DATE_MAX
+	j2 := DATE_MIN
+	*/
+	/*
+    // TODO commenté car besoin de trouver le mode de calcul
+    var tas *Tas
+    cout = 0
+    // s'il y a au moins un transport et un chargement
+    if j1 != DATE_MAX && j2 != DATE_MIN {
+        // vérifie que tous les tas du chantier ont été déclarés vides
+        vides := true
+        for _, tas = range(ch.Tas){
+            if tas.Actif {
+                vides = false
+            }
+        }
+        if vides == true {
+
+        }
+    }
+	*/
+	return nil
+}
+
 
 // ************************** CRUD *******************************
 

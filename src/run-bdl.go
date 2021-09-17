@@ -10,12 +10,15 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
-	"path/filepath"
 	"time"
+	"net/http"
+    "mime"
+	"path/filepath"
+	"bdl.local/bdl/static"
+	"bdl.local/bdl/view"
+	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
-	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/gorilla/mux"
 )
@@ -132,12 +135,16 @@ func main() {
 	r.HandleFunc("/commune/liste", H(control.ListCommunes))
 	r.HandleFunc("/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
 	r.HandleFunc("/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
-
+	
 	r.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir(filepath.Join("..", "docs")))))
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	r.PathPrefix("/view/common/").Handler(http.StripPrefix("/view/common/", http.FileServer(http.Dir(filepath.Join("view", "common")))))
+	
+    // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+    r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(static.StaticFiles))))
+    r.PathPrefix("/view/").Handler(http.StripPrefix("/view/", http.FileServer(http.FS(view.ViewFiles))))
 
 	r.NotFoundHandler = http.HandlerFunc(notFound)
+	
+	r.Use(contentTypeMiddleware)
 
 	ctx := ctxt.NewContext()
 	srv := &http.Server{
@@ -273,4 +280,31 @@ func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *ht
 		ctxt.LogError(err)
 		return
 	}
+}
+
+/** 
+    Adds a "Content-Type" header to the response
+**/
+func contentTypeMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        ext := filepath.Ext(r.URL.String())
+        var contentType string
+        switch ext {
+        case ".htm", ".html":
+            contentType = "text/html"
+        case ".css":
+            contentType = "text/css"
+        case ".png":
+            contentType = "image/png"
+        case ".svg":
+            contentType = "image/svg+xml"
+        case ".js":
+            contentType = "application/javascript"
+        default:
+            contentType = mime.TypeByExtension(ext)
+        }
+        w.Header().Add("Content-Type", contentType + ";charset=utf-8")
+        // Call the next handler, which can be another middleware in the chain, or the final handler.
+        next.ServeHTTP(w, r)
+    })
 }

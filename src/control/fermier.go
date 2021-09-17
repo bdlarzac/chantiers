@@ -36,7 +36,7 @@ func ListFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 		Menu: "acteurs",
 		Footer: ctxt.Footer{
-			JSFiles: []string{"/static/js/toogleTR.js"},
+			JSFiles: []string{},
 		},
 		Details: detailsFermierList{
 			List:  list,
@@ -78,8 +78,7 @@ func ShowFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: fermier.String(),
-			CSSFiles: []string{
-				"/static/css/form.css"},
+			CSSFiles: []string{},
 		},
 		Menu: "acteurs",
 		Details: detailsFermierShow{

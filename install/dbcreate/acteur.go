@@ -75,7 +75,7 @@ func addActeurSCTL() {
 func addActeurBDL() {
     
     var adresse1, cp, ville, tel, email string
-    if PRIVACY {
+    if PRIVACY { // voir PRIVACY.go
 		adresse1 = ""
 		cp = ""
 		ville = ""
@@ -203,7 +203,7 @@ func AddActeursFromCSV() {
     var actif bool
     var adresse1, adresse2, cp, ville string
     for _, line := range(csv){
-        if PRIVACY {
+        if PRIVACY { // voir PRIVACY.go
             adresse1 = ""
             adresse2 = ""
             cp       = ""

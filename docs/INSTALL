@@ -13,19 +13,17 @@ psql
 
 CREATE USER bdl;
 ALTER ROLE bdl WITH CREATEDB;
-ALTER USER bdl WITH ENCRYPTED PASSWORD 'mon_mot_de_passe' ;
+ALTER USER bdl WITH ENCRYPTED PASSWORD 'mon_mot_de_passe';
 CREATE DATABASE bdlbois OWNER bdl;
 -- si besoin de créer un schéma différent de public :
 CREATE SCHEMA myschema;
-
 \q
-
 exit
 
 sudo /etc/init.d/postgresql restart
 
 # Pour se connecter à la base :
-psql -U bdl -W -h localhost --cluster 10/main -d bdlbois
+psql -U bdl -W -h localhost --cluster 12/main -d bdlbois
 
 ###### go ######
 # dev version :
