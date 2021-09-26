@@ -23,7 +23,8 @@ $config = yaml_parse(file_get_contents('../../config.yml'));
 
 //$version = '2018';
 //$version = '2020-02-27';
-$version = '2020-12-16';
+//$version = '2020-12-16';
+$version = '2021-07-27';
 
 $csvDir = $config['dev']['sctl-data'] . "/csv-$version";
 
@@ -54,7 +55,8 @@ test_1n($csvDir, $tables);
 **/
 function test_zero($csvDir, $tables){
     $table = 'Parcelle';
-    echo "Teste lieux-dits sans communes (table $table)\n";
+    echo "Lieux-dits sans communes (table $table)\n";
+    echo "-----------------------------------------------------\n";
     $res = [];
     $nameIdC = $tables[$table][0];
     $nameIdLD = $tables[$table][1];
@@ -103,6 +105,8 @@ function test_zero($csvDir, $tables){
     Utilise Parcelle
 **/
 function liste_multiples($csvDir, $tables){
+    echo "Lieux-dits associés à plusieurs communes\n";
+    echo "-----------------------------------------------------\n";
     $table = 'Parcelle';
     $res = [];
     $nameIdC = $tables[$table][0];
@@ -142,7 +146,7 @@ function liste_multiples($csvDir, $tables){
             continue;
         }
         $N++;
-        echo "\nLieu-dit $idLD " . $lieuxdits[$idLD] . "\n";
+        echo "Lieu-dit $idLD " . $lieuxdits[$idLD] . "\n";
         foreach($idsC as $idC){
             echo "    $idC " . $communes[$idC] . "\n";
         }
