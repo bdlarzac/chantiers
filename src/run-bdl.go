@@ -136,7 +136,7 @@ func main() {
 	r.HandleFunc("/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
 	r.HandleFunc("/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
 	
-	r.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir(filepath.Join("..", "docs")))))
+	r.PathPrefix("/doc/").Handler(http.StripPrefix("/doc/", http.FileServer(http.Dir(filepath.Join("..", "doc")))))
 	
     // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
     r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(static.StaticFiles))))
