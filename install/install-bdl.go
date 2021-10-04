@@ -161,7 +161,6 @@ func handleInstall() {
 		installVente()
 		installRecent()
 		for _, migration := range(possibleMigrations){
-fmt.Printf("possibleMigrations %+v\n", migration)
 		    handleMigration(migration)
 		}
 	} else if *flagInstall == "type" {
@@ -296,7 +295,7 @@ func handleMigration(migration string) {
 // = liste des fonctions du package dbmigrate commençant par Migrate_
 // Ça n'a pas l'air possible avec reflect => bidouille avec regex
 func computeMigrations() (res []string) {
-    out, err := exec.Command("grep", "-rn", "func Migrate_", "/home/thierry/dev/jobs/bdl/appli/install/dbmigrate").Output()
+    out, err := exec.Command("grep", "-rn", "func Migrate_", "dbmigrate").Output()
     if err != nil {
         panic(err)
     }
