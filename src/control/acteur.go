@@ -113,6 +113,7 @@ func NewActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		// Affiche form
 		//
 		acteur := &model.Acteur{}
+		acteur.Actif = true
 		ctx.TemplateName = "acteur-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
