@@ -81,17 +81,17 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) (err error) {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsTransportProprioutil()")
 			}
 		// Rangement
-		case "RA":
+		case "RG":
 			err = aff.computeItemsRangementGlobal(db)
 			if err != nil {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsRangementGlobal()")
 			}
-		case "RA-CO":
+		case "RG-CO":
 			err = aff.computeItemsRangementConducteur(db)
 			if err != nil {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsRangementConducteur()")
 			}
-		case "RA-OU":
+		case "RG-OU":
 			err = aff.computeItemsRangementProprioutil(db)
 			if err != nil {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsRangementProprioutil()")
@@ -402,7 +402,7 @@ func (aff *Affacture) computeItemsTransportProprioutil(db *sqlx.DB) (err error) 
 
 func (aff *Affacture) computeItemsRangementGlobal(db *sqlx.DB) (err error) {
 	list := []PlaqRange{}
-	query := "select * from plaqtrange where id_rangeur=$1 and daterange>=$2 and daterange<=$3"
+	query := "select * from plaqrange where id_rangeur=$1 and daterange>=$2 and daterange<=$3"
 	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
@@ -447,7 +447,7 @@ func (aff *Affacture) computeItemsRangementGlobal(db *sqlx.DB) (err error) {
 
 func (aff *Affacture) computeItemsRangementConducteur(db *sqlx.DB) (err error) {
 	list := []PlaqRange{}
-	query := "select * from plaqtrange where id_conducteur=$1 and daterange>=$2 and daterange<=$3"
+	query := "select * from plaqrange where id_conducteur=$1 and daterange>=$2 and daterange<=$3"
 	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
@@ -500,7 +500,7 @@ func (aff *Affacture) computeItemsRangementConducteur(db *sqlx.DB) (err error) {
 
 func (aff *Affacture) computeItemsRangementProprioutil(db *sqlx.DB) (err error) {
 	list := []PlaqRange{}
-	query := "select * from plaqtrange where id_proprioutil=$1 and daterange>=$2 and daterange<=$3"
+	query := "select * from plaqrange where id_proprioutil=$1 and daterange>=$2 and daterange<=$3"
 	err = db.Select(&list, query, aff.IdActeur, tiglib.DateIso(aff.DateDebut), tiglib.DateIso(aff.DateFin))
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
