@@ -61,7 +61,7 @@
                 {{if .Stockage.Archived}}
                     <div>{{.Nom}}</div>
                 {{else}}
-                    <div><a href="/stockage/liste">{{.Nom}}</a> : {{.Stock}} maps</div>
+                    <div><a href="/stockage/liste">{{.Nom}}</a> : <script>document.write(round({{.Stock}}, 2));</script> maps</div>
                 {{end}}
             {{end}}
         </td>

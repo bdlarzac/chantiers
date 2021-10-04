@@ -41,7 +41,7 @@
             {{$.Details.GlTVAOptions}}
         </select>
         
-        <label for="gldatepay">Date Paiement</label>
+        <label class="optional" for="gldatepay">Date Paiement</label>
         <input type="date" name="gldatepay" id="gldatepay" value="{{.GlDatePay | dateIso}}" class="width20">
         
         <!-- ****************** Coût détaillé ******************* -->
@@ -68,7 +68,7 @@
             {{$.Details.CoTVAOptions}}
         </select>
         
-        <label for="codatepay">Date Paiement</label>
+        <label class="optional" for="codatepay">Date Paiement</label>
         <input type="date" name="codatepay" id="codatepay" value="{{.CoDatePay | dateIso}}" class="width20">
         
         <!-- ***************** Outil ******************** -->

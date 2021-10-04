@@ -26,7 +26,7 @@
     <div class="margin-left2 margin-bottom2">
     
         <!-- ***************** Stock ******************** -->
-        <div class="big2 bold margin-top margin-bottom">Stock : {{.Stock}} maps</div>
+        <div class="big2 bold margin-top margin-bottom">Stock : <script>document.write(round({{.Stock}}, 2));</script> maps</div>
         
         <!-- **************** Tas ********************* -->
         <div class="big2 bold margin-top margin-bottom">Tas courants</div>
@@ -42,7 +42,7 @@
                     <div class="icon-empty">&empty;</div>
                 </a>
 
-                <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = {{.Stock}} maps
+                <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = <script>document.write(round({{.Stock}}, 2));</script> maps
                 <!-- **************** Mesures humidité ********************* -->
                 {{if .MesuresHumidite}}
                     <div class="margin-left2">
