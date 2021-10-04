@@ -112,7 +112,12 @@
                 <div class="bold">{{.DateTrans | dateFr}}</div>
                 
                 <div>Qté</div>
-                <div class="bold">{{.Qte}} maps <a title="Quantité brute sans déduire le coefficient de perte lié au séchage">(bois vert)</a></div>
+                <div class="bold">
+                    {{.Qte}} maps <a title="Quantité brute sans déduire le coefficient de perte lié au séchage"> de bois vert</a>
+                    <div class="normal">
+                        (soit <script>document.write(round(quantiteBoisSec({{.Qte}}, {{$.Details.PourcentagePerte}}), 2));</script> maps de bois sec)
+                    </div>
+                </div>
                 
             </div>
             {{if .Notes}}

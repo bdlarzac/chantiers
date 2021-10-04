@@ -100,13 +100,13 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			CSSFiles: []string{"/static/css/tabstrip.css"},
 			JSFiles: []string{
 				"/static/js/round.js",
-				"/view/common/prix.js"},
+				"/view/common/prix.js",
+			    "/view/common/plaq.js"},
 		},
 		Menu: "chantiers",
 		Footer: ctxt.Footer{
 			JSFiles: []string{
-				"/static/js/tabstrip.js",
-				"/view/common/plaq.js"},
+				"/static/js/tabstrip.js"},
 		},
 		Details: detailsPlaqShow{
 			Chantier:         chantier,

@@ -41,7 +41,8 @@
     </td>
     <td>
         {{.Tel}}
-        {{if .Email}}<br>{{.Email}}{{end}}
+        {{if and .Tel .Email}}<br>{{end}}
+        {{if .Email}}{{.Email}}{{end}}
     </td>
     {{if .Actif}}
         <td class="ok">oui</td>

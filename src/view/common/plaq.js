@@ -16,3 +16,8 @@ function deleteChantierPlaquette(idChantier, nomChantier){
         window.location = "/chantier/plaquette/delete/" + idChantier;
     }
 }
+
+
+function quantiteBoisSec(qteVert, pourcentPerte){
+    return qteVert * (1- pourcentPerte / 100);
+}
