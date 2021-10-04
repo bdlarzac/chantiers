@@ -62,6 +62,12 @@ a{text-decoration:none;}
     font-weight:bold;
 }
 
+.ok{
+    background:lightgreen;
+}
+.nok{
+    background:lightsalmon;
+}
 
 /* ================ Particular styles ================ */
 
