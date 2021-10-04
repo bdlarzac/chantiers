@@ -23,6 +23,9 @@ database:
   schema: my_schema
   ssl-mode: disable
   backup:
+    # Attention ici de ne pas mettre un répertoire contenant des fichiers sensibles
+    # (risque de sécurité si le user saisit directement le nom d'un fichier dans l'url)
+    # répertoire absolu ou relatif au dossier contenant run-bdl.go
     directory: /tmp
     cmd-pgdump: pg_dump
 

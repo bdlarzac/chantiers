@@ -33,6 +33,7 @@ func main() {
 		}
 	}()
 
+	ctx := ctxt.NewContext()
 	r := mux.NewRouter()
 	
 	r.HandleFunc("/ajax/get/lieudits-from-code-ug/{code}", Hajax(ajax.GetLieuditsFromCodeUG))
@@ -137,16 +138,16 @@ func main() {
 	r.HandleFunc("/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
 	
 	r.PathPrefix("/doc/").Handler(http.StripPrefix("/doc/", http.FileServer(http.Dir(filepath.Join("..", "doc")))))
+	r.HandleFunc("/dbdump/", notFound) // pour empêcher de lister le rep contenant les db dumps
+	r.PathPrefix("/dbdump/").Handler(http.StripPrefix("/dbdump/", http.FileServer(http.Dir(ctx.Config.Database.Backup.Directory))))
 	
-    // r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
     r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(static.StaticFiles))))
     r.PathPrefix("/view/").Handler(http.StripPrefix("/view/", http.FileServer(http.FS(view.ViewFiles))))
-
+	
 	r.NotFoundHandler = http.HandlerFunc(notFound)
 	
 	r.Use(contentTypeMiddleware)
 
-	ctx := ctxt.NewContext()
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         ctx.Config.Run.URL + ":" + ctx.Config.Run.Port,

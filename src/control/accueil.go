@@ -45,14 +45,14 @@ func ShowDoc(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 }
 
 func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	// PGPASSWORD='bdl2019-09-29' pg_dump --file bdl.pgsql.dump -h localhost -n public -p 5432 -U bdl  bdlbois
 	var err error
 	dirname := ctx.Config.Database.Backup.Directory
-	filename := "bdl-" + time.Now().Format("2006-02-15-150405") + ".pgdump"
+	filename := "bdl-" + time.Now().Format("2006-01-02-150405") + ".pgdump"
 	filepath := dirname + string(os.PathSeparator) + filename
 	//
 	// 1 - pg_dump
 	//
+	// PGPASSWORD='my_password' pg_dump --file my_dump_file -h _my_host -n my_schema -p my_port -U my_user  my_database
 	cmd := exec.Command(
 		ctx.Config.Database.Backup.CmdPgdump,
 		"--file", filepath,
@@ -69,8 +69,9 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	//
 	// 2 - zip
 	//
-	zipfilename := filepath + ".zip"
-	zipfile, err := os.Create(zipfilename)
+	zipfilepath := filepath + ".zip"
+	zipfilename := filename + ".zip"
+	zipfile, err := os.Create(zipfilepath)
 	if err != nil {
 		return err
 	}
