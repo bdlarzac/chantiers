@@ -15,7 +15,7 @@ import (
 //	"fmt"
 )
 
-func Migrate_2021_03_01(ctx *ctxt.Context) {
+func Migrate_2021_03_01_exemple(ctx *ctxt.Context) {
 /* 
 	db := ctx.DB
 	query := `alter table plaqtrans add column pourcentperte numeric not null`

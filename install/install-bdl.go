@@ -93,7 +93,7 @@ func init() {
 	
 	possibleMigrations = computeMigrations()
     errorMsg += "Valeurs possibles pour -m :\n  "
-    strMigrate := strings.Join(possibleMigrations, ", ")
+    strMigrate := strings.Join(possibleMigrations, " ")
 	errorMsg += strMigrate + "\n"
 	
 	strSctlDataSource := "Répertoire contenant les dumps SCTL"
@@ -295,11 +295,14 @@ func handleMigration(ctx *ctxt.Context, migration string) {
     // check que la migration existe
     if !tiglib.InArrayString(migration, possibleMigrations){
         fmt.Println("MIGRATION INEXISTANTE : " + migration)
-        fmt.Println("Migrations possibles : " + strings.Join(possibleMigrations, ", "))
+        fmt.Println("Migrations possibles : " + strings.Join(possibleMigrations, " "))
+        return
     }
     switch(migration){
-    case "Migrate_2021_03_01":
-        dbmigrate.Migrate_2021_03_01(ctx)
+    case "Migrate_2021_03_01_exemple":
+        dbmigrate.Migrate_2021_03_01_exemple(ctx)
+    case "Migrate_2021_11_10_note_plaq":
+        dbmigrate.Migrate_2021_11_10_note_plaq(ctx)
     }
 }
 
