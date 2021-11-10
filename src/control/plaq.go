@@ -79,7 +79,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	tab := vars["tab"]
 	if tab == "" {
-		tab = "general"
+		tab = "chantiers"
 	}
 	idChantier, err := strconv.Atoi(vars["id"])
 	if err != nil {
