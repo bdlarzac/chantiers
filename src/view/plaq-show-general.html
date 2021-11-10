@@ -92,6 +92,15 @@
     </tr>
     {{end}}
 
+    {{if .Notes}}
+    <tr>
+        <th class="vertical-align-top">Notes</th>
+        <td>
+            <textarea rows="6" cols="50" disabled>{{.Notes}}</textarea>
+        </td>
+    </tr>
+    {{end}}
+
 </table>
 
 <table class="bordered" style="margin-top:1em;">

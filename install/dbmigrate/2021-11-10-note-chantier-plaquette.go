@@ -15,7 +15,7 @@ import (
 
 func Migrate_2021_11_10_note_plaq(ctx *ctxt.Context) {
 	db := ctx.DB
-	query := `alter table plaq add column notes text`
+	query := `alter table plaq add column notes text default ''`
 	_, err := db.Exec(query)
 	if err != nil {
 		panic(err)

@@ -28,6 +28,7 @@ type Plaq struct {
 	Essence         string
 	FraisRepas      float64
 	FraisReparation float64
+	Notes           string
 	// pas stocké en base
 	UGs        []*UG
 	Lieudits   []*Lieudit
@@ -585,8 +586,9 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
         exploitation,
         essence,
         fraisrepas,
-        fraisreparation
-        ) values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
+        fraisreparation,
+        notes
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning id`
 	id := int(0)
 	err = db.QueryRow(
 		query,
@@ -597,7 +599,8 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 		ch.Exploitation,
 		ch.Essence,
 		ch.FraisRepas,
-		ch.FraisReparation).Scan(&id)
+		ch.FraisReparation,
+		ch.Notes).Scan(&id)
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -679,8 +682,9 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
         exploitation,
         essence,
         fraisrepas, 
-        fraisreparation
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8) where id=$9`
+        fraisreparation,
+        notes
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9) where id=$10`
 	_, err := db.Exec(
 		query,
 		ch.DateDebut,
@@ -691,6 +695,7 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 		ch.Essence,
 		ch.FraisRepas,
 		ch.FraisReparation,
+		ch.Notes,
 		ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

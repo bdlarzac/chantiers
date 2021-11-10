@@ -376,5 +376,7 @@ func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 		ch.FraisReparation = tiglib.Round(ch.FraisReparation, 2)
 	}
 	//
+	ch.Notes = r.PostFormValue("notes")
+	//
 	return ch, nil
 }
