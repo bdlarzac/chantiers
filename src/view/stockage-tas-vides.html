@@ -19,7 +19,6 @@
             stock = 0;
             sommeChargement = 0;
         </script>
-        <div class="bold">Evolution du stock</div>
         <div class="margin-left">
             <table class="bordered">
                 <tr><th>Date</th><th>Opération</th><th>Delta (maps)</th><th>Stock (maps)</th></tr>
@@ -51,19 +50,32 @@
                     <td class="right">0</td>
                 </tr>
             </table>
-            <div>
-                Volume bois vert : {{$chantier.Volume}} maps (somme des quantités broyées dans le chantier)
+            <div class="padding-top05">
+                <b>Volume bois vert</b> : {{$chantier.Volume}} maps (somme des quantités broyées dans le chantier)
             </div>
             <div>
-                Somme chargements : <script>document.write(round(-sommeChargement, 0));</script> maps
+                <b>Somme chargements</b> : <script>document.write(round(-sommeChargement, 0));</script> maps
             </div>
-            <script>perteReelle = 100 - (-sommeChargement * 100 / {{$chantier.Volume}});</script>
-            <div class="bold">
-                Perte réelle (bois vert - bois sec) : <script>document.write(round(perteReelle, 2));</script> %
+            <script>
+                volumeChantier = {{$chantier.Volume}};
+                if(volumeChantier != 0){
+                    perteReelle = 100 - (-sommeChargement * 100 / {{$chantier.Volume}});
+                }
+            </script>
+            <div>
+                <b>Perte réelle (bois vert - bois sec)</b> : 
+                <script>
+                    if(volumeChantier != 0){
+                        document.write("<b>" + round(perteReelle, 2) + " %</b>");
+                    }
+                else{
+                    document.write("Impossible à calculer (car volume bois vert = 0)");
+                }
+                </script>
             </div>
         </div>
     {{end}}
     </div>
-
+    <hr class="margin-top">
 
 {{end}}

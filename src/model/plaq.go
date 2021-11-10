@@ -210,7 +210,7 @@ func GetAllPlaqsVides(db *sqlx.DB) ([]*Plaq, error) {
 	res := []*Plaq{}
 	var err error
 	var idsChantier []int
-	query := "select id_chantier from tas where actif=false"
+	query := "select id_chantier from tas where actif=false order by datevidage desc"
 	err = db.Select(&idsChantier, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
