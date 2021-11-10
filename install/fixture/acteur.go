@@ -14,8 +14,7 @@ import (
 	"math/rand"
 )
 
-func AnonymizeActeurs() {
-	ctx := ctxt.NewContext()
+func AnonymizeActeurs(ctx *ctxt.Context) {
 	table := "acteur"
 	fmt.Println("MAJ " + table + " avec des données de test")
 	// noms de famille les plus répandus en France

@@ -20,7 +20,7 @@
     Ces exports sont des fichiers csv obtenus avec mdb-export
     
     Ex de commande mdb-export à exécuter depuis /path/to/db-sctl :
-    mdb-export -d ';' -Q Sctl-Gfa-2020-02-27.mdb LieuDit > csv-2020-03-06/LieuDit.csv
+    mdb-export -d ';' -Q Sctl-Gfa-2020-02-27.mdb LieuDit > csv-2020-02-27/LieuDit.csv
     
     Pour installer mdb-export :
     sudo apt install mdbtools
@@ -61,10 +61,10 @@ func init() {
     errorMsg += "  -i parcelle\n"
     errorMsg += "  -i all\n"
     errorMsg += "Exemples :\n"
-    errorMsg += "  go run install-bdl.go -i all -s 2020-12-16\n"
+    errorMsg += "  go run install-bdl.go -i all -s 2021-07-27\n"
     errorMsg += "  go run install-bdl.go -i chantier\n"
     errorMsg += "  go run install-bdl.go -f stockage\n"
-    errorMsg += "  go run install-bdl.go -i commune -s 2020-12-16\n"
+    errorMsg += "  go run install-bdl.go -i commune -s 2021-07-27\n"
     
 	possibleInstall := []string{
 		"all",
@@ -119,6 +119,8 @@ func main() {
 		return
 	}
 	
+    ctx := ctxt.NewContext()
+        
 	// options ayant besoin de la version de la base SCTL utilisée
 	needFlagS := *flagInstall == "fermier" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all"
 	if needFlagS {
@@ -128,7 +130,6 @@ func main() {
             return
 	    }
 	    // check que le répertoire existe
-        ctx := ctxt.NewContext()
         dirCsv := dbcreate.GetSCTLDataDir(ctx, *flagSctlDataSource)
         _, err := os.Stat(dirCsv)
         if os.IsNotExist(err) {
@@ -138,137 +139,150 @@ func main() {
 	}
 	
 	if *flagInstall != "" {
-		handleInstall()
+		handleInstall(ctx)
 	} else if *flagFixture != "" {
-		handleFixture()
+		handleFixture(ctx)
 	} else if *flagMigrate != "" {
-		handleMigration(*flagMigrate)
+		handleMigration(ctx, *flagMigrate)
 	}
 
 }
 
 // *********************************************************
-func handleInstall() {
+func handleInstall(ctx *ctxt.Context) {
 	if *flagInstall == "all" {
-		installTypes()
-		installCommune()
-		installActeur()
-		installFermier()
-		installParcelle()
-		installUG()
-		installStockage()
-		installChantier()
-		installVente()
-		installRecent()
+	    
+        db := ctx.DB
+        var err error
+        _, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
+        if err != nil {
+            panic(err)
+        }
+        _, err = db.Exec(fmt.Sprintf("create schema %s", ctx.Config.Database.Schema))
+        if err != nil {
+            panic(err)
+        }
+        _, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
+	    
+		installTypes(ctx)
+		installCommune(ctx)
+		installActeur(ctx)
+		installFermier(ctx)
+		installParcelle(ctx)
+		installUG(ctx)
+		installStockage(ctx)
+		installChantier(ctx)
+		installVente(ctx)
+		installRecent(ctx)
 		for _, migration := range(possibleMigrations){
-		    handleMigration(migration)
+		    handleMigration(ctx, migration)
 		}
 	} else if *flagInstall == "type" {
-		installTypes()
+		installTypes(ctx)
 	} else if *flagInstall == "commune" {
-		installCommune()
+		installCommune(ctx)
 	} else if *flagInstall == "acteur" {
-		installActeur()
+		installActeur(ctx)
 	} else if *flagInstall == "fermier" {
-		installFermier()
+		installFermier(ctx)
 	} else if *flagInstall == "parcelle" {
-		installParcelle()
+		installParcelle(ctx)
 	} else if *flagInstall == "ug" {
-		installUG()
+		installUG(ctx)
 	} else if *flagInstall == "stockage" {
-		installStockage()
+		installStockage(ctx)
 	} else if *flagInstall == "chantier" {
-		installChantier()
+		installChantier(ctx)
 	} else if *flagInstall == "vente" {
-		installVente()
+		installVente(ctx)
 	} else if *flagInstall == "recent" {
-		installRecent()
+		installRecent(ctx)
 	} else {
 		fmt.Println(errorMsg)
 	}
 }
-func installTypes() {
-	dbcreate.CreateTable("typessence")
-	dbcreate.CreateTable("typexploitation")
-	dbcreate.CreateTable("typeop")
-	dbcreate.CreateTable("typeunite")
-	dbcreate.CreateTable("typevalorisation")
-	dbcreate.CreateTable("typevente")
-	dbcreate.CreateTable("typegranulo")
-	dbcreate.CreateTable("typestockfrais")
+func installTypes(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "typessence")
+	dbcreate.CreateTable(ctx, "typexploitation")
+	dbcreate.CreateTable(ctx, "typeop")
+	dbcreate.CreateTable(ctx, "typeunite")
+	dbcreate.CreateTable(ctx, "typevalorisation")
+	dbcreate.CreateTable(ctx, "typevente")
+	dbcreate.CreateTable(ctx, "typegranulo")
+	dbcreate.CreateTable(ctx, "typestockfrais")
 }
-func installCommune() {
-	dbcreate.CreateTable("commune")
-	dbcreate.CreateTable("lieudit")
-	dbcreate.CreateTable("commune_lieudit")
-	dbcreate.FillCommune()
-	dbcreate.FillLieudit(*flagSctlDataSource)
-	dbcreate.FillLiensCommuneLieudit(*flagSctlDataSource)
-	dbcreate.CreateTable("lieudit_mot")
-	dbcreate.FillLieuditMot()
+func installCommune(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "commune")
+	dbcreate.CreateTable(ctx, "lieudit")
+	dbcreate.CreateTable(ctx, "commune_lieudit")
+	dbcreate.FillCommune(ctx)
+	dbcreate.FillLieudit(ctx, *flagSctlDataSource)
+	dbcreate.FillLiensCommuneLieudit(ctx, *flagSctlDataSource)
+	dbcreate.CreateTable(ctx, "lieudit_mot")
+	dbcreate.FillLieuditMot(ctx)
 }
-func installActeur() {
-	dbcreate.CreateTable("acteur")
-	dbcreate.AddActeursInitiaux()
-	dbcreate.AddActeursFromCSV()
+func installActeur(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "acteur")
+	dbcreate.AddActeursInitiaux(ctx)
+	dbcreate.AddActeursFromCSV(ctx)
 }
-func installFermier(){
-	dbcreate.CreateTable("fermier")
-	dbcreate.FillFermier(*flagSctlDataSource)
+func installFermier(ctx *ctxt.Context){
+	dbcreate.CreateTable(ctx, "fermier")
+	dbcreate.FillFermier(ctx, *flagSctlDataSource)
 }
-func installParcelle() {
-	dbcreate.CreateTable("parcelle")
-	dbcreate.CreateTable("parcelle_lieudit")
-	dbcreate.CreateTable("parcelle_fermier")
-	dbcreate.FillParcelle(*flagSctlDataSource)
-	dbcreate.FillLiensParcelleFermier(*flagSctlDataSource)
-	dbcreate.FillLiensParcelleLieudit(*flagSctlDataSource)
+func installParcelle(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "parcelle")
+	dbcreate.CreateTable(ctx, "parcelle_lieudit")
+	dbcreate.CreateTable(ctx, "parcelle_fermier")
+	dbcreate.FillParcelle(ctx, *flagSctlDataSource)
+	dbcreate.FillLiensParcelleFermier(ctx, *flagSctlDataSource)
+	dbcreate.FillLiensParcelleLieudit(ctx, *flagSctlDataSource)
 }
-func installUG() {
-	dbcreate.CreateTable("ug")
-	dbcreate.CreateTable("parcelle_ug")
-	dbcreate.FillUG()
-	dbcreate.FillLiensParcelleUG()
+func installUG(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "ug")
+	dbcreate.CreateTable(ctx, "parcelle_ug")
+	dbcreate.FillUG(ctx)
+	dbcreate.FillLiensParcelleUG(ctx)
 }
-func installStockage() {
-	dbcreate.CreateTable("stockage")
-	dbcreate.CreateTable("stockfrais")
-	dbcreate.CreateTable("plaq")
-	dbcreate.CreateTable("tas")
-	dbcreate.CreateTable("humid")
-	dbcreate.CreateTable("humid_acteur")
-	dbcreate.FillHangarsInitiaux()
+func installStockage(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "stockage")
+	dbcreate.CreateTable(ctx, "stockfrais")
+	dbcreate.CreateTable(ctx, "plaq")
+	dbcreate.CreateTable(ctx, "tas")
+	dbcreate.CreateTable(ctx, "humid")
+	dbcreate.CreateTable(ctx, "humid_acteur")
+	dbcreate.FillHangarsInitiaux(ctx)
 }
-func installChantier() {
+func installChantier(ctx *ctxt.Context) {
     // liens pour plaq, chautre
-	dbcreate.CreateTable("chantier_ug")
-	dbcreate.CreateTable("chantier_fermier")
-	dbcreate.CreateTable("chantier_lieudit")
+	dbcreate.CreateTable(ctx, "chantier_ug")
+	dbcreate.CreateTable(ctx, "chantier_fermier")
+	dbcreate.CreateTable(ctx, "chantier_lieudit")
     // plaquettes
-	dbcreate.CreateTable("plaqop")
-	dbcreate.CreateTable("plaqtrans")
-	dbcreate.CreateTable("plaqrange")
+	dbcreate.CreateTable(ctx, "plaqop")
+	dbcreate.CreateTable(ctx, "plaqtrans")
+	dbcreate.CreateTable(ctx, "plaqrange")
 	// autres valorisations
-	dbcreate.CreateTable("chautre")
+	dbcreate.CreateTable(ctx, "chautre")
 	// chauffage fermier
-	dbcreate.CreateTable("chaufer")
-	dbcreate.CreateTable("chaufer_parcelle")
+	dbcreate.CreateTable(ctx, "chaufer")
+	dbcreate.CreateTable(ctx, "chaufer_parcelle")
 }
-func installVente() {
-	dbcreate.CreateTable("venteplaq")
-	dbcreate.CreateTable("ventelivre")
-	dbcreate.CreateTable("ventecharge")
+func installVente(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "venteplaq")
+	dbcreate.CreateTable(ctx, "ventelivre")
+	dbcreate.CreateTable(ctx, "ventecharge")
 }
-func installRecent() {
-	dbcreate.CreateTable("recent")
+func installRecent(ctx *ctxt.Context) {
+	dbcreate.CreateTable(ctx, "recent")
 }
 
 // *********************************************************
-func handleFixture() {
+func handleFixture(ctx *ctxt.Context) {
 	if *flagFixture == "stockage" {
-		fixture.FillStockage()
+		fixture.FillStockage(ctx)
 	} else if *flagFixture == "acteur" {
-		fixture.AnonymizeActeurs()
+		fixture.AnonymizeActeurs(ctx)
 	} else {
 		fmt.Println(errorMsg)
 	}
@@ -277,7 +291,7 @@ func handleFixture() {
 // *********************************************************
 //  @param migration Nom de la migration = nom de la fonction de dbmigrate à exécuter 
 //                   pour effectuer la migration
-func handleMigration(migration string) {
+func handleMigration(ctx *ctxt.Context, migration string) {
     // check que la migration existe
     if !tiglib.InArrayString(migration, possibleMigrations){
         fmt.Println("MIGRATION INEXISTANTE : " + migration)
@@ -285,7 +299,7 @@ func handleMigration(migration string) {
     }
     switch(migration){
     case "Migrate_2021_03_01":
-        dbmigrate.Migrate_2021_03_01()
+        dbmigrate.Migrate_2021_03_01(ctx)
     }
 }
 

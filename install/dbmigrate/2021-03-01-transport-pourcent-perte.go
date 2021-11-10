@@ -10,15 +10,13 @@
 ********************************************************************************/
 package dbmigrate
 
-/*
 import (
 	"bdl.local/bdl/ctxt"
-	"fmt"
+//	"fmt"
 )
-*/
-func Migrate_2021_03_01() {
+
+func Migrate_2021_03_01(ctx *ctxt.Context) {
 /* 
-	ctx := ctxt.NewContext()
 	db := ctx.DB
 	query := `alter table plaqtrans add column pourcentperte numeric not null`
 	_, err := db.Exec(query)

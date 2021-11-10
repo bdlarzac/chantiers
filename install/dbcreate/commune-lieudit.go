@@ -21,13 +21,12 @@ import (
 // Prend les données dans install/data/commune.csv
 // A la différence des autres données venant de la SCTL,
 // commune.csv est versionné (car modifié, ajout de colonne nom_court)
-func FillCommune() {
+func FillCommune(ctx *ctxt.Context) {
 	fmt.Println("Remplit table commune à partir de commune.csv")
 	dirCsv := GetDataDir()
 	filename := path.Join(dirCsv, "commune.csv")
 	records, err := tiglib.CsvMap(filename, ';')
 	// insert db
-	ctx := ctxt.NewContext()
 	db := ctx.DB
 	if err != nil {
 		panic(err)
@@ -43,10 +42,8 @@ func FillCommune() {
 
 // *********************************************************
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillLieudit(versionSCTL string) {
+func FillLieudit(ctx *ctxt.Context, versionSCTL string) {
 	fmt.Println("Remplit table lieudit à partir de LieuDit.csv")
-	
-	ctx := ctxt.NewContext()
 	
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "LieuDit.csv")
@@ -67,12 +64,10 @@ func FillLieudit(versionSCTL string) {
 
 // *********************************************************
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillLiensCommuneLieudit(versionSCTL string) {
+func FillLiensCommuneLieudit(ctx *ctxt.Context, versionSCTL string) {
 	table := "commune_lieudit"
 	fmt.Println("Remplit table " + table + " à partir de SubdivCadastre.csv")
 
-	ctx := ctxt.NewContext()
-	
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "SubdivCadastre.csv")
 	//
@@ -112,50 +107,40 @@ func FillLiensCommuneLieudit(versionSCTL string) {
 }
 
 // *********************************************************
-func FillLieuditMot() {
+func FillLieuditMot(ctx *ctxt.Context) {
 	type ld struct {
-		id  int
-		nom string
+		Id  int
+		Nom string
 	}
 	corres := make(map[string][]ld)
-	var id int
-	var name string
 	ignore := []string{"LE", "LA", "LES", "DE", "DU", "D'", "DES", "DEL", "ET", "L'"}
-	ctx := ctxt.NewContext()
 	db := ctx.DB
+	var err error
 
-	rows, err := db.Query("select id, nom from lieudit")
+	rows := []*ld{}
+	err = db.Select(&rows, "select id, nom from lieudit")
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
-
-	stmt, err := db.Prepare("INSERT INTO lieudit_mot(mot,id,nom) VALUES($1,$2,$3)")
+	
+	stmt, err := db.Prepare("insert into lieudit_mot(mot,id,nom) values($1,$2,$3)")
 	if err != nil {
 		panic(err)
 	}
 
-	for rows.Next() {
-		err := rows.Scan(&id, &name)
-		if err != nil {
-			panic(err)
-		}
-		parts := strings.Split(name, " ")
+	for _, row := range rows {
+		parts := strings.Split(row.Nom, " ")
 		for _, part := range parts {
 			if tiglib.InArrayString(part, ignore) {
 				continue
 			}
-			corres[part] = append(corres[part], ld{id, name})
+			corres[part] = append(corres[part], ld{row.Id, row.Nom})
 		}
-	}
-	err = rows.Err()
-	if err != nil {
-		panic(err)
 	}
 
 	for mot, lds := range corres {
 		for _, ld := range lds {
-			_, err = stmt.Exec(mot, ld.id, ld.nom)
+			_, err = stmt.Exec(mot, ld.Id, ld.Nom)
 			if err != nil {
 				panic(err)
 			}

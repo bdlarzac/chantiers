@@ -20,21 +20,20 @@ import (
     "golang.org/x/text/transform"
 )
 
-func AddActeursInitiaux() {
+func AddActeursInitiaux(ctx *ctxt.Context) {
     // Attention ordre d'appel important
     // car détermine les ids des 4 premiers acteurs
     // ces ids sont utilisés dans l'appli BDL
-    addActeurZero()
-    addActeurSCTL()
-    addActeurBDL()
-    addActeurGFA()
+    addActeurZero(ctx)
+    addActeurSCTL(ctx)
+    addActeurBDL(ctx)
+    addActeurGFA(ctx)
 }
 
 // *********************************************************
 // Acteur servant à autoriser des clés étrangères optionnelles dans les tables plaqtrans et plaqrange
 // id = 0
-func addActeurZero() {
-	ctx := ctxt.NewContext()
+func addActeurZero(ctx *ctxt.Context) {
 	db := ctx.DB
 	_,err := db.Exec("insert into acteur values(0,'','','','','','','','','','','','',false,false,false,'')")
 	if err != nil {
@@ -48,8 +47,7 @@ func addActeurZero() {
 // id = 1
 // Nécessaire au fonctionnement du logiciel BDL (car c'est un propriétaire)
 // Un exploitant "SCTL" est présent dans la base SCTL, mais pas importé car non agricole
-func addActeurSCTL() {
-	ctx := ctxt.NewContext()
+func addActeurSCTL(ctx *ctxt.Context) {
 	db := ctx.DB
 	query := `insert into acteur(
         nom,
@@ -72,7 +70,7 @@ func addActeurSCTL() {
 // Ajoute un acteur BDL
 // id = 2
 // Nécessaire au fonctionnement du logiciel BDL car c'est un fournisseur
-func addActeurBDL() {
+func addActeurBDL(ctx *ctxt.Context) {
     
     var adresse1, cp, ville, tel, email string
     if PRIVACY { // voir PRIVACY.go
@@ -89,7 +87,6 @@ func addActeurBDL() {
 		email = "lesboisdularzac@larzac.org"
     }
 	
-    ctx := ctxt.NewContext()
 	db := ctx.DB
 	query := `insert into acteur(
         nom,
@@ -125,8 +122,7 @@ func addActeurBDL() {
 // id = 3
 // Nécessaire au fonctionnement du logiciel BDL car c'est un propriétaire
 // Un exploitant "GFA" est présent dans la base SCTL, mais pas importé car non agricole
-func addActeurGFA() {
-	ctx := ctxt.NewContext()
+func addActeurGFA(ctx *ctxt.Context) {
 	db := ctx.DB
 	query := `insert into acteur(
         nom,
@@ -148,7 +144,7 @@ func addActeurGFA() {
 // *********************************************************
 // Ajoute les acteurs saisis dans un fichier csv de Bastien
 // pour importer les acteurs de BDL au moment du démarrage de la base
-func AddActeursFromCSV() {
+func AddActeursFromCSV(ctx *ctxt.Context) {
 	table := "acteur"
 	csvfile := "acteurs-bdl-bastien.csv"
 	dirCsv := GetPrivateDir()
@@ -186,7 +182,6 @@ func AddActeursFromCSV() {
         csv = append(csv, current)
     }
     
-	ctx := ctxt.NewContext()
 	db := ctx.DB
 	id := int(0)
 	n := int(0)

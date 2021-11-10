@@ -19,11 +19,9 @@ import (
 // *********************************************************
 // Remplit les acteurs à partir d'un export de la base SCTL
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillFermier(versionSCTL string) {
+func FillFermier(ctx *ctxt.Context, versionSCTL string) {
 	table := "fermier"
 	fmt.Println("Remplit " + table + " à partir de Exploita.csv")
-	
-	ctx := ctxt.NewContext()
 	
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Exploita.csv")
@@ -91,11 +89,9 @@ func FillFermier(versionSCTL string) {
 // *********************************************************
 // Remplit les liens parcelle - exploitant à partir d'un export de la base SCTL
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillLiensParcelleFermier(versionSCTL string) {
+func FillLiensParcelleFermier(ctx *ctxt.Context, versionSCTL string) {
 	table := "parcelle_fermier"
 	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
-	
-	ctx := ctxt.NewContext()
 	
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Subdivision.csv")
@@ -119,24 +115,12 @@ func FillLiensParcelleFermier(versionSCTL string) {
 
 	// insert db
 	db := ctx.DB
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
 	n := 0
 	for _, unique := range uniques {
 		idP := unique[0]
 		idE := unique[1]
 		sql := fmt.Sprintf("insert into %s(id_parcelle,id_fermier) values(%s, %s)", table, idP, idE)
-		if _, err = tx.Exec(sql); err != nil {
+		if _, err = db.Exec(sql); err != nil {
 			n++
 			continue
 		}

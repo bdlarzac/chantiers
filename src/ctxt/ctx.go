@@ -11,6 +11,7 @@ import (
 	"bdl.local/bdl/model"
 	"github.com/jmoiron/sqlx"
 	"html/template"
+	"fmt"
 )
 
 type Context struct {
@@ -26,6 +27,8 @@ func NewContext() *Context {
 	ctx := &Context{}
 	ctx.Template = tmpl // déclaré dans template.go
 	ctx.DB = db         // déclaré dans db.go
+	// Pas compris pourquoi devoir choisir le schema à chaque fois
+    ctx.DB.Exec(fmt.Sprintf(`set search_path='%s'`, config.Database.Schema))
 	ctx.Config = config // déclaré dans config.go
 	return ctx
 }

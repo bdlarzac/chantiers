@@ -27,10 +27,14 @@ func init() {
 		config.Database.SSLMode,
 	)
 	var err error
+	
 	db, err = sqlx.Open("postgres", connStr)
 	if err != nil {
 		LogError(err)
 	}
+	
+	db.Exec(fmt.Sprintf(`set search_path='%s'`, config.Database.Schema))
+
 	err = db.Ping()
 	if err != nil {
 		LogError(err)

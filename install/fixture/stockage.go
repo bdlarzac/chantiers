@@ -16,8 +16,7 @@ import (
 )
 
 // *********************************************************
-func FillStockage() {
-	ctx := ctxt.NewContext()
+func FillStockage(ctx *ctxt.Context) {
 	db := ctx.DB
 	fmt.Println("Crée le hangar de test")
 	//

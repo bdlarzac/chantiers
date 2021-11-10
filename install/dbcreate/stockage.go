@@ -17,8 +17,7 @@ import (
 )
 
 // *********************************************************
-func FillHangarsInitiaux() {
-	ctx := ctxt.NewContext()
+func FillHangarsInitiaux(ctx *ctxt.Context) {
 	db := ctx.DB
 	//
 	fmt.Println("Crée le hangar des Liquisses")

@@ -21,12 +21,10 @@ import (
 
 // *********************************************************
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillParcelle(versionSCTL string) {
+func FillParcelle(ctx *ctxt.Context, versionSCTL string) {
 	table := "parcelle"
 	csvname := "Parcelle.csv"
 	fmt.Println("Remplit table parcelle à partir de " + csvname)
-	
-	ctx := ctxt.NewContext()
 	
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, csvname)
@@ -34,17 +32,6 @@ func FillParcelle(versionSCTL string) {
 	records, err := tiglib.CsvMap(filename, ';')
 
 	db := ctx.DB
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
 	
 	// 2 propriétaires possibles : SCTL ou GFA
 	// ATTENTION : les ids de SCTL et GFA sont récupérés à partir du nom
@@ -80,7 +67,7 @@ func FillParcelle(versionSCTL string) {
 			v["PARCELLE"],
 			idProprio,
 			surface)
-		if _, err = tx.Exec(sql); err != nil {
+		if _, err = db.Exec(sql); err != nil {
 			panic(err)
 		}
 	}
@@ -88,11 +75,9 @@ func FillParcelle(versionSCTL string) {
 
 // *********************************************************
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
-func FillLiensParcelleLieudit(versionSCTL string) {
+func FillLiensParcelleLieudit(ctx *ctxt.Context, versionSCTL string) {
 	table := "parcelle_lieudit"
 	fmt.Println("Remplit table " + table + " à partir de Parcelle.csv")
-	
-	ctx := ctxt.NewContext()
 	
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Parcelle.csv")
@@ -138,23 +123,11 @@ func FillLiensParcelleLieudit(versionSCTL string) {
 
 	// insert db
 	db := ctx.DB
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
-
 	for _, record := range records {
 		idC := record["IdParcelle"]
 		idLD := record["IdLieuDit"]
 		sql := fmt.Sprintf("insert into %s(id_parcelle,id_lieudit) values(%s, '%s')", table, idC, idLD)
-		if _, err = tx.Exec(sql); err != nil {
+		if _, err = db.Exec(sql); err != nil {
 			panic(err)
 		}
 	}

@@ -13,25 +13,10 @@ import (
 )
 
 // crée une table ou un type à partir du contenu d'un fichier .sql
-func CreateTable(table string) {
-	ctx := ctxt.NewContext()
+func CreateTable(ctx *ctxt.Context, table string) {
 	db := ctx.DB
-
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			panic(err)
-		}
-		err = tx.Commit()
-		if err != nil {
-			panic(err)
-		}
-	}()
-
+	var err error
+	
 	dirSql := GetCreateTableDir()
 
 	filename := path.Join(dirSql, table) + ".sql"
@@ -39,16 +24,16 @@ func CreateTable(table string) {
 	if err != nil {
 		panic(err)
 	}
-	sql := string(tmp)
+	
+	sql := string(tmp) // contient l'instruction create table ou create type
 	fmt.Printf("Crée table ou type %s\n", table)
-	if _, err = tx.Exec("drop table if exists " + table + " cascade"); err != nil {
+	if _, err = db.Exec("drop table if exists " + table + " cascade"); err != nil {
 		panic(err)
 	}
-	if _, err = tx.Exec("drop type if exists " + table + " cascade"); err != nil {
+	if _, err = db.Exec("drop type if exists " + table + " cascade"); err != nil {
 		panic(err)
 	}
-	if _, err = tx.Exec(sql); err != nil {
+	if _, err = db.Exec(sql); err != nil {
 		panic(err)
 	}
-	//    tx.Commit()
 }

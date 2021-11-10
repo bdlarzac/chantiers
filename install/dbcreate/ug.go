@@ -18,7 +18,7 @@ import (
 	"math"
 )
 
-func FillUG() {
+func FillUG(ctx *ctxt.Context) {
 	table := "ug"
 	csvname := "ug.csv"
 	fmt.Println("Remplit table " + table + " à partir de " + csvname)
@@ -55,19 +55,7 @@ func FillUG() {
 			records3[code]["surface_sig"] = surfaceStr
 		}
 	}
-	ctx := ctxt.NewContext()
 	db := ctx.DB
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			return
-		}
-		err = tx.Commit()
-	}()
 	for code, record2 := range records2 {
 		// array_value() pour faire strings.Join()
 		var tmp []string
@@ -82,7 +70,7 @@ func FillUG() {
 			type_coupe,
 			records3[code]["type_peuplement"],
 			records3[code]["surface_sig"])
-		if _, err = tx.Exec(sql); err != nil {
+		if _, err = db.Exec(sql); err != nil {
 			panic(err)
 		}
 	}
@@ -91,7 +79,7 @@ func FillUG() {
 // *********************************************************
 // @pre La table parcelle existe et est remplie
 // @pre la table ug existe et est remplie
-func FillLiensParcelleUG() {
+func FillLiensParcelleUG(ctx *ctxt.Context) {
 	table := "parcelle_ug"
 	fmt.Println("Remplit table " + table + " à partir de ug.csv")
 	dirCsv := GetDataDir()
@@ -120,7 +108,6 @@ func FillLiensParcelleUG() {
 	}
 
 	// Assoc codes => ids
-	ctx := ctxt.NewContext()
 	db := ctx.DB
 	//	defer db.Close() => ??? si pas commenté, dans le cas de install all, génère un panic dans la fonction suivante installStockage()
 
@@ -165,22 +152,6 @@ func FillLiensParcelleUG() {
 	if err != nil {
 		panic(err)
 	}
-
-	// insert
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-			panic(err)
-		}
-		err = tx.Commit()
-		if err != nil {
-			panic(err)
-		}
-	}()
 
 	sql := fmt.Sprintf("insert into %s(id_parcelle,id_ug) values($1, $2)", table)
 	stmt, err := db.Prepare(sql)
