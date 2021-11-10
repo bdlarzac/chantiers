@@ -1,5 +1,6 @@
 
 config.yml
+dbdump
 
 # private data
 install/data-private
