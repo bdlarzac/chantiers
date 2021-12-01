@@ -142,15 +142,14 @@ function initialize(){
     }
     // form update
     else{
-        document.getElementById("livreur").value = "{{.Livreur.String}}";
-        document.getElementById("conducteur").value = "{{.Conducteur.String}}";
-        document.getElementById("proprioutil").value = "{{.Proprioutil.String}}";
-        //
         if("{{.TypeCout}}" == "G"){
+            document.getElementById("livreur").value = "{{.Livreur.String}}";
             document.getElementById("cout-global").setAttribute("checked", true);
             setCoutGlobal();
         }
         else{
+            document.getElementById("conducteur").value = "{{.Conducteur.String}}";
+            document.getElementById("proprioutil").value = "{{.Proprioutil.String}}";
             document.getElementById("cout-detaille").setAttribute("checked", true);
             setCoutDetaille();
         }

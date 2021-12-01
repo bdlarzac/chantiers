@@ -11,7 +11,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
+//"fmt"
 )
 
 type detailsVenteLivreForm struct {
@@ -139,7 +139,8 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 		ctx.TemplateName = "ventelivre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Modifier la livraison : " + vl.String(),
+//				Title: "Modifier la livraison : " + vl.String(),
+				Title: "Modifier une livraison",
 				CSSFiles: []string{
 					"/static/css/form.css"},
 			},

@@ -58,6 +58,8 @@ type ActeurActivite struct {
 // ************************** Structure *******************************
 
 // cf règles de gestion dans cahier des charges
+// TODO GetActivitesByDate() génère beaucoup de requêtes inutiles
+// Possible d'implémenter IsDeletable() avec des select count(), plus économiques
 func (a *Acteur) IsDeletable(db *sqlx.DB) (bool, error) {
 	act, err := a.GetActivitesByDate(db)
 	if err != nil {
@@ -376,13 +378,13 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetVentePlaq()")
 		}
-		err = vp.ComputeClient(db)
+		err = vp.ComputeClient(db) // besoin de client pour calculer vp.FullString()
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateLivre,
-			Role:        "conducteur",
+			Role:        "conducteur (livraison)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString()}
 		res = append(res, new)
@@ -401,13 +403,13 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetVentePlaq()")
 		}
-		err = vp.ComputeClient(db)
+		err = vp.ComputeClient(db) // besoin de client pour calculer vp.FullString()
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateLivre,
-			Role:        "propriétaire outil",
+			Role:        "propriétaire outil (livraison)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString()}
 		res = append(res, new)
@@ -422,7 +424,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, elt := range list5 {
-		elt.Chargeur = a
+		elt.Chargeur = a// besoin pour appel elt.FullString()
 		err = elt.ComputeIdVente(db)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeIdVente()")
@@ -444,14 +446,18 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, elt := range list5a {
-		elt.Chargeur = a
+		elt.Conducteur = a // besoin pour appel elt.FullString()
+		err = elt.ComputeProprioutil(db) // besoin pour appel elt.FullString()
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeProprioutil()")
+		}
 		err = elt.ComputeIdVente(db)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeIdVente()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateCharge,
-			Role:        "conducteur",
+			Role:        "conducteur (chargement)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: elt.FullString()}
 		res = append(res, new)
@@ -460,20 +466,24 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 	// Chargement pour livraison plaquette - propriétaire outil
 	//
 	list5b := []VenteCharge{}
-	query = "select * from ventecharge where id_conducteur=$1"
+	query = "select * from ventecharge where id_proprioutil=$1"
 	err = db.Select(&list5b, query, a.Id)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, elt := range list5b {
-		elt.Chargeur = a
+		elt.Proprioutil = a // besoin pour appel elt.FullString()
+		err = elt.ComputeConducteur(db) // besoin pour appel elt.FullString()
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeConducteur()")
+		}
 		err = elt.ComputeIdVente(db)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VenteCharge.ComputeIdVente()")
 		}
 		new := &ActeurActivite{
 			Date:        elt.DateCharge,
-			Role:        "propriétaire outil",
+			Role:        "propriétaire outil (chargement)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: elt.FullString()}
 		res = append(res, new)
@@ -488,7 +498,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, elt := range list6 {
-		elt.Client, err = GetActeur(db, elt.IdClient)
+		elt.Client, err = GetActeur(db, elt.IdClient) // besoin pour appel elt.FullString()
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetActeur()")
 		}

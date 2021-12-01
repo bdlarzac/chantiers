@@ -169,6 +169,14 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		if err != nil {
 			return err
 		}
+		// Obligé d'initialiser à acteur vide afin de pouvoir utiliser dans le js de la vue
+		// {{.Chargeur.String}} ou ({{.Conducteur.String}} et {{.Proprioutil.String}})
+        if vc.TypeCout == "G" {
+            vc.Conducteur = &model.Acteur{}
+            vc.Proprioutil = &model.Acteur{}
+        } else {
+            vc.Chargeur = &model.Acteur{}
+        }
 		// full pour avoir la vente et le nom de la livraison
 		vc.Livraison, err = model.GetVenteLivreFull(ctx.DB, vc.IdLivraison)
 		if err != nil {

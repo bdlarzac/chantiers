@@ -51,6 +51,10 @@ type VenteLivre struct {
 
 // ************************** Nom *******************************
 
+// ATTENTION ce String() n'est pas implémenté correctement
+// Voir VenteCharge.String() pour une implémentation correcte
+// Ne génère pas de bug car vl.Livreur.String() revoie une chaîne vide si n'est pas calculé
+// => A implémenter correctement ou à supprimer
 func (vl *VenteLivre) String() string {
 	if vl.Livreur == nil {
 		panic("Erreur dans le code - Le livreur d'une livraison plaquettes doit être calculé avant d'appeler String()")

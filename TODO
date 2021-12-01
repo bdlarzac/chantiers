@@ -2,6 +2,17 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+
+BUG 
+http://localhost:8012/vente/13/livraison/13/chargement/update/5
+http://localhost:8012/vente/14/livraison/14/chargement/update/10
+
+- control.UpdatePlaqRange() => 
+    // TODO écrire GetPlaqRangeFull pour remplacer le code suivant
+
+- Possible d'implémenter IsDeletable() avec des select count(), plus économiques
+  Acteur.GetActivitesByDate() génère beaucoup de requêtes inutiles
+  
 - en cours : bug plaq 2 - fermier 43 : comment un fermier inexistant a pu être associé au chantier
     => dans table fermier, dissocier id et id_sctl ?
 

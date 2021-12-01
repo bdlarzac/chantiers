@@ -128,7 +128,7 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-		// TODO écrire GetPlaqRangeFull pour remplacer le code suivant
+// TODO écrire GetPlaqRangeFull pour remplacer le code suivant
 		pr, err := model.GetPlaqRange(ctx.DB, idPr)
 		if err != nil {
 			return err
@@ -154,9 +154,7 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			return err
 		}
 		err = pr.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
-		if err != nil {
-			return err
-		}
+// fin TODO
 		if err != nil {
 			return err
 		}
