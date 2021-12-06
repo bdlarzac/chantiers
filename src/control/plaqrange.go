@@ -12,7 +12,6 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-	//"fmt"
 )
 
 type detailsPlaqRangeForm struct {
@@ -154,10 +153,10 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 			return err
 		}
 		err = pr.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
-// fin TODO
 		if err != nil {
 			return err
 		}
+// fin TODO
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
 			return err

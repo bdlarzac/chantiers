@@ -9,9 +9,9 @@ package model
 
 import (
 	"time"
-	"strconv"
+//	"strconv"
 	
-	"bdl.local/bdl/generic/tiglib"
+//	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	//"fmt"
@@ -49,43 +49,6 @@ type VenteCharge struct {
 	Conducteur  *Acteur
 	Proprioutil *Acteur
 	Tas         *Tas
-}
-
-// ************************** Nom *******************************
-
-// Cette fonction est compliquée parce qu'on l'utilise:
-// - dans le titre du formulaire de maj d'un chargement
-// - dans la liste des activités d'un acteur
-// On pourrait supprimer ça :
-// - modifier le titre du formulaire de maj d'un chargement ("Modifier un chargement")
-// - mettre le titre de la vente dans la liste des activités.
-// Les autres opérations avec coût global / détaillé fonctionnent de cette manière plus simple.
-//
-// Attention, ici on teste sur TypeCout
-// On ne peut pas tester directement if vc.Chargeur == nil
-// car dans control.UpdateVenteCharge(), on initialise à acteurs vides
-func (vc *VenteCharge) String() string {
-    nom := ""
-    if vc.TypeCout == "G" {
-        if vc.Chargeur == nil {
-            msg := "Erreur dans le code VenteCharge.String() : chargeur doit être calculé avant d'appeler String()" +
-                "\nventecharge id = " + strconv.Itoa(vc.Id)
-            panic(msg)
-        }
-        nom = vc.Chargeur.String()
-    } else {
-        if vc.Conducteur == nil || vc.Proprioutil == nil {
-            msg := "Erreur dans le code VenteCharge.String() : conducteur et proprioutil doivent être calculés avant d'appeler String()" +
-                "\nventecharge id = " + strconv.Itoa(vc.Id)
-            panic(msg)
-        }
-		nom = vc.Conducteur.String() + " / " + vc.Proprioutil.String()
-    }
-	return nom + " " + tiglib.DateFr(vc.DateCharge)
-}
-
-func (vc *VenteCharge) FullString() string {
-	return "Chargement plaquettes " + vc.String()
 }
 
 // ************************** Get *******************************

@@ -198,7 +198,7 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		ctx.TemplateName = "ventecharge-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Modifier le chargement : " + vc.String(),
+				Title: "Modifier un chargement",
 				CSSFiles: []string{
 					"/static/css/form.css"},
 			},

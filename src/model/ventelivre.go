@@ -8,13 +8,11 @@
 package model
 
 import (
-	//"strconv"
 	"time"
-
+	"strconv"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
 )
 
 type VenteLivre struct {
@@ -51,16 +49,32 @@ type VenteLivre struct {
 
 // ************************** Nom *******************************
 
-// ATTENTION ce String() n'est pas implémenté correctement
-// Voir VenteCharge.String() pour une implémentation correcte
-// Ne génère pas de bug car vl.Livreur.String() revoie une chaîne vide si n'est pas calculé
-// => A implémenter correctement ou à supprimer
+// Les livraisons sont les seules opérations composées (avec coût global / coût détaillé)
+// ayant besoin de String(), car le nom apparaît dans le formulaire de new / update chargement.
 func (vl *VenteLivre) String() string {
-	if vl.Livreur == nil {
-		panic("Erreur dans le code - Le livreur d'une livraison plaquettes doit être calculé avant d'appeler String()")
-	}
-	return vl.Livreur.String() + " " + tiglib.DateFr(vl.DateLivre)
+    nom := ""
+    if vl.TypeCout == "G" {
+        if vl.Livreur == nil {
+            msg := "Erreur dans le code VenteLivre.String() : livreur doit être calculé avant d'appeler String()" +
+                "\nventecharge id = " + strconv.Itoa(vl.Id)
+            panic(msg)
+        }
+        nom = vl.Livreur.String()
+    } else {
+        if vl.Conducteur == nil || vl.Proprioutil == nil {
+            msg := "Erreur dans le code VenteLivre.String() : conducteur et proprioutil doivent être calculés avant d'appeler String()" +
+                "\nventecharge id = " + strconv.Itoa(vl.Id)
+            panic(msg)
+        }
+		nom = vl.Conducteur.String() + " / " + vl.Proprioutil.String()
+    }
+	return nom + " " + tiglib.DateFr(vl.DateLivre)
 }
+
+func (vl *VenteLivre) FullString() string {
+	return "Livraison plaquettes " + vl.String()
+}
+
 
 // ************************** Get *******************************
 

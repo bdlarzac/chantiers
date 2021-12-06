@@ -248,7 +248,7 @@ Livraisons
                         <a href="/vente/{{$idVente}}/livraison/{{$idLivraison}}/chargement/update/{{.Id}}">
                             <img src="/static/img/update.png" title="Modifier ce chargement">
                         </a>
-                        <a href="#" onclick='deleteChargement({{.Id}}, {{$idLivraison}}, {{$idVente}}, "{{.String}}");'>
+                        <a href="#" onclick='deleteChargement({{.Id}}, {{$idLivraison}}, {{$idVente}});'>
                             <img src="/static/img/delete.png" title="Supprimer ce chargement">
                         </a>
                     </td>
@@ -382,9 +382,9 @@ function deleteLivraison(idLivraison, idVente, nomLivreur, dateLivraison){
 }
 
 // *****************************************
-function deleteChargement(idChargement, idLivraison, idVente, stringChargement){
+function deleteChargement(idChargement, idLivraison, idVente){
     let msg = "ATTENTION, en cliquant sur OK,\n"
-            + "le chargement \"" + stringChargement + "\" sera définitivement supprimé.\n";
+            + "ce chargement sera définitivement supprimé.\n";
     if (confirm(msg) == true) {
         window.location = "/vente/" + idVente + "/livraison/" + idLivraison + "/chargement/delete/" + idChargement;
     }
