@@ -61,6 +61,39 @@ func GetPlaqRange(db *sqlx.DB, id int) (pr *PlaqRange, err error) {
 	return pr, nil
 }
 
+// Calcule tous les champs utile à l'affichage d'un formulaire PlaqRange
+func GetPlaqRangeFull(db *sqlx.DB, id int) (pr *PlaqRange, err error) {
+    pr, err = GetPlaqRange(db, id)
+    if err != nil {
+        return nil, err
+    }
+    pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
+    if err != nil {
+        return nil, err
+    }
+    pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
+    if err != nil {
+        return nil, err
+    }
+    pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
+    if err != nil {
+        return nil, err
+    }
+    pr.Chantier, err = GetPlaq(db, pr.IdChantier)
+    if err != nil {
+        return nil, err
+    }
+    err = pr.Chantier.ComputeTas(db)
+    if err != nil {
+        return nil, err
+    }
+    err = pr.Chantier.ComputeLieudits(db) // pour le nom du chantier
+    if err != nil {
+        return nil, err
+    }
+	return pr, nil
+}
+
 // ************************** Compute *******************************
 
 func (pr *PlaqRange) ComputeTas(db *sqlx.DB) (err error) {

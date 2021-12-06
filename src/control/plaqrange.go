@@ -127,36 +127,10 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
-// TODO écrire GetPlaqRangeFull pour remplacer le code suivant
-		pr, err := model.GetPlaqRange(ctx.DB, idPr)
+		pr, err := model.GetPlaqRangeFull(ctx.DB, idPr)
 		if err != nil {
 			return err
 		}
-		pr.Rangeur, err = model.GetActeur(ctx.DB, pr.IdRangeur)
-		if err != nil {
-			return err
-		}
-		pr.Conducteur, err = model.GetActeur(ctx.DB, pr.IdConducteur)
-		if err != nil {
-			return err
-		}
-		pr.Proprioutil, err = model.GetActeur(ctx.DB, pr.IdProprioutil)
-		if err != nil {
-			return err
-		}
-		pr.Chantier, err = model.GetPlaq(ctx.DB, pr.IdChantier)
-		if err != nil {
-			return err
-		}
-		err = pr.Chantier.ComputeTas(ctx.DB)
-		if err != nil {
-			return err
-		}
-		err = pr.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
-		if err != nil {
-			return err
-		}
-// fin TODO
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
 			return err
