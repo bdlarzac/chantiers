@@ -12,7 +12,6 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"time"
-"fmt"
 )
 
 type Stockage struct {
@@ -209,8 +208,7 @@ func (s *Stockage) ComputeCout(db *sqlx.DB, jourD, jourF string) (res []float64,
 	if jF.Before(jD) {
 		return res, errors.New("ComputeCout() a besoin de jourD < jourF")
 	}
-	duree := jF.Sub(jD)
-fmt.Printf("duree = %+v\n",duree)
+//	duree := jF.Sub(jD)
 	// Récupère les frais
 	// tels que datedeb ou datefin sont dans [jD, jF]
 	var frais []StockFrais

@@ -15,7 +15,6 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-//"fmt"
 )
 
 type Plaq struct {
@@ -506,6 +505,9 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
 			}
 		}
 	}
+	//
+	// Stockage
+	//
 	err = ch.computeCoutStockage(db)
     if err != nil {
         return werr.Wrapf(err, "Erreur appel computeCoutStockage()")
@@ -531,7 +533,7 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
     //
     var stockages []*Stockage
     for _, t := range(ch.Tas){
-        s, err := GetStockage(db, t.Id)
+        s, err := GetStockage(db, t.IdStockage)
         if err != nil {
             return werr.Wrapf(err, "Erreur appel GetStockage()")
         }
