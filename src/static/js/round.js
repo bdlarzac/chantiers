@@ -15,5 +15,4 @@ function round(x, precision){
     x = x * Math.pow(10, precision);
     x = Math.round(x);
     return (x / Math.pow(10, precision)).toFixed(precision);
-    
 }

@@ -38,11 +38,11 @@
         <td><a href="/acteur/{{.Acteur.Id}}">{{.Acteur.String}}</a></td>
         <td class="center">{{.DateDebut | dateFr}}</td>
         <td class="center">{{.DateFin | dateFr}}</td>
-        <td class="whitespace-pre"><script>document.write(round({{.Qte}}, 2));</script> {{.Unite | labelUnite}}</td>
-        <td class="whitespace-pre"><script>document.write(round({{.PUHT}}, 2));</script> &euro;</td>
-        <td class="whitespace-pre"><script>document.write(round(prixHT({{.PUHT}}, {{.Qte}}), 2));</script> &euro;</td>
+        <td class="whitespace-pre"><script>document.write(formatNb(round({{.Qte}}, 2)));</script> {{.Unite | labelUnite}}</td>
+        <td class="whitespace-pre"><script>document.write(formatNb(round({{.PUHT}}, 2)));</script> &euro;</td>
+        <td class="whitespace-pre"><script>document.write(formatNb(round(prixHT({{.PUHT}}, {{.Qte}}), 2)));</script> &euro;</td>
         <td class="whitespace-pre">{{.TVA}} %</td>
-        <td class="whitespace-pre"><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2));</script> &euro;</td>
+        <td class="whitespace-pre"><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2)));</script> &euro;</td>
         <td class="center">{{.DatePay | dateFr}}</td>
         <td>{{.Notes | nl2br}}</td>
     </tr>
@@ -113,9 +113,10 @@
                 
                 <div>Qté</div>
                 <div class="bold">
-                    {{.Qte}} maps <a title="Quantité brute sans déduire le coefficient de perte lié au séchage"> de bois vert</a>
+                    <script>document.write(formatNb({{.Qte}}));</script>
+                    maps <a title="Quantité brute sans déduire le coefficient de perte lié au séchage"> de bois vert</a>
                     <div class="normal">
-                        (soit <script>document.write(round(quantiteBoisSec({{.Qte}}, {{$.Details.PourcentagePerte}}), 2));</script> maps de bois sec)
+                        (soit <script>document.write(formatNb(round(quantiteBoisSec({{.Qte}}, {{$.Details.PourcentagePerte}}), 2)));</script> maps de bois sec)
                     </div>
                 </div>
                 
@@ -140,13 +141,13 @@
                 <div><a href="/acteur/{{.IdTransporteur}}">{{.Transporteur.String}}</a></div>
                 
                 <div>Prix HT</div>
-                <div class="bold">{{.GlPrix}} &euro;</div>
+                <div class="bold"><script>document.write(formatNb({{.GlPrix}}));</script> &euro;</div>
                 
                 <div>TVA</div>
                 <div class="bold">{{.GlTVA}} %</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(coutTTC, 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.GlDatePay | dateFr}}</div>
@@ -170,16 +171,16 @@
                 <div class="bold">{{.CoNheure}}</div>
                 
                 <div>Prix HT / h</div>
-                <div class="bold">{{.CoPrixH}} &euro;</div>
+                <div class="bold"><script>document.write(formatNb({{.CoPrixH}}));</script> &euro;</div>
                 
                 <div>TVA</div>
                 <div class="bold">{{.CoTVA}} %</div>
                 
                 <div class="padding-top05">Total HT</div>
-                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                <div class="bold padding-top05"><script>document.write(formatNb(round(coutHT, 2)));</script> &euro;</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(coutTTC, 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.CoDatePay | dateFr}}</div>
@@ -209,10 +210,10 @@
                 <div class="bold">{{.CaTVA}} %</div>
                 
                 <div class="padding-top05">Total HT</div>
-                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                <div class="bold padding-top05"><script>document.write(formatNb(round(coutHT, 2)));</script> &euro;</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(coutTTC, 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.CaDatePay | dateFr}}</div>
@@ -242,10 +243,10 @@
                 <div class="bold">{{.TbTVA}} %</div>
                 
                 <div class="padding-top05">Total HT</div>
-                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                <div class="bold padding-top05"><script>document.write(formatNb(round(coutHT, 2)));</script> &euro;</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(coutTTC, 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.TbDatePay | dateFr}}</div>
@@ -255,11 +256,11 @@
         {{end}} {{/* end cout != G */}}
 
         <td class="bold center">
-            <script>document.write(round(totalLigne / {{.Qte}}, 2));</script> &euro;
+            <script>document.write(formatNb(round(totalLigne / {{.Qte}}, 2)));</script> &euro;
         </td>
         
         <td class="bold center">
-            <script>document.write(round(totalLigne, 2));</script> &euro;
+            <script>document.write(formatNb(round(totalLigne, 2)));</script> &euro;
         </td>
         
     </tr>
@@ -272,7 +273,7 @@
     <tr>
         <td colspan="5" class="bold right">Total transport HT</td>
         <td class="bold center">
-            <script>document.write(round(totalTransport, 2));</script> &euro;
+            <script>document.write(formatNb(round(totalTransport, 2)));</script> &euro;
         </td>
     </tr>
     {{end}}
@@ -351,13 +352,13 @@
                 <div><a href="/acteur/{{.IdRangeur}}">{{.Rangeur.String}}</a></div>
                 
                 <div>Prix HT</div>
-                <div class="bold">{{.GlPrix}} &euro;</div>
+                <div class="bold"><script>document.write(formatNb({{.GlPrix}}));</script> &euro;</div>
                 
                 <div>TVA</div>
                 <div class="bold">{{.GlTVA}} %</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(coutTTC, 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.GlDatePay | dateFr}}</div>
@@ -386,10 +387,10 @@
                 <div class="bold">{{.CoTVA}} %</div>
                 
                 <div class="padding-top05">Total HT</div>
-                <div class="bold padding-top05"><script>document.write(round(coutHT, 2));</script> &euro;</div>
+                <div class="bold padding-top05"><script>document.write(formatNb(round(coutHT, 2)));</script> &euro;</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(coutTTC, 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.CoDatePay | dateFr}}</div>
@@ -408,13 +409,13 @@
                 <div><a href="/acteur/{{.IdProprioutil}}">{{.Proprioutil.String}}</a></div>
                 
                 <div>Prix HT</div>
-                <div class="bold">{{.OuPrix}} &euro;</div>
+                <div class="bold"><script>document.write(formatNb({{.OuPrix}}));</script> &euro;</div>
                 
                 <div>TVA</div>
                 <div class="bold">{{.OuTVA}} %</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(coutTTC, 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(coutTTC, 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.OuDatePay | dateFr}}</div>
@@ -436,7 +437,7 @@
     <tr>
         <td colspan="4" class="bold right">Total rangement HT</td>
         <td class="bold center">
-            <script>document.write(round(totalRangement, 2));</script> &euro;
+            <script>document.write(formatNb(round(totalRangement, 2)));</script> &euro;
         </td>
     </tr>
 {{end}}

@@ -2,7 +2,7 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-- Possible d'implémenter IsDeletable() avec des select count(), plus économiques
+- Possible d'implémenter Acteur.IsDeletable() avec des select count(), plus économiques
   Acteur.GetActivitesByDate() génère beaucoup de requêtes inutiles
   
 - en cours : bug plaq 2 - fermier 43 : comment un fermier inexistant a pu être associé au chantier

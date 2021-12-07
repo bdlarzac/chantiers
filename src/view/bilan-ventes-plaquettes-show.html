@@ -22,8 +22,8 @@
             <td><a href="/vente/{{.Id}}">{{.DateVente | dateFr}}</a></td>
             <td><a href="/acteur/{{.Client.Id}}">{{.Client.String}}</a></td>
             <td class="right">{{.Qte}} maps</td>
-            <td class="right"><script>document.write(round({{.PUHT}}*{{.PUHT}}, 2));</script> &euro;</td>
-            <td class="right"><script>document.write(round({{.Qte}}*{{.PUHT}}, 2));</script> &euro;</td>
+            <td class="right"><script>document.write(formatNb(round({{.PUHT}}*{{.PUHT}}, 2)));</script> &euro;</td>
+            <td class="right"><script>document.write(formatNb(round({{.Qte}}*{{.PUHT}}, 2)));</script> &euro;</td>
             <script>
                 totalPrix += {{.Qte}}*{{.PUHT}};
                 totalQte += {{.Qte}};
@@ -34,9 +34,9 @@
     <tr class="total">
         <td>TOTAL</td>
         <td></td>
-        <td class="right"><script>document.write(totalQte);</script> maps</td>
+        <td class="right"><script>document.write(formatNb(totalQte));</script> maps</td>
         <td></td>
-        <td class="right"><script>document.write(round(totalPrix, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(formatNb(round(totalPrix, 2)));</script> &euro;</td>
     </tr>
     
 </table>

@@ -41,10 +41,10 @@
             </a>
         </td>
         <td><a href="/vente/{{.Id}}">{{.FullString}}</a></td>
-        <td class="right">{{.Qte}} maps</td>
-        <td class="right">{{.PUHT}} &euro;</td>
-        <td class="right"><script>document.write(round(prixHT({{.PUHT}}, {{.Qte}}), 2));</script> &euro;</td>
-        <td class="right"><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2));</script> &euro;</td>
+        <td class="right"><script>document.write(formatNb({{.Qte}}));</script> maps</td>
+        <td class="right"><script>document.write(formatNb({{.PUHT}}));</script> &euro;</td>
+        <td class="right"><script>document.write(formatNb(round(prixHT({{.PUHT}}, {{.Qte}}), 2)));</script> &euro;</td>
+        <td class="right"><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2)));</script> &euro;</td>
         <td>{{.NumFacture}}</td>
         <td>{{.DateFacture | dateFr}}</td>
     </tr>

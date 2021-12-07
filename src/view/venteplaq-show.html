@@ -45,19 +45,19 @@
 
 <div class="grid2-pres padding-left">
     <span>Quantité</span>
-    <span class="bold">{{.Qte}} maps</span>
+    <span class="bold"><script>document.write(formatNb({{.Qte}}));</script> maps</span>
     
     <span>PU HT</span>
     <span class="bold">{{.PUHT | twoDigits}} &euro;</span>
     
     <span>Prix HT</span>
-    <span class="bold"><script>document.write(round(prixHT({{.PUHT}}, {{.Qte}}), 2));</script> &euro;</span>
+    <span class="bold"><script>document.write(formatNb(round(prixHT({{.PUHT}}, {{.Qte}}), 2)));</script> &euro;</span>
     
     <span>TVA</span>
     <span class="bold">{{.TVA}} %</span>
     
     <span>Prix TTC</span>
-    <span class="bold"><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2));</script> &euro;</span>
+    <span class="bold"><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2)));</script> &euro;</span>
 </div>
 
 </div><!-- end class="flex-wrap" -->
@@ -172,13 +172,13 @@ Livraisons
             <div class="padding02 bg-ccc center margin-bottom05">Coût global</div>
             <div class="grid2-pres">
                 <div>Prix HT</div>
-                <div class="bold">{{.GlPrix | twoDigits}} &euro;</div>
+                <div class="bold"><script>document.write(formatNb({{.GlPrix | twoDigits}}));</script> &euro;</div>
                 
                 <div>TVA</div>
                 <div class="bold">{{.GlTVA}} %</div>
                 
                 <div>Total TTC</div>
-                <div class="bold"><script>document.write(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2));</script> &euro;</div>
+                <div class="bold"><script>document.write(formatNb(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2)));</script> &euro;</div>
                 
                 <div>Paiement</div>
                 <div class="bold">{{.GlDatePay | dateFr}}</div>
@@ -192,16 +192,16 @@ Livraisons
                     <div class="bold">{{.MoNHeure}}</div>
                     
                     <div>Prix HT / h</div>
-                    <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
+                    <div class="bold"><script>document.write(formatNb({{.MoPrixH | twoDigits}}));</script> &euro;</div>
                     
                     <div>Total HT</div>
-                    <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
+                    <div class="bold"><script>document.write(formatNb(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2)));</script> &euro;</div>
                     
                     <div>TVA</div>
                     <div class="bold">{{.MoTVA}} %</div>
                     
                     <div>Total TTC</div>
-                    <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
+                    <div class="bold"><script>document.write(formatNb(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2)));</script> &euro;</div>
                                         
                     <div>Paiement</div>
                     <div class="bold">{{.MoDatePay | dateFr}}</div>
@@ -215,13 +215,13 @@ Livraisons
                     <div>&nbsp;</div><div>&nbsp;</div>
                     <div>&nbsp;</div><div>&nbsp;</div>
                     <div>Prix HT</div>
-                    <div class="bold">{{.OuPrix | twoDigits}} &euro;</div>
+                    <div class="bold"><script>document.write(formatNb({{.OuPrix | twoDigits}}));</script> &euro;</div>
                     
                     <div>TVA</div>
                     <div class="bold">{{.OuTVA}} %</div>
                     
                     <div>Total TTC</div>
-                    <div class="bold"><script>document.write(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2));</script> &euro;</div>
+                    <div class="bold"><script>document.write(formatNb(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2)));</script> &euro;</div>
                     
                     <div>Paiement</div>
                     <div class="bold">{{.OuDatePay | dateFr}}</div>
@@ -295,13 +295,13 @@ Livraisons
                             <div class="padding02 bg-ccc center margin-bottom05">Coût global</div>
                             <div class="grid2-pres">
                                 <div>Prix HT</div>
-                                <div class="bold">{{.GlPrix | twoDigits}} &euro;</div>
+                                <div class="bold"><script>document.write(formatNb({{.GlPrix | twoDigits}}));</script> &euro;</div>
                                 
                                 <div>TVA</div>
                                 <div class="bold">{{.GlTVA}} %</div>
                                 
                                 <div>Total TTC</div>
-                                <div class="bold"><script>document.write(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2));</script> &euro;</div>
+                                <div class="bold"><script>document.write(formatNb(round(prixTTC({{.GlPrix}}, {{.GlTVA}}), 2)));</script> &euro;</div>
                                 
                                 <div>Paiement</div>
                                 <div class="bold">{{.GlDatePay | dateFr}}</div>
@@ -319,13 +319,13 @@ Livraisons
                                 <div class="bold">{{.MoPrixH | twoDigits}} &euro;</div>
                                 
                                 <div>Total HT</div>
-                                <div class="bold"><script>document.write(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2));</script> &euro;</div>
+                                <div class="bold"><script>document.write(formatNb(round(prixHT({{.MoPrixH}}, {{.MoNHeure}}), 2)));</script> &euro;</div>
                                 
                                 <div>TVA</div>
                                 <div class="bold">{{.MoTVA}} %</div>
                                 
                                 <div>Total TTC</div>
-                                <div class="bold"><script>document.write(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2));</script> &euro;</div>
+                                <div class="bold"><script>document.write(formatNb(round(prixTTC(prixHT({{.MoPrixH}}, {{.MoNHeure}}), {{.MoTVA}}), 2)));</script> &euro;</div>
                                 
                                 <div>Paiement</div>
                                 <div class="bold">{{.MoDatePay | dateFr}}</div>
@@ -339,13 +339,13 @@ Livraisons
                                 <div>&nbsp;</div><div>&nbsp;</div>
                                 <div>&nbsp;</div><div>&nbsp;</div>
                                 <div>Prix HT</div>
-                                <div class="bold">{{.OuPrix | twoDigits}} &euro;</div>
+                                <div class="bold"><script>document.write(formatNb({{.OuPrix | twoDigits}}));</script> &euro;</div>
                                 
                                 <div>TVA</div>
                                 <div class="bold">{{.OuTVA}} %</div>
                                 
                                 <div>Total TTC</div>
-                                <div class="bold"><script>document.write(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2));</script> &euro;</div>
+                                <div class="bold"><script>document.write(formatNb(round(prixTTC({{.OuPrix}}, {{.OuTVA}}), 2)));</script> &euro;</div>
                                 
                                 <div>Paiement</div>
                                 <div class="bold">{{.OuDatePay | dateFr}}</div>

@@ -137,6 +137,7 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 			CSSFiles: []string{},
 			JSFiles: []string{
 				"/static/js/round.js",
+				"/static/js/formatNb.js",
 				"/view/common/prix.js"},
 		},
 		Menu: "bilans",
@@ -178,6 +179,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 			Title:    "Bilan ventes plaquettes",
 			CSSFiles: []string{},
 			JSFiles: []string{
+				"/static/js/formatNb.js",
 				"/static/js/round.js"},
 		},
 		Menu: "bilans",
@@ -227,7 +229,8 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 		Header: ctxt.Header{
 			Title:    titre,
 			CSSFiles: []string{},
-			JSFiles:  []string{},
+			JSFiles:  []string{
+				"/static/js/formatNb.js"},
 		},
 		Menu: "bilans",
 		Footer: ctxt.Footer{

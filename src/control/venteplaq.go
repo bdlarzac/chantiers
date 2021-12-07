@@ -52,6 +52,7 @@ func ListVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Title: "Ventes plaquettes " + annee,
 			JSFiles: []string{
 				"/static/js/round.js",
+				"/static/js/formatNb.js",
 				"/view/common/venteplaq.js",
 				"/view/common/prix.js"},
 		},
@@ -80,6 +81,7 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Title: vente.FullString(),
 			JSFiles: []string{
 				"/static/js/round.js",
+				"/static/js/formatNb.js",
 				"/view/common/venteplaq.js",
 				"/view/common/prix.js"},
 		},

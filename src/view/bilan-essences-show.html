@@ -36,7 +36,7 @@ let k1, k2;
             <td class="right">
                 {{$key := printf "%s-%s-vol" $valoCode .}}
                 {{$val := index $.Details.Valorisations $key}}
-                {{$val}}
+                <script>document.write(formatNb({{$val}}));</script>
                 {{$key_totaux := printf "%s-vol" $valoCode}}
                 <script>
                     document.write(unites.get({{$key_totaux}}));
@@ -45,7 +45,7 @@ let k1, k2;
             <td class="right">
                 {{$key := printf "%s-%s-ca" $valoCode .}}
                 {{$val := index $.Details.Valorisations $key}}
-                {{$val}}
+                <script>document.write(formatNb({{$val}}));</script>
                 {{$key_totaux := printf "%s-ca" $valoCode}}
                 <script>
                     document.write(unites.get({{$key_totaux}}));

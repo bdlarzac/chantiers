@@ -61,7 +61,7 @@
                 {{if .Stockage.Archived}}
                     <div>{{.Nom}}</div>
                 {{else}}
-                    <div><a href="/stockage/liste">{{.Nom}}</a> : <script>document.write(round({{.Stock}}, 2));</script> maps</div>
+                    <div><a href="/stockage/liste">{{.Nom}}</a> : <script>document.write(formatNb(round({{.Stock}}, 2)));</script> maps</div>
                 {{end}}
             {{end}}
         </td>
@@ -70,14 +70,14 @@
     {{if .FraisRepas}}
     <tr>
         <th class="vertical-align-top">Frais repas</th>
-        <td>{{.FraisRepas}} &euro;</td>
+        <td><script>document.write(formatNb({{.FraisRepas}}));</script> &euro;</td>
     </tr>
     {{end}}
 
     {{if .FraisReparation}}
     <tr>
         <th class="vertical-align-top">Frais réparation</th>
-        <td>{{.FraisReparation}} &euro;</td>
+        <td><script>document.write(formatNb({{.FraisReparation}}));</script> &euro;</td>
     </tr>
     {{end}}
 
@@ -110,9 +110,21 @@
         <th>Volume sec</th>
     </tr>
     <tr>
-        <td>{{.Volume}} map</td>
-        <td><script>let nb = {{.Volume}}*{{$PourcentPerte}}/100; document.write(round(nb, 2));</script> map</td>
-        <td><script>nb = {{.Volume}}*(1 - {{$PourcentPerte}}/100); document.write(round(nb, 2));</script> map</td>
+        <td>
+            <script>document.write(formatNb({{.Volume}}));</script> maps
+        </td>
+        <td>
+            <script>
+                let nb = {{.Volume}}*{{$PourcentPerte}}/100;
+                document.write(formatNb(round(nb, 2)));
+            </script> maps
+        </td>
+        <td>
+            <script>
+                nb = {{.Volume}}*(1 - {{$PourcentPerte}}/100);
+                document.write(formatNb(round(nb, 2)));
+            </script> maps
+        </td>
     </tr>
 </table>
 

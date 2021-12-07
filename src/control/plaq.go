@@ -99,6 +99,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			CSSFiles: []string{"/static/css/tabstrip.css"},
 			JSFiles: []string{
 				"/static/js/round.js",
+				"/static/js/formatNb.js",
 				"/view/common/prix.js",
 			    "/view/common/plaq.js"},
 		},

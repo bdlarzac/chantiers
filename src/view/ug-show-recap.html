@@ -20,23 +20,23 @@
         
         <tr>
             <th>Plaquettes</th>
-            <td>{{$recap.Plaquettes.Quantite}} maps</td>
-            <td>{{$recap.Plaquettes.Superficie}} ha</td>
+            <td><script>document.write(formatNb({{$recap.Plaquettes.Quantite}}));</script> maps</td>
+            <td><script>document.write(formatNb({{$recap.Plaquettes.Superficie}}));</script> ha</td>
             <td>???</td>
             <td>???</td>
         </tr>
     
         <tr>
             <th>Pâte à papier</th>
-            <td>{{$recap.PateAPapier.Quantite}} tonnes</td>
+            <td><script>document.write(formatNb({{$recap.PateAPapier.Quantite}}));</script> tonnes</td>
             <td>???</td>
             <td>0 &euro;</td>
-            <td>{{$recap.PateAPapier.Benefice}} &euro;</td>
+            <td><script>document.write(formatNb({{$recap.PateAPapier.Benefice}}));</script> &euro;</td>
         </tr>
     
         <tr>
             <th>Chauffage fermier</th>
-            <td>{{$recap.ChauffageFermier.Quantite}} stères</td>
+            <td><script>document.write(formatNb({{$recap.ChauffageFermier.Quantite}}));</script> stères</td>
             <td>???</td>
             <td>0 &euro;</td>
             <td>0 &euro;</td>
@@ -44,42 +44,42 @@
     
         <tr>
             <th>Bois de chauffage</th>
-            <td>{{$recap.Chauffage.Quantite}} stères</td>
+            <td><script>document.write(formatNb({{$recap.Chauffage.Quantite}}));</script> stères</td>
             <td>???</td>
             <td>0 &euro;</td>
-            <td>{{$recap.Chauffage.Benefice}} &euro;</td>
+            <td><script>document.write(formatNb({{$recap.Chauffage.Benefice}}));</script> &euro;</td>
         </tr>
     
         <tr>
             <th>Bois palette</th>
-            <td>{{$recap.Palette.Quantite}} stères</td>
+            <td><script>document.write(formatNb({{$recap.Palette.Quantite}}));</script> stères</td>
             <td>???</td>
             <td>0 &euro;</td>
-            <td>{{$recap.Palette.Benefice}} &euro;</td>
+            <td><script>document.write(formatNb({{$recap.Palette.Benefice}}));</script> &euro;</td>
         </tr>
     
         <tr>
             <th>Piquets</th>
-            <td>{{$recap.Piquets.Quantite}} stères</td>
+            <td><script>document.write(formatNb({{$recap.Piquets.Quantite}}));</script> stères</td>
             <td>???</td>
             <td>0 &euro;</td>
-            <td>{{$recap.Piquets.Benefice}} &euro;</td>
+            <td><script>document.write(formatNb({{$recap.Piquets.Benefice}}));</script> &euro;</td>
         </tr>
     
         <tr>
             <th>Bois d'oeuvre</th>
-            <td>{{$recap.BoisOeuvre.Quantite}} m<sup>3</sup></td>
+            <td><script>document.write(formatNb({{$recap.BoisOeuvre.Quantite}}));</script> m<sup>3</sup></td>
             <td>???</td>
             <td>0 &euro;</td>
-            <td>{{$recap.BoisOeuvre.Benefice}} &euro;</td>
+            <td><script>document.write(formatNb({{$recap.BoisOeuvre.Benefice}}));</script> &euro;</td>
         </tr>
     
         <tr>
             <th>Bois sur pied</th>
-            <td>{{$recap.BoisSurPied.Quantite}} stères</td>
+            <td><script>document.write(formatNb({{$recap.BoisSurPied.Quantite}}));</script> stères</td>
             <td>???</td>
             <td>0 &euro;</td>
-            <td>{{$recap.BoisSurPied.Benefice}} &euro;</td>
+            <td><script>document.write(formatNb({{$recap.BoisSurPied.Benefice}}));</script> &euro;</td>
         </tr>
     
     </table>

@@ -47,7 +47,9 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			CSSFiles: []string{
 			    "/static/css/form.css",
                 "/static/css/modal.css"},
-			JSFiles:  []string{"/static/js/round.js"},
+			JSFiles:  []string{
+				"/static/js/formatNb.js",
+                "/static/js/round.js"},
 		},
 		Menu: "accueil",
 		Details: detailsStockageList{

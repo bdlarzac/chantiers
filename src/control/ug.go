@@ -48,6 +48,7 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Header: ctxt.Header{
 			Title:    "Unité de gestion " + ug.Code,
 			CSSFiles: []string{"/static/css/tabstrip.css"},
+			JSFiles:  []string{"/static/js/formatNb.js"},
 		},
 		Menu: "accueil",
 		Details: detailsUGShow{

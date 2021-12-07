@@ -30,8 +30,8 @@
         <tr>
             <td><a href="/vente/{{.Id}}">{{.DateVente | dateFr}}</a></td>
             <td class="right">{{.Qte}} maps</td>
-            <td class="right"><script>document.write(round({{.PUHT}}, 2));</script> &euro;</td>
-            <td class="right"><script>document.write(round({{.Qte}}*{{.PUHT}}, 2));</script> &euro;</td>
+            <td class="right"><script>document.write(formatNb(round({{.PUHT}}, 2)));</script> &euro;</td>
+            <td class="right"><script>document.write(formatNb(round({{.Qte}}*{{.PUHT}}, 2)));</script> &euro;</td>
             <script>
                 totalPrix += {{.Qte}}*{{.PUHT}};
                 totalQte += {{.Qte}};
@@ -44,10 +44,10 @@
                             <br>(
                             <script>
                                 prixOp = prixTTC({{.GlPrix}}, {{.GlTVA}});
-                                document.write(round(prixOp, 2) + " &euro;");
+                                document.write(formatNb(round(prixOp, 2)) + " &euro;");
                                 if({{.Qte}} != 0){
                                     prixOpParMap = prixOp / {{.Qte}};
-                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                    document.write(" - " + formatNb(round(prixOpParMap, 2)) + " &euro; / map");
                                 }
                             </script>
                             )
@@ -59,10 +59,10 @@
                             <script>
                                 prixOp = prixTTC({{.MoNHeure}}*{{.MoPrixH}}, {{.MoTVA}})
                                        + prixTTC({{.OuPrix}}, {{.OuTVA}});
-                                document.write(round(prixOp, 2) + " &euro;");
+                                document.write(formatNb(round(prixOp, 2)) + " &euro;");
                                 if({{.Qte}} != 0){
                                     prixOpParMap = prixOp / {{.Qte}};
-                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                    document.write(" - " + formatNb(round(prixOpParMap, 2)) + " &euro; / map");
                                 }
                             </script>
                             )
@@ -79,10 +79,10 @@
                             <br>(
                             <script>
                                 prixOp = prixTTC({{.GlPrix}}, {{.GlTVA}});
-                                document.write(round(prixOp, 2) + " &euro;");
+                                document.write(formatNb(round(prixOp, 2)) + " &euro;");
                                 if({{.Qte}} != 0){
                                     prixOpParMap = prixOp / {{.Qte}};
-                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                    document.write(" - " + formatNb(round(prixOpParMap, 2)) + " &euro; / map");
                                 }
                             </script>
                             )
@@ -94,10 +94,10 @@
                             <script>
                                 prixOp = prixTTC({{.MoNHeure}}*{{.MoPrixH}}, {{.MoTVA}})
                                        + prixTTC({{.OuPrix}}, {{.OuTVA}});
-                                document.write(round(prixOp, 2) + " &euro;");
+                                document.write(formatNb(round(prixOp, 2)) + " &euro;");
                                 if({{.Qte}} != 0){
                                     prixOpParMap = prixOp / {{.Qte}};
-                                    document.write(" - " + round(prixOpParMap, 2) + " &euro; / map");
+                                    document.write(" - " + formatNb(round(prixOpParMap, 2)) + " &euro; / map");
                                 }
                             </script>
                             )
@@ -119,9 +119,9 @@
     
     <tr class="total">
         <td>TOTAL</td>
-        <td class="right"><script>document.write(totalQte);</script> maps</td>
+        <td class="right"><script>document.write(formatNb(totalQte));</script> maps</td>
         <td></td>
-        <td class="right"><script>document.write(round(totalPrix, 2));</script> &euro;</td>
+        <td class="right"><script>document.write(formatNb(round(totalPrix, 2)));</script> &euro;</td>
         <td colspan="3"></td>
     </tr>
     

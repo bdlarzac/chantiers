@@ -40,7 +40,7 @@ let k1, k2;
             <td class="right">
                 {{$key := printf "%s-%s-vol" . $essenceCode}}
                 {{$val := index $.Details.Valorisations $key}}
-                {{$val}}
+                <script>document.write(formatNb({{$val}}));</script>
                 {{$key_totaux := printf "%s-vol" .}}
                 <script>
                     document.write(unites.get({{$key_totaux}}));
@@ -50,7 +50,7 @@ let k1, k2;
             <td class="right">
                 {{$key := printf "%s-%s-ca" . $essenceCode}}
                 {{$val := index $.Details.Valorisations $key}}
-                {{$val}}
+                <script>document.write(formatNb({{$val}}));</script>
                 {{$key_totaux := printf "%s-ca" .}}
                 <script>
                     document.write(unites.get({{$key_totaux}}));
@@ -64,7 +64,7 @@ let k1, k2;
         <th>TOTAL</th>
         <script>
         for(let [key, value] of totaux) {
-            document.write("<td class=\"right\"><b>" + value + "</b> " + unites.get(key) + "</td>");
+            document.write("<td class=\"right\"><b>" + formatNb(value) + "</b> " + unites.get(key) + "</td>");
         }
         
         </script>

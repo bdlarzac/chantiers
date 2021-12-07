@@ -26,7 +26,7 @@
     <div class="margin-left2 margin-bottom2">
     
         <!-- ***************** Stock ******************** -->
-        <div class="big2 bold margin-top margin-bottom">Stock : <script>document.write(round({{.Stock}}, 2));</script> maps</div>
+        <div class="big2 bold margin-top margin-bottom">Stock : <script>document.write(formatNb(round({{.Stock}}, 2)));</script> maps</div>
         
         <!-- **************** Tas ********************* -->
         <div class="big2 bold margin-top margin-bottom">Tas courants</div>
@@ -42,7 +42,7 @@
                     <div class="icon-empty">&empty;</div>
                 </a>
 
-                <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = <script>document.write(round({{.Stock}}, 2));</script> maps
+                <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = <script>document.write(formatNb(round({{.Stock}}, 2)));</script> maps
                 <!-- **************** Mesures humidité ********************* -->
                 {{if .MesuresHumidite}}
                     <div class="margin-left2">
@@ -70,14 +70,14 @@
                     <script>stock += {{.Delta}};</script>
                     <tr>
                         <td>{{.Date | dateFr}}</td>
-                        <td>
+                        <td>                                                 
                             {{if .URL}}<a href="{{.URL}}">{{end}}
                             {{.Label}}
                             {{if .URL}}</a>{{end}}
                         </td>
                         <td class="right">{{printf "%+.0f" .Delta}}</td>
                         <td class="right">
-                            <script>document.write(round(stock, 2));</script>
+                            <script>document.write(formatNb(round(stock, 2)));</script>
                         </td>
                     </tr>
                 {{end}}
@@ -113,7 +113,7 @@
                 <td>{{.TypeFrais | labelStockFrais}}</td>
                 <td>{{.DateDebut | dateFr}}</td>
                 <td>{{.DateFin | dateFr}}</td>
-                <td class="right"><b><script>document.write(round({{.Montant}}, 2));</script> &euro; HT</b></td>
+                <td class="right"><b><script>document.write(formatNb(round({{.Montant}}, 2)));</script> &euro; HT</b></td>
                 <td>{{.Notes | nl2br}}</td>
             </tr>
         {{end}}
