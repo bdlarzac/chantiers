@@ -303,6 +303,8 @@ func handleMigration(ctx *ctxt.Context, migration string) {
         dbmigrate.Migrate_2021_03_01_exemple(ctx)
     case "Migrate_2021_11_10_note_plaq":
         dbmigrate.Migrate_2021_11_10_note_plaq(ctx)
+    case "Migrate_2022_01_10_facture_vente_km_map":
+        dbmigrate.Migrate_2022_01_10_facture_vente_km_map(ctx)
     }
 }
 

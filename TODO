@@ -2,6 +2,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- Utiliser openg/src/generic/tiglib/number-format.go
+
 - Possible d'implémenter Acteur.IsDeletable() avec des select count(), plus économiques
   Acteur.GetActivitesByDate() génère beaucoup de requêtes inutiles
   

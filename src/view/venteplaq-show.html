@@ -1,6 +1,19 @@
 
 {{with .Details.Vente}}
 {{$idVente := .Id}}
+<script>
+    const prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
+    let prixLivraisonHT = 0;
+    let prixTotalHT = prixPlaquettesHT;
+    {{if .FactureLivraison}}
+        prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.Qte}});
+        prixTotalHT += prixLivraisonHT;
+    {{end}}
+    const prixPlaquettesTTC = prixTTC(prixPlaquettesHT, {{.TVA}});
+    const prixLivraisonTTC = prixTTC(prixLivraisonHT, {{.FactureLivraisonTVA}});
+    const prixTotalTTC = prixPlaquettesTTC + prixLivraisonTTC;
+</script>
+
 <h1>
     {{.FullString}}
     <a class="padding-left" href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
@@ -21,7 +34,7 @@
 
 <div class="flex-wrap">
 
-<div class=" padding-right border-right">
+<div class="padding-right border-right">
 <div class="grid2-pres">
     <span>Client</span>
     <span class="bold"><a href="/acteur/{{.IdClient}}">{{.Client.String}}</a></span>
@@ -40,10 +53,19 @@
         {{end}}
         </div>
     {{end}}
+    
+    <span class="padding-top">Prix total HT</span>
+    <span class="padding-top bold"><script>document.write(formatNb(round(prixTotalHT, 2)));</script></span>
+    
+    <span>Prix total TTC</span>
+    <span class="bold"><script>document.write(formatNb(round(prixTotalTTC, 2)));</script></span>
+    
 </div>
 </div>
 
-<div class="grid2-pres padding-left">
+<div class="padding-left padding-right border-right">
+<div class="margin-bottom bold">Prix plaquettes</div>
+<div class="grid2-pres">
     <span>Quantité</span>
     <span class="bold"><script>document.write(formatNb({{.Qte}}));</script> maps</span>
     
@@ -51,14 +73,37 @@
     <span class="bold">{{.PUHT | twoDigits}} &euro;</span>
     
     <span>Prix HT</span>
-    <span class="bold"><script>document.write(formatNb(round(prixHT({{.PUHT}}, {{.Qte}}), 2)));</script> &euro;</span>
+    <span class="bold"><script>document.write(formatNb(round(prixPlaquettesHT, 2)));</script> &euro;</span>
     
     <span>TVA</span>
     <span class="bold">{{.TVA}} %</span>
     
     <span>Prix TTC</span>
-    <span class="bold"><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2)));</script> &euro;</span>
+    <span class="bold"><script>document.write(formatNb(round(prixPlaquettesTTC, 2)));</script> &euro;</span>
 </div>
+</div>
+
+{{if .FactureLivraison}}
+<div class="padding-left padding-right border-right">
+<div class="margin-bottom bold">Prix Livraison</div>
+<div class="grid2-pres">
+    <span>Quantité</span>
+    <span class="bold"><script>document.write(formatNb({{.Qte}}));</script> {{.FactureLivraisonUnite}}</span>
+    
+    <span>PU HT</span>
+    <span class="bold">{{.FactureLivraisonPUHT | twoDigits}} &euro;</span>
+    
+    <span>Prix HT</span>
+    <span class="bold"><script>document.write(formatNb(round(prixLivraisonHT, 2)));</script> &euro;</span>
+    
+    <span>TVA</span>
+    <span class="bold">{{.FactureLivraisonTVA}} %</span>
+    
+    <span>Prix TTC</span>
+    <span class="bold"><script>document.write(formatNb(round(prixLivraisonTTC, 2)));</script> &euro;</span>
+</div>
+</div>
+{{end}}
 
 </div><!-- end class="flex-wrap" -->
 
@@ -91,16 +136,8 @@
         <div>
             <div>Sur la facture :</div>
             <div class="grid2-pres">
-                <div>Faire apparaître un coût de livraison</div> 
+                <div>Faire apparaître le coût de livraison</div> 
                 <div class="bold">{{if .FactureLivraison}}Oui{{else}}Non{{end}}</div>
-                
-                {{if .FactureLivraison}}
-                <div>PU HT livraison facturée</div>
-                <div class="bold">{{.FactureLivraisonPUHT}} &euro; / map</div>
-                
-                <div>TVA livraison facturée</div>
-                <div class="bold">{{.FactureLivraisonTVA}} %</div>
-                {{end}}
                 
                 <div>Faire apparaître les notes</div> 
                 <div class="bold">{{if .FactureNotes}}Oui{{else}}Non{{end}}</div>

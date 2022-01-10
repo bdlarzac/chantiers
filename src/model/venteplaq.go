@@ -1,5 +1,11 @@
 /******************************************************************************
     Vente de plaquettes, depuis un lieu de stockage
+    Note: La string stockée dans FactureLivraisonUnite ne vient pas d'une enum.
+    Donc les valeurs "km" et "map" sont codées en dur
+    - dans le js de venteplaq-form.html
+    - dans venteplaq-show.html
+    - dans venteplaq-list.html
+    La valeur est insérée directement en base dans control.ventePlaqForm2var()
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -14,7 +20,6 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
 )
 
 type VentePlaq struct {
@@ -31,6 +36,7 @@ type VentePlaq struct {
 	FactureLivraisonPUHT float64
 	FactureLivraisonTVA  float64
 	FactureNotes         bool
+	FactureLivraisonUnite string // voir note dans commentaire de la classe
 	//
 	Notes string
 	// Pas stocké en base
@@ -286,10 +292,11 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
         datefacture,
         facturelivraison,
         facturelivraisonpuht,
+        facturelivraisonunite,
         facturelivraisontva,
         facturenotes,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
@@ -302,6 +309,7 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
 		vp.DateFacture,
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
+		vp.FactureLivraisonUnite,
 		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes).Scan(&id)
@@ -319,10 +327,11 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
         datefacture,
         facturelivraison,
         facturelivraisonpuht,
+        facturelivraisonunite,
         facturelivraisontva,
         facturenotes,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) where id=$13`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) where id=$14`
 	_, err := db.Exec(
 		query,
 		vp.IdClient,
@@ -334,6 +343,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 		vp.DateFacture,
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
+		vp.FactureLivraisonUnite,
 		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes,
