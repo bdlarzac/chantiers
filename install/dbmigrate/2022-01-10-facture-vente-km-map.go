@@ -3,7 +3,7 @@
     Ajout de venteplaq.facturelivraisonunite
     Peut prendre les valeurs 'km', 'map', ''
 
-    TODO Intégration : commit
+    Intégration : commit cbab3d5 - 2022-01-10 18:49:11
     
     @copyright  BDL, Bois du Larzac
     @license    GPL

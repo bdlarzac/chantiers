@@ -14,21 +14,38 @@
 </div>
 {{end}}
 
-
 {{if .Details.Ventes}}
+<script>
+    let prixPlaquettesHT,
+        prixPlaquettesTTC,
+        prixLivraisonHT,
+        prixLivraisonTTC,
+        prixTotalTTC;
+</script>
+
 <table class="entities">
     <tr>
         <th colspan="2"></th>
         <th>Qté</th>
-        <th>PU HT</th>
-        <th>Prix HT</th>
         <th>Prix TTC</th>
+        <th title="Comment la livraison apparaît sur la facture">Livr.</th>
         <th>Num facture</th>
         <th>Date facture</th>
     </tr>
 {{end}}
 {{range .Details.Ventes}}
     <tr>
+        <script>
+            prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
+            prixLivraisonHT = 0;
+            prixTotalHT = prixPlaquettesHT;
+            {{if .FactureLivraison}}
+                prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.Qte}});
+            {{end}}
+            prixPlaquettesTTC = prixTTC(prixPlaquettesHT, {{.TVA}});
+            prixLivraisonTTC = prixTTC(prixLivraisonHT, {{.FactureLivraisonTVA}});
+            prixTotalTTC = prixPlaquettesTTC + prixLivraisonTTC;
+        </script>
         <td>
             <a href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
                 <img src="/static/img/facture.png" title="Voir la facture" />
@@ -42,9 +59,8 @@
         </td>
         <td><a href="/vente/{{.Id}}">{{.FullString}}</a></td>
         <td class="right"><script>document.write(formatNb({{.Qte}}));</script> maps</td>
-        <td class="right"><script>document.write(formatNb({{.PUHT}}));</script> &euro;</td>
-        <td class="right"><script>document.write(formatNb(round(prixHT({{.PUHT}}, {{.Qte}}), 2)));</script> &euro;</td>
-        <td class="right"><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2)));</script> &euro;</td>
+        <td class="right"><script>document.write(formatNb(round(prixTotalTTC, 2)));</script> &euro;</td>
+        <td>{{.FactureLivraisonUnite}}</td>
         <td>{{.NumFacture}}</td>
         <td>{{.DateFacture | dateFr}}</td>
     </tr>
