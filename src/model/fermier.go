@@ -1,8 +1,8 @@
 /******************************************************************************
     Fermiers = exploitants agricoles, issus de la base SCTL
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2021-02-08 09:09:36+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

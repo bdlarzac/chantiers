@@ -1,8 +1,8 @@
 /******************************************************************************
     Lieux-dits
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2019-11-07 10:07:45+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

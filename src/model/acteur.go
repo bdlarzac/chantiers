@@ -1,8 +1,8 @@
 /******************************************************************************
     Acteurs
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2019-11-08 10:43:40+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

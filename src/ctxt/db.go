@@ -1,7 +1,8 @@
 /******************************************************************************
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  Thierry Graff
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+    
     @history    2019-09-26 23:41:06+02:00, Thierry Graff : Creation
 ********************************************************************************/
 

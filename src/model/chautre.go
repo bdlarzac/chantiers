@@ -2,8 +2,8 @@
     Chautre = Chantiers Autres valorisations
     Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par BDL
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2020-02-04 19:32:43+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

@@ -1,5 +1,11 @@
+/******************************************************************************
+    
+    @copyright  Thierry Graff
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+    
+    @history    2018, Thierry Graff : Creation
+********************************************************************************/
 
-//document.getElementById("defaultOpen").click();
 document.getElementsByClassName("defaultOpen")[0].click();
 
 function openTab(evt, tabame) {

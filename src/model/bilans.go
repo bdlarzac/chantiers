@@ -1,8 +1,8 @@
 /******************************************************************************
     Calculs utilisés dans les bilans
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2021-01-19 10:09:42+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

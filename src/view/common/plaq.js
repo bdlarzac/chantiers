@@ -2,7 +2,9 @@
     Code relatif aux chantiers plaquettes
     Mis ici car commun à plusieurs pages
 
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+    
     @history    2020-01-27 17:57:44+01:00, Thierry Graff : Creation
 ********************************************************************************/
 

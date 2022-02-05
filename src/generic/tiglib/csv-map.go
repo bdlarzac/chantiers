@@ -1,5 +1,4 @@
 /******************************************************************************
-
     Lit un fichier csv et le charge dans une map.
     Les clés sont tirées de la première ligne.
 

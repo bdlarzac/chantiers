@@ -1,6 +1,6 @@
 
 Ce répertoire contient du js générique, ou lié à l'UI.
 
-Le js spécifique à cette application se trouve
+Le js spécifique au code métier de cette application se trouve :
 - soit dans les templates view/*.html
 - soit dans view/common/

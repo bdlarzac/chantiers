@@ -2,8 +2,8 @@
     Affacture = "facture à l'envers", que BDL doit payer à un acteur
     Pas stocké en base
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2020-03-03 11:16:58+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

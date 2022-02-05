@@ -1,3 +1,8 @@
+/** 
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+**/
+
 
 /* en test - pour anchor qui se décale de la hauteur du menu */
 :target{
@@ -13,16 +18,6 @@
    left: 0;
    right: 0;
 }
-/* solution de bootstrap - casse icon help dans form */
-/* 
-*[id]:before { 
-  display: block; 
-  content: " "; 
-  margin-top: -60px;
-  height: 60px;
-  visibility: hidden; 
-}
-*/
 
 /* ================ Normalization ================ */
 *{

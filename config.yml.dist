@@ -54,7 +54,9 @@ tva-bdl:
   # pas la TVA appliquée par les livreurs
   livraison: 20
   vente-plaquettes: 10
-  autre-valorisation: 20
+  autres-valorisations:
+    - 10
+    - 20
 
 # Infos figurant sur les factures
 facture:

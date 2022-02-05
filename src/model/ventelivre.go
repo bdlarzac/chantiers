@@ -1,8 +1,8 @@
 /******************************************************************************
     Livraison lors d'une vente de plaquettes
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2020-03-13 10:59:50+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

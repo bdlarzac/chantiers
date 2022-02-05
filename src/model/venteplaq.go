@@ -7,8 +7,8 @@
     - dans venteplaq-list.html
     La valeur est insérée directement en base dans control.ventePlaqForm2var()
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2020-01-22 02:56:23+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

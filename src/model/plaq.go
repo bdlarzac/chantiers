@@ -1,8 +1,8 @@
 /******************************************************************************
     Chantier plaquettes - contient infos générales d'un chantier
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2019, Thierry Graff : Creation
 ********************************************************************************/
 package model

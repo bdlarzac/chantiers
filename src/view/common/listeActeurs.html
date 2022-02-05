@@ -1,4 +1,9 @@
-{{/* datalist commune à tous les input pour saisir des acteurs */}}
+{{/*
+    Datalist commune à tous les input pour saisir des acteurs.
+    
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
 <datalist id="liste-acteurs">
     {{range $id, $nom := .ListeActeurs}}
         <option name="acteur-{{$id}}" value="{{$nom}}">

@@ -1,10 +1,11 @@
 /******************************************************************************
     Chargement de config.yml
 
-    contains package init()
+    Contains package init()
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  Thierry Graff
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+    
     @history    2019-09-26, Thierry Graff : Creation
 ********************************************************************************/
 package ctxt

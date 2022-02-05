@@ -1,8 +1,8 @@
 /******************************************************************************
     Gestion des chantiers visités récemment
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2020-05-14 17:35:22+02:00, Thierry Graff : Creation
 ********************************************************************************/
 package model

@@ -1,8 +1,10 @@
 /******************************************************************************
-    Templates
+    Fonctions utilisée dans les templates HTML.
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  Les fonctions spécifiques au programme BDL sont la propriété intellectuelle de BDL, Bois du Larzac.
+                Les fonctions génériques sont la propriété intellectuelle de Thierry Graff.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+    
     @history    2019-12-11 14:49:10+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package ctxt
@@ -24,8 +26,17 @@ var tmpl *template.Template
 
 func init() {
 	var fmap = template.FuncMap{
+		// Generic pipelines
 		"dateFr":                       dateFr,
 		"dateIso":                      dateIso,
+		"modulo":                       modulo,
+		"nl2br":                        nl2br,
+		"safeHTML":                     safeHTML,
+		"twoDigits":                    twoDigits,
+		"ucFirst":                      ucFirst,
+		"year":                         year,
+		"zero2empty":                   zero2empty,
+		// Pipelines related to current program
 		"labelActivite":                labelActivite,
 		"labelEssence":                 labelEssence,
 		"labelExploitation":            labelExploitation,
@@ -34,15 +45,8 @@ func init() {
 		"labelUnite":                   labelUnite,
 		"labelValorisation":            labelValorisation,
 		"labelValorisationAvecChaufer": labelValorisationAvecChaufer,
-		"modulo":                       modulo,
-		"nl2br":                        nl2br,
-		"safeHTML":                     safeHTML,
-		"twoDigits":                    twoDigits,
-		"ucFirst":                      ucFirst,
 		"valorisation2unite":           valorisation2unite,
 		"valorisation2uniteLabel":      valorisation2uniteLabel,
-		"year":                         year,
-		"zero2empty":                   zero2empty,
 	}
 	tmpl = template.
 		Must(template.
@@ -57,84 +61,55 @@ func init() {
 	tmpl.New("listeActeurs").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "listeActeurs.html"))
 }
 
-// ************************* pipelines ********************************
+// ************************* Generic pipelines ********************************
 
+/** 
+    @copyright Thierry Graff
+**/
 func modulo(i, mod int) int {
     return i % mod;
 }
 
+/** 
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func nl2br(t string) template.HTML {
 	return template.HTML(strings.Replace(template.HTMLEscapeString(t), "\n", "<br>", -1))
 }
 
-// Affiche une date JJ/MM/AAAA
+/** 
+    Displays a date, format DD/MM/YYYY.
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func dateFr(t time.Time) template.HTML {
 	return template.HTML(tiglib.DateFr(t))
 }
 
-// Affiche une date YYYY-MM-DD
+/** 
+    Displays a date, format YYYY-MM-DD.
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func dateIso(t time.Time) template.HTML {
 	return template.HTML(tiglib.DateIso(t))
 }
 
-// Affiche l'année YYYY d'une date
+/** 
+    Displays the year of a date, format YYYY.
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func year(t time.Time) template.HTML {
 	return template.HTML(strconv.Itoa(t.Year()))
 }
 
-// Nom d'une essence (chêne etc.) à partir de son code
-func labelEssence(str string) template.HTML {
-	return template.HTML(model.LabelEssence(str))
-}
-
-// Nom d'une unité utilisée dans cette appli, à partir de son code
-func labelUnite(str string) template.HTML {
-	return template.HTML(model.LabelUniteHTML(str))
-}
-
-// Type d'exploitation (1 - 5), à partir de son code
-func labelExploitation(str string) template.HTML {
-	return template.HTML(model.LabelExploitation(str))
-}
-
-// Type de valorisation (palette, pâte à papier...), à partir de son code
-func labelValorisation(str string) template.HTML {
-	return template.HTML(model.LabelValorisation(str))
-}
-
-// Même chose que labelValorisation(), avec :
-// "CH" renvoie "Chauffage client"
-// "CF" renvoie " Chauffage fermier"
-func labelValorisationAvecChaufer(str string) template.HTML {
-	return template.HTML(model.LabelValorisationAvecChaufer(str))
-}
-
-// Renvoie le code unité correspondant à un type de valorisation (palette, pâte à papier...)
-func valorisation2unite(str string) template.HTML {
-	return template.HTML(model.Valorisation2unite(str))
-}
-
-// Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
-func valorisation2uniteLabel(str string) template.HTML {
-	return template.HTML(model.LabelUnite(model.Valorisation2unite(str)))
-}
-
-// Type de vente (pour chautre) à partir de son code
-func labelTypeVente(str string) template.HTML {
-	return template.HTML(model.LabelTypeVente(str))
-}
-
-// Type d'opération simple (abattage, débardage...) à partir de son code
-func labelActivite(str string) template.HTML {
-	return template.HTML(model.LabelActivite(str))
-}
-
-// Type de frais pour stockage (loyer, assurance, élec) à partir de son code
-func labelStockFrais(str string) template.HTML {
-	return template.HTML(model.LabelStockFrais(str))
-}
-
-// from https://www.php2golang.com/method/function.ucfirst.html
+/** 
+    From https://www.php2golang.com/method/function.ucfirst.html
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func ucFirst(str string) template.HTML {
 	for _, v := range str {
 		u := string(unicode.ToUpper(v))
@@ -143,9 +118,13 @@ func ucFirst(str string) template.HTML {
 	return template.HTML("")
 }
 
-// Sert à initialiser les input type number à "" au lieu de "0"
-// val doit être un int ou un float64
-// Pas de vérification d'erreur
+/** 
+    Used to initialize input type=number with "" instead of "0".
+    No error check.
+    @param      val  Must be an int or a float64. 
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func zero2empty(val interface{}) template.HTML {
 	var res string
 	if _, ok := val.(float64); ok {
@@ -165,12 +144,74 @@ func zero2empty(val interface{}) template.HTML {
 	return template.HTML(res)
 }
 
-// Pour afficher les prix, 2 chiffres après la virgule
-// Des zéros sont rajoutés si besoin - par ex renvoie 12.50 au lieu de 12.5
+/** 
+    To display prices, with a precision of 1E-2. Zeroes are added if needed.
+    Ex: twoDigits(12.5) returns 12.50 instead of 12.5
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func twoDigits(f float64) template.HTML {
 	return template.HTML(fmt.Sprintf("%.2f", f))
 }
 
+/** 
+    @copyright  Thierry Graff
+    @license    GPL
+**/
 func safeHTML(str string) template.HTML {
 	return template.HTML(str)
+}
+
+// ************************* Pipelines related to current program ********************************
+
+// Type d'opération simple (abattage, débardage...) à partir de son code
+func labelActivite(str string) template.HTML {
+	return template.HTML(model.LabelActivite(str))
+}
+
+// Nom d'une essence (chêne etc.) à partir de son code
+func labelEssence(str string) template.HTML {
+	return template.HTML(model.LabelEssence(str))
+}
+
+// Type d'exploitation (1 - 5), à partir de son code
+func labelExploitation(str string) template.HTML {
+	return template.HTML(model.LabelExploitation(str))
+}
+
+// Type de frais pour stockage (loyer, assurance, élec) à partir de son code
+func labelStockFrais(str string) template.HTML {
+	return template.HTML(model.LabelStockFrais(str))
+}
+
+// Type de vente (pour chautre) à partir de son code
+func labelTypeVente(str string) template.HTML {
+	return template.HTML(model.LabelTypeVente(str))
+}
+
+// Nom d'une unité utilisée dans cette appli, à partir de son code
+func labelUnite(str string) template.HTML {
+	return template.HTML(model.LabelUniteHTML(str))
+}
+
+// Type de valorisation (palette, pâte à papier...), à partir de son code
+func labelValorisation(str string) template.HTML {
+	return template.HTML(model.LabelValorisation(str))
+}
+
+// Même chose que labelValorisation(), avec :
+// "CH" renvoie "Chauffage client"
+// "CF" renvoie " Chauffage fermier"
+func labelValorisationAvecChaufer(str string) template.HTML {
+	return template.HTML(model.LabelValorisationAvecChaufer(str))
+}
+
+// Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
+func valorisation2uniteLabel(str string) template.HTML {
+	return template.HTML(model.LabelUnite(model.Valorisation2unite(str)))
+}
+
+// Renvoie le code unité correspondant à un type de valorisation (palette, pâte à papier...)
+func valorisation2unite(str string) template.HTML {
+	return template.HTML(model.Valorisation2unite(str))
 }

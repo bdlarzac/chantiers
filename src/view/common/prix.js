@@ -1,7 +1,9 @@
 /******************************************************************************
     Opérations sur les prix.
 
-    @license    GPL
+    @copyright  Thierry Graff.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+    
     @history    2020-02-10 22:11:54+01:00, Thierry Graff : Creation
 ********************************************************************************/
 

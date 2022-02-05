@@ -4,8 +4,8 @@
     Compare l'état de la base BDL (qui est le résultat d'un import d'une version antérieure de la base SCTL)
     avec une nouvelle version de la base SCTL
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2020-04-18 14:20:54+02:00, Thierry Graff : Creation
 ********************************************************************************/
 package model
