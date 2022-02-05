@@ -70,9 +70,9 @@ func GetPlaqTrans(db *sqlx.DB, id int) (pt *PlaqTrans, err error) {
 // ************************** Compute *******************************
 
 func (pt *PlaqTrans) ComputeTas(db *sqlx.DB) (err error) {
-    if pt.Tas != nil {
-        return nil // déjà calculé
-    }
+	if pt.Tas != nil {
+		return nil // déjà calculé
+	}
 	pt.Tas, err = GetTasFull(db, pt.IdTas)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTasFull()")
@@ -84,9 +84,9 @@ func (pt *PlaqTrans) ComputeTransporteur(db *sqlx.DB) (err error) {
 	if pt.IdTransporteur == 0 {
 		return nil // pas de transporteur (mais conducteur et proprioutil)
 	}
-    if pt.Transporteur != nil {
-        return nil // déjà calculé
-    }
+	if pt.Transporteur != nil {
+		return nil // déjà calculé
+	}
 	pt.Transporteur, err = GetActeur(db, pt.IdTransporteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -98,9 +98,9 @@ func (pt *PlaqTrans) ComputeConducteur(db *sqlx.DB) (err error) {
 	if pt.IdConducteur == 0 {
 		return nil // pas de conducteur ni proprioutil (mais un transporteur)
 	}
-    if pt.Conducteur != nil {
-        return nil // déjà calculé                                                                                        
-    }
+	if pt.Conducteur != nil {
+		return nil // déjà calculé
+	}
 	pt.Conducteur, err = GetActeur(db, pt.IdConducteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -112,9 +112,9 @@ func (pt *PlaqTrans) ComputeProprioutil(db *sqlx.DB) (err error) {
 	if pt.IdProprioutil == 0 {
 		return nil // pas de conducteur ni proprioutil (mais un transporteur)
 	}
-    if pt.Proprioutil != nil {
-        return nil // déjà calculé                                                                                        
-    }
+	if pt.Proprioutil != nil {
+		return nil // déjà calculé
+	}
 	pt.Proprioutil, err = GetActeur(db, pt.IdProprioutil)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")

@@ -18,21 +18,21 @@ import (
 )
 
 type Chautre struct {
-	Id           int
-	IdAcheteur   int `db:"id_acheteur"`
-	TypeVente    string
-	TypeValo     string
-	DateContrat  time.Time
-	Exploitation string
-	Essence      string
-	VolumeContrat       float64
-	VolumeRealise       float64
-	Unite        string
-	PUHT         float64
-	TVA          float64
-	DateFacture  time.Time
-	NumFacture   string
-	Notes        string
+	Id            int
+	IdAcheteur    int `db:"id_acheteur"`
+	TypeVente     string
+	TypeValo      string
+	DateContrat   time.Time
+	Exploitation  string
+	Essence       string
+	VolumeContrat float64
+	VolumeRealise float64
+	Unite         string
+	PUHT          float64
+	TVA           float64
+	DateFacture   time.Time
+	NumFacture    string
+	Notes         string
 	// pas stocké en base
 	UGs      []*UG
 	Lieudits []*Lieudit

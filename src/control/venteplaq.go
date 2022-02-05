@@ -1,27 +1,27 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
 package control
 
 import (
-	"html/template"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
+	"html/template"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type detailsVentePlaqForm struct {
 	Vente              *model.VentePlaq
 	FournisseurOptions template.HTML
-    ListeActeurs       map[int]string
+	ListeActeurs       map[int]string
 	UrlAction          string
 }
 type detailsVentePlaqList struct {
@@ -153,7 +153,7 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			Details: detailsVentePlaqForm{
 				Vente:              vente,
 				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), "CHOOSE_FOURNISSEUR"),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs:       listeActeurs,
 				UrlAction:          "/vente/new",
 			},
 		}
@@ -216,9 +216,9 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 					"/static/js/toogle.js"},
 			},
 			Details: detailsVentePlaqForm{
-				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), "fournisseur-" + strconv.Itoa(vente.IdFournisseur)),
+				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), "fournisseur-"+strconv.Itoa(vente.IdFournisseur)),
 				Vente:              vente,
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs:       listeActeurs,
 				UrlAction:          "/vente/update/" + vars["id-vente"],
 			},
 		}
@@ -446,12 +446,12 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 		x += wi
 		pdf.SetXY(x, y)
 		wi = w3
-        var unite string
-        if vente.FactureLivraisonUnite == "map"{
-            unite = "MAP"
-        } else {
-            unite = "KM"
-        }
+		var unite string
+		if vente.FactureLivraisonUnite == "map" {
+			unite = "MAP"
+		} else {
+			unite = "KM"
+		}
 		pdf.MultiCell(wi, he, unite, "RB", "C", false)
 		x += wi
 		pdf.SetXY(x, y)

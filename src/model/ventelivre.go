@@ -8,11 +8,11 @@
 package model
 
 import (
-	"time"
-	"strconv"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"strconv"
+	"time"
 )
 
 type VenteLivre struct {
@@ -52,29 +52,28 @@ type VenteLivre struct {
 // Les livraisons sont les seules opérations composées (avec coût global / coût détaillé)
 // ayant besoin de String(), car le nom apparaît dans le formulaire de new / update chargement.
 func (vl *VenteLivre) String() string {
-    nom := ""
-    if vl.TypeCout == "G" {
-        if vl.Livreur == nil {
-            msg := "Erreur dans le code VenteLivre.String() : livreur doit être calculé avant d'appeler String()" +
-                "\nventecharge id = " + strconv.Itoa(vl.Id)
-            panic(msg)
-        }
-        nom = vl.Livreur.String()
-    } else {
-        if vl.Conducteur == nil || vl.Proprioutil == nil {
-            msg := "Erreur dans le code VenteLivre.String() : conducteur et proprioutil doivent être calculés avant d'appeler String()" +
-                "\nventecharge id = " + strconv.Itoa(vl.Id)
-            panic(msg)
-        }
+	nom := ""
+	if vl.TypeCout == "G" {
+		if vl.Livreur == nil {
+			msg := "Erreur dans le code VenteLivre.String() : livreur doit être calculé avant d'appeler String()" +
+				"\nventecharge id = " + strconv.Itoa(vl.Id)
+			panic(msg)
+		}
+		nom = vl.Livreur.String()
+	} else {
+		if vl.Conducteur == nil || vl.Proprioutil == nil {
+			msg := "Erreur dans le code VenteLivre.String() : conducteur et proprioutil doivent être calculés avant d'appeler String()" +
+				"\nventecharge id = " + strconv.Itoa(vl.Id)
+			panic(msg)
+		}
 		nom = vl.Conducteur.String() + " / " + vl.Proprioutil.String()
-    }
+	}
 	return nom + " " + tiglib.DateFr(vl.DateLivre)
 }
 
 func (vl *VenteLivre) FullString() string {
 	return "Livraison plaquettes " + vl.String()
 }
-
 
 // ************************** Get *******************************
 

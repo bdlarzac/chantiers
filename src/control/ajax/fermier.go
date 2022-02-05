@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-//	"strconv"
+	//	"strconv"
 )
 
 // Renvoie une liste de fermiers associés à une UG
@@ -34,7 +34,7 @@ func GetFermiersFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Req
 	return nil
 }
 
-/* 
+/*
 // TODO supprimer si toujours inutile
 func GetFermiersFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)

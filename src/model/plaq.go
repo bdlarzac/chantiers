@@ -57,7 +57,7 @@ type CoutPlaq struct {
 	Chargement   float64
 	Livraison    float64
 	//
-	Total        float64
+	Total float64
 }
 
 // ************************** Manipulation Volume *******************************
@@ -214,30 +214,30 @@ func GetAllPlaqsVides(db *sqlx.DB) ([]*Plaq, error) {
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
-	for _, idChantier := range(idsChantier){
-	    ch, err := GetPlaq(db, idChantier)
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
-        }
-        err = ch.ComputeTas(db)
-        for _, tas := range(ch.TasVides){
-            err = tas.ComputeEvolutionStock(db)
-            if err != nil {
-                return res, werr.Wrapf(err, "Erreur appel Tas.ComputeEvolutionStock()")
-            }
-        }
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeTas()")
-        }
-        err = ch.ComputeVolume(db)
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeVolume()")
-        }
-        err = ch.ComputeLieudits(db) // nécessaire pour afficher le nom du chantier
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
-        }
-        res = append(res, ch)
+	for _, idChantier := range idsChantier {
+		ch, err := GetPlaq(db, idChantier)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel GetPlaq()")
+		}
+		err = ch.ComputeTas(db)
+		for _, tas := range ch.TasVides {
+			err = tas.ComputeEvolutionStock(db)
+			if err != nil {
+				return res, werr.Wrapf(err, "Erreur appel Tas.ComputeEvolutionStock()")
+			}
+		}
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeTas()")
+		}
+		err = ch.ComputeVolume(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeVolume()")
+		}
+		err = ch.ComputeLieudits(db) // nécessaire pour afficher le nom du chantier
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
+		}
+		res = append(res, ch)
 	}
 	return res, err
 }
@@ -368,9 +368,9 @@ func (ch *Plaq) ComputeTas(db *sqlx.DB) error {
 			return werr.Wrapf(err, "Erreur appel Tas.ComputeNom()")
 		}
 		if ch.Tas[i].Actif {
-		    ch.TasActifs = append(ch.TasActifs, ch.Tas[i])
+			ch.TasActifs = append(ch.TasActifs, ch.Tas[i])
 		} else {
-		    ch.TasVides = append(ch.TasVides, ch.Tas[i])
+			ch.TasVides = append(ch.TasVides, ch.Tas[i])
 		}
 	}
 	return nil
@@ -418,8 +418,8 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
 	//
 	for _, op := range ch.Operations {
 		cout = op.PUHT * op.Qte
-        ch.CoutParMap.Total += cout / nMapSec
-        ch.CoutTotal.Total += cout
+		ch.CoutParMap.Total += cout / nMapSec
+		ch.CoutTotal.Total += cout
 		switch op.TypOp {
 		case "AB":
 			ch.CoutParMap.Abattage += cout / nMapSec
@@ -509,9 +509,9 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
 	// Stockage
 	//
 	err = ch.computeCoutStockage(db)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel computeCoutStockage()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel computeCoutStockage()")
+	}
 	ch.CoutTotal.Chargement = coutC
 	ch.CoutTotal.Livraison = coutL
 	ch.CoutTotal.Total += ch.CoutTotal.Chargement
@@ -528,49 +528,48 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
 // Calcule ch.CoutParMap.Stockage
 // Auxiliaire de ComputeCouts(), donc ch est obtenu par GetPlaqFull()
 func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
-    //
-    // Calcule tous les hangars (Stockage) contenant des tas liés à ce chantier
-    //
-    var stockages []*Stockage
-    for _, t := range(ch.Tas){
-        s, err := GetStockage(db, t.IdStockage)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur appel GetStockage()")
-        }
-        stockages = append(stockages, s)
-    }
-//fmt.Printf("%+v\n",stockages)
-    
+	//
+	// Calcule tous les hangars (Stockage) contenant des tas liés à ce chantier
+	//
+	var stockages []*Stockage
+	for _, t := range ch.Tas {
+		s, err := GetStockage(db, t.IdStockage)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel GetStockage()")
+		}
+		stockages = append(stockages, s)
+	}
+	//fmt.Printf("%+v\n",stockages)
+
 	// j1, j2, DATE_MIN, DATE_MAX utilisés pour coût stockage
 	// j1 = date du premier transport
 	// j2 = date du dernier chargement
-	/* 
-	DATE_MAX, _ := time.Parse("2006-01-02", "2999-12-31")
-	DATE_MIN, _ := time.Parse("2006-01-02", "1999-12-31")
-	j1 := DATE_MAX
-	j2 := DATE_MIN
+	/*
+		DATE_MAX, _ := time.Parse("2006-01-02", "2999-12-31")
+		DATE_MIN, _ := time.Parse("2006-01-02", "1999-12-31")
+		j1 := DATE_MAX
+		j2 := DATE_MIN
 	*/
 	/*
-    // TODO commenté car besoin de trouver le mode de calcul
-    var tas *Tas
-    cout = 0
-    // s'il y a au moins un transport et un chargement
-    if j1 != DATE_MAX && j2 != DATE_MIN {
-        // vérifie que tous les tas du chantier ont été déclarés vides
-        vides := true
-        for _, tas = range(ch.Tas){
-            if tas.Actif {
-                vides = false
-            }
-        }
-        if vides == true {
+	   // TODO commenté car besoin de trouver le mode de calcul
+	   var tas *Tas
+	   cout = 0
+	   // s'il y a au moins un transport et un chargement
+	   if j1 != DATE_MAX && j2 != DATE_MIN {
+	       // vérifie que tous les tas du chantier ont été déclarés vides
+	       vides := true
+	       for _, tas = range(ch.Tas){
+	           if tas.Actif {
+	               vides = false
+	           }
+	       }
+	       if vides == true {
 
-        }
-    }
+	       }
+	   }
 	*/
 	return nil
 }
-
 
 // ************************** CRUD *******************************
 

@@ -3,16 +3,16 @@
 
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    
+
     @history    2019-12-11 14:42:24+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package ctxt
 
 import (
 	"bdl.local/bdl/model"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"html/template"
-	"fmt"
 )
 
 type Context struct {
@@ -29,7 +29,7 @@ func NewContext() *Context {
 	ctx.Template = tmpl // déclaré dans template.go
 	ctx.DB = db         // déclaré dans db.go
 	// Pas compris pourquoi devoir choisir le schema à chaque fois
-    ctx.DB.Exec(fmt.Sprintf(`set search_path='%s'`, config.Database.Schema))
+	ctx.DB.Exec(fmt.Sprintf(`set search_path='%s'`, config.Database.Schema))
 	ctx.Config = config // déclaré dans config.go
 	return ctx
 }

@@ -140,11 +140,13 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) (err error) {
 	//
 	return nil
 }
+
 // Auxiliaires de Affacture.ComputeItems() pour trier par date
 type affactureItemSlice []*AffactureItem
-func (p affactureItemSlice) Len() int { return len(p) }
+
+func (p affactureItemSlice) Len() int           { return len(p) }
 func (p affactureItemSlice) Less(i, j int) bool { return p[i].Date.Before(p[j].Date) }
-func (p affactureItemSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
+func (p affactureItemSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
 func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite string) (err error) {
 	list := []PlaqOp{}

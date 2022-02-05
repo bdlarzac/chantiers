@@ -95,9 +95,9 @@ func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) (lds []*Lieudit, err erro
 
 // Remplit le champ Parcelles d'un Lieudit
 func (ld *Lieudit) ComputeParcelles(db *sqlx.DB) (err error) {
-    if len(ld.Parcelles) != 0 {
-        return nil // déjà calculé
-    }
+	if len(ld.Parcelles) != 0 {
+		return nil // déjà calculé
+	}
 	query := `
 	    select * from parcelle where id in(
             select id_parcelle from parcelle_lieudit where id_lieudit=$1
@@ -111,9 +111,9 @@ func (ld *Lieudit) ComputeParcelles(db *sqlx.DB) (err error) {
 
 // Remplit le champ Communes d'un Lieudit
 func (ld *Lieudit) ComputeCommunes(db *sqlx.DB) (err error) {
-    if len(ld.Communes) != 0 {
-        return nil // déjà calculé
-    }
+	if len(ld.Communes) != 0 {
+		return nil // déjà calculé
+	}
 	query := `  
 	    select * from commune where id in(
             select id_commune from commune_lieudit where id_lieudit=$1

@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -14,19 +14,19 @@ import (
 )
 
 type detailsTasVidesShow struct {
-    Chantiers []*model.Plaq
+	Chantiers []*model.Plaq
 }
 
 // *********************************************************
 func ShowTasVides(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-    chantiers, err := model.GetAllPlaqsVides(ctx.DB)
-    if err != nil {
-        return err
-    }
+	chantiers, err := model.GetAllPlaqsVides(ctx.DB)
+	if err != nil {
+		return err
+	}
 	ctx.TemplateName = "stockage-tas-vides.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title: "Tas vides",
+			Title:   "Tas vides",
 			JSFiles: []string{"/static/js/round.js"},
 		},
 		Menu: "accueil",
@@ -34,7 +34,7 @@ func ShowTasVides(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			JSFiles: []string{},
 		},
 		Details: detailsTasVidesShow{
-		    Chantiers: chantiers,
+			Chantiers: chantiers,
 		},
 	}
 	return nil
@@ -47,10 +47,10 @@ func SignalerTasVide(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		return err
 	}
-    date, err := time.Parse("2006-01-02", vars["date"])
-    if err != nil {
-        return err
-    }
+	date, err := time.Parse("2006-01-02", vars["date"])
+	if err != nil {
+		return err
+	}
 	err = model.DesactiverTas(ctx.DB, id, date)
 	if err != nil {
 		return err

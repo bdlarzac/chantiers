@@ -8,13 +8,13 @@
 package model
 
 import (
-    "strings"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"strings"
 )
 
 type Fermier struct {
-	Id        int     // IdExploitant de la base SCTL
+	Id        int // IdExploitant de la base SCTL
 	Nom       string
 	Prenom    string
 	Adresse   string
@@ -85,7 +85,7 @@ func GetSortedFermiers(db *sqlx.DB, field string) (fermiers []*Fermier, err erro
 	return fermiers, nil
 }
 
-/* 
+/*
 // TODO supprimer si toujours inutile
 // Renvoie des Fermiers à partir d'un lieu-dit.
 // Utilise les parcelles pour faire le lien

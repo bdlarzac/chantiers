@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -80,8 +80,8 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	// Add recent - modifie URL pour éviter des doublons :
 	// Année non spécifiée dans URL = Année courante
 	url := r.URL.String()
-	if strings.HasSuffix(url, "/liste"){
-	    url += "/" + annee
+	if strings.HasSuffix(url, "/liste") {
+		url += "/" + annee
 	}
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: titrePage})
 	if err != nil {

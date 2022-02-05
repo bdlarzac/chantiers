@@ -483,6 +483,7 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 
 // Auxiliaires de GetActivitesByDate() pour trier par date
 type ugActiviteSlice []*UGActivite
-func (p ugActiviteSlice) Len() int { return len(p) }
+
+func (p ugActiviteSlice) Len() int           { return len(p) }
 func (p ugActiviteSlice) Less(i, j int) bool { return p[i].Date.After(p[j].Date) }
-func (p ugActiviteSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
+func (p ugActiviteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }

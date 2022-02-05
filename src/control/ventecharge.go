@@ -1,20 +1,20 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
 package control
 
 import (
-	"html/template"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
+	"html/template"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type detailsVenteChargeForm struct {
@@ -23,7 +23,7 @@ type detailsVenteChargeForm struct {
 	GlTVAOptions template.HTML
 	MoTVAOptions template.HTML
 	OuTVAOptions template.HTML
-    ListeActeurs map[int]string
+	ListeActeurs map[int]string
 	UrlAction    string
 }
 
@@ -101,7 +101,7 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), "CHOOSE_TVA_MO"),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), "CHOOSE_TVA_OU"),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/" + vars["id-livraison"] + "/chargement/new",
 			},
 		}
@@ -175,12 +175,12 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		}
 		// Obligé d'initialiser à acteur vide afin de pouvoir utiliser dans le js de la vue
 		// {{.Chargeur.String}} ou ({{.Conducteur.String}} et {{.Proprioutil.String}})
-        if vc.TypeCout == "G" {
-            vc.Conducteur = &model.Acteur{}
-            vc.Proprioutil = &model.Acteur{}
-        } else {
-            vc.Chargeur = &model.Acteur{}
-        }
+		if vc.TypeCout == "G" {
+			vc.Conducteur = &model.Acteur{}
+			vc.Proprioutil = &model.Acteur{}
+		} else {
+			vc.Chargeur = &model.Acteur{}
+		}
 		// full pour avoir la vente et le nom de la livraison
 		vc.Livraison, err = model.GetVenteLivreFull(ctx.DB, vc.IdLivraison)
 		if err != nil {
@@ -213,11 +213,11 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 			},
 			Details: detailsVenteChargeForm{
 				VenteCharge:  vc,
-				TasOptions:   webo.FmtOptions(weboTas, "tas-" + strconv.Itoa(vc.IdTas)),
+				TasOptions:   webo.FmtOptions(weboTas, "tas-"+strconv.Itoa(vc.IdTas)),
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(vc.GlTVA, 'f', 1, 64)),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), strconv.FormatFloat(vc.MoTVA, 'f', 1, 64)),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(vc.OuTVA, 'f', 1, 64)),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/" + vars["id-livraison"] + "/chargement/update/" + vars["id-chargement"],
 			},
 		}

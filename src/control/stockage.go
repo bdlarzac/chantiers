@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -47,13 +47,13 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	}
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    "Stockage plaquettes",
+			Title: "Stockage plaquettes",
 			CSSFiles: []string{
-			    "/static/css/form.css",
-                "/static/css/modal.css"},
-			JSFiles:  []string{
+				"/static/css/form.css",
+				"/static/css/modal.css"},
+			JSFiles: []string{
 				"/static/js/formatNb.js",
-                "/static/js/round.js"},
+				"/static/js/round.js"},
 		},
 		Menu: "accueil",
 		Details: detailsStockageList{

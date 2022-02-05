@@ -3,7 +3,7 @@
 
     @copyright  Thierry Graff
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    
+
     @history    2019-12-11 15:20:42+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package ctxt

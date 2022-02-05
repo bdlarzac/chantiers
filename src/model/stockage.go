@@ -100,12 +100,12 @@ func GetStockages(db *sqlx.DB, actifs bool) (stockages []*Stockage, err error) {
 // @param actifs
 //          true => ne renvoie que les stockages actifs (pas archivés)
 //          false => ne renvoie que les stockages archivés
-func GetStockagesFull(db *sqlx.DB, actifs bool) (stockages[]*Stockage, err error) {
+func GetStockagesFull(db *sqlx.DB, actifs bool) (stockages []*Stockage, err error) {
 	res := []*Stockage{}
 	stockages, err = GetStockages(db, actifs)
-    if err != nil {
-        return res, werr.Wrapf(err, "Erreur appel GetStockages()")
-    }
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur appel GetStockages()")
+	}
 	for _, stockage := range stockages {
 		s, err := GetStockageFull(db, stockage.Id)
 		if err != nil {
@@ -196,7 +196,7 @@ func (s *Stockage) ComputeDeletableAndArchivable(db *sqlx.DB) (err error) {
 // @return  Tableau contenant les coûts pour chaque jour de la période [jourD, jourF]
 //          res[0] = frais pour jourD, res[1] = frais pour jourD + 1, etc.
 func (s *Stockage) ComputeCout(db *sqlx.DB, jourD, jourF string) (res []float64, err error) {
-    res = []float64{}
+	res = []float64{}
 	jD, err := time.Parse("2006-01-02", jourD)
 	if err != nil {
 		return res, werr.Wrapf(err, "Format de date incorrect : "+jourD)
@@ -208,7 +208,7 @@ func (s *Stockage) ComputeCout(db *sqlx.DB, jourD, jourF string) (res []float64,
 	if jF.Before(jD) {
 		return res, errors.New("ComputeCout() a besoin de jourD < jourF")
 	}
-//	duree := jF.Sub(jD)
+	//	duree := jF.Sub(jD)
 	// Récupère les frais
 	// tels que datedeb ou datefin sont dans [jD, jF]
 	var frais []StockFrais
@@ -218,32 +218,32 @@ func (s *Stockage) ComputeCout(db *sqlx.DB, jourD, jourF string) (res []float64,
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query : "+query)
 	}
-/* 
-	var debFrais, finFrais time.Time
-	var dureeFraisTotale time.Duration  // durée totale du frais, peut dépasser [jD, jF]
-	var dureeFraisPeriode time.Duration // durée du frais dans [jD, jF]
-	//
-	for _, f := range frais {
-		dureeFraisTotale = f.DateFin.Sub(f.DateDebut)
-		if jD.After(f.DateDebut) {
-			debFrais = jD
-		} else {
-			debFrais = f.DateDebut
-		}
-		if jF.Before(f.DateFin) {
-			finFrais = jF
-		} else {
-			finFrais = f.DateFin
-		}
-		dureeFraisPeriode = finFrais.Sub(debFrais)
-		// contribution du frais sur la période [jD, jF]
-//		total += (dureeFraisPeriode.Hours() * f.Montant / dureeFraisTotale.Hours())
-	}
-*/	
+	/*
+	   	var debFrais, finFrais time.Time
+	   	var dureeFraisTotale time.Duration  // durée totale du frais, peut dépasser [jD, jF]
+	   	var dureeFraisPeriode time.Duration // durée du frais dans [jD, jF]
+	   	//
+	   	for _, f := range frais {
+	   		dureeFraisTotale = f.DateFin.Sub(f.DateDebut)
+	   		if jD.After(f.DateDebut) {
+	   			debFrais = jD
+	   		} else {
+	   			debFrais = f.DateDebut
+	   		}
+	   		if jF.Before(f.DateFin) {
+	   			finFrais = jF
+	   		} else {
+	   			finFrais = f.DateFin
+	   		}
+	   		dureeFraisPeriode = finFrais.Sub(debFrais)
+	   		// contribution du frais sur la période [jD, jF]
+	   //		total += (dureeFraisPeriode.Hours() * f.Montant / dureeFraisTotale.Hours())
+	   	}
+	*/
 	return res, nil
 }
 
-/* 
+/*
 // Calcule le coût du stockage pour une période donnée.
 // Prend en compte tous les frais du hangar (loyer, elec, assurance)
 // Le coût est ramené à la période considérée.

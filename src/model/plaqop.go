@@ -66,9 +66,9 @@ func GetPlaqOp(db *sqlx.DB, id int) (op *PlaqOp, err error) {
 
 // Remplit le champ Acteur d'une opération
 func (op *PlaqOp) ComputeActeur(db *sqlx.DB) (err error) {
-    if op.Acteur != nil {
-        return nil // déjà calculé
-    }
+	if op.Acteur != nil {
+		return nil // déjà calculé
+	}
 	op.Acteur, err = GetActeur(db, op.IdActeur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")

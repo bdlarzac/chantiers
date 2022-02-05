@@ -30,12 +30,12 @@ type VentePlaq struct {
 	TVA           float64
 	DateVente     time.Time
 	// Facture
-	NumFacture           string
-	DateFacture          time.Time
-	FactureLivraison     bool
-	FactureLivraisonPUHT float64
-	FactureLivraisonTVA  float64
-	FactureNotes         bool
+	NumFacture            string
+	DateFacture           time.Time
+	FactureLivraison      bool
+	FactureLivraisonPUHT  float64
+	FactureLivraisonTVA   float64
+	FactureNotes          bool
 	FactureLivraisonUnite string // voir note dans commentaire de la classe
 	//
 	Notes string

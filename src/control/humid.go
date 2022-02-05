@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -15,13 +15,13 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-//"fmt"
+	//"fmt"
 )
 
 type detailsHumidForm struct {
 	Humid        *model.Humid
 	TasOptions   template.HTML
-    ListeActeurs map[int]string
+	ListeActeurs map[int]string
 	UrlAction    string
 }
 
@@ -113,10 +113,10 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				JSFiles: []string{},
 			},
 			Details: detailsHumidForm{
-				Humid:      humid,
-				TasOptions: webo.FmtOptions(weboTas, optionTas),
-			    ListeActeurs:  listeActeurs,
-				UrlAction:  "/humidite/new",
+				Humid:        humid,
+				TasOptions:   webo.FmtOptions(weboTas, optionTas),
+				ListeActeurs: listeActeurs,
+				UrlAction:    "/humidite/new",
 			},
 		}
 		ctx.TemplateName = "humid-form.html"
@@ -191,10 +191,10 @@ func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 				JSFiles: []string{},
 			},
 			Details: detailsHumidForm{
-				Humid:      humid,
-				TasOptions: webo.FmtOptions(weboTas, "tas-" + strconv.Itoa(humid.IdTas)),
-			    ListeActeurs:  listeActeurs,
-				UrlAction:  "/humidite/update/" + vars["id"],
+				Humid:        humid,
+				TasOptions:   webo.FmtOptions(weboTas, "tas-"+strconv.Itoa(humid.IdTas)),
+				ListeActeurs: listeActeurs,
+				UrlAction:    "/humidite/update/" + vars["id"],
 			},
 		}
 		ctx.TemplateName = "humid-form.html"

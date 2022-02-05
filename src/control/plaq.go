@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -105,7 +105,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				"/static/js/round.js",
 				"/static/js/formatNb.js",
 				"/view/common/prix.js",
-			    "/view/common/plaq.js"},
+				"/view/common/plaq.js"},
 		},
 		Menu: "chantiers",
 		Footer: ctxt.Footer{
@@ -155,14 +155,14 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
 		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		//
 		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
-		}                                                                                                  
+		}
 		//
 		redirect := "/chantier/plaquette/" + strconv.Itoa(id)
 		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
@@ -191,12 +191,12 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				Title: "Nouveau chantier plaquettes",
 				CSSFiles: []string{
 					"/static/css/form.css",
-				    "/static/css/modal.css"},
+					"/static/css/modal.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-				    "/static/js/round.js",
+					"/static/js/round.js",
 					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqForm{
@@ -244,9 +244,9 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdatePlaq()
 		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		//
 		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
@@ -288,12 +288,12 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				Title: "Modifier " + chantier.FullString(),
 				CSSFiles: []string{
 					"/static/css/form.css",
-				    "/static/css/modal.css"},
+					"/static/css/modal.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-				    "/static/js/round.js",
+					"/static/js/round.js",
 					"/static/js/toogle.js"},
 			},
 			Details: detailsPlaqForm{

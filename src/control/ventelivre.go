@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -15,7 +15,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
-//"fmt"
+	//"fmt"
 )
 
 type detailsVenteLivreForm struct {
@@ -23,7 +23,7 @@ type detailsVenteLivreForm struct {
 	GlTVAOptions template.HTML
 	MoTVAOptions template.HTML
 	OuTVAOptions template.HTML
-    ListeActeurs map[int]string
+	ListeActeurs map[int]string
 	UrlAction    string
 }
 type detailsVenteLivreList struct {
@@ -88,7 +88,7 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), "CHOOSE_TVA_MO"),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), "CHOOSE_TVA_OU"),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/new",
 			},
 		}
@@ -143,7 +143,7 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 		ctx.TemplateName = "ventelivre-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-//				Title: "Modifier la livraison : " + vl.String(),
+				//				Title: "Modifier la livraison : " + vl.String(),
 				Title: "Modifier une livraison",
 				CSSFiles: []string{
 					"/static/css/form.css"},
@@ -158,7 +158,7 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(vl.GlTVA, 'f', 1, 64)),
 				MoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_MO", "mo-"), strconv.FormatFloat(vl.MoTVA, 'f', 1, 64)),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(vl.OuTVA, 'f', 1, 64)),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/vente/" + vars["id-vente"] + "/livraison/update/" + vars["id-livraison"],
 			},
 		}

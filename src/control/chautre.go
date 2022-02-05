@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -26,7 +26,7 @@ type detailsChautreForm struct {
 	EssenceOptions      template.HTML
 	ExploitationOptions template.HTML
 	ValorisationOptions template.HTML
-    ListeActeurs        map[int]string
+	ListeActeurs        map[int]string
 	TVAOptions          template.HTML
 	AllUGs              []*model.UG
 }
@@ -74,8 +74,8 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	// Add recent - modifie URL pour éviter des doublons :
 	// Année non spécifiée dans URL = Année courante
 	url := r.URL.String()
-	if strings.HasSuffix(url, "/liste"){
-	    url += "/" + annee
+	if strings.HasSuffix(url, "/liste") {
+		url += "/" + annee
 	}
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: titrePage})
 	if err != nil {
@@ -98,9 +98,9 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertChautre()
 		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		//
 		_, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
@@ -129,12 +129,12 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				Title: "Nouveau chantier autres valorisations",
 				CSSFiles: []string{
 					"/static/css/form.css",
-				    "/static/css/modal.css"},
+					"/static/css/modal.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-				    "/static/js/round.js",
+					"/static/js/round.js",
 					"/static/js/toogle.js"},
 			},
 			Details: detailsChautreForm{
@@ -143,7 +143,7 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "CHOOSE_EXPLOITATION"),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "CHOOSE_VALORISATION"),
 				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "CHOOSE_TVA"),
-			    ListeActeurs:        listeActeurs,
+				ListeActeurs:        listeActeurs,
 				AllUGs:              allUGs,
 				UrlAction:           "/chantier/autre/new",
 			},
@@ -171,9 +171,9 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		}
 		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdateChautre()
 		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		//
 		err = model.UpdateChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
@@ -209,12 +209,12 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				Title: "Modifier un chantier autres valorisations",
 				CSSFiles: []string{
 					"/static/css/form.css",
-				    "/static/css/modal.css"},
+					"/static/css/modal.css"},
 			},
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-				    "/static/js/round.js",
+					"/static/js/round.js",
 					"/static/js/toogle.js"},
 			},
 			Details: detailsChautreForm{
@@ -223,8 +223,8 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				EssenceOptions:      webo.FmtOptions(WeboEssence(), "essence-"+chantier.Essence),
 				ExploitationOptions: webo.FmtOptions(WeboExploitation(), "exploitation-"+chantier.Exploitation),
 				ValorisationOptions: webo.FmtOptions(WeboChautreValo(), "valorisation-"+chantier.TypeValo),
-				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "tva-"+ strconv.FormatFloat(chantier.TVA, 'f', -1, 64)),
-			    ListeActeurs:        listeActeurs,
+				TVAOptions:          webo.FmtOptions(WeboChautreTVA(ctx, "CHOOSE_TVA", "tva-"), "tva-"+strconv.FormatFloat(chantier.TVA, 'f', -1, 64)),
+				ListeActeurs:        listeActeurs,
 				AllUGs:              allUGs,
 				UrlAction:           "/chantier/autre/update/" + vars["id"],
 			},
@@ -284,19 +284,19 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
 	//
 	if r.PostFormValue("volume-contrat") == "" {
-	    ch.VolumeContrat = 0 // car optionnel
+		ch.VolumeContrat = 0 // car optionnel
 	} else {
-        ch.VolumeContrat, err = strconv.ParseFloat(r.PostFormValue("volume-contrat"), 32)
-        if err != nil {
-            return ch, err
-        }
-    }
+		ch.VolumeContrat, err = strconv.ParseFloat(r.PostFormValue("volume-contrat"), 32)
+		if err != nil {
+			return ch, err
+		}
+	}
 	ch.VolumeContrat = tiglib.Round(ch.VolumeContrat, 2)
 	//
-    ch.VolumeRealise, err = strconv.ParseFloat(r.PostFormValue("volume-realise"), 32)
-    if err != nil {
-        return ch, err
-    }
+	ch.VolumeRealise, err = strconv.ParseFloat(r.PostFormValue("volume-realise"), 32)
+	if err != nil {
+		return ch, err
+	}
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
 	//
 	ch.Unite = model.Valorisation2unite(ch.TypeValo)

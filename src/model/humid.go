@@ -57,9 +57,9 @@ func GetHumidFull(db *sqlx.DB, idMesure int) (h *Humid, err error) {
 // ************************** Compute *******************************
 
 func (h *Humid) ComputeMesureurs(db *sqlx.DB) (err error) {
-    if len(h.Mesureurs) != 0 {
-        return nil // déjà calculé
-    }
+	if len(h.Mesureurs) != 0 {
+		return nil // déjà calculé
+	}
 	query := "select * from acteur where id in(select id_acteur from humid_acteur where id_humid=$1)"
 	err = db.Select(&h.Mesureurs, query, &h.Id)
 	if err != nil {
@@ -69,9 +69,9 @@ func (h *Humid) ComputeMesureurs(db *sqlx.DB) (err error) {
 }
 
 func (h *Humid) ComputeTas(db *sqlx.DB) (err error) {
-    if h.Tas == nil {
-        return nil // déjà calculé
-    }
+	if h.Tas == nil {
+		return nil // déjà calculé
+	}
 	h.Tas, err = GetTasFull(db, h.IdTas)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTas()")

@@ -63,43 +63,43 @@ func GetPlaqRange(db *sqlx.DB, id int) (pr *PlaqRange, err error) {
 
 // Calcule tous les champs utile à l'affichage d'un formulaire PlaqRange
 func GetPlaqRangeFull(db *sqlx.DB, id int) (pr *PlaqRange, err error) {
-    pr, err = GetPlaqRange(db, id)
-    if err != nil {
-        return nil, err
-    }
-    pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
-    if err != nil {
-        return nil, err
-    }
-    pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
-    if err != nil {
-        return nil, err
-    }
-    pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
-    if err != nil {
-        return nil, err
-    }
-    pr.Chantier, err = GetPlaq(db, pr.IdChantier)
-    if err != nil {
-        return nil, err
-    }
-    err = pr.Chantier.ComputeTas(db)
-    if err != nil {
-        return nil, err
-    }
-    err = pr.Chantier.ComputeLieudits(db) // pour le nom du chantier
-    if err != nil {
-        return nil, err
-    }
+	pr, err = GetPlaqRange(db, id)
+	if err != nil {
+		return nil, err
+	}
+	pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
+	if err != nil {
+		return nil, err
+	}
+	pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
+	if err != nil {
+		return nil, err
+	}
+	pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
+	if err != nil {
+		return nil, err
+	}
+	pr.Chantier, err = GetPlaq(db, pr.IdChantier)
+	if err != nil {
+		return nil, err
+	}
+	err = pr.Chantier.ComputeTas(db)
+	if err != nil {
+		return nil, err
+	}
+	err = pr.Chantier.ComputeLieudits(db) // pour le nom du chantier
+	if err != nil {
+		return nil, err
+	}
 	return pr, nil
 }
 
 // ************************** Compute *******************************
 
 func (pr *PlaqRange) ComputeTas(db *sqlx.DB) (err error) {
-    if pr.Tas != nil {
-        return nil // déjà calculé
-    }
+	if pr.Tas != nil {
+		return nil // déjà calculé
+	}
 	pr.Tas, err = GetTasFull(db, pr.IdTas)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetTasFull()")
@@ -111,9 +111,9 @@ func (pr *PlaqRange) ComputeRangeur(db *sqlx.DB) (err error) {
 	if pr.IdRangeur == 0 {
 		return nil // pas de rangeur (mais conducteur et proprioutil)
 	}
-    if pr.Rangeur != nil {
-        return nil // déjà calculé
-    }
+	if pr.Rangeur != nil {
+		return nil // déjà calculé
+	}
 	pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")
@@ -125,9 +125,9 @@ func (pr *PlaqRange) ComputeConducteur(db *sqlx.DB) (err error) {
 	if pr.IdConducteur == 0 {
 		return nil // pas de conducteur ni proprioutil (mais un rangeur)
 	}
-    if pr.Conducteur != nil {
-        return nil // déjà calculé
-    }
+	if pr.Conducteur != nil {
+		return nil // déjà calculé
+	}
 	pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
 	return err
 }
@@ -136,9 +136,9 @@ func (pr *PlaqRange) ComputeProprioutil(db *sqlx.DB) (err error) {
 	if pr.IdProprioutil == 0 {
 		return nil // pas de conducteur ni proprioutil (mais un rangeur)
 	}
-    if pr.Proprioutil != nil {
-        return nil // déjà calculé
-    }
+	if pr.Proprioutil != nil {
+		return nil // déjà calculé
+	}
 	pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
 	return err
 }

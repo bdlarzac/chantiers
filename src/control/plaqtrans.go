@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -25,7 +25,7 @@ type detailsPlaqTransForm struct {
 	CaTVAOptions template.HTML
 	TbTVAOptions template.HTML
 	Transport    *model.PlaqTrans
-    ListeActeurs map[int]string
+	ListeActeurs map[int]string
 	UrlAction    string
 }
 
@@ -99,7 +99,7 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), "CHOOSE_TVA_CO"),
 				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA", "ca-"), "CHOOSE_TVA_CA"),
 				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB", "tb-"), "CHOOSE_TVA_TB"),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/transport/new",
 			},
 		}
@@ -190,7 +190,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), strconv.FormatFloat(pt.CoTVA, 'f', 1, 64)),
 				CaTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CA", "ca-"), strconv.FormatFloat(pt.CaTVA, 'f', 1, 64)),
 				TbTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_TB", "tb-"), strconv.FormatFloat(pt.TbTVA, 'f', 1, 64)),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/transport/update/" + vars["id-pt"],
 			},
 		}

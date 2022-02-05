@@ -1,15 +1,15 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
 package control
 
 import (
-	"net/http"
-	"strconv"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
+	"net/http"
+	"strconv"
 )
 
 type detailsActeurList struct {

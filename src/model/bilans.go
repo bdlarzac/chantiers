@@ -28,7 +28,7 @@ type Valorisations map[string]float64
 // Renvoie un tableau contenant les dates de début / fin des "saisons"
 // Les saisons encadrent tous les chantiers stockés en base.
 // Une saison dure un an.
-// 
+//
 // @param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
 //
 // @return
@@ -36,7 +36,7 @@ type Valorisations map[string]float64
 //      - un bool indiquant s'il existe des chantiers en base
 //      - une erreur éventuelle
 func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bool, error) {
-    // retour
+	// retour
 	var res [][2]time.Time
 	var err error
 	//
@@ -50,7 +50,7 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 	query = "select min(datedeb), max(datedeb) from plaq"
 	err = db.QueryRow(query).Scan(&first1, &last1)
 	if err != nil {
-	    ok1 = false
+		ok1 = false
 	}
 	// chantiers autres valorisations
 	ok2 := true
@@ -58,7 +58,7 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 	query = "select min(datecontrat), max(datecontrat) from chautre"
 	err = db.QueryRow(query).Scan(&first2, &last2)
 	if err != nil {
-	    ok2 = false
+		ok2 = false
 	}
 	// chantiers chauffage fermier
 	ok3 := true
@@ -66,25 +66,25 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 	query = "select min(datechantier), max(datechantier) from chaufer"
 	err = db.QueryRow(query).Scan(&first3, &last3)
 	if err != nil {
-	    ok3 = false
+		ok3 = false
 	}
 	//
-	if (!ok1 && !ok2 && !ok3){
+	if !ok1 && !ok2 && !ok3 {
 		return res, false, nil
 	}
-	if isBefore(first1, first2) && isBefore(first1, first3){
-	    first = first1
-	} else if isBefore(first2, first1) && isBefore(first2, first3){
-	    first = first2
-	} else if isBefore(first3, first1) && isBefore(first3, first2){
-	    first = first3
+	if isBefore(first1, first2) && isBefore(first1, first3) {
+		first = first1
+	} else if isBefore(first2, first1) && isBefore(first2, first3) {
+		first = first2
+	} else if isBefore(first3, first1) && isBefore(first3, first2) {
+		first = first3
 	}
-	if last1.After(last2) && last1.After(last3){
-	    last = last1
-	} else if last2.After(last1) && last2.After(last3){
-	    last = last2
-	} else if last3.After(last1) && last3.After(last2){
-	    last = last3
+	if last1.After(last2) && last1.After(last3) {
+		last = last1
+	} else if last2.After(last1) && last2.After(last3) {
+		last = last2
+	} else if last3.After(last1) && last3.After(last2) {
+		last = last3
 	}
 	//
 	// dLim, mLim = limites de saison, stockées en conf
@@ -142,15 +142,15 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 }
 
 // Auxiliaire de ComputeLimitesSaisons()
-// Compare 2 dates en prenant en compte IsZero() 
+// Compare 2 dates en prenant en compte IsZero()
 func isBefore(t1, t2 time.Time) bool {
-    if t1.IsZero(){
-        return false
-    }
-    if t2.IsZero(){
-        return true
-    }
-    return t1.Before(t2)
+	if t1.IsZero() {
+		return false
+	}
+	if t2.IsZero() {
+		return true
+	}
+	return t1.Before(t2)
 }
 
 func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error) {

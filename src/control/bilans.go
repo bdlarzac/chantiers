@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -83,9 +83,9 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		// Affiche form
 		//
 		periods, hasChantier, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "bilans-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -233,7 +233,7 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 		Header: ctxt.Header{
 			Title:    titre,
 			CSSFiles: []string{},
-			JSFiles:  []string{
+			JSFiles: []string{
 				"/static/js/formatNb.js"},
 		},
 		Menu: "bilans",

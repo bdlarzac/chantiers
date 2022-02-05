@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -23,7 +23,7 @@ type detailsPlaqRangeForm struct {
 	CoTVAOptions template.HTML
 	OuTVAOptions template.HTML
 	Rangement    *model.PlaqRange
-    ListeActeurs map[int]string
+	ListeActeurs map[int]string
 	UrlAction    string
 }
 
@@ -92,7 +92,7 @@ func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), "CHOOSE_TVA_GL"),
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), "CHOOSE_TVA_CO"),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), "CHOOSE_TVA_OU"),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + idChantierStr + "/range/new",
 			},
 		}
@@ -155,7 +155,7 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 				GlTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_GL", "gl-"), strconv.FormatFloat(pr.GlTVA, 'f', 1, 64)),
 				CoTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_CO", "co-"), strconv.FormatFloat(pr.CoTVA, 'f', 1, 64)),
 				OuTVAOptions: webo.FmtOptions(WeboTVAExt(ctx, "CHOOSE_TVA_OU", "ou-"), strconv.FormatFloat(pr.OuTVA, 'f', 1, 64)),
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs: listeActeurs,
 				UrlAction:    "/chantier/plaquette/" + vars["id-chantier"] + "/range/update/" + vars["id-pr"],
 			},
 		}

@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -81,7 +81,7 @@ func ShowFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	ctx.TemplateName = "fermier-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title: fermier.String(),
+			Title:    fermier.String(),
 			CSSFiles: []string{},
 		},
 		Menu: "acteurs",

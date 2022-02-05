@@ -1,4 +1,4 @@
-/** 
+/**
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -24,7 +24,7 @@ type detailsPlaqOpForm struct {
 	UniteOptions  template.HTML
 	TypeOpOptions template.HTML
 	Op            *model.PlaqOp
-    ListeActeurs  map[int]string
+	ListeActeurs  map[int]string
 	UrlAction     string
 }
 
@@ -88,7 +88,7 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 				UniteOptions:  webo.FmtOptions(WeboPlaqOpUnite(), "CHOOSE_UNITE"),
 				TypeOpOptions: webo.FmtOptions(WeboTypeOp(), "CHOOSE_TYPEOP"),
 				Op:            op,
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs:  listeActeurs,
 				UrlAction:     "/chantier/plaquette/" + idChantierStr + "/op/new",
 			},
 		}
@@ -164,7 +164,7 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				UniteOptions:  webo.FmtOptions(WeboPlaqOpUnite(), "unite-"+op.Unite),
 				TypeOpOptions: webo.FmtOptions(WeboTypeOp(), "typeop-"+op.TypOp),
 				Op:            op,
-			    ListeActeurs:  listeActeurs,
+				ListeActeurs:  listeActeurs,
 				UrlAction:     "/chantier/plaquette/" + vars["id-chantier"] + "/op/update/" + vars["id-op"],
 			},
 		}

@@ -9,9 +9,9 @@ package model
 
 import (
 	"time"
-//	"strconv"
-	
-//	"bdl.local/bdl/generic/tiglib"
+	//	"strconv"
+
+	//	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	//"fmt"

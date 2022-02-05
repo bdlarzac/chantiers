@@ -4,14 +4,14 @@
     @copyright  Les fonctions spécifiques au programme BDL sont la propriété intellectuelle de BDL, Bois du Larzac.
                 Les fonctions génériques sont la propriété intellectuelle de Thierry Graff.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    
+
     @history    2019-12-11 14:49:10+01:00, Thierry Graff : Creation
 ********************************************************************************/
 package ctxt
 
 import (
-	"bdl.local/bdl/model"
 	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/model"
 	"fmt"
 	"html/template"
 	"path/filepath"
@@ -27,15 +27,15 @@ var tmpl *template.Template
 func init() {
 	var fmap = template.FuncMap{
 		// Generic pipelines
-		"dateFr":                       dateFr,
-		"dateIso":                      dateIso,
-		"modulo":                       modulo,
-		"nl2br":                        nl2br,
-		"safeHTML":                     safeHTML,
-		"twoDigits":                    twoDigits,
-		"ucFirst":                      ucFirst,
-		"year":                         year,
-		"zero2empty":                   zero2empty,
+		"dateFr":     dateFr,
+		"dateIso":    dateIso,
+		"modulo":     modulo,
+		"nl2br":      nl2br,
+		"safeHTML":   safeHTML,
+		"twoDigits":  twoDigits,
+		"ucFirst":    ucFirst,
+		"year":       year,
+		"zero2empty": zero2empty,
 		// Pipelines related to current program
 		"labelActivite":                labelActivite,
 		"labelEssence":                 labelEssence,
@@ -52,9 +52,9 @@ func init() {
 		Must(template.
 			New("").
 			Funcs(fmap).
-//			ParseFS(embedded.ViewFiles, filepath.Join("view", "*.html"))).
+			//			ParseFS(embedded.ViewFiles, filepath.Join("view", "*.html"))).
 			ParseGlob(filepath.Join("view", "*.html"))).
-            Option("missingkey=error")
+		Option("missingkey=error")
 	tmpl.New("chantier-lien").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien.html"))
 	tmpl.New("chantier-lien-help").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "chantier-lien-help.html"))
 	tmpl.New("checkActeur").Funcs(fmap).ParseFiles(filepath.Join("view", "common", "checkActeur.js.html"))
@@ -63,14 +63,14 @@ func init() {
 
 // ************************* Generic pipelines ********************************
 
-/** 
+/**
     @copyright Thierry Graff
 **/
 func modulo(i, mod int) int {
-    return i % mod;
+	return i % mod
 }
 
-/** 
+/**
     @copyright  Thierry Graff
     @license    GPL
 **/
@@ -78,7 +78,7 @@ func nl2br(t string) template.HTML {
 	return template.HTML(strings.Replace(template.HTMLEscapeString(t), "\n", "<br>", -1))
 }
 
-/** 
+/**
     Displays a date, format DD/MM/YYYY.
     @copyright  Thierry Graff
     @license    GPL
@@ -87,7 +87,7 @@ func dateFr(t time.Time) template.HTML {
 	return template.HTML(tiglib.DateFr(t))
 }
 
-/** 
+/**
     Displays a date, format YYYY-MM-DD.
     @copyright  Thierry Graff
     @license    GPL
@@ -96,7 +96,7 @@ func dateIso(t time.Time) template.HTML {
 	return template.HTML(tiglib.DateIso(t))
 }
 
-/** 
+/**
     Displays the year of a date, format YYYY.
     @copyright  Thierry Graff
     @license    GPL
@@ -105,7 +105,7 @@ func year(t time.Time) template.HTML {
 	return template.HTML(strconv.Itoa(t.Year()))
 }
 
-/** 
+/**
     From https://www.php2golang.com/method/function.ucfirst.html
     @copyright  Thierry Graff
     @license    GPL
@@ -118,10 +118,10 @@ func ucFirst(str string) template.HTML {
 	return template.HTML("")
 }
 
-/** 
+/**
     Used to initialize input type=number with "" instead of "0".
     No error check.
-    @param      val  Must be an int or a float64. 
+    @param      val  Must be an int or a float64.
     @copyright  Thierry Graff
     @license    GPL
 **/
@@ -144,7 +144,7 @@ func zero2empty(val interface{}) template.HTML {
 	return template.HTML(res)
 }
 
-/** 
+/**
     To display prices, with a precision of 1E-2. Zeroes are added if needed.
     Ex: twoDigits(12.5) returns 12.50 instead of 12.5
     @copyright  Thierry Graff
@@ -154,7 +154,7 @@ func twoDigits(f float64) template.HTML {
 	return template.HTML(fmt.Sprintf("%.2f", f))
 }
 
-/** 
+/**
     @copyright  Thierry Graff
     @license    GPL
 **/

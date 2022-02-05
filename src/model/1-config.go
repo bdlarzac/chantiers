@@ -35,8 +35,8 @@ type Config struct {
 	DebutSaison      string    `yaml:"debut-saison"`
 	TVAExt           []float64 `yaml:"tva-ext"`
 	TVABDL           struct {
-		Livraison           float64 `yaml:"livraison"`
-		VentePlaquettes     float64 `yaml:"vente-plaquettes"`
+		Livraison           float64   `yaml:"livraison"`
+		VentePlaquettes     float64   `yaml:"vente-plaquettes"`
 		AutresValorisations []float64 `yaml:"autres-valorisations"`
 	} `yaml:"tva-bdl"`
 	Facture struct {

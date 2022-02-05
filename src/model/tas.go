@@ -11,9 +11,9 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"errors"
 	"github.com/jmoiron/sqlx"
-	"time"
-	"strconv"
 	"sort"
+	"strconv"
+	"time"
 )
 
 type Tas struct {
@@ -33,11 +33,11 @@ type Tas struct {
 
 // MouvementStock = opération qui fait changer le stock du tas :
 // transports, chargements, vidage
-type MouvementStock struct{
-    Date    time.Time
-    Label   string
-    URL     string
-    Delta   float64
+type MouvementStock struct {
+	Date  time.Time
+	Label string
+	URL   string
+	Delta float64
 }
 
 func NewTas(idStockage, idChantier int, stock float64, actif bool) *Tas {
@@ -133,9 +133,9 @@ func GetAllTasActifsFull(db *sqlx.DB) (tas []*Tas, err error) {
 // ************************** Compute *******************************
 
 func (t *Tas) ComputeNom(db *sqlx.DB) (err error) {
-    if t.Nom != ""{
-        return nil // déjà calculé
-    }
+	if t.Nom != "" {
+		return nil // déjà calculé
+	}
 	if t.Chantier == nil || t.Stockage == nil {
 		return errors.New("Impossible de calculer le nom du tas - appeler d'abord ComputeStockage() et ComputeChantier()")
 	}
@@ -148,32 +148,32 @@ func (t *Tas) ComputeNom(db *sqlx.DB) (err error) {
 }
 
 func (t *Tas) ComputeStockage(db *sqlx.DB) (err error) {
-    if t.Stockage != nil{
-        return nil // déjà calculé
-    }
+	if t.Stockage != nil {
+		return nil // déjà calculé
+	}
 	t.Stockage, err = GetStockage(db, t.IdStockage)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel GetStockage()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetStockage()")
+	}
 	return nil
 }
 
 func (t *Tas) ComputeChantier(db *sqlx.DB) (err error) {
-    if t.Chantier != nil{
-        return nil // déjà calculé
-    }
+	if t.Chantier != nil {
+		return nil // déjà calculé
+	}
 	t.Chantier, err = GetPlaq(db, t.IdChantier)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel GetPlaq()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetPlaq()")
+	}
 	return nil
 }
 
 // Pas inclus par défaut dans GetTasFull()
 func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) (err error) {
-    if len(t.MesuresHumidite) != 0{
-        return nil // déjà calculé
-    }
+	if len(t.MesuresHumidite) != 0 {
+		return nil // déjà calculé
+	}
 	query := "select * from humid where id_tas=$1"
 	err = db.Select(&t.MesuresHumidite, query, t.Id)
 	if err != nil {
@@ -192,55 +192,55 @@ func (t *Tas) ComputeMesuresHumidite(db *sqlx.DB) (err error) {
 // Note : en théorie, l'url des mouvements ne devrait pas
 // être calculée dans le model mais dans le controller
 func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) (err error) {
-    if len(t.EvolutionStock) != 0{
-        return nil // déjà calculé
-    }
+	if len(t.EvolutionStock) != 0 {
+		return nil // déjà calculé
+	}
 	res := []*MouvementStock{}
 	// transports
-	var tmp1 = []*struct{
-		Id int
-		Id_chantier int
-		Qte float64
+	var tmp1 = []*struct {
+		Id            int
+		Id_chantier   int
+		Qte           float64
 		PourcentPerte float64
-		DateTrans  time.Time
+		DateTrans     time.Time
 	}{}
 	query := "select id,id_chantier,qte,pourcentperte,datetrans from plaqtrans where id_tas=$1"
 	err = db.Select(&tmp1, query, t.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, line := range(tmp1){
-	    mvt := MouvementStock{
-	        Date: line.DateTrans,
-	        Label: "Transport",
-	        URL: "/chantier/plaquette/" + strconv.Itoa(line.Id_chantier) + "/chantiers",
-	        Delta: line.Qte*(1-line.PourcentPerte/100),
-	    }
-	    res = append(res, &mvt)
+	for _, line := range tmp1 {
+		mvt := MouvementStock{
+			Date:  line.DateTrans,
+			Label: "Transport",
+			URL:   "/chantier/plaquette/" + strconv.Itoa(line.Id_chantier) + "/chantiers",
+			Delta: line.Qte * (1 - line.PourcentPerte/100),
+		}
+		res = append(res, &mvt)
 	}
 	// chargements (utilise GetVenteCharge() pour récupérer id vente)
-    idsCharge := []int{}
+	idsCharge := []int{}
 	query = "select id from ventecharge where id_tas=$1"
 	err = db.Select(&idsCharge, query, t.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, idCharge := range(idsCharge){
-	    vc, err := GetVenteCharge(db, idCharge)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur appel GetVenteCharge()")
-        }
-        err = vc.ComputeIdVente(db)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur appel ComputeIdVente()")
-        }
-	    mvt := MouvementStock{
-	        Date: vc.DateCharge,
-	        Label: "Chargement",
-	        URL: "/vente/" + strconv.Itoa(vc.IdVente),
-	        Delta: -vc.Qte,
-	    }
-	    res = append(res, &mvt)
+	for _, idCharge := range idsCharge {
+		vc, err := GetVenteCharge(db, idCharge)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel GetVenteCharge()")
+		}
+		err = vc.ComputeIdVente(db)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel ComputeIdVente()")
+		}
+		mvt := MouvementStock{
+			Date:  vc.DateCharge,
+			Label: "Chargement",
+			URL:   "/vente/" + strconv.Itoa(vc.IdVente),
+			Delta: -vc.Qte,
+		}
+		res = append(res, &mvt)
 	}
 	// tri par date
 	sortedRes := make(mouvementStockSlice, 0, len(res))
@@ -252,11 +252,13 @@ func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) (err error) {
 	//
 	return nil
 }
+
 // Auxiliaires de ComputeEvolutionStock() pour trier par date
 type mouvementStockSlice []*MouvementStock
-func (m mouvementStockSlice) Len() int { return len(m) }
+
+func (m mouvementStockSlice) Len() int           { return len(m) }
 func (m mouvementStockSlice) Less(i, j int) bool { return m[i].Date.Before(m[j].Date) }
-func (m mouvementStockSlice) Swap(i, j int) { m[i], m[j] = m[j], m[i] }
+func (m mouvementStockSlice) Swap(i, j int)      { m[i], m[j] = m[j], m[i] }
 
 // ************************** CRUD *******************************
 

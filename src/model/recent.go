@@ -39,11 +39,11 @@ func GetRecents(db *sqlx.DB) ([]*Recent, error) {
 // Attention, l'historique basée sur les urls peut mener à des doublons :
 // /chantier/plaquette/1
 // /chantier/plaquette/1/chantiers
-// ou 
+// ou
 // /chantier/chauffage-fermier/liste
 // /chantier/chauffage-fermier/liste/2021
 // La logique de dédoublonnage n'est pas gérée ici,
-// mais dans les contrôleurs, dans le code qui appelle AddRecent() 
+// mais dans les contrôleurs, dans le code qui appelle AddRecent()
 func AddRecent(db *sqlx.DB, conf *Config, r *Recent) error {
 	var err error
 	var count int
