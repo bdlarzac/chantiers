@@ -17,7 +17,7 @@ import (
 // les scripts de création des tables
 func GetCreateTableDir() string {
 	_, filename, _, _ := runtime.Caller(0) // path to current go file
-	return path.Join(path.Dir(path.Dir(filename)), "create-tables")
+	return path.Join(path.Dir(path.Dir(filename)), "db-sql-create")
 }
 
 // GetDataDir renvoie le chemin absolu vers le répertoire contenant
