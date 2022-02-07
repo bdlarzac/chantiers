@@ -7,5 +7,9 @@ create type typeunite as enum(
 	'MA', -- maps
 	'ST', -- stères
 	'TO'  -- tonnes
+	/* 
+	Ajout migration 2022-02-07
+	'NP'  -- nombre de piquets
+	*/
 );
                                                                                                                   

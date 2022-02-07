@@ -279,10 +279,6 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	//
 	ch.TypeValo = strings.Replace(r.PostFormValue("typevalo"), "valorisation-", "", -1)
 	//
-	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
-	//
-	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
-	//
 	if r.PostFormValue("volume-contrat") == "" {
 		ch.VolumeContrat = 0 // car optionnel
 	} else {
@@ -299,7 +295,15 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	}
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
 	//
-	ch.Unite = model.Valorisation2unite(ch.TypeValo)
+	if ch.TypeValo == "PI" {
+	    ch.Unite = r.PostFormValue("unite-pi")
+	} else {
+        ch.Unite = model.Valorisation2unite(ch.TypeValo)
+    }
+	//
+	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
+	//
+	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
 	//
 	ch.PUHT, err = strconv.ParseFloat(r.PostFormValue("puht"), 32)
 	if err != nil {

@@ -83,6 +83,8 @@ func Valorisation2unite(codeValo string) string {
 	case "PL":
 		return "ST"
 	case "PI":
+		// piquets plus utilisé
+		// suite à demande BDL de pouvoir choisir stère ou nb de piquets
 		return "ST"
 	case "BO":
 		return "M3"
@@ -102,6 +104,8 @@ func LabelUnite(abbrev string) string {
 		return "m<sup>3</sup>"
 	case "MA":
 		return "maps"
+	case "NP": // nb de piquets
+		return "piquets"
 	case "ST":
 		return "stères"
 	case "TO":
