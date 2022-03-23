@@ -3,7 +3,7 @@
     Ajout de typeunite.NP
     NP pour nombre de piquets
 
-    Intégration : commit 
+    Intégration : commit b31602d 2022-02-07 23:28:51 +0100 
     
     @copyright  BDL, Bois du Larzac
     @license    GPL

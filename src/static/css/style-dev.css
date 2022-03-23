@@ -1,0 +1,15 @@
+/** 
+    Styles overridant le style par défaut
+    si dans config.yml, on a run / mode = "dev".
+    
+    Sert à éviter de confondre la prod avec la version de dev...
+    
+    Style inclus dans view/header.html
+
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+**/
+
+:root {
+    --main-bg-color:lightblue;
+}

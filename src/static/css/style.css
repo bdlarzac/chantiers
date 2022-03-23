@@ -3,6 +3,10 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
 
+:root {
+    --main-bg-color:lightyellow;
+}
+
 
 /* en test - pour anchor qui se décale de la hauteur du menu */
 :target{
@@ -30,7 +34,7 @@ body{
 /* ================ General styles ================ */                                               
 body{
     font-family:Verdana, Geneva, sans-serif;
-    background:lightyellow;
+    background:var(--main-bg-color);
 }
 
 a{text-decoration:none;}

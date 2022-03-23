@@ -14,6 +14,7 @@ type Config struct {
 	Run struct {
 		URL  string `yaml:"url"`
 		Port string `yaml:"port"`
+		Mode string `yaml:"mode"`
 	}
 	Database struct {
 		Host     string `yaml:"host"`

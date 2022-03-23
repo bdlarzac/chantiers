@@ -169,6 +169,9 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 		ctx := ctxt.NewContext()
 		//
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
+		//
+		ctx.Page.RunMode = ctx.Config.Run.Mode // "dev" or "prod", available in all pages
+		//
 		if err != nil {
 			showErrorPage(err, ctx, w, r)
 			return

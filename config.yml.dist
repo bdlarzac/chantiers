@@ -11,6 +11,9 @@
 run:
   url: 127.0.0.1
   port: 8000
+  # "dev" ou "prod" - pour mode = dev, voir section dev en fin de config.yml
+  # pour mode = dev, voir section dev en fin de config.yml
+  mode: dev
 
 # Paramètres BDD postgresql
 # psql -U bdl -W -h localhost --cluster 10/main -d bdlbois
@@ -82,10 +85,12 @@ affacture:
 # Nombre de chantiers affichés dans la partie "activités récentes" (page d'accueil)
 nb-recent: 5
 
+# -----------------------------------------------------------
+
 # Utiles uniquement pour le développement de l'application
 dev:
   # Répertoire contenant les différents dumps de la base SCTL
-  # Doit contenir des sous-répertoires avec les différents .mdb et exports csv
+  # Doit contenir les différents .mdb et des sous-répertoires avec les exports csv correspondant
   sctl-data: /path/to/sctl/data
   # Répertoire contenant les résultats des tests effectués sur la base SCTL
   sctl-analyse: /path/to/sctl/analyse

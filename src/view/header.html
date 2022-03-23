@@ -12,6 +12,10 @@
     <link href="/static/css/menus.css" rel="stylesheet" type="text/css">
     {{range .Header.CSSFiles}}<link href="{{.}}" rel="stylesheet" type="text/css">
     {{end}}
+    {{if eq .RunMode "dev"}}
+        {{/* CSS à inclure en dernier */}}
+        <link href="/static/css/style-dev.css" rel="stylesheet" type="text/css">
+    {{end}}
     {{range .Header.JSFiles}}
     <script src="{{.}}"></script>
     {{end}}

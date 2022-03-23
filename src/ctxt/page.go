@@ -17,6 +17,8 @@ type Page struct {
 	Footer  Footer
 	Menu    string // used for active menu in the template
 	Details interface{}
+	// "dev" or "prod" - filled for all pages by handler function H
+	RunMode string
 }
 
 /**
