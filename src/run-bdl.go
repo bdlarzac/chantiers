@@ -170,7 +170,10 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 		//
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		//
-		ctx.Page.RunMode = ctx.Config.Run.Mode // "dev" or "prod", available in all pages
+        if ctx.Page != nil {
+            // ctx.Page == nil si contentTypeMiddleware appelé
+            ctx.Page.RunMode = ctx.Config.Run.Mode // "dev" or "prod", available in all pages
+        }
 		//
 		if err != nil {
 			showErrorPage(err, ctx, w, r)

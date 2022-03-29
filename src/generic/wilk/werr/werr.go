@@ -11,10 +11,6 @@ import (
 )
 
 // ====== ajouts Thierry ======
-// TODO supprimer, plus utile
-func Bidon() error {
-	return errors.New("Erreur bidon")
-}
 
 // SprintHTML returns traceback as string formatted for html display
 func SprintHTML(err error) string {
@@ -125,17 +121,17 @@ func (e Error) SprintSkip(skip string) string {
 	return s
 }
 
-// FprintSkip write SprintSkip to writer
+// FprintSkip writes SprintSkip to writer
 func FprintSkip(w io.Writer, err error, skip string) {
 	w.Write([]byte(SprintSkip(err, skip)))
 }
 
-// PrintSkip write SprintSkip to stdout
+// PrintSkip writes SprintSkip to stdout
 func PrintSkip(err error, skip string) {
 	FprintSkip(os.Stdout, err, skip)
 }
 
-// PrintSkip remove lines before skip in suffix
+// PrintSkip removes lines before skip in suffix
 // ex : ServeHTTP
 // return as string
 func SprintSkip(err error, skip string) string {
@@ -146,22 +142,22 @@ func SprintSkip(err error, skip string) string {
 	return fmt.Sprintf("%+v\n", err) // pkg.errors stack
 }
 
-// Fprint write traceback in f
+// Fprint writes traceback in f
 func Fprint(f io.Writer, err error) {
 	f.Write([]byte(Sprint(err)))
 }
 
-// Sprint return traceback as string
+// Sprint returns traceback as string
 func Sprint(err error) string {
 	return SprintSkip(err, "")
 }
 
-// Print print traceback to stdout
+// Print prints traceback to stdout
 func Print(err error) {
 	Fprint(os.Stdout, err)
 }
 
-// Wrapf wrap error with stack only if not already
+// Wrapf wraps error with stack only if not already
 // error is wrapped with fmt.Errorf(msg + " : %w",err)
 func Wrapf(err error, msg string, args ...interface{}) error {
 	if err == nil {
@@ -177,7 +173,7 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 	return Error{Err: err, trace: stk}
 }
 
-// Stack add stack trace to an error if it's not
+// Stack adds stack trace to an error if it's not
 func Stack(e error) error {
 	if e == nil {
 		return e
@@ -190,7 +186,7 @@ func Stack(e error) error {
 	return Error{Err: e, trace: stk}
 }
 
-// getStackTrace return Frames after nb
+// getStackTrace returns Frames after nb
 func getStackTrace(nb int) []uintptr {
 	stackBuf := make([]uintptr, 1024)
 	length := runtime.Callers(nb, stackBuf[:])
