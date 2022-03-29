@@ -39,7 +39,8 @@ go run install-bdl.go -i all
 
 
 ###### Lancement du programme en local ######
-En mode dev, utilise github.com/codegangsta/gin
+En mode dev, utilise        github.com/codegangsta/gin
+Nouvel outil :              github.com/cosmtrek/air
 
 cd /path/to/bdl/
 cd src/
