@@ -3,7 +3,7 @@
 ###### postgresql ######
 # dev version :
 # psql --version
-# psql (PostgreSQL) 10.12 (Ubuntu 10.12-0ubuntu0.18.04.1)
+# psql (PostgreSQL) 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1)
 
 # cf config.yml pour le mot de passe
 
@@ -14,21 +14,19 @@ psql
 CREATE USER bdl;
 ALTER ROLE bdl WITH CREATEDB;
 ALTER USER bdl WITH ENCRYPTED PASSWORD 'mon_mot_de_passe';
-CREATE DATABASE bdlbois OWNER bdl;
+CREATE DATABASE bdlchantiers OWNER bdl;
 -- si besoin de créer un schéma différent de public :
 CREATE SCHEMA mon_schema;
 \q
 exit
 
-sudo /etc/init.d/postgresql restart
-
 # Pour se connecter à la base :
-psql -U bdl -W -h localhost --cluster 12/main -d bdlbois
+psql -U bdl -W -h localhost -d bdlbois
 
 ###### go ######
 # dev version :
 # go version
-# go version go1.14.1 linux/amd64
+# go version go1.18 linux/amd64
 
 # todo install go
 
