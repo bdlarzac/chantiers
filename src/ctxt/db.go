@@ -10,6 +10,7 @@ package ctxt
 
 import (
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
 
 	_ "github.com/lib/pq"
@@ -18,11 +19,15 @@ import (
 var db *sqlx.DB
 
 func init() {
+	password := ""
+	if config.Database.Password != "" {
+		password = "password=" + config.Database.Password
+	}
 	connStr := fmt.Sprintf(
-		"dbname=%s user=%s password=%s host=%s port=%s sslmode=%s",
+		"dbname=%s user=%s %s host=%s port=%s sslmode=%s",
 		config.Database.DbName,
 		config.Database.User,
-		config.Database.Password,
+		password,
 		config.Database.Host,
 		config.Database.Port,
 		config.Database.SSLMode,
