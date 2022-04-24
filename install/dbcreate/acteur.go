@@ -9,25 +9,25 @@
 package dbcreate
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"path"
 	"strings"
-    "bufio"
-    "os"
-	
+
 	"bdl.local/bdl/ctxt"
-    "golang.org/x/text/encoding/charmap"
-    "golang.org/x/text/transform"
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/transform"
 )
 
 func AddActeursInitiaux(ctx *ctxt.Context) {
-    // Attention ordre d'appel important
-    // car détermine les ids des 4 premiers acteurs
-    // ces ids sont utilisés dans l'appli BDL
-    addActeurZero(ctx)
-    addActeurSCTL(ctx)
-    addActeurBDL(ctx)
-    addActeurGFA(ctx)
+	// Attention ordre d'appel important
+	// car détermine les ids des 4 premiers acteurs
+	// ces ids sont utilisés dans l'appli BDL
+	addActeurZero(ctx)
+	addActeurSCTL(ctx)
+	addActeurBDL(ctx)
+	addActeurGFA(ctx)
 }
 
 // *********************************************************
@@ -35,7 +35,7 @@ func AddActeursInitiaux(ctx *ctxt.Context) {
 // id = 0
 func addActeurZero(ctx *ctxt.Context) {
 	db := ctx.DB
-	_,err := db.Exec("insert into acteur values(0,'','','','','','','','','','','','',false,false,false,'')")
+	_, err := db.Exec("insert into acteur values(0,'','','','','','','','','','','','',false,false,false,'')")
 	if err != nil {
 		panic(err)
 	}
@@ -71,22 +71,22 @@ func addActeurSCTL(ctx *ctxt.Context) {
 // id = 2
 // Nécessaire au fonctionnement du logiciel BDL car c'est un fournisseur
 func addActeurBDL(ctx *ctxt.Context) {
-    
-    var adresse1, cp, ville, tel, email string
-    if PRIVACY { // voir PRIVACY.go
+
+	var adresse1, cp, ville, tel, email string
+	if PRIVACY { // voir PRIVACY.go
 		adresse1 = ""
 		cp = ""
 		ville = ""
 		tel = ""
 		email = ""
-    } else {
+	} else {
 		adresse1 = "Montredon"
 		cp = "12230"
 		ville = "La Roque-Sainte-Marguerite"
 		tel = "05 65 62 13 39"
 		email = "lesboisdularzac@larzac.org"
-    }
-	
+	}
+
 	db := ctx.DB
 	query := `insert into acteur(
         nom,
@@ -150,38 +150,38 @@ func AddActeursFromCSV(ctx *ctxt.Context) {
 	dirCsv := GetPrivateDir()
 	filename := path.Join(dirCsv, csvfile)
 	// conversion utf8
-    file, err := os.Open(filename)
-    if err != nil {
-        fmt.Println(csvfile, "inexistant - ne remplit pas les acteurs")
-        return
-    }
-    defer file.Close()
-    decodingReader := transform.NewReader(file, charmap.Windows1252.NewDecoder())	
-    scanner := bufio.NewScanner(decodingReader)
-    lines := []string{}
-    for scanner.Scan() {
-        lines = append(lines, strings.TrimSpace(scanner.Text()))
-    }
-    // lecture csv
-    sep := ";"
-    fields := strings.Split(lines[0], sep)
-    nfields := len(fields)
-    var csv []map[string]string
-    for i, line := range(lines){
-        if i == 0 {
-            continue
-        }
-        tmp := strings.Split(line, sep)
-        if tmp[0] == ""{
-            continue
-        }
-        current := make(map[string]string, nfields)
-        for j, field := range(tmp) {
-            current[fields[j]] = field
-        }
-        csv = append(csv, current)
-    }
-    
+	file, err := os.Open(filename)
+	if err != nil {
+		fmt.Println(csvfile, "inexistant - ne remplit pas les acteurs")
+		return
+	}
+	defer file.Close()
+	decodingReader := transform.NewReader(file, charmap.Windows1252.NewDecoder())
+	scanner := bufio.NewScanner(decodingReader)
+	lines := []string{}
+	for scanner.Scan() {
+		lines = append(lines, strings.TrimSpace(scanner.Text()))
+	}
+	// lecture csv
+	sep := ";"
+	fields := strings.Split(lines[0], sep)
+	nfields := len(fields)
+	var csv []map[string]string
+	for i, line := range lines {
+		if i == 0 {
+			continue
+		}
+		tmp := strings.Split(line, sep)
+		if tmp[0] == "" {
+			continue
+		}
+		current := make(map[string]string, nfields)
+		for j, field := range tmp {
+			current[fields[j]] = field
+		}
+		csv = append(csv, current)
+	}
+
 	db := ctx.DB
 	id := int(0)
 	n := int(0)
@@ -195,41 +195,39 @@ func AddActeursFromCSV(ctx *ctxt.Context) {
         actif,
         notes
         )values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
-    var actif bool
-    var adresse1, adresse2, cp, ville string
-    for _, line := range(csv){
-        if PRIVACY { // voir PRIVACY.go
-            adresse1 = ""
-            adresse2 = ""
-            cp       = ""
-            ville    = ""
-        } else {
-            adresse1 = line["adresse1"]
-            adresse2 = line["adresse2"]
-            cp       = line["cp"]
-            ville    = line["ville"]
-        }
-        if line["actif"] == "oui" {
-            actif = true
-        } else {
-            actif = false
-        }
-        err := db.QueryRow(
-            query,
-            line["nom"],
-            line["prenom"],
-            adresse1,
-            adresse2,
-            cp,
-            ville,
-            actif,
-            line["notes"]).Scan(&id)
-        if err != nil {
-            panic(err)
-        }
-        n++
-    }
+	var actif bool
+	var adresse1, adresse2, cp, ville string
+	for _, line := range csv {
+		if PRIVACY { // voir PRIVACY.go
+			adresse1 = ""
+			adresse2 = ""
+			cp = ""
+			ville = ""
+		} else {
+			adresse1 = line["adresse1"]
+			adresse2 = line["adresse2"]
+			cp = line["cp"]
+			ville = line["ville"]
+		}
+		if line["actif"] == "oui" {
+			actif = true
+		} else {
+			actif = false
+		}
+		err := db.QueryRow(
+			query,
+			line["nom"],
+			line["prenom"],
+			adresse1,
+			adresse2,
+			cp,
+			ville,
+			actif,
+			line["notes"]).Scan(&id)
+		if err != nil {
+			panic(err)
+		}
+		n++
+	}
 	fmt.Println("Insère", n, "lignes dans", table, "à partir de", csvfile)
 }
-
-
