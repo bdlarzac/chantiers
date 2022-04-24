@@ -6,10 +6,11 @@
     @history    2019-11-05 05:50:37+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
 package dbcreate
-                                                                                                                                 
+
 import (
 	"path"
 	"runtime"
+
 	"bdl.local/bdl/ctxt"
 )
 
@@ -38,6 +39,6 @@ func GetPrivateDir() string {
 // GetSCTLDataDir renvoie le chemin absolu vers le répertoire contenant
 // des exports de la base SCTL
 func GetSCTLDataDir(ctx *ctxt.Context, versionSCTL string) string {
-    basedir := ctx.Config.Dev.SCTLData
-	return path.Join(basedir, "csv-" + versionSCTL)
+	basedir := ctx.Config.Dev.SCTLData
+	return path.Join(basedir, "csv-"+versionSCTL)
 }

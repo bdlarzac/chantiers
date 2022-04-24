@@ -16,7 +16,7 @@ install/sctl-data/*
 z.*
 
 # temporary executables generated during development
-src/tmp
+tmp
 
 # temporary stuff
 *.exe
