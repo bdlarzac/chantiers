@@ -24,7 +24,7 @@ func init() {
 		password = "password=" + config.Database.Password
 	}
 	connStr := fmt.Sprintf(
-		"dbname=%s user=%s host=%s %s port=%s sslmode=%s",
+		"dbname=%s user=%s %s host=%s port=%s sslmode=%s",
 		config.Database.DbName,
 		config.Database.User,
 		password,
