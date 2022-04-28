@@ -1,6 +1,7 @@
 
 config.yml
 dbdump
+tmp
 
 # private data
 install/data-private
@@ -14,9 +15,6 @@ install/sctl-data/*
 
 # convention, files marked for deletion
 z.*
-
-# temporary executables generated during development
-tmp
 
 # temporary stuff
 *.exe
