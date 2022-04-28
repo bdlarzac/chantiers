@@ -156,6 +156,21 @@ func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 	return res, nil
 }
 
+// Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
+func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
+	res = map[int]string{}
+	acteurs := []*Acteur{}
+	query := "select id,nom from acteur where proprietaire=true"
+	err = db.Select(&acteurs, query)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, a := range acteurs {
+		res[a.Id] = a.String()
+	}
+	return res, nil
+}
+
 // ************************** Get activité *******************************
 
 // Renvoie les activités auxquelles un acteur a participé.

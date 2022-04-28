@@ -21,6 +21,7 @@ type detailsBilansForm struct {
 	HasChantier              bool
 	ClientsPlaquettesOptions template.HTML
 	UrlAction                string
+	Proprietaires            map[int]string
 }
 
 // ventes d'un seul client
@@ -87,6 +88,9 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		ctx.TemplateName = "bilans-form.html"
+		
+		proprietaires, err := model.GetProprietaires(ctx.DB)
+		
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Choix bilan",
@@ -98,6 +102,7 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				HasChantier:              hasChantier,
 				UrlAction:                "/bilans",
 				ClientsPlaquettesOptions: webo.FmtOptions(WeboClientsPlaquettes(ctx), "CHOOSE_CLIENT"),
+				Proprietaires:            proprietaires,
 			},
 			Menu: "bilans",
 			Footer: ctxt.Footer{

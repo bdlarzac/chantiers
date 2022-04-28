@@ -45,6 +45,15 @@
             </div>
         </div>
         
+        <div class="bold padding-top2">Propriétaires</div>
+        
+        <div class="padding-top2">
+            {{range $id, $name := .Proprietaires}}
+                <div><input type="checkbox" name="proprio-{{$id}}" id="proprio-{{$id}}" checked><label for="proprio-{{$id}}">{{$name}}</label></div>
+            {{end}}
+        </div>
+        
+            
         <div class="bold padding-top2">Bilan</div>
         
         <div>
