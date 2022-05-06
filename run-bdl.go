@@ -35,7 +35,7 @@ func main() {
 		}
 	}()
 
-	model.LoadEnv()
+	model.MustLoadEnv()
 	ctxt.MustInitConfig()
 	ctxt.MustInitDB()
 
