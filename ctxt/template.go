@@ -25,7 +25,7 @@ import (
 // used to fill Context.Template
 var tmpl *template.Template
 
-func init() {
+func MustInitTemplates() {
 	var fmap = template.FuncMap{
 		// Generic pipelines
 		"dateFr":     dateFr,

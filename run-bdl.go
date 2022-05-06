@@ -38,6 +38,7 @@ func main() {
 	model.MustLoadEnv()
 	ctxt.MustInitConfig()
 	ctxt.MustInitDB()
+	ctxt.MustInitTemplates()
 
 	r := mux.NewRouter()
 
