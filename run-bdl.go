@@ -8,19 +8,21 @@
 package main
 
 import (
-	"bdl.local/bdl/control"
-	"bdl.local/bdl/control/ajax"
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/wilk/werr"
-	"bdl.local/bdl/static"
-	"bdl.local/bdl/view"
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"mime"
 	"net/http"
 	"path/filepath"
 	"time"
+
+	"bdl.local/bdl/control"
+	"bdl.local/bdl/control/ajax"
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/model"
+	"bdl.local/bdl/static"
+	"bdl.local/bdl/view"
+	"github.com/gorilla/mux"
 )
 
 // *********************************************************
@@ -33,7 +35,10 @@ func main() {
 		}
 	}()
 
-	ctx := ctxt.NewContext()
+	model.LoadEnv()
+	ctxt.MustInitConfig()
+	ctxt.MustInitDB()
+
 	r := mux.NewRouter()
 
 	r.HandleFunc("/ajax/get/lieudits-from-code-ug/{code}", Hajax(ajax.GetLieuditsFromCodeUG))
@@ -139,7 +144,7 @@ func main() {
 
 	r.PathPrefix("/doc/").Handler(http.StripPrefix("/doc/", http.FileServer(http.Dir(filepath.Join("..", "doc")))))
 	r.HandleFunc("/dbdump/", notFound) // pour empêcher de lister le rep contenant les db dumps
-	r.PathPrefix("/dbdump/").Handler(http.StripPrefix("/dbdump/", http.FileServer(http.Dir(ctx.Config.Database.Backup.Directory))))
+	r.PathPrefix("/dbdump/").Handler(http.StripPrefix("/dbdump/", http.FileServer(http.Dir(model.SERVER_ENV.BACKUP_DIR))))
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.FS(static.StaticFiles))))
 	r.PathPrefix("/view/").Handler(http.StripPrefix("/view/", http.FileServer(http.FS(view.ViewFiles))))
@@ -148,13 +153,15 @@ func main() {
 
 	r.Use(contentTypeMiddleware)
 
+	addr := model.SERVER_ENV.SERVER_ADDR + ":" + model.SERVER_ENV.PORT
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         ctx.Config.Run.URL + ":" + ctx.Config.Run.Port,
+		Addr:         addr,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
+	log.Printf("Listen %s", addr)
 	log.Fatal(srv.ListenAndServe())
 }
 
@@ -170,10 +177,10 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 		//
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		//
-        if ctx.Page != nil {
-            // ctx.Page == nil si contentTypeMiddleware appelé
-            ctx.Page.RunMode = ctx.Config.Run.Mode // "dev" or "prod", available in all pages
-        }
+		if ctx.Page != nil {
+			// ctx.Page == nil si contentTypeMiddleware appelé
+			ctx.Page.RunMode = model.SERVER_ENV.MODE // "dev" or "prod", available in all pages
+		}
 		//
 		if err != nil {
 			showErrorPage(err, ctx, w, r)

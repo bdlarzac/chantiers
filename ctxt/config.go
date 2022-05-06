@@ -19,7 +19,7 @@ import (
 
 var config *model.Config
 
-func init() {
+func MustInitConfig() {
 	y, err := ioutil.ReadFile("config.yml")
 	if err != nil {
 		panic(err)

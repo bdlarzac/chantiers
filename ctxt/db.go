@@ -9,8 +9,10 @@
 package ctxt
 
 import (
-	"fmt"
+	"log"
+	"strings"
 
+	"bdl.local/bdl/model"
 	"github.com/jmoiron/sqlx"
 
 	_ "github.com/lib/pq"
@@ -18,31 +20,28 @@ import (
 
 var db *sqlx.DB
 
-func init() {
-	password := ""
-	if config.Database.Password != "" {
-		password = "password=" + config.Database.Password
+// ajoute le schema a l'url
+// et supprime sslmode=prefer mis automatiquement par Scalingo
+func ajusteDbURL(url string, schema string) string {
+	dbURL := strings.ReplaceAll(url, "sslmode=prefer", "") // non supporté par lib/pq
+	if strings.HasPrefix(dbURL, "postgres") && !strings.Contains(dbURL, "search_path") {
+		if !strings.Contains(dbURL, "?") {
+			dbURL += "?"
+		}
+		dbURL += "&search_path=" + schema
 	}
-	connStr := fmt.Sprintf(
-		"dbname=%s user=%s %s host=%s port=%s sslmode=%s",
-		config.Database.DbName,
-		config.Database.User,
-		password,
-		config.Database.Host,
-		config.Database.Port,
-		config.Database.SSLMode,
-	)
+	return dbURL
+}
+
+func MustInitDB() {
 	var err error
 
-	db, err = sqlx.Open("postgres", connStr)
+	dbURL := ajusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.SCHEMA)
+
+	db, err = sqlx.Open("postgres", dbURL)
 	if err != nil {
-		LogError(err)
+		log.Fatalf("Connexion DB impossible : %v", err)
 	}
 
-	db.Exec(fmt.Sprintf(`set search_path='%s'`, config.Database.Schema))
-
-	err = db.Ping()
-	if err != nil {
-		LogError(err)
-	}
+	//TODO: ici faire upgrade versions
 }
