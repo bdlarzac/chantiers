@@ -154,7 +154,7 @@ func main() {
 
 	r.Use(contentTypeMiddleware)
 
-	addr := model.SERVER_ENV.SERVER_ADDR + ":" + model.SERVER_ENV.PORT
+	addr := model.SERVER_ENV.RUN_SERVER_ADDR + ":" + model.SERVER_ENV.PORT
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         addr,
@@ -180,7 +180,7 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 		//
 		if ctx.Page != nil {
 			// ctx.Page == nil si contentTypeMiddleware appelé
-			ctx.Page.RunMode = model.SERVER_ENV.MODE // "dev" or "prod", available in all pages
+			ctx.Page.RunMode = model.SERVER_ENV.RUN_MODE // "dev" or "prod", available in all pages
 		}
 		//
 		if err != nil {

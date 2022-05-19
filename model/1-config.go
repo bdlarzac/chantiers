@@ -54,13 +54,13 @@ type Config struct {
 // configuration spécifique au déploiement
 // en utilisant les variables d'environnement
 type serverEnv struct {
-	DATABASE_URL string
-	SCHEMA       string
-	PORT         string
-	MODE         string
-	BACKUP_DIR   string
-	CMD_PGDUMP   string
-	SERVER_ADDR  string // http.Server
+	DATABASE_URL    string
+	DATABASE_SCHEMA string
+	PORT            string
+	RUN_MODE        string
+	BACKUP_DIR      string
+	CMD_PGDUMP      string
+	RUN_SERVER_ADDR string // http.Server
 }
 
 var SERVER_ENV serverEnv
@@ -72,12 +72,12 @@ func MustLoadEnv() {
 		log.Printf("Chargement env : %s\n", err)
 	}
 	SERVER_ENV = serverEnv{
-		DATABASE_URL: os.Getenv("DATABASE_URL"),
-		SCHEMA:       os.Getenv("SCHEMA"),
-		PORT:         os.Getenv("PORT"),
-		MODE:         os.Getenv("MODE"),
-		CMD_PGDUMP:   os.Getenv("CMD_PGDUMP"),
-		SERVER_ADDR:  os.Getenv("SERVER_ADDR"),
-		BACKUP_DIR:   os.Getenv("BACKUP_DIR"),
+		DATABASE_URL:    os.Getenv("DATABASE_URL"),
+		DATABASE_SCHEMA: os.Getenv("DATABASE_SCHEMA"),
+		PORT:            os.Getenv("PORT"),
+		RUN_MODE:        os.Getenv("RUN_MODE"),
+		CMD_PGDUMP:      os.Getenv("CMD_PGDUMP"),
+		RUN_SERVER_ADDR: os.Getenv("RUN_SERVER_ADDR"),
+		BACKUP_DIR:      os.Getenv("BACKUP_DIR"),
 	}
 }

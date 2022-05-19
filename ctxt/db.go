@@ -36,7 +36,7 @@ func ajusteDbURL(url string, schema string) string {
 func MustInitDB() {
 	var err error
 
-	dbURL := ajusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.SCHEMA)
+	dbURL := ajusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
 
 	db, err = sqlx.Open("postgres", dbURL)
 	if err != nil {
