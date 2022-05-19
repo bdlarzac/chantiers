@@ -65,11 +65,22 @@ type serverEnv struct {
 
 var SERVER_ENV serverEnv
 
-// LoadEnv charge les variables d'environnement spécifiques au serveur
+// MustLoadEnv charge les variables d'environnement spécifiques au serveur
+// Dans l'ordre :
+// - si CONFIG_FILE existe dans l'environnement : lecture du fichier en question
+// - si non lecture config.env s'il existe
+// Pas d'erreur s'il n'y a pas de fichier de conf
+// - les variables d'environnement : elles sont prioritaires !
 func MustLoadEnv() {
-	err := godotenv.Load("config.env")
+	configFile := os.Getenv("CONFIG_FILE")
+	if configFile == "" {
+		configFile = "config.env"
+	}
+	err := godotenv.Load(configFile)
 	if err != nil {
-		log.Printf("Chargement env : %s\n", err)
+		log.Printf("Chargement env %s : %s\n", configFile, err)
+	} else {
+		log.Printf("Chargement env %s OK\n", configFile)
 	}
 	SERVER_ENV = serverEnv{
 		DATABASE_URL:    os.Getenv("DATABASE_URL"),
