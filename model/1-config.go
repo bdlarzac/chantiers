@@ -51,16 +51,16 @@ type Config struct {
 	} `yaml:"dev"`
 }
 
-// configuration spécifique au déploiement
+// Configuration spécifique au déploiement
 // en utilisant les variables d'environnement
 type serverEnv struct {
 	DATABASE_URL    string
 	DATABASE_SCHEMA string
-	PORT            string
+	RUN_SERVER_ADDR string // http.Server
+	PORT            string // RUN_PORT
 	RUN_MODE        string
 	BACKUP_DIR      string
 	CMD_PGDUMP      string
-	RUN_SERVER_ADDR string // http.Server
 }
 
 var SERVER_ENV serverEnv
@@ -85,10 +85,10 @@ func MustLoadEnv() {
 	SERVER_ENV = serverEnv{
 		DATABASE_URL:    os.Getenv("DATABASE_URL"),
 		DATABASE_SCHEMA: os.Getenv("DATABASE_SCHEMA"),
-		PORT:            os.Getenv("PORT"),
+		RUN_SERVER_ADDR: os.Getenv("RUN_SERVER_ADDR"),
+		PORT:            os.Getenv("PORT"), // RUN_PORT
 		RUN_MODE:        os.Getenv("RUN_MODE"),
 		CMD_PGDUMP:      os.Getenv("CMD_PGDUMP"),
-		RUN_SERVER_ADDR: os.Getenv("RUN_SERVER_ADDR"),
 		BACKUP_DIR:      os.Getenv("BACKUP_DIR"),
 	}
 }
