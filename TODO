@@ -2,6 +2,8 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+- page d'erreur : prendre en compte version prod / dev (fond bleu)
+
 - Voir css, utiliser normalize.css
 
 - Possible d'implémenter Acteur.IsDeletable() avec des select count(), plus économiques
