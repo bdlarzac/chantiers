@@ -67,7 +67,10 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		return werr.Wrapf(err, "%v", cmd.Args)
+	    if model.SERVER_ENV.RUN_MODE == "prod" {
+	        return werr.Wrapf(err, "Paramètres BDD invalides")
+	    }
+		return werr.Wrapf(err, "Paramètres BDD invalides:\n%v", cmd.Args)
 	}
 	//
 	// 2 - zip

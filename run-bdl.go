@@ -179,7 +179,7 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		//
 		if ctx.Page != nil {
-			// ctx.Page == nil si contentTypeMiddleware appelé
+			// ctx.Page == nil if contentTypeMiddleware was called
 			ctx.Page.RunMode = model.SERVER_ENV.RUN_MODE // "dev" or "prod", available in all pages
 		}
 		//
@@ -273,6 +273,7 @@ func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *ht
 			URL:     r.URL.String(),
 			Details: werr.SprintHTML(theErr),
 		},
+		RunMode: model.SERVER_ENV.RUN_MODE,
 	}
 	tmpl := ctx.Template
 	err = tmpl.ExecuteTemplate(w, "header.html", ctx.Page)

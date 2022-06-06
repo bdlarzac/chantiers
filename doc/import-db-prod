@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+
+#
+# Commande pour importer un dump postgres de la base de prod dans la base locale 
+#
+
+if [ $# -ne 1 ]; then
+    echo "Cette commande a besoin d'un argument : "
+    echo "le nom du fichier zip contenant le dump postgres SANS l'extension zip"
+    echo "Ex: $0 bdl-2021-11-10-155100.pgdump"
+    exit
+fi
+
+# Voir valeurs des paramètres pg dans config.env
+dirdump=/path/to/directory/containing/dbdumps
+pgdatabase=bdlchantiers
+pgschema=bdlprod
+pguser=bdl
+pgpass=my_password
+pgport=5432
+
+dumpfile=$1
+zipfile=$dumpfile.zip
+
+if [ ! -f $dirdump/$zipfile ]; then
+    echo "Fichier inexistant: $dirdump/$zipfile"
+    exit
+fi
+
+# unzip se fait dans le rep courant
+unzip $dirdump/$zipfile
+
+export PGPASSWORD=$pgpass
+psql -d $pgdatabase -U $pguser -h localhost -p $pgport -c "drop schema $pgschema cascade"
+psql $pgdatabase -U $pguser -h localhost -p $pgport < $dumpfile
+
+rm $dumpfile
+
+echo "Import terminé"

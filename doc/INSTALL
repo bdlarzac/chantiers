@@ -1,11 +1,13 @@
 
+---------------------------------------------------------------------------------------------------
+INSTALLATION ACTUELLE
+---------------------------------------------------------------------------------------------------
 
-###### postgresql ######
+Créer une base postgresql
+---------------------------------------------------------------------------------------------------
 # dev version :
 # psql --version
 # psql (PostgreSQL) 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1)
-
-# cf config.yml pour le mot de passe
 
 sudo apt install postgres
 sudo -s -u postgres
@@ -21,22 +23,55 @@ CREATE SCHEMA mon_schema;
 exit
 
 # Pour se connecter à la base :
-psql -U bdl -W -h localhost -d bdlbois
+psql -U bdl -W -h localhost -d bdlchantiers
 
-###### go ######
+Ensuite, importer un dump dans postgres - voir script import-db-prod
+
+---------------------------------------------------------------------------------------------------
+RUN
+---------------------------------------------------------------------------------------------------
+2 possibilités :
+
+1) Fichier config.env
+- copier config.env.dist en config.env
+- Modifier les valeurs dans config.env
+- go run run-bdl.go
+
+2) Variables d'environnement
+DATABASE_URL=postgresql://bdl:pg_password@localhost:5432/bdlchantiers \
+DATABASE_SCHEMA=bdlprod \
+RUN_SERVER_ADDR=localhost \
+PORT=8012 \
+RUN_MODE=dev \
+CMD_PGDUMP=pg_dump \
+BACKUP_DIR=/path/to/directory/containing/dbdumps/ \
+go run run-bdl.go
+
+Puis visiter http://localhost:8012
+
+
+---------------------------------------------------------------------------------------------------
+INSTALLATION INITIALE - obsolete
+---------------------------------------------------------------------------------------------------
+
+
+go
+---------------------------------------------------------------------------------------------------
 # dev version :
 # go version
 # go version go1.18 linux/amd64
 
 # todo install go
 
-###### Initialisation des tables ######
+Initialisation des tables
+---------------------------------------------------------------------------------------------------
 cd /path/to/bdl/
 cd install/
 go run install-bdl.go -i all
 
 
-###### Lancement du programme en local ######
+Lancement du programme en local
+---------------------------------------------------------------------------------------------------
 En mode dev, utilise        github.com/codegangsta/gin
 Nouvel outil :              github.com/cosmtrek/air
 
@@ -49,7 +84,8 @@ gin -i --all -a 8000 -p 3012 run run-bdl.go
 http://localhost:3012/
 
 
-###### Install version de test sur serveur ######
+Install version de test sur serveur
+---------------------------------------------------------------------------------------------------
 go run install-bdl.go -i all
 go run install-bdl.go -f acteur
 go run install-bdl.go -f stockage
@@ -62,20 +98,25 @@ sert à anonymiser les acteurs
 - une fois l'install terminée, supprimer private/Exploita.csv
 
 
-###### Compilation version de prod ######
+Compilation version de prod
+---------------------------------------------------------------------------------------------------
 todo
 
-###### Déploiement sur machine windows ######
+Déploiement sur machine windows
+---------------------------------------------------------------------------------------------------
 todo
 
-###### Install version de test sur le server ######
+Install version de test sur le server
+---------------------------------------------------------------------------------------------------
 sudo -H certbot-auto --rsa-key-size 4096 --apache -d bdl.larzac.info
 
 
-###### Obslolete, refaire avec go.mod ######
+Obslolete, refaire avec go.mod
+---------------------------------------------------------------------------------------------------
 go get github.com/lib/pq
 go get gopkg.in/yaml.v3
 
 Unix ODBC, pour lire les bases access
+---------------------------------------------------------------------------------------------------
 https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC
 https://github.com/alexbrainman/odbc/wiki/InstallingFreeTDS

@@ -13,10 +13,10 @@ package model
 import (
 	"log"
 	"os"
-
 	"github.com/joho/godotenv"
 )
 
+// Configuration "métier", venant de config.yml
 type Config struct {
 	Paths struct {
 		LogicielFoncier string `yaml:"logiciel-foncier"`
@@ -52,7 +52,7 @@ type Config struct {
 }
 
 // Configuration spécifique au déploiement
-// en utilisant les variables d'environnement
+// en utilisant les variables d'environnement ou config.env
 type serverEnv struct {
 	DATABASE_URL    string
 	DATABASE_SCHEMA string
