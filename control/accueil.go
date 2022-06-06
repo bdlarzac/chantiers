@@ -6,13 +6,15 @@ package control
 
 import (
 	"archive/zip"
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/model"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
 	"time"
+
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/model"
 )
 
 type detailsAccueil struct {
@@ -50,7 +52,7 @@ func ShowDoc(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 
 func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	var err error
-	dirname := ctx.Config.Database.Backup.Directory
+	dirname := model.SERVER_ENV.BACKUP_DIR
 	filename := "bdl-" + time.Now().Format("2006-01-02-150405") + ".pgdump"
 	filepath := dirname + string(os.PathSeparator) + filename
 	//
@@ -58,17 +60,14 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	//
 	// PGPASSWORD='my_password' pg_dump --file my_dump_file -h _my_host -n my_schema -p my_port -U my_user  my_database
 	cmd := exec.Command(
-		ctx.Config.Database.Backup.CmdPgdump,
+		model.SERVER_ENV.CMD_PGDUMP,
+		model.SERVER_ENV.DATABASE_URL,
 		"--file", filepath,
-		"-h", ctx.Config.Database.Host,
-		"-p", ctx.Config.Database.Port,
-		"-U", ctx.Config.Database.User,
-		"-n", ctx.Config.Database.Schema,
-		ctx.Config.Database.DbName)
-	cmd.Env = append(os.Environ(), "PGPASSWORD="+ctx.Config.Database.Password)
+	)
+	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		return err
+		return werr.Wrapf(err, "%v", cmd.Args)
 	}
 	//
 	// 2 - zip

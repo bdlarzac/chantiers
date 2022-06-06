@@ -10,25 +10,14 @@
 ********************************************************************************/
 package model
 
+import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+)
+
 type Config struct {
-	Run struct {
-		URL  string `yaml:"url"`
-		Port string `yaml:"port"`
-		Mode string `yaml:"mode"`
-	}
-	Database struct {
-		Host     string `yaml:"host"`
-		Port     string `yaml:"port"`
-		User     string `yaml:"user"`
-		Password string `yaml:"password"`
-		DbName   string `yaml:"dbname"`
-		Schema   string `yaml:"schema"`
-		SSLMode  string `yaml:"ssl-mode"`
-		Backup   struct {
-			Directory string `yaml:"directory"`
-			CmdPgdump string `yaml:"cmd-pgdump"`
-		} `yaml:"backup"`
-	} `yaml:"database"`
 	Paths struct {
 		LogicielFoncier string `yaml:"logiciel-foncier"`
 	} `yaml:"paths"`
@@ -60,4 +49,46 @@ type Config struct {
 		SCTLData    string `yaml:"sctl-data"`
 		SCTLAnalyse string `yaml:"sctl-analyse"`
 	} `yaml:"dev"`
+}
+
+// configuration spécifique au déploiement
+// en utilisant les variables d'environnement
+type serverEnv struct {
+	DATABASE_URL    string
+	DATABASE_SCHEMA string
+	PORT            string
+	RUN_MODE        string
+	BACKUP_DIR      string
+	CMD_PGDUMP      string
+	RUN_SERVER_ADDR string // http.Server
+}
+
+var SERVER_ENV serverEnv
+
+// MustLoadEnv charge les variables d'environnement spécifiques au serveur
+// Dans l'ordre :
+// - si CONFIG_FILE existe dans l'environnement : lecture du fichier en question
+// - si non lecture config.env s'il existe
+// Pas d'erreur s'il n'y a pas de fichier de conf
+// - les variables d'environnement : elles sont prioritaires !
+func MustLoadEnv() {
+	configFile := os.Getenv("CONFIG_FILE")
+	if configFile == "" {
+		configFile = "config.env"
+	}
+	err := godotenv.Load(configFile)
+	if err != nil {
+		log.Printf("Chargement env %s : %s\n", configFile, err)
+	} else {
+		log.Printf("Chargement env %s OK\n", configFile)
+	}
+	SERVER_ENV = serverEnv{
+		DATABASE_URL:    os.Getenv("DATABASE_URL"),
+		DATABASE_SCHEMA: os.Getenv("DATABASE_SCHEMA"),
+		PORT:            os.Getenv("PORT"),
+		RUN_MODE:        os.Getenv("RUN_MODE"),
+		CMD_PGDUMP:      os.Getenv("CMD_PGDUMP"),
+		RUN_SERVER_ADDR: os.Getenv("RUN_SERVER_ADDR"),
+		BACKUP_DIR:      os.Getenv("BACKUP_DIR"),
+	}
 }
