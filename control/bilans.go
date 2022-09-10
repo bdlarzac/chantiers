@@ -5,6 +5,7 @@
 package control
 
 import (
+	"github.com/jmoiron/sqlx"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
@@ -37,6 +38,7 @@ type detailsBilanVentesPlaquettes struct {
 	DateDebut time.Time
 	DateFin   time.Time
 	Ventes    []*model.VentePlaq
+	Proprietaires    []*model.Acteur
 }
 
 type detailsBilanValoEssences struct {
@@ -167,7 +169,9 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 }
 
 // *********************************************************
-// Bilan ventes pour tous clients confondus
+// Bilan ventes
+// pour tous clients confondus
+// de date 1 à date 2
 func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	dateDebut, err := time.Parse("2006-01-02", formValues.Get("date-debut"))
 	if err != nil {
@@ -178,6 +182,10 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		return err
 	}
 	ventes, err := model.GetVentePlaqsOfPeriod(ctx.DB, dateDebut, dateFin)
+	if err != nil {
+		return err
+	}
+	proprietaires, err := computeProprietaires(ctx.DB, formValues)
 	if err != nil {
 		return err
 	}
@@ -199,6 +207,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 			DateDebut: dateDebut,
 			DateFin:   dateFin,
 			Ventes:    ventes,
+			Proprietaires: proprietaires,
 		},
 	}
 	if err != nil {
@@ -206,6 +215,27 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	}
 	return nil
 }
+
+// A partir de valeurs telles que proprio-1:[on]
+// renvoyées dans un formulaire
+// récupérer les ids (dans l'exemple : 1)
+func computeProprietaires(db *sqlx.DB, formValues url.Values) ([]*model.Acteur, error) {
+    res := []*model.Acteur{}
+    RADIX := "proprio-"
+    length := len(RADIX)
+	for k, _ := range formValues {
+	    if strings.HasPrefix(k, RADIX){
+	        id, _ := strconv.Atoi(k[length:])
+	        proprio, err := model.GetActeur(db, id)
+	        if err != nil {
+	            return res, err
+	        }
+	        res = append(res, proprio)
+        }
+	}
+    return res, nil
+}
+
 
 // *********************************************************
 // Bilan par valorisation et par essences

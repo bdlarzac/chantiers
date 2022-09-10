@@ -8,6 +8,7 @@ Créer une base postgresql
 # dev version :
 # psql --version
 # psql (PostgreSQL) 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1)
+# psql (PostgreSQL) 14.3 (Debian 14.3-1.pgdg110+1)
 
 sudo apt install postgres
 sudo -s -u postgres
@@ -81,7 +82,7 @@ gin -i --all -a 8000 -p 3012 run run-bdl.go
 
 # 8000 défini dans config.yml, dans Run / Port
 # dans un navigateur web
-http://localhost:3012/
+http://localhost:8012/
 
 
 Install version de test sur serveur

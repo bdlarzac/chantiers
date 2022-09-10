@@ -36,6 +36,7 @@
 
 <div class="page-content">
 
+
 <div class="flex-wrap">
 
 <div class="padding-right border-right">
@@ -152,7 +153,7 @@
 
 <!-- ************************************* -->
 {{if .Notes}}
-<fieldset class="margin-top margin-bottom">
+<fieldset class="note margin-top margin-bottom">
     <legend class="big3 bold padding-right05 padding-left05">Notes</legend>
     {{.Notes | nl2br}}
 </fieldset>
@@ -204,7 +205,7 @@ Livraisons
             </div>
             {{if .Notes}}
                 <div class="bold margin-top">Notes</div>
-                <div>{{.Notes | nl2br}}</div>
+                <div class="note padding05">{{.Notes | nl2br}}</div>
             {{end}}
         </td>
         <td class="vertical-align-top">
@@ -327,7 +328,7 @@ Livraisons
                         </div>
                         {{if .Notes}}
                             <div class="bold margin-top">Notes</div>
-                            <div>{{.Notes | nl2br}}</div>
+                            <div class="note">{{.Notes | nl2br}}</div>
                         {{end}}
                     </td>
                     {{if eq .TypeCout "G"}}

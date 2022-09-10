@@ -32,6 +32,7 @@ func MustInitTemplates() {
 		"dateIso":    dateIso,
 		"modulo":     modulo,
 		"nl2br":      nl2br,
+		"plus":       plus,
 		"safeHTML":   safeHTML,
 		"twoDigits":  twoDigits,
 		"ucFirst":    ucFirst,
@@ -60,21 +61,6 @@ func MustInitTemplates() {
 // ************************* Generic pipelines ********************************
 
 /**
-    @copyright Thierry Graff
-**/
-func modulo(i, mod int) int {
-	return i % mod
-}
-
-/**
-    @copyright  Thierry Graff
-    @license    GPL
-**/
-func nl2br(t string) template.HTML {
-	return template.HTML(strings.Replace(template.HTMLEscapeString(t), "\n", "<br>", -1))
-}
-
-/**
     Displays a date, format DD/MM/YYYY.
     @copyright  Thierry Graff
     @license    GPL
@@ -93,12 +79,27 @@ func dateIso(t time.Time) template.HTML {
 }
 
 /**
-    Displays the year of a date, format YYYY.
+    @copyright Thierry Graff
+    @license    GPL
+**/
+func modulo(i, mod int) int {
+	return i % mod
+}
+
+/**
     @copyright  Thierry Graff
     @license    GPL
 **/
-func year(t time.Time) template.HTML {
-	return template.HTML(strconv.Itoa(t.Year()))
+func nl2br(t string) template.HTML {
+	return template.HTML(strings.Replace(template.HTMLEscapeString(t), "\n", "<br>", -1))
+}
+
+/**
+    @copyright  Thierry Graff
+    @license    GPL
+**/
+func plus(a, b int) int {
+	return a + b
 }
 
 /**
@@ -112,6 +113,15 @@ func ucFirst(str string) template.HTML {
 		return template.HTML(u + str[len(u):])
 	}
 	return template.HTML("")
+}
+
+/**
+    Displays the year of a date, format YYYY.
+    @copyright  Thierry Graff
+    @license    GPL
+**/
+func year(t time.Time) template.HTML {
+	return template.HTML(strconv.Itoa(t.Year()))
 }
 
 /**

@@ -1,7 +1,11 @@
 #!/usr/bin/bash
 
 #
-# Commande pour importer un dump postgres de la base de prod dans la base locale 
+# Commande pour importer un dump postgres de la base de prod dans la base locale.
+# Ce script est versionné, ne pas modifier les valeurs des paramètres de connexion.
+#
+# Ce script a vocation a être recopié dans un endroit hors du versionnage de git
+# en adaptant les valeurs des paramètres de connexion
 #
 
 if [ $# -ne 1 ]; then

@@ -49,7 +49,7 @@
         <td class="whitespace-pre">{{.TVA}} %</td>
         <td class="whitespace-pre"><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2)));</script> &euro;</td>
         <td class="center">{{.DatePay | dateFr}}</td>
-        <td>{{.Notes | nl2br}}</td>
+        <td class="note padding05">{{.Notes | nl2br}}</td>
     </tr>
 {{end}}
     
@@ -128,7 +128,7 @@
             </div>
             {{if .Notes}}
                 <div class="bold margin-top">Notes</div>
-                <div>{{.Notes | nl2br}}</div>
+                <div class="note padding05">{{.Notes | nl2br}}</div>
             {{end}}
         </td>
         
@@ -340,7 +340,7 @@
             </div>
             {{if .Notes}}
                 <div class="bold margin-top">Notes</div>
-                <div>{{.Notes | nl2br}}</div>
+                <div class="note padding05">{{.Notes | nl2br}}</div>
             {{end}}
         </td>
         

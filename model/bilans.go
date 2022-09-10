@@ -156,6 +156,7 @@ func isBefore(t1, t2 time.Time) bool {
 func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error) {
 	essenceCodes := AllEssenceCodes()
 	valoCodes := AllValorisationCodes()
+	///////////////// TODO la ligne suivante est louche
 	valoCodes = append(valoCodes, "CF") // ajoute type valo pour séparer chaffage fermier / chauffage client
 	valos = make(Valorisations)
 	for _, valoCode := range valoCodes {
