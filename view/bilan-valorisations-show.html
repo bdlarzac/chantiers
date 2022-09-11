@@ -3,9 +3,22 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<h1>{{.Header.Title}} du {{.Details.DateDebut | dateFr}} au {{.Details.DateFin | dateFr}}</h1>
-
 {{with .Details}}
+
+<style>
+    h2{padding-left:1rem;}
+</style>
+
+<h1>
+    {{$.Header.Title}} - 
+    {{$len := len .Proprietaires}}
+    {{range $i, $proprio := .Proprietaires}}
+        {{printf "%+v" $proprio}}
+        {{if lt (plus $i 1) $len}} + {{end}}
+    {{end}}
+</h1>
+
+<h2>Du {{.DateDebut | dateFr}} au {{.DateFin | dateFr}}</h2>
 
 <div class="page-content">
 

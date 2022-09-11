@@ -47,6 +47,7 @@ type detailsBilanValoEssences struct {
 	Valorisations model.Valorisations
 	EssenceCodes  []string
 	ValoCodes     []string
+	Proprietaires    []*model.Acteur
 }
 
 func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -216,27 +217,6 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	return nil
 }
 
-// A partir de valeurs telles que proprio-1:[on]
-// renvoyées dans un formulaire
-// récupérer les ids (dans l'exemple : 1)
-func computeProprietaires(db *sqlx.DB, formValues url.Values) ([]*model.Acteur, error) {
-    res := []*model.Acteur{}
-    RADIX := "proprio-"
-    length := len(RADIX)
-	for k, _ := range formValues {
-	    if strings.HasPrefix(k, RADIX){
-	        id, _ := strconv.Atoi(k[length:])
-	        proprio, err := model.GetActeur(db, id)
-	        if err != nil {
-	            return res, err
-	        }
-	        res = append(res, proprio)
-        }
-	}
-    return res, nil
-}
-
-
 // *********************************************************
 // Bilan par valorisation et par essences
 // (les deux sont presque identiques)
@@ -262,6 +242,10 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 		titre = "Bilan essences"
 		templateName = "bilan-essences-show.html"
 	}
+	proprietaires, err := computeProprietaires(ctx.DB, formValues)
+	if err != nil {
+		return err
+	}
 	//
 	ctx.TemplateName = templateName
 	ctx.Page = &ctxt.Page{
@@ -281,6 +265,7 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 			Valorisations: valos,
 			EssenceCodes:  model.AllEssenceCodes(),
 			ValoCodes:     model.AllValorisationCodesAvecChaufer(),
+			Proprietaires: proprietaires,
 		},
 	}
 	if err != nil {
@@ -288,3 +273,27 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 	}
 	return nil
 }
+
+
+// A partir de valeurs telles que proprio-1:[on]
+// renvoyées dans un formulaire
+// récupérer les ids (dans l'exemple : 1)
+// Auxiliaire des fonctions showBilan*()
+func computeProprietaires(db *sqlx.DB, formValues url.Values) ([]*model.Acteur, error) {
+    res := []*model.Acteur{}
+    RADIX := "proprio-"
+    length := len(RADIX)
+	for k, _ := range formValues {
+	    if strings.HasPrefix(k, RADIX){
+	        id, _ := strconv.Atoi(k[length:])
+	        proprio, err := model.GetActeur(db, id)
+	        if err != nil {
+	            return res, err
+	        }
+	        res = append(res, proprio)
+        }
+	}
+    return res, nil
+}
+
+
