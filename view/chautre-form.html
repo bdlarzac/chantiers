@@ -3,8 +3,8 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-ommon/common/checkActeur
 {{template "listeActeurs.html" .Details}}
+<script>{{template "checkActeur.js.html" .Details}}</script>
 
 <h1>{{.Header.Title}}</h1>
 
@@ -211,7 +211,7 @@ function validateForm(){
     //
     msg += chantierLienValidateForm(); // dans view/common/chantier-lien.html
     //
-ommon/common/checkActeur
+    const check = checkActeur("acheteur", "- Vous devez renseigner l'acheteur.\n");
     document.getElementById("id-acheteur").value = check[0];
     msg += check[1];
     //
