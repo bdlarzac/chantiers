@@ -11,8 +11,8 @@ package fixture
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"time"
 	"fmt"
+	"time"
 )
 
 // *********************************************************
@@ -32,50 +32,50 @@ func FillStockage(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Loyer 1000 E / an
 	typefrais = "LO"
 	montant = 1000 * 3
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
 	_, err = model.InsertStockFrais(db, &model.StockFrais{
-	    IdStockage: idStock,
-	    TypeFrais: typefrais,
-	    Montant: montant,
-	    DateDebut: datedeb,
-	    DateFin: datefin,
+		IdStockage: idStock,
+		TypeFrais:  typefrais,
+		Montant:    montant,
+		DateDebut:  datedeb,
+		DateFin:    datefin,
 	})
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Assurance 100 E / mois
 	typefrais = "AS"
 	montant = 100 * 36
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
 	_, err = model.InsertStockFrais(db, &model.StockFrais{
-	    IdStockage: idStock,
-	    TypeFrais: typefrais,
-	    Montant: montant,
-	    DateDebut: datedeb,
-	    DateFin: datefin,
+		IdStockage: idStock,
+		TypeFrais:  typefrais,
+		Montant:    montant,
+		DateDebut:  datedeb,
+		DateFin:    datefin,
 	})
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Elec 52.5 E tous les 2 mois
 	typefrais = "EL"
 	montant = 52.5 * 18
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
 	_, err = model.InsertStockFrais(db, &model.StockFrais{
-	    IdStockage: idStock,
-	    TypeFrais: typefrais,
-	    Montant: montant,
-	    DateDebut: datedeb,
-	    DateFin: datefin,
+		IdStockage: idStock,
+		TypeFrais:  typefrais,
+		Montant:    montant,
+		DateDebut:  datedeb,
+		DateFin:    datefin,
 	})
 	if err != nil {
 		panic(err)

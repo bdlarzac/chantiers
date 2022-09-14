@@ -57,21 +57,21 @@ func AnonymizeActeurs(ctx *ctxt.Context) {
 		"Sylvie",
 	}
 	autres := model.Acteur{
-		Adresse1:    "Le bourg",
-		Adresse2:    "",
-		Tel:         "01 02 03 04 05",
-		Mobile: "06 07 08 09 10",
-		Email:       "test@mail.org",
-		Bic:         "",
-		Iban:        "",
-		Siret:       "",
-		Notes:       "Données de test - ne correspond à aucune personne réelle",
+		Adresse1: "Le bourg",
+		Adresse2: "",
+		Tel:      "01 02 03 04 05",
+		Mobile:   "06 07 08 09 10",
+		Email:    "test@mail.org",
+		Bic:      "",
+		Iban:     "",
+		Siret:    "",
+		Notes:    "Données de test - ne correspond à aucune personne réelle",
 	}
 
 	acteurs, _ := model.GetSortedActeurs(ctx.DB, "id")
 
 	for _, a := range acteurs {
-		if a.Nom == "BDL" || a.Nom == "SCTL"  || a.Nom == "GFA" {
+		if a.Nom == "BDL" || a.Nom == "SCTL" || a.Nom == "GFA" {
 			continue
 		}
 		idxNom := rand.Intn(len(noms) - 1)

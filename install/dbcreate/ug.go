@@ -12,10 +12,10 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"fmt"
-	"path"
-	"strings"
-	"strconv"
 	"math"
+	"path"
+	"strconv"
+	"strings"
 )
 
 func FillUG(ctx *ctxt.Context) {
@@ -43,10 +43,10 @@ func FillUG(ctx *ctxt.Context) {
 			records2[code] = make(map[string]string)
 		}
 		type_coupe := record["Coupe"] + " " + record["Annee_intervention"] // TODO voir si on garde info "0 0"
-        // Arrondit surface au m2 (4 chiffres après la virgule)
+		// Arrondit surface au m2 (4 chiffres après la virgule)
 		surface, _ := strconv.ParseFloat(record["Surf_SIG"], 64)
-        surface = math.Round(surface * 10000) / 10000
-        surfaceStr := strconv.FormatFloat(surface, 'f', -1, 64)
+		surface = math.Round(surface*10000) / 10000
+		surfaceStr := strconv.FormatFloat(surface, 'f', -1, 64)
 		records2[code][type_coupe] = type_coupe
 		if _, ok := records3[code]; !ok {
 			records3[code] = make(map[string]string)

@@ -12,8 +12,8 @@ package dbcreate
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"time"
 	"fmt"
+	"time"
 )
 
 // *********************************************************
@@ -34,7 +34,7 @@ func FillHangarsInitiaux(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Loyer 6000 E / an
 	typefrais = "LO"
 	montant = 6000 * 3
@@ -42,30 +42,30 @@ func FillHangarsInitiaux(ctx *ctxt.Context) {
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
 	_, err = model.InsertStockFrais(db, &model.StockFrais{
-	    IdStockage: idStock,
-	    TypeFrais: typefrais,
-	    Montant: montant,
-	    DateDebut: datedeb,
-	    DateFin: datefin,
-	    Notes: notes,
+		IdStockage: idStock,
+		TypeFrais:  typefrais,
+		Montant:    montant,
+		DateDebut:  datedeb,
+		DateFin:    datefin,
+		Notes:      notes,
 	})
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Assurance 700 E tous les 6 mois
 	typefrais = "AS"
-	montant = 700 * 6                                                                       
+	montant = 700 * 6
 	notes = "700 E tous les 6 mois"
 	datedeb, _ = time.Parse("2006-01-02", "2018-01-01")
 	datefin, _ = time.Parse("2006-01-02", "2020-12-31")
 	_, err = model.InsertStockFrais(db, &model.StockFrais{
-	    IdStockage: idStock,
-	    TypeFrais: typefrais,
-	    Montant: montant,
-	    DateDebut: datedeb,
-	    DateFin: datefin,
-	    Notes: notes,
+		IdStockage: idStock,
+		TypeFrais:  typefrais,
+		Montant:    montant,
+		DateDebut:  datedeb,
+		DateFin:    datefin,
+		Notes:      notes,
 	})
 	if err != nil {
 		panic(err)

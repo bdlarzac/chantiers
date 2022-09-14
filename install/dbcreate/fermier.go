@@ -9,11 +9,11 @@
 package dbcreate
 
 import (
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/tiglib"
 	"fmt"
 	"path"
 	"strings"
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/tiglib"
 )
 
 // *********************************************************
@@ -22,7 +22,7 @@ import (
 func FillFermier(ctx *ctxt.Context, versionSCTL string) {
 	table := "fermier"
 	fmt.Println("Remplit " + table + " à partir de Exploita.csv")
-	
+
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Exploita.csv")
 	records, err := tiglib.CsvMap(filename, ';')
@@ -40,25 +40,25 @@ func FillFermier(ctx *ctxt.Context, versionSCTL string) {
 		err = tx.Commit()
 	}()
 
-    var adresse, cp, ville, tel, email string
-    
+	var adresse, cp, ville, tel, email string
+
 	for _, v := range records {
 		if v["Agricole"] != "1" {
 			// Importer que les agricoles
 			continue
 		}
-        if PRIVACY{ // voir PRIVACY.go
-            adresse, cp, ville, tel, email = "", "", "", "", ""
-        } else {
-            adresse = strings.Replace(v["AdresseExp"], "'", `''`, -1)
-            cp := v["CPExp"]
-            if len(cp) > 5 {
-                cp = cp[:5] // fix une typo dans la base SCTL
-            }
-            ville = strings.Replace(v["VilleExp"], "'", `''`, -1)
-            tel = v["Telephone"]
-            email = v["Mail"]
-        }
+		if PRIVACY { // voir PRIVACY.go
+			adresse, cp, ville, tel, email = "", "", "", "", ""
+		} else {
+			adresse = strings.Replace(v["AdresseExp"], "'", `''`, -1)
+			cp := v["CPExp"]
+			if len(cp) > 5 {
+				cp = cp[:5] // fix une typo dans la base SCTL
+			}
+			ville = strings.Replace(v["VilleExp"], "'", `''`, -1)
+			tel = v["Telephone"]
+			email = v["Mail"]
+		}
 		query := `insert into %s(
             id,
             nom,
@@ -92,7 +92,7 @@ func FillFermier(ctx *ctxt.Context, versionSCTL string) {
 func FillLiensParcelleFermier(ctx *ctxt.Context, versionSCTL string) {
 	table := "parcelle_fermier"
 	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
-	
+
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Subdivision.csv")
 

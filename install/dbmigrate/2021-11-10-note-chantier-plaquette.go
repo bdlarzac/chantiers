@@ -1,7 +1,7 @@
 /******************************************************************************
 
     Ajout de plaq.notes
-    
+
     Intégration : commit ce96026 - 2021-11-10 18:28:05
 
     @copyright  BDL, Bois du Larzac

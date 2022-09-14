@@ -33,10 +33,10 @@ func FillCommune(ctx *ctxt.Context) {
 	}
 	stmt, err := db.Prepare("insert into commune(id,nom,nomcourt) values($1, $2, $3)")
 	for _, v := range records {
-        _, err = stmt.Exec(v["id"], v["nom"], v["nom_court"])
-        if err != nil {
-            panic(err)
-        }
+		_, err = stmt.Exec(v["id"], v["nom"], v["nom_court"])
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -44,7 +44,7 @@ func FillCommune(ctx *ctxt.Context) {
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
 func FillLieudit(ctx *ctxt.Context, versionSCTL string) {
 	fmt.Println("Remplit table lieudit à partir de LieuDit.csv")
-	
+
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "LieuDit.csv")
 	records, err := tiglib.CsvMap(filename, ';')
@@ -55,10 +55,10 @@ func FillLieudit(ctx *ctxt.Context, versionSCTL string) {
 	db := ctx.DB
 	stmt, err := db.Prepare("insert into lieudit(id,nom) values($1, $2)")
 	for _, v := range records {
-        _, err = stmt.Exec(v["IdLieuDit"], v["Libelle"])
-        if err != nil {
-            panic(err)
-        }
+		_, err = stmt.Exec(v["IdLieuDit"], v["Libelle"])
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -90,20 +90,20 @@ func FillLiensCommuneLieudit(ctx *ctxt.Context, versionSCTL string) {
 	// insert db
 	db := ctx.DB
 	stmt, err := db.Prepare("insert into " + table + "(id_commune,id_lieudit) values($1, $2)")
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 	for _, unique := range uniques {
 		idC := unique[0]
 		idLD := unique[1]
-        _, err := stmt.Exec(idC, idLD)
-        if err != nil {
-            if idLD == "267" {
-                continue; // Les Mares, bug sctl
-            }
-            panic(err)
-        }
-    }
+		_, err := stmt.Exec(idC, idLD)
+		if err != nil {
+			if idLD == "267" {
+				continue // Les Mares, bug sctl
+			}
+			panic(err)
+		}
+	}
 }
 
 // *********************************************************
@@ -122,7 +122,7 @@ func FillLieuditMot(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	stmt, err := db.Prepare("insert into lieudit_mot(mot,id,nom) values($1,$2,$3)")
 	if err != nil {
 		panic(err)

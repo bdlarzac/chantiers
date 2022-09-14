@@ -296,10 +296,10 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
 	//
 	if ch.TypeValo == "PI" {
-	    ch.Unite = r.PostFormValue("unite-pi")
+		ch.Unite = r.PostFormValue("unite-pi")
 	} else {
-        ch.Unite = model.Valorisation2unite(ch.TypeValo)
-    }
+		ch.Unite = model.Valorisation2unite(ch.TypeValo)
+	}
 	//
 	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//

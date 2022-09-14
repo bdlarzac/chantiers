@@ -11,12 +11,12 @@ package dbcreate
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
+	"bufio"
 	"fmt"
+	"os"
 	"path"
 	"strconv"
 	"strings"
-	"bufio"
-	"os"
 )
 
 // *********************************************************
@@ -25,14 +25,14 @@ func FillParcelle(ctx *ctxt.Context, versionSCTL string) {
 	table := "parcelle"
 	csvname := "Parcelle.csv"
 	fmt.Println("Remplit table parcelle à partir de " + csvname)
-	
+
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, csvname)
 
 	records, err := tiglib.CsvMap(filename, ';')
 
 	db := ctx.DB
-	
+
 	// 2 propriétaires possibles : SCTL ou GFA
 	// ATTENTION : les ids de SCTL et GFA sont récupérés à partir du nom
 	// Si le nom change, ce code plante
@@ -78,48 +78,48 @@ func FillParcelle(ctx *ctxt.Context, versionSCTL string) {
 func FillLiensParcelleLieudit(ctx *ctxt.Context, versionSCTL string) {
 	table := "parcelle_lieudit"
 	fmt.Println("Remplit table " + table + " à partir de Parcelle.csv")
-	
+
 	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
 	filename := path.Join(dirCsv, "Parcelle.csv")
-	
+
 	// pour lire le csv, on ne peut pas utiliser du code générique tiglib.CsvMap()
 	// car certaines lignes contiennent des \n (champ Observation de la table)
 	// => à ignorer
-    file, err := os.Open(filename)
-    if err != nil {
-        panic(err)
-    }
-    defer file.Close()
-    scanner := bufio.NewScanner(file)
-    if err := scanner.Err(); err != nil {
-        panic(err)
-    }
-    var records []map[string]string
-    var tmp []string
-    var nCols int
-    var colNames []string
-    i := -1
-    for scanner.Scan() {
-        line := scanner.Text()
-        i++
-        if i == 0 {
-            // récupère le nom des colonnes
-            colNames = strings.Split(line, ";")
-            nCols = len(colNames)
-            continue
-        }
-        // remplit une ligne de données
-        tmp = strings.Split(line, ";")
-        if len(tmp) != nCols{
-            // ligne foireuse, la ligne précédente contient un \n dans le champ Observation
-            continue
-        }
-        var record = make(map[string]string, nCols)
+	file, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+	var records []map[string]string
+	var tmp []string
+	var nCols int
+	var colNames []string
+	i := -1
+	for scanner.Scan() {
+		line := scanner.Text()
+		i++
+		if i == 0 {
+			// récupère le nom des colonnes
+			colNames = strings.Split(line, ";")
+			nCols = len(colNames)
+			continue
+		}
+		// remplit une ligne de données
+		tmp = strings.Split(line, ";")
+		if len(tmp) != nCols {
+			// ligne foireuse, la ligne précédente contient un \n dans le champ Observation
+			continue
+		}
+		var record = make(map[string]string, nCols)
 		for idx, field := range colNames {
 			record[field] = tmp[idx]
 		}
 		records = append(records, record)
-    }
+	}
 
 	// insert db
 	db := ctx.DB

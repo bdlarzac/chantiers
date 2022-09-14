@@ -16,7 +16,7 @@ import (
 func CreateTable(ctx *ctxt.Context, table string) {
 	db := ctx.DB
 	var err error
-	
+
 	dirSql := GetCreateTableDir()
 
 	filename := path.Join(dirSql, table) + ".sql"
@@ -24,7 +24,7 @@ func CreateTable(ctx *ctxt.Context, table string) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	sql := string(tmp) // contient l'instruction create table ou create type
 	fmt.Printf("Crée table ou type %s\n", table)
 	if _, err = db.Exec("drop table if exists " + table + " cascade"); err != nil {

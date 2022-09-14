@@ -157,7 +157,7 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Va
 	essenceCodes := AllEssenceCodes()
 	valoCodes := AllValorisationCodes()
 	///////////////// TODO la ligne suivante est louche
-	valoCodes = append(valoCodes, "CF") // ajoute type valo pour séparer chaffage fermier / chauffage client
+	valoCodes = append(valoCodes, "CF") // ajoute type valo pour séparer chauffage fermier / chauffage client
 	valos = make(Valorisations)
 	for _, valoCode := range valoCodes {
 		for _, essenceCode := range essenceCodes {

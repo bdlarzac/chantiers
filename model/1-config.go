@@ -11,9 +11,9 @@
 package model
 
 import (
+	"github.com/joho/godotenv"
 	"log"
 	"os"
-	"github.com/joho/godotenv"
 )
 
 // Configuration "métier", venant de config.yml

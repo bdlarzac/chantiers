@@ -5,10 +5,10 @@
 package control
 
 import (
-	"github.com/jmoiron/sqlx"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
+	"github.com/jmoiron/sqlx"
 	"html/template"
 	"net/http"
 	"net/url"
@@ -35,10 +35,10 @@ type detailsBilanClientPlaquettes struct {
 
 // ventes de tous les clients
 type detailsBilanVentesPlaquettes struct {
-	DateDebut time.Time
-	DateFin   time.Time
-	Ventes    []*model.VentePlaq
-	Proprietaires    []*model.Acteur
+	DateDebut     time.Time
+	DateFin       time.Time
+	Ventes        []*model.VentePlaq
+	Proprietaires []*model.Acteur
 }
 
 type detailsBilanValoEssences struct {
@@ -47,7 +47,7 @@ type detailsBilanValoEssences struct {
 	Valorisations model.Valorisations
 	EssenceCodes  []string
 	ValoCodes     []string
-	Proprietaires    []*model.Acteur
+	Proprietaires []*model.Acteur
 }
 
 func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -91,9 +91,9 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		ctx.TemplateName = "bilans-form.html"
-		
+
 		proprietaires, err := model.GetProprietaires(ctx.DB)
-		
+
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Choix bilan",
@@ -205,9 +205,9 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 			JSFiles: []string{},
 		},
 		Details: detailsBilanVentesPlaquettes{
-			DateDebut: dateDebut,
-			DateFin:   dateFin,
-			Ventes:    ventes,
+			DateDebut:     dateDebut,
+			DateFin:       dateFin,
+			Ventes:        ventes,
 			Proprietaires: proprietaires,
 		},
 	}
@@ -274,26 +274,23 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 	return nil
 }
 
-
 // A partir de valeurs telles que proprio-1:[on]
 // renvoyées dans un formulaire
-// récupérer les ids (dans l'exemple : 1)
+// récupérer les ids (dans l'exemple : 1) et les acteurs correspondant
 // Auxiliaire des fonctions showBilan*()
 func computeProprietaires(db *sqlx.DB, formValues url.Values) ([]*model.Acteur, error) {
-    res := []*model.Acteur{}
-    RADIX := "proprio-"
-    length := len(RADIX)
+	res := []*model.Acteur{}
+	RADIX := "proprio-"
+	length := len(RADIX)
 	for k, _ := range formValues {
-	    if strings.HasPrefix(k, RADIX){
-	        id, _ := strconv.Atoi(k[length:])
-	        proprio, err := model.GetActeur(db, id)
-	        if err != nil {
-	            return res, err
-	        }
-	        res = append(res, proprio)
-        }
+		if strings.HasPrefix(k, RADIX) {
+			id, _ := strconv.Atoi(k[length:])
+			proprio, err := model.GetActeur(db, id)
+			if err != nil {
+				return res, err
+			}
+			res = append(res, proprio)
+		}
 	}
-    return res, nil
+	return res, nil
 }
-
-
