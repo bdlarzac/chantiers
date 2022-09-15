@@ -264,7 +264,7 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 			DateFin:       dateFin,
 			Valorisations: valos,
 			EssenceCodes:  model.AllEssenceCodes(),
-			ValoCodes:     model.AllValorisationCodesAvecChaufer(),
+			ValoCodes:     model.AllValorisationCodesAvecChauferEtPlaq(),
 			Proprietaires: proprios,
 		},
 	}

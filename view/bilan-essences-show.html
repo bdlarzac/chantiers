@@ -48,7 +48,7 @@ let k1, k2;
     </tr>
     {{range .ValoCodes}}
     <tr>
-        <th>{{. | labelValorisationAvecChaufer}}</th>
+        <th>{{. | labelValorisationAvecChauferEtPlaq}}</th>
         {{$valoCode := .}}
         {{range $.Details.EssenceCodes}}
             <td class="right">

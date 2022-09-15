@@ -17,6 +17,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Représente un chantier plaquettes
 type Plaq struct {
 	Id              int
 	DateDebut       time.Time `db:"datedeb"`

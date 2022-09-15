@@ -46,7 +46,7 @@ func MustInitTemplates() {
 		"labelTypeVente":               labelTypeVente,
 		"labelUnite":                   labelUnite,
 		"labelValorisation":            labelValorisation,
-		"labelValorisationAvecChaufer": labelValorisationAvecChaufer,
+		"labelValorisationAvecChauferEtPlaq": labelValorisationAvecChauferEtPlaq,
 		"valorisation2unite":           valorisation2unite,
 		"valorisation2uniteLabel":      valorisation2uniteLabel,
 	}
@@ -208,8 +208,8 @@ func labelValorisation(str string) template.HTML {
 // Même chose que labelValorisation(), avec :
 // "CH" renvoie "Chauffage client"
 // "CF" renvoie " Chauffage fermier"
-func labelValorisationAvecChaufer(str string) template.HTML {
-	return template.HTML(model.LabelValorisationAvecChaufer(str))
+func labelValorisationAvecChauferEtPlaq(str string) template.HTML {
+	return template.HTML(model.LabelValorisationAvecChauferEtPlaq(str))
 }
 
 // Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)

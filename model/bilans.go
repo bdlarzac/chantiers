@@ -155,9 +155,11 @@ func isBefore(t1, t2 time.Time) bool {
 
 func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsProprio []int) (valos Valorisations, err error) {
 	essenceCodes := AllEssenceCodes()
-	valoCodes := AllValorisationCodes()
-	// ajoute type valo pour séparer chauffage fermier / chauffage client
-	valoCodes = append(valoCodes, "CF")
+	valoCodes := AllValorisationCodes() // {"PP", "CH", "PL", "PI", "BO"}
+	// AllValorisationCodes() contient les valos pour les chantiers "autres valorisations"
+	// Les bilans ont d'autres types de valorisation
+	valoCodes = append(valoCodes, "CF") // pour séparer chauffage fermier / chauffage client
+	valoCodes = append(valoCodes, "PQ") // pour ajouter plaquettes
 	valos = make(Valorisations)
 	for _, valoCode := range valoCodes {
 		for _, essenceCode := range essenceCodes {
@@ -210,6 +212,34 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 	for _, chaufer := range chaufers {
 		valos["CF-"+chaufer.Essence+"-vol"] += chaufer.Volume // CF = chauffage fermier
 	}
+	//
+	// plaq
+	//
+	plaqs := []*Plaq{}
+	query = `select * from plaq where datedeb >= ? and datedeb <= ?
+	            and id in(
+	                select id_chantier from chantier_ug where type_chantier='plaq' and id_ug in(
+	                    select id_ug from parcelle_ug where id_parcelle in(
+	                        select id from parcelle where id_proprietaire in(?)
+	                    )
+	                )
+	            )
+	`
+	query, args, err = sqlx.In(query, dateDeb, dateFin, idsProprio)
+	query = db.Rebind(query)
+	err = db.Select(&plaqs, query, args...)
+	if err != nil {
+		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, plaq := range plaqs {
+	    err = plaq.ComputeVolume(db)
+        if err != nil {
+            return valos, werr.Wrapf(err, "Erreur appel plaq.computeVolume()")
+        }
+		valos["PQ-PS-vol"] += plaq.Volume // PQ = plaquettes ; PS = pin sylvestre
+		// valos["PQ-PS-ca"] dépend des ventes ; trop compliqué (?)
+	}
+	
 	//
 	return valos, err
 }
