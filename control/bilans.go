@@ -186,7 +186,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 	if err != nil {
 		return err
 	}
-	proprietaires, err := computeProprietaires(ctx.DB, formValues)
+	proprios, _, err := computeProprietaires(ctx.DB, formValues)
 	if err != nil {
 		return err
 	}
@@ -208,7 +208,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 			DateDebut:     dateDebut,
 			DateFin:       dateFin,
 			Ventes:        ventes,
-			Proprietaires: proprietaires,
+			Proprietaires: proprios,
 		},
 	}
 	if err != nil {
@@ -230,7 +230,11 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 	if err != nil {
 		return err
 	}
-	valos, err := model.ComputeBilanValoEssences(ctx.DB, dateDebut, dateFin)
+	proprios, idsProprio, err := computeProprietaires(ctx.DB, formValues)
+	if err != nil {
+		return err
+	}
+	valos, err := model.ComputeBilanValoEssences(ctx.DB, dateDebut, dateFin, idsProprio)
 	if err != nil {
 		return err
 	}
@@ -241,10 +245,6 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 	} else {
 		titre = "Bilan essences"
 		templateName = "bilan-essences-show.html"
-	}
-	proprietaires, err := computeProprietaires(ctx.DB, formValues)
-	if err != nil {
-		return err
 	}
 	//
 	ctx.TemplateName = templateName
@@ -265,7 +265,7 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 			Valorisations: valos,
 			EssenceCodes:  model.AllEssenceCodes(),
 			ValoCodes:     model.AllValorisationCodesAvecChaufer(),
-			Proprietaires: proprietaires,
+			Proprietaires: proprios,
 		},
 	}
 	if err != nil {
@@ -274,23 +274,25 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 	return nil
 }
 
-// A partir de valeurs telles que proprio-1:[on]
-// renvoyées dans un formulaire
-// récupérer les ids (dans l'exemple : 1) et les acteurs correspondant
+// Calcule les ids des propriétaires et les acteurs correspondant
+// à partir de valeurs telles que proprio-1:[on] renvoyées dans un formulaire.
+// (dans l'exemple : id calculé = 1)
 // Auxiliaire des fonctions showBilan*()
-func computeProprietaires(db *sqlx.DB, formValues url.Values) ([]*model.Acteur, error) {
-	res := []*model.Acteur{}
+func computeProprietaires(db *sqlx.DB, formValues url.Values) ([]*model.Acteur, []int, error) {
+	proprios := []*model.Acteur{}
+	idsProprio := []int{}
 	RADIX := "proprio-"
 	length := len(RADIX)
 	for k, _ := range formValues {
 		if strings.HasPrefix(k, RADIX) {
 			id, _ := strconv.Atoi(k[length:])
+			idsProprio = append(idsProprio, id)
 			proprio, err := model.GetActeur(db, id)
 			if err != nil {
-				return res, err
+				return nil, nil, err
 			}
-			res = append(res, proprio)
+			proprios = append(proprios, proprio)
 		}
 	}
-	return res, nil
+	return proprios, idsProprio, nil
 }

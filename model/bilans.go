@@ -153,11 +153,11 @@ func isBefore(t1, t2 time.Time) bool {
 	return t1.Before(t2)
 }
 
-func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Valorisations, err error) {
+func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsProprio []int) (valos Valorisations, err error) {
 	essenceCodes := AllEssenceCodes()
 	valoCodes := AllValorisationCodes()
-	///////////////// TODO la ligne suivante est louche
-	valoCodes = append(valoCodes, "CF") // ajoute type valo pour séparer chauffage fermier / chauffage client
+	// ajoute type valo pour séparer chauffage fermier / chauffage client
+	valoCodes = append(valoCodes, "CF")
 	valos = make(Valorisations)
 	for _, valoCode := range valoCodes {
 		for _, essenceCode := range essenceCodes {
@@ -169,8 +169,18 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Va
 	// chautre
 	//
 	chautres := []*Chautre{}
-	query := "select * from chautre where datecontrat>=$1 and datecontrat<=$2"
-	err = db.Select(&chautres, query, dateDeb, dateFin)
+	query := `select * from chautre where datecontrat >= ? and datecontrat <= ?
+	            and id in(
+	                select id_chantier from chantier_ug where type_chantier='chautre' and id_ug in(
+	                    select id_ug from parcelle_ug where id_parcelle in(
+	                        select id from parcelle where id_proprietaire in(?)
+	                    )
+	                )
+	            )
+	`
+	query, args, err := sqlx.In(query, dateDeb, dateFin, idsProprio)
+	query = db.Rebind(query)
+	err = db.Select(&chautres, query, args...)
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -182,8 +192,18 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time) (valos Va
 	// chaufer
 	//
 	chaufers := []*Chaufer{}
-	query = "select * from chaufer where datechantier>=$1 and datechantier<=$2"
-	err = db.Select(&chaufers, query, dateDeb, dateFin)
+	query = `select * from chaufer where datechantier >= ? and datechantier <= ?
+	            and id in(
+	                select id_chantier from chantier_ug where type_chantier='chaufer' and id_ug in(
+	                    select id_ug from parcelle_ug where id_parcelle in(
+	                        select id from parcelle where id_proprietaire in(?)
+	                    )
+	                )
+	            )
+	`
+	query, args, err = sqlx.In(query, dateDeb, dateFin, idsProprio)
+	query = db.Rebind(query)
+	err = db.Select(&chaufers, query, args...)
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
