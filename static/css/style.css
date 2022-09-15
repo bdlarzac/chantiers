@@ -62,11 +62,7 @@ a{text-decoration:none;}
     border:1px solid grey;
 }
 .red{color:red;}
-.red{
-    color:red;
-    font-weight:bold;
-}
-
+.black{color:black;}
 .ok{
     background:lightgreen;
 }

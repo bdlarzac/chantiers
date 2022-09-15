@@ -27,12 +27,21 @@
         
         <!-- ********************************************** -->
         <h2>Données foncières</h2>
+        
+        <div class="bold">Propriétaire(s)</div>
+        <ul class="naked margin-top0">
+        {{range .Proprietaires}}
+            <li><a href="/fermier/{{.Id}}">{{.String}}</a></li>
+        {{end}}
+        </ul>
+        
         <div class="bold">Fermiers</div>
         <ul class="naked margin-top0">
         {{range .Fermiers}}
             <li><a href="/fermier/{{.Id}}">{{.String}}</a></li>
         {{end}}
         </ul>
+        
         <div class="bold">Parcelles</div>
         <ul>
         {{range .Parcelles}}

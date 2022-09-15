@@ -31,6 +31,7 @@ type UG struct {
 	Fermiers         []*Fermier
 	Recaps           map[string]RecapUG
 	SortedRecapYears []string // années contenant de l'activité prise en compte dans Recaps
+	Proprietaires    []*Acteur
 }
 
 // Sert à afficher la liste des activités sur une UG.
@@ -69,7 +70,7 @@ func (ug *UG) String() string {
 // ************************ Get one *********************************
 
 // Renvoie une UG à partir de son id.
-// Ne contient que les champs de la table lieudit.
+// Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
 func GetUG(db *sqlx.DB, id int) (ug *UG, err error) {
 	ug = &UG{}
@@ -98,6 +99,10 @@ func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
 		}
 	}
 	err = ug.ComputeFermiers(db)
+	if err != nil {
+		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
+	}
+	err = ug.ComputeProprietaires(db)
 	if err != nil {
 		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
 	}
@@ -289,6 +294,23 @@ func (ug *UG) ComputeFermiers(db *sqlx.DB) error {
             )
         ) order by nom`
 	err := db.Select(&ug.Fermiers, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func (ug *UG) ComputeProprietaires(db *sqlx.DB) error {
+	if len(ug.Proprietaires) != 0 {
+		return nil // déjà calculé
+	}
+	query := `
+        select * from acteur where id in(
+            select id_proprietaire from parcelle where id in(
+                select id_parcelle from parcelle_ug where id_ug=$1
+            )
+        ) order by nom`
+	err := db.Select(&ug.Proprietaires, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
