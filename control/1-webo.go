@@ -57,6 +57,7 @@ func WeboPlaqOpUnite() []webo.OptionString {
 		webo.OptionString{OptionValue: "unite-JO", OptionLabel: model.LabelUnite("JO")}, // jour
 		webo.OptionString{OptionValue: "unite-HE", OptionLabel: model.LabelUnite("HE")}, // heure
 		webo.OptionString{OptionValue: "unite-MA", OptionLabel: model.LabelUnite("MA")}, // map
+		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.LabelUnite("ST")}, // stère
 	}
 }
 
