@@ -14,7 +14,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	//"fmt"
+//	"fmt"
 )
 
 type Chautre struct {
@@ -37,6 +37,7 @@ type Chautre struct {
 	UGs      []*UG
 	Lieudits []*Lieudit
 	Fermiers []*Fermier
+	Proprietaires []*Acteur
 	Acheteur *Acteur
 }
 
@@ -94,6 +95,10 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	err = ch.ComputeFermiers(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeFermiers()")
+	}
+	err = ch.ComputeProprietaires(db)
+	if err != nil {
+		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeProprietaires()")
 	}
 	return ch, nil
 }
@@ -194,6 +199,30 @@ func (ch *Chautre) ComputeFermiers(db *sqlx.DB) error {
 	err := db.Select(&ch.Fermiers, query, &ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) error {
+	if len(ch.Proprietaires) != 0 {
+		return nil // déjà calculé
+	}
+	err := ch.ComputeUGs(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel ch.ComputeUGs()")
+	}
+	idsProprios := []int{}
+	for _, ug := range ch.UGs {
+        err = ug.ComputeProprietaires(db)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel UG.ComputeProprietaires()")
+        }
+        for _, proprio := range ug.Proprietaires {
+            if(!tiglib.InArrayInt(proprio.Id, idsProprios)){
+                idsProprios = append(idsProprios, proprio.Id)
+                ch.Proprietaires = append(ch.Proprietaires, proprio)
+            }
+        }
 	}
 	return nil
 }

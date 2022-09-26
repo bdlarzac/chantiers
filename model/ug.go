@@ -104,7 +104,7 @@ func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
 	}
 	err = ug.ComputeProprietaires(db)
 	if err != nil {
-		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
+		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeProprietaires()")
 	}
 	return ug, nil
 }
