@@ -1,4 +1,6 @@
 /**
+    Vente plaquettes
+
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 **/
@@ -299,6 +301,12 @@ func ventePlaqForm2var(r *http.Request) (*model.VentePlaq, error) {
 		}
 		vente.FactureLivraisonPUHT = tiglib.Round(vente.FactureLivraisonPUHT, 2)
 		vente.FactureLivraisonUnite = r.PostFormValue("facturelivraisonunite") // map ou km -cf commentaire de classe model.VentePlaq
+		if r.PostFormValue("facturelivraisonnbkm") != "" {
+		    vente.FactureLivraisonNbKm, err = strconv.ParseFloat(r.PostFormValue("facturelivraisonnbkm"), 32)
+		}
+        if err != nil {
+            return vente, err
+        }
 	}
 	// sinon
 	// - FactureLivraisonPUHT reste à 0
@@ -430,8 +438,16 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	//
 	// ligne avec valeurs de la livraison
 	//
-	var prixHTLivraison float64
+	var prixHTLivraison, qteLivraison float64
+    var unite string
 	if vente.FactureLivraison {
+		if vente.FactureLivraisonUnite == "map" {
+			unite = "MAP"
+			qteLivraison = vente.Qte
+		} else {
+			unite = "KM"
+			qteLivraison = vente.FactureLivraisonNbKm
+		}
 		pdf.SetFont("Arial", "B", 10)
 		x = x0
 		y += he
@@ -442,16 +458,10 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 		x += wi
 		pdf.SetXY(x, y)
 		wi = w2
-		pdf.MultiCell(wi, he, strconv.FormatFloat(vente.Qte, 'f', 2, 64), "RB", "C", false)
+		pdf.MultiCell(wi, he, strconv.FormatFloat(qteLivraison, 'f', 2, 64), "RB", "C", false)
 		x += wi
 		pdf.SetXY(x, y)
 		wi = w3
-		var unite string
-		if vente.FactureLivraisonUnite == "map" {
-			unite = "MAP"
-		} else {
-			unite = "KM"
-		}
 		pdf.MultiCell(wi, he, unite, "RB", "C", false)
 		x += wi
 		pdf.SetXY(x, y)

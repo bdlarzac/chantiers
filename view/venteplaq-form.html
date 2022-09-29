@@ -53,12 +53,17 @@
                         <label class="optional" for="facturelivraisonpuht">PU HT livraison</label>
                         <input type="number" name="facturelivraisonpuht" id="facturelivraisonpuht"
                                step="0.01" min="0" value="{{.FactureLivraisonPUHT | zero2empty}}" class="width5">
-                       &euro; /
-                        <select name="facturelivraisonunite" id="facturelivraisonunite">
+                        &euro; /
+                        <select name="facturelivraisonunite" id="facturelivraisonunite" onchange="changeUniteFactureLivraison();">
                             <option id="CHOOSE_FACTURELIVRAISONUNITE" value="">--- Choisir ---</option>
                             <option id="FACTURELIVRAISONUNITE-MAP" value="map">Map</option>
                             <option id="FACTURELIVRAISONUNITE-KM" value="km">Km</option>
                         </select>
+                    </div>
+                    <div class="padding-top05">
+                        <label class="optional" for="facturelivraisonnbkm">Nombre de km</label>
+                        <input type="number" name="facturelivraisonnbkm" id="facturelivraisonnbkm"
+                               step="1" min="0" value="{{.FactureLivraisonNbKm}}" class="width5">
                     </div>
                     <div class="padding-top05 optional">TVA livraison : {{.FactureLivraisonTVA}} %</div>
                 </div>
@@ -142,8 +147,10 @@ function initialize(){
             document.getElementById("facturelivraison").checked = true;
             {{if eq .FactureLivraisonUnite "map"}}
                 document.getElementById("FACTURELIVRAISONUNITE-MAP").selected = true;
+                document.getElementById("facturelivraisonnbkm").disabled = true;
             {{else}}
                 document.getElementById("FACTURELIVRAISONUNITE-KM").selected = true;
+                document.getElementById("facturelivraisonnbkm").disabled = false;
             {{end}}
         }
         //
@@ -161,12 +168,32 @@ function changeFactureLivraison(){
     if(document.getElementById("facturelivraison").checked == true){
         document.getElementById("facturelivraisonpuht").disabled = false;
         document.getElementById("facturelivraisonunite").disabled = false;
+        if(document.getElementById("FACTURELIVRAISONUNITE-KM").selected == true){
+            document.getElementById("facturelivraisonnbkm").disabled = false;
+        }
+        else{
+            document.getElementById("facturelivraisonnbkm").disabled = true;
+        }
     }
     else{
         document.getElementById("facturelivraisonpuht").value = "";
         document.getElementById("facturelivraisonpuht").disabled = true;
         document.getElementById("CHOOSE_FACTURELIVRAISONUNITE").selected = true;
         document.getElementById("facturelivraisonunite").disabled = true;
+        document.getElementById("facturelivraisonnbkm").value = "";
+        document.getElementById("facturelivraisonnbkm").disabled = true;
+    }
+}
+
+// ***************************************
+/** Exécutée lorsque l'utilisateur l'unité utilisée pour afficher le prix de livraison sur la facture **/
+function changeUniteFactureLivraison(){
+    if(document.getElementById("FACTURELIVRAISONUNITE-KM").selected == false){
+        document.getElementById("facturelivraisonnbkm").value = "";
+        document.getElementById("facturelivraisonnbkm").disabled = true;
+    }
+    else{
+        document.getElementById("facturelivraisonnbkm").disabled = false;
     }
 }
 
@@ -198,6 +225,11 @@ function validateForm(){
         if(document.getElementById("CHOOSE_FACTURELIVRAISONUNITE").selected == true){
             msg += "- Si la livraison apparaît sur la facture, vous devez spécifier l'unité (map ou km).\n";
         }
+        if(document.getElementById("FACTURELIVRAISONUNITE-KM").selected == true
+        && document.getElementById("facturelivraisonnbkm").value == ""  ){
+            msg += "- Si le prix de livraison apparaissant sur la facture est compté en km, vous devez spécifier le nombre de km.\n";
+        }
+        
     }
     //
     document.getElementById("notes").value = document.getElementById("notes").value.trim();

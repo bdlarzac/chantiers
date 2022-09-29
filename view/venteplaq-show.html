@@ -139,13 +139,35 @@
             </div>
         </div>
         <div>
-            <div>Sur la facture :</div>
+            <div class="margin-bottom05">Sur la facture :</div>
             <div class="grid2-pres">
                 <div>Faire apparaître le coût de livraison</div> 
                 <div class="bold">{{if .FactureLivraison}}Oui{{else}}Non{{end}}</div>
                 
-                <div>Faire apparaître les notes</div> 
-                <div class="bold">{{if .FactureNotes}}Oui{{else}}Non{{end}}</div>
+                {{if .FactureLivraison}}
+                    <div>Prix unitaire</div>
+                    <div class="bold">{{.FactureLivraisonPUHT}} &euro; / {{.FactureLivraisonUnite}}</div>
+                    
+                    <div>Nb {{.FactureLivraisonUnite}}s</div>
+                    <div class="bold">{{if eq .FactureLivraisonUnite "km"}}{{.FactureLivraisonNbKm}}{{else}}{{.Qte}}{{end}}</div>
+                    
+                    <div>Prix affiché sur la facture</div>
+                    <div class="bold">
+                    <script>
+                        let prixFacture;
+                        {{if eq .FactureLivraisonUnite "km"}}
+                            prixFacture = {{.FactureLivraisonPUHT}} * {{.FactureLivraisonNbKm}};
+                        {{else}}
+                            prixFacture = {{.FactureLivraisonPUHT}} * {{.Qte}};
+                        {{end}}
+                        document.write(prixFacture); 
+                    </script>
+                    &euro;
+                    </div>
+                {{end}}
+                
+                <div class="margin-top05">Faire apparaître les notes</div> 
+                <div class="bold margin-top05">{{if .FactureNotes}}Oui{{else}}Non{{end}}</div>
             </div>
         </div>
     </div><!-- end class="flex-wrap" -->

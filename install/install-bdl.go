@@ -153,6 +153,7 @@ func main() {
 func handleInstall(ctx *ctxt.Context) {
 	if *flagInstall == "all" {
 
+//fmt.Printf("db = %+v\n",ctx)
 		db := ctx.DB
 		var err error
 		_, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
@@ -308,6 +309,8 @@ func handleMigration(ctx *ctxt.Context, migration string) {
 		dbmigrate.Migrate_2022_01_10_facture_vente_km_map(ctx)
 	case "Migrate_2022_02_07_unite_piquets":
 		dbmigrate.Migrate_2022_02_07_unite_piquets(ctx)
+	case "Migrate_2022_09_24_km_livraison":
+		dbmigrate.Migrate_2022_09_24_km_livraison(ctx)
 	}
 }
 

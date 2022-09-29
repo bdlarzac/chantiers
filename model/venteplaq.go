@@ -6,7 +6,11 @@
     - dans venteplaq-show.html
     - dans venteplaq-list.html
     La valeur est insérée directement en base dans control.ventePlaqForm2var()
-
+    
+    Pour afficher sur la facture :
+    Si FactureLivraisonUnite = map, on utilise Qte
+    Si FactureLivraisonUnite = km, on utilise FactureLivraisonNbKm
+    
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
     @history    2020-01-22 02:56:23+01:00, Thierry Graff : Creation
@@ -36,7 +40,8 @@ type VentePlaq struct {
 	FactureLivraisonPUHT  float64
 	FactureLivraisonTVA   float64
 	FactureNotes          bool
-	FactureLivraisonUnite string // voir note dans commentaire de la classe
+	FactureLivraisonUnite string  // voir note dans commentaire de la classe
+	FactureLivraisonNbKm  float64 // voir note dans commentaire de la classe
 	//
 	Notes string
 	// Pas stocké en base
@@ -293,10 +298,11 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
         facturelivraison,
         facturelivraisonpuht,
         facturelivraisonunite,
+        facturelivraisonnbkm,
         facturelivraisontva,
         facturenotes,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
@@ -310,6 +316,7 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
 		vp.FactureLivraisonUnite,
+		vp.FactureLivraisonNbKm,
 		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes).Scan(&id)
@@ -328,10 +335,11 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
         facturelivraison,
         facturelivraisonpuht,
         facturelivraisonunite,
+        facturelivraisonnbkm,
         facturelivraisontva,
         facturenotes,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) where id=$14`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) where id=$15`
 	_, err := db.Exec(
 		query,
 		vp.IdClient,
@@ -344,6 +352,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
 		vp.FactureLivraisonUnite,
+		vp.FactureLivraisonNbKm,
 		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes,
