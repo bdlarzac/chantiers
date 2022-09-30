@@ -470,7 +470,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 		x += wi
 		pdf.SetXY(x, y)
 		wi = w5
-		prixHTLivraison = vente.Qte * vente.FactureLivraisonPUHT
+		prixHTLivraison = qteLivraison * vente.FactureLivraisonPUHT
 		pdf.MultiCell(wi, he, strconv.FormatFloat(prixHTLivraison, 'f', 2, 64), "RB", "C", false)
 		prixHT += prixHTLivraison
 	}
