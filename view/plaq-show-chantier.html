@@ -63,6 +63,8 @@
     let totalLigne = 0;
     let coutHT = 0;
     let coutTTC = 0;
+    // Pour transport tracteur + benne
+    let coutParBenne = 0;
 </script>
 
 <!-- *********************************************** -->
@@ -229,6 +231,7 @@
                 coutHT = {{.TbNbenne}} * {{.TbDuree}} * {{.TbPrixH}};
                 coutTTC = prixTTC(coutHT, {{.TbTVA}});
                 totalLigne += coutHT;
+                coutParBenne = coutHT / {{.TbNbenne}};
             </script>
             <div class="padding02 bg-ccc center margin-bottom05">Tracteur + benne</div>
             <div class="grid2-pres">
@@ -240,6 +243,9 @@
                 
                 <div>Durée / benne</div>
                 <div class="bold">{{.TbDuree}} h</div>
+                
+                <div>Prix HT / benne</div>
+                <div class="bold"><script>document.write(formatNb(round(coutParBenne, 2)));</script> &euro;</div>
                 
                 <div>Prix HT / h</div>
                 <div class="bold">{{.TbPrixH}} &euro; / h</div>
