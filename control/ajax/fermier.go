@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-	//	"strconv"
 )
 
 // Renvoie une liste de fermiers associés à une UG

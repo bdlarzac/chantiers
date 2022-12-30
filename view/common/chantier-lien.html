@@ -263,7 +263,7 @@ async function drawListUGs(){
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){
-            errorMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+            errorMsg += "- ERREUR - Transmettez ce message à l'administrateur du site :\n"
                 + "Problème de récupération " + url + " dans {{$.TypeChantier}}-form.html\n";
             continue;
         }
