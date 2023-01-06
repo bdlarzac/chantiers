@@ -1,4 +1,9 @@
 /******************************************************************************
+    
+    Lancer l'exécution en utilisant des variables d'environnement :
+    
+    ENV_CONFIG_FILE='../config.env' APPLI_CONFIG_FILE='../config.yml' go run install-bdl.go
+    
     Initialisation de l'environnement nécessaire au fonctionnement de l'application.
     - Installation de la base (package dbcreate)
     - Modifications de la base (package dbmigrate)
@@ -44,6 +49,10 @@ import (
 	"bdl.local/bdl/install/dbcreate"
 	"bdl.local/bdl/install/dbmigrate"
 	"bdl.local/bdl/install/fixture"
+	
+	// "io/ioutil"
+	// "gopkg.in/yaml.v3"
+	"bdl.local/bdl/model"
 )
 
 var errorMsg string
@@ -108,6 +117,11 @@ func init() {
 // *********************************************************
 func main() {
 
+    model.MustLoadEnv()
+	ctxt.MustLoadConfig()
+	ctxt.MustInitDB()
+	ctxt.MustInitTemplates()
+	
 	flag.Parse()
 
 	// check que un seul flag est utilisé
@@ -121,7 +135,9 @@ func main() {
 	}
 
 	ctx := ctxt.NewContext()
-
+fmt.Printf("ctx.DB = %+v\n", ctx.DB)
+	
+	
 	// options ayant besoin de la version de la base SCTL utilisée
 	needFlagS := *flagInstall == "fermier" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all"
 	if needFlagS {
@@ -151,8 +167,10 @@ func main() {
 
 // *********************************************************
 func handleInstall(ctx *ctxt.Context) {
+	
 	if *flagInstall == "all" {
 
+		/* 
 //fmt.Printf("db = %+v\n",ctx)
 		db := ctx.DB
 		var err error
@@ -165,6 +183,7 @@ func handleInstall(ctx *ctxt.Context) {
 			panic(err)
 		}
 		_, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
+		*/
 
 		installTypes(ctx)
 		installCommune(ctx)
@@ -311,6 +330,8 @@ func handleMigration(ctx *ctxt.Context, migration string) {
 		dbmigrate.Migrate_2022_02_07_unite_piquets(ctx)
 	case "Migrate_2022_09_24_km_livraison":
 		dbmigrate.Migrate_2022_09_24_km_livraison(ctx)
+	case "Migrate_2023_01_chantier_parcelle":
+		dbmigrate.Migrate_Migrate_2023_01_chantier_parcelle(ctx)
 	}
 }
 

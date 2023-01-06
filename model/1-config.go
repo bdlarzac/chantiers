@@ -72,7 +72,7 @@ var SERVER_ENV serverEnv
 // Pas d'erreur s'il n'y a pas de fichier de conf
 // - les variables d'environnement : elles sont prioritaires !
 func MustLoadEnv() {
-	configFile := os.Getenv("CONFIG_FILE")
+	configFile := os.Getenv("ENV_CONFIG_FILE")
 	if configFile == "" {
 		configFile = "config.env"
 	}

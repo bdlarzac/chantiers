@@ -1,5 +1,7 @@
 # ******************************************************************************
 #   Configuration à particulariser pour chaque nouvelle installation de l'application
+#   
+#   L'emplacement de ce fichier peut être spécifié par la variable d'environnement APPLI_CONFIG_FILE
 #     
 #   @copyright  BDL, Bois du Larzac
 #   @license    GPL
@@ -15,16 +17,17 @@ run:
   # pour mode = dev, voir section dev en fin de config.yml
   mode: dev
 
-# Paramètres BDD postgresql
-# psql -U bdl -W -h localhost --cluster 10/main -d bdlbois
+# Paramètres BDD postgresql - voir config.env
+# psql -U bdl -W -h localhost --cluster 11/main -d bdlbois
+
 database:
-  host: localhost
-  port: 5432
-  user: my_user
-  password: my_password
-  dbname: my_db
-  schema: my_schema
-  ssl-mode: disable
+  # host: localhost
+  # port: 5432
+  # user: my_user
+  # password: my_password
+  # dbname: my_db
+  # schema: my_schema
+  # ssl-mode: disable
   backup:
     # Attention ici de ne pas mettre un répertoire contenant des fichiers sensibles
     # (risque de sécurité si le user saisit directement le nom d'un fichier dans l'url)

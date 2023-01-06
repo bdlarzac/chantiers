@@ -12,6 +12,8 @@ package ctxt
 
 import (
 	"io/ioutil"
+	"os"
+	"log"
 
 	"bdl.local/bdl/model"
 	"gopkg.in/yaml.v3"
@@ -19,11 +21,20 @@ import (
 
 var config *model.Config
 
-func MustInitConfig() {
-	y, err := ioutil.ReadFile("config.yml")
-	if err != nil {
-		panic(err)
+func MustLoadConfig() {
+    
+	configFile := os.Getenv("APPLI_CONFIG_FILE")
+	if configFile == "" {
+		configFile = "config.yml"
 	}
+    
+	y, err := ioutil.ReadFile(configFile)
+	if err != nil {
+		log.Printf("Chargement conf %s : %s\n", configFile, err)
+	} else {
+		log.Printf("Chargement conf %s OK\n", configFile)
+	}
+	
 	err = yaml.Unmarshal(y, &config)
 	if err != nil {
 		panic(err)
