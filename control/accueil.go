@@ -105,7 +105,7 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	//
 	// 4 - affiche
 	//
-	ctx.TemplateName = "backup.html"
+	ctx.TemplateName = "db-backup.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "Sauvegarde des données",

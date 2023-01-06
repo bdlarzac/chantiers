@@ -1,5 +1,6 @@
 # ******************************************************************************
 #   Configuration à particulariser pour chaque nouvelle installation de l'application
+#   Pour la connexion à la base de données, voir config.env
 #   
 #   L'emplacement de ce fichier peut être spécifié par la variable d'environnement APPLI_CONFIG_FILE
 #     
@@ -10,17 +11,17 @@
 # ********************************************************************************
 
 # Paramètres du web server go
-run:
-  url: 127.0.0.1
-  port: 8000
-  # "dev" ou "prod" - pour mode = dev, voir section dev en fin de config.yml
-  # pour mode = dev, voir section dev en fin de config.yml
-  mode: dev
+# run:
+  # url: 127.0.0.1
+  # port: 8000
+  # # "dev" ou "prod" - pour mode = dev, voir section dev en fin de config.yml
+  # # pour mode = dev, voir section dev en fin de config.yml
+  # mode: dev
 
 # Paramètres BDD postgresql - voir config.env
 # psql -U bdl -W -h localhost --cluster 11/main -d bdlbois
 
-database:
+# database:
   # host: localhost
   # port: 5432
   # user: my_user
@@ -28,12 +29,12 @@ database:
   # dbname: my_db
   # schema: my_schema
   # ssl-mode: disable
-  backup:
+  # backup:
     # Attention ici de ne pas mettre un répertoire contenant des fichiers sensibles
     # (risque de sécurité si le user saisit directement le nom d'un fichier dans l'url)
     # répertoire absolu ou relatif au dossier contenant run-bdl.go
-    directory: /tmp
-    cmd-pgdump: pg_dump
+    # directory: /tmp
+    # cmd-pgdump: pg_dump
 
 paths:
   # Emplacement du fichier .mdb contenant la base access du logiciel de parts SCTL
