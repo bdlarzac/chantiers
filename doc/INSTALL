@@ -26,7 +26,7 @@ exit
 # Pour se connecter à la base :
 psql -U bdl -W -h localhost -d bdlchantiers
 
-Ensuite, importer un dump dans postgres - voir script import-db-prod
+Ensuite, importer un dump dans postgres - voir script 1.local/import-db-prod
 
 ---------------------------------------------------------------------------------------------------
 RUN

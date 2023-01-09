@@ -540,7 +540,6 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 		}
 		stockages = append(stockages, s)
 	}
-	//fmt.Printf("%+v\n",stockages)
 
 	// j1, j2, DATE_MIN, DATE_MAX utilisés pour coût stockage
 	// j1 = date du premier transport

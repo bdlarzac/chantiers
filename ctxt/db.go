@@ -14,7 +14,6 @@ import (
 
 	"bdl.local/bdl/model"
 	"github.com/jmoiron/sqlx"
-
 	_ "github.com/lib/pq"
 )
 
@@ -22,13 +21,15 @@ var db *sqlx.DB
 
 // ajoute le schema a l'url
 // et supprime sslmode=prefer mis automatiquement par Scalingo
-func ajusteDbURL(url string, schema string) string {
+func AjusteDbURL(url string, schema string) string {
 	dbURL := strings.ReplaceAll(url, "sslmode=prefer", "") // non supporté par lib/pq
 	if strings.HasPrefix(dbURL, "postgres") && !strings.Contains(dbURL, "search_path") {
 		if !strings.Contains(dbURL, "?") {
 			dbURL += "?"
-		}
-		dbURL += "&search_path=" + schema
+		} /* else {
+			dbURL += "&"
+		} */
+		dbURL += "search_path=" + schema
 	}
 	return dbURL
 }
@@ -36,7 +37,29 @@ func ajusteDbURL(url string, schema string) string {
 func MustInitDB() {
 	var err error
 
-	dbURL := ajusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
+	dbURL := AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
+	db, err = sqlx.Open("postgres", dbURL)
+	/* db, err = sqlx.Open(
+	    "postgres",
+	    "dbname="+model.SERVER_ENV.DATABASE_DBNAME+
+	    " user="+model.SERVER_ENV.DATABASE_USER+
+	    " password="+model.SERVER_ENV.DATABASE_PASSWORD+
+	    " host="+model.SERVER_ENV.DATABASE_HOST+
+	    " port="+model.SERVER_ENV.DATABASE_PORT+
+	    " search_path="+model.SERVER_ENV.DATABASE_SCHEMA+
+	    " sslmode=disable",
+	) */
+	if err != nil {
+		log.Fatalf("Connexion DB impossible : %v", err)
+	}
+	//TODO: ici faire upgrade versions
+}
+/*
+/////////////// original function ////////////////////////////////
+func MustInitDB() {
+	var err error
+
+	dbURL := AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
 
 	db, err = sqlx.Open("postgres", dbURL)
 	if err != nil {
@@ -44,4 +67,6 @@ func MustInitDB() {
 	}
 
 	//TODO: ici faire upgrade versions
-}
+} */
+
+
