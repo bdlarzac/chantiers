@@ -6,7 +6,7 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 - page d'erreur : prendre en compte version prod / dev (fond bleu)
 
-- Voir css, utiliser normalize.css
+- Voir css, utiliser normalize.css - séparer style.css en style.css et style-bdl.css
 
 - Possible d'implémenter Acteur.IsDeletable() avec des select count(), plus économiques
   Acteur.GetActivitesByDate() génère beaucoup de requêtes inutiles

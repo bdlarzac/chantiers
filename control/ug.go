@@ -30,18 +30,22 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	if tab == "" {
 		tab = "general"
 	}
+	//
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		return werr.Wrapf(err, "Erreur conversion id UG")
 	}
+	//
 	ug, err := model.GetUGFull(ctx.DB, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetUGFull()")
 	}
+	//
 	err = ug.ComputeRecap(ctx.DB)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel UG.ComputeRecap()")
 	}
+	//
 	activites, err := ug.GetActivitesByDate(ctx.DB)
 	if err != nil {
 		return err

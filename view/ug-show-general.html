@@ -46,9 +46,12 @@
         <ul>
         {{range .Parcelles}}
             <li>
-                <a href="/parcelle/{{.Id}}">{{.Code}}</a>
+                <a href="/parcelle/{{.Id}}">{{.Code}}</a> ({{.Proprietaire}})
                     {{range .Lieudits}}
                         <div class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></div>
+                    {{end}}
+                    {{range .Communes}}
+                        <div class="padding-left"><a href="/commune/{{.Id}}">{{.Nom}}</a></div>
                     {{end}}
             </li>
         {{end}}
