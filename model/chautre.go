@@ -14,7 +14,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-//	"fmt"
+	//	"fmt"
 )
 
 type Chautre struct {
@@ -34,11 +34,11 @@ type Chautre struct {
 	NumFacture    string
 	Notes         string
 	// pas stocké en base
-	UGs      []*UG
-	Lieudits []*Lieudit
-	Fermiers []*Fermier
+	UGs           []*UG
+	Lieudits      []*Lieudit
+	Fermiers      []*Fermier
 	Proprietaires []*Acteur
-	Acheteur *Acteur
+	Acheteur      *Acteur
 }
 
 // ************************** Nom *******************************
@@ -213,16 +213,16 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) error {
 	}
 	idsProprios := []int{}
 	for _, ug := range ch.UGs {
-        err = ug.ComputeProprietaires(db)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur appel UG.ComputeProprietaires()")
-        }
-        for _, proprio := range ug.Proprietaires {
-            if(!tiglib.InArrayInt(proprio.Id, idsProprios)){
-                idsProprios = append(idsProprios, proprio.Id)
-                ch.Proprietaires = append(ch.Proprietaires, proprio)
-            }
-        }
+		err = ug.ComputeProprietaires(db)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel UG.ComputeProprietaires()")
+		}
+		for _, proprio := range ug.Proprietaires {
+			if !tiglib.InArrayInt(proprio.Id, idsProprios) {
+				idsProprios = append(idsProprios, proprio.Id)
+				ch.Proprietaires = append(ch.Proprietaires, proprio)
+			}
+		}
 	}
 	return nil
 }

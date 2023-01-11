@@ -232,14 +232,14 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, plaq := range plaqs {
-	    err = plaq.ComputeVolume(db)
-        if err != nil {
-            return valos, werr.Wrapf(err, "Erreur appel plaq.computeVolume()")
-        }
+		err = plaq.ComputeVolume(db)
+		if err != nil {
+			return valos, werr.Wrapf(err, "Erreur appel plaq.computeVolume()")
+		}
 		valos["PQ-PS-vol"] += plaq.Volume // PQ = plaquettes ; PS = pin sylvestre
 		// valos["PQ-PS-ca"] dépend des ventes ; trop compliqué (?)
 	}
-	
+
 	//
 	return valos, err
 }

@@ -50,19 +50,20 @@ type Config struct {
 // Configuration spécifique au déploiement
 // en utilisant les variables d'environnement ou config.env
 type serverEnv struct {
-	DATABASE_URL    string
-	DATABASE_SCHEMA string
-	DATABASE_USER   string
+	DATABASE_URL      string
+	DATABASE_SCHEMA   string
+	DATABASE_USER     string
 	DATABASE_PASSWORD string
-	DATABASE_HOST   string
-	DATABASE_PORT    string
-	DATABASE_DBNAME string
-	RUN_SERVER_ADDR string // http.Server
-	PORT            string // RUN_PORT
-	RUN_MODE        string
-	BACKUP_DIR      string
-	CMD_PGDUMP      string
+	DATABASE_HOST     string
+	DATABASE_PORT     string
+	DATABASE_DBNAME   string
+	RUN_SERVER_ADDR   string // http.Server
+	PORT              string // RUN_PORT
+	RUN_MODE          string
+	BACKUP_DIR        string
+	CMD_PGDUMP        string
 }
+
 // DATABASE_URL=postgresql://bdl:2222bdl4444@localhost:5433/bdlchantiers
 
 var SERVER_ENV serverEnv
@@ -85,17 +86,17 @@ func MustLoadEnv() {
 		log.Printf("Chargement env %s OK\n", configFile)
 	}
 	SERVER_ENV = serverEnv{
-		DATABASE_URL:    os.Getenv("DATABASE_URL"),
-		DATABASE_SCHEMA: os.Getenv("DATABASE_SCHEMA"),
-        DATABASE_USER:   os.Getenv("DATABASE_USER"),
-        DATABASE_PASSWORD:  os.Getenv("DATABASE_PASSWORD"),
-        DATABASE_HOST:      os.Getenv("DATABASE_HOST"),
-        DATABASE_PORT:      os.Getenv("DATABASE_PORT"),
-        DATABASE_DBNAME:    os.Getenv("DATABASE_DBNAME"),
-		RUN_SERVER_ADDR: os.Getenv("RUN_SERVER_ADDR"),
-		PORT:            os.Getenv("PORT"), // RUN_PORT
-		RUN_MODE:        os.Getenv("RUN_MODE"),
-		CMD_PGDUMP:      os.Getenv("CMD_PGDUMP"),
-		BACKUP_DIR:      os.Getenv("BACKUP_DIR"),
+		DATABASE_URL:      os.Getenv("DATABASE_URL"),
+		DATABASE_SCHEMA:   os.Getenv("DATABASE_SCHEMA"),
+		DATABASE_USER:     os.Getenv("DATABASE_USER"),
+		DATABASE_PASSWORD: os.Getenv("DATABASE_PASSWORD"),
+		DATABASE_HOST:     os.Getenv("DATABASE_HOST"),
+		DATABASE_PORT:     os.Getenv("DATABASE_PORT"),
+		DATABASE_DBNAME:   os.Getenv("DATABASE_DBNAME"),
+		RUN_SERVER_ADDR:   os.Getenv("RUN_SERVER_ADDR"),
+		PORT:              os.Getenv("PORT"), // RUN_PORT
+		RUN_MODE:          os.Getenv("RUN_MODE"),
+		CMD_PGDUMP:        os.Getenv("CMD_PGDUMP"),
+		BACKUP_DIR:        os.Getenv("BACKUP_DIR"),
 	}
 }

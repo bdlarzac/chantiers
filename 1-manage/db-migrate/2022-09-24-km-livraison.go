@@ -2,7 +2,7 @@
 
     Ajout de venteplaq.facturelivraisonnbkm
 
-    Intégration : commit 
+    Intégration : commit
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -16,8 +16,8 @@ import (
 )
 
 func Migrate_2022_09_24_km_livraison(ctx *ctxt.Context) {
-fmt.Println("ok, ici")
-return
+	fmt.Println("ok, ici")
+	return
 	db := ctx.DB
 	query := `alter table venteplaq add column facturelivraisonnbkm numeric not null default 0`
 	_, err := db.Exec(query)

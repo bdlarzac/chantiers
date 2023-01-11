@@ -59,13 +59,13 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	// 1 - pg_dump
 	//
 	// PGPASSWORD='my_password' pg_dump --file my_dump_file -h _my_host -n my_schema -p my_port -U my_user my_database
-//	dbURL := ctxt.AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
+	//	dbURL := ctxt.AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
 	cmd := exec.Command(
 		model.SERVER_ENV.CMD_PGDUMP,
-//		dbURL,
+		//		dbURL,
 		model.SERVER_ENV.DATABASE_URL,
-		"--file=" + filepath,
-		"--schema=" + model.SERVER_ENV.DATABASE_SCHEMA,
+		"--file="+filepath,
+		"--schema="+model.SERVER_ENV.DATABASE_SCHEMA,
 	)
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()

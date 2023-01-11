@@ -302,11 +302,11 @@ func ventePlaqForm2var(r *http.Request) (*model.VentePlaq, error) {
 		vente.FactureLivraisonPUHT = tiglib.Round(vente.FactureLivraisonPUHT, 2)
 		vente.FactureLivraisonUnite = r.PostFormValue("facturelivraisonunite") // map ou km -cf commentaire de classe model.VentePlaq
 		if r.PostFormValue("facturelivraisonnbkm") != "" {
-		    vente.FactureLivraisonNbKm, err = strconv.ParseFloat(r.PostFormValue("facturelivraisonnbkm"), 32)
+			vente.FactureLivraisonNbKm, err = strconv.ParseFloat(r.PostFormValue("facturelivraisonnbkm"), 32)
 		}
-        if err != nil {
-            return vente, err
-        }
+		if err != nil {
+			return vente, err
+		}
 	}
 	// sinon
 	// - FactureLivraisonPUHT reste à 0
@@ -439,7 +439,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	// ligne avec valeurs de la livraison
 	//
 	var prixHTLivraison, qteLivraison float64
-    var unite string
+	var unite string
 	if vente.FactureLivraison {
 		if vente.FactureLivraisonUnite == "map" {
 			unite = "MAP"

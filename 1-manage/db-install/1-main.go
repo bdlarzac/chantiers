@@ -1,9 +1,9 @@
 /******************************************************************************
-    
+
     Lancer l'exécution en utilisant des variables d'environnement :
-    
+
     ENV_CONFIG_FILE='../../../config.env' APPLI_CONFIG_FILE='../../../config.yml' go run 1-main.go
-    
+
     Initialisation de l'environnement nécessaire au fonctionnement de l'application.
     - Installation de la base (package dbcreate)
     - Modifications de la base (package dbmigrate)
@@ -49,7 +49,7 @@ import (
 	"bdl.local/bdl/install/dbcreate"
 	"bdl.local/bdl/install/dbmigrate"
 	"bdl.local/bdl/install/fixture"
-	
+
 	// "io/ioutil"
 	// "gopkg.in/yaml.v3"
 	"bdl.local/bdl/model"
@@ -117,11 +117,11 @@ func init() {
 // *********************************************************
 func main() {
 
-    model.MustLoadEnv()
+	model.MustLoadEnv()
 	ctxt.MustLoadConfig()
 	ctxt.MustInitDB()
 	ctxt.MustInitTemplates()
-	
+
 	flag.Parse()
 
 	// check que un seul flag est utilisé
@@ -135,9 +135,8 @@ func main() {
 	}
 
 	ctx := ctxt.NewContext()
-fmt.Printf("ctx.DB = %+v\n", ctx.DB)
-	
-	
+	fmt.Printf("ctx.DB = %+v\n", ctx.DB)
+
 	// options ayant besoin de la version de la base SCTL utilisée
 	needFlagS := *flagInstall == "fermier" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all"
 	if needFlagS {
@@ -167,22 +166,22 @@ fmt.Printf("ctx.DB = %+v\n", ctx.DB)
 
 // *********************************************************
 func handleInstall(ctx *ctxt.Context) {
-	
+
 	if *flagInstall == "all" {
 
-		/* 
-//fmt.Printf("db = %+v\n",ctx)
-		db := ctx.DB
-		var err error
-		_, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
-		if err != nil {
-			panic(err)
-		}
-		_, err = db.Exec(fmt.Sprintf("create schema %s", ctx.Config.Database.Schema))
-		if err != nil {
-			panic(err)
-		}
-		_, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
+		/*
+		//fmt.Printf("db = %+v\n",ctx)
+				db := ctx.DB
+				var err error
+				_, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
+				if err != nil {
+					panic(err)
+				}
+				_, err = db.Exec(fmt.Sprintf("create schema %s", ctx.Config.Database.Schema))
+				if err != nil {
+					panic(err)
+				}
+				_, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
 		*/
 
 		installTypes(ctx)

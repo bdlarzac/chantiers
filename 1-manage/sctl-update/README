@@ -28,4 +28,4 @@ Les fichiers générés se trouvent dans le répertoire appli/1-manage/sctl-upda
 
 2 - Importer les fichiers csv dans la base BDL
 
-go run sctl-update AAAA-MM-JJ
+go run sctl-update.go AAAA-MM-JJ

@@ -54,6 +54,7 @@ func MustInitDB() {
 	}
 	//TODO: ici faire upgrade versions
 }
+
 /*
 /////////////// original function ////////////////////////////////
 func MustInitDB() {
@@ -68,5 +69,3 @@ func MustInitDB() {
 
 	//TODO: ici faire upgrade versions
 } */
-
-

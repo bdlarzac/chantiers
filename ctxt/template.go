@@ -39,16 +39,16 @@ func MustInitTemplates() {
 		"year":       year,
 		"zero2empty": zero2empty,
 		// Pipelines related to current program
-		"labelActivite":                labelActivite,
-		"labelEssence":                 labelEssence,
-		"labelExploitation":            labelExploitation,
-		"labelStockFrais":              labelStockFrais,
-		"labelTypeVente":               labelTypeVente,
-		"labelUnite":                   labelUnite,
-		"labelValorisation":            labelValorisation,
+		"labelActivite":                      labelActivite,
+		"labelEssence":                       labelEssence,
+		"labelExploitation":                  labelExploitation,
+		"labelStockFrais":                    labelStockFrais,
+		"labelTypeVente":                     labelTypeVente,
+		"labelUnite":                         labelUnite,
+		"labelValorisation":                  labelValorisation,
 		"labelValorisationAvecChauferEtPlaq": labelValorisationAvecChauferEtPlaq,
-		"valorisation2unite":           valorisation2unite,
-		"valorisation2uniteLabel":      valorisation2uniteLabel,
+		"valorisation2unite":                 valorisation2unite,
+		"valorisation2uniteLabel":            valorisation2uniteLabel,
 	}
 	tmpl = template.
 		Must(template.
