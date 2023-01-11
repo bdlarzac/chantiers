@@ -1,0 +1,324 @@
+-- ----------------------------------------------------------
+-- MDB Tools - A library for reading MS Access database files
+-- Copyright (C) 2000-2011 Brian Bruns and others.
+-- Files in libmdb are licensed under LGPL and the utilities under
+-- the GPL, see COPYING.LIB and COPYING files respectively.
+-- Check out http://mdbtools.sourceforge.net
+-- ----------------------------------------------------------
+
+-- That file uses encoding UTF-8
+
+DROP TABLE IF EXISTS `CadValeur`;
+CREATE TABLE `CadValeur`
+ (
+	`COMMUNE`			int, 
+	`Type Cad`			varchar (20), 
+	`ClassCad`			int, 
+	`NOM`			varchar (100), 
+	`Valeur`			float, 
+	`ValeurActuel`			float, 
+	`IdCadValeur`			int NOT NULL, 
+	`IdCommune`			int, 
+	`IdTypeCad`			int, 
+	`IdClassCad`			int
+);
+
+DROP TABLE IF EXISTS `ClassCadastre`;
+CREATE TABLE `ClassCadastre`
+ (
+	`IdClassCad`			int NOT NULL, 
+	`ClassCadastre`			int, 
+	`Libelle`			varchar (40), 
+	`Couleur`			int
+);
+
+DROP TABLE IF EXISTS `Commune`;
+CREATE TABLE `Commune`
+ (
+	`COMMUNE`			int, 
+	`NOM`			varchar (256), 
+	`IdCommune`			int NOT NULL, 
+	`Couleur`			int, 
+	`CodeInsee`			varchar (100)
+);
+
+DROP TABLE IF EXISTS `Config`;
+CREATE TABLE `Config`
+ (
+	`IdConfig`			int NOT NULL, 
+	`RaisonSociale`			varchar (510), 
+	`Adresse`			varchar (400), 
+	`CodePostal`			varchar (40), 
+	`Ville`			varchar (256), 
+	`Telephone`			varchar (60), 
+	`Fax`			varchar (60), 
+	`Mail`			varchar (510), 
+	`Siret`			varchar (100)
+);
+
+DROP TABLE IF EXISTS `Exploita`;
+CREATE TABLE `Exploita`
+ (
+	`NUMEXP`			int, 
+	`NOMEXP`			varchar (100), 
+	`AdresseExp`			varchar (256), 
+	`CPExp`			varchar (20), 
+	`VilleExp`			varchar (100), 
+	`IdExploitant`			int NOT NULL, 
+	`IdValeurPointGFA`			int, 
+	`IdValeurPointSCTL`			int, 
+	`Telephone`			varchar (40), 
+	`Mail`			varchar (256), 
+	`Prenom`			varchar (100), 
+	`DateDebutBailGFA`			datetime, 
+	`DateFinBailGFA`			datetime, 
+	`DateAvenantGFA`			datetime, 
+	`NumAvenantGFA`			int, 
+	`DateDebutBailSCTL`			datetime, 
+	`DateFinBailSCTL`			datetime, 
+	`DateAvenantSCTL`			datetime, 
+	`NumAvenantSCTL`			int, 
+	`SuppDureeGFA`			char NOT NULL DEFAULT FALSE, 
+	`SuppDureeSCTL`			char NOT NULL DEFAULT FALSE, 
+	`AssocieSCTL`			char NOT NULL DEFAULT FALSE, 
+	`Agricole`			char NOT NULL DEFAULT FALSE, 
+	`Ignorer`			char NOT NULL DEFAULT FALSE
+);
+
+DROP TABLE IF EXISTS `Fermage`;
+CREATE TABLE `Fermage`
+ (
+	`TypeFermage`			varchar (20), 
+	`Points`			int, 
+	`IdFermage`			int NOT NULL, 
+	`Libelle`			varchar (40), 
+	`Couleur`			int
+);
+
+DROP TABLE IF EXISTS `ForPrintSctl`;
+CREATE TABLE `ForPrintSctl`
+ (
+	`COMMUNE`			int, 
+	`PARCELLE`			varchar (20), 
+	`DIVISION`			int, 
+	`GFA`			varchar (20), 
+	`NUMEXP`			int, 
+	`DUREE`			int, 
+	`SURFACE`			float, 
+	`NOMEXP`			varchar (256), 
+	`REVENU`			float, 
+	`TYPECAD`			varchar (20), 
+	`TYPEFERMAGE`			varchar (20), 
+	`POINT`			float, 
+	`DUREEFERMAGE`			int, 
+	`NomCommune`			varchar (100), 
+	`Lieudit`			varchar (100), 
+	`Parcelle A`			varchar (20), 
+	`Parcelle B`			int, 
+	`Parcelle c`			varchar (20), 
+	`Sup Total`			float, 
+	`Lettre`			varchar (100), 
+	`Chiffre`			int, 
+	`IdForPrintSctl`			int NOT NULL, 
+	`SURFACEDIVISION`			float, 
+	`SURFACEDIVHA`			varchar (256), 
+	`SURFACEPARCELLEHA`			varchar (256), 
+	`SURFACEPARCELLE`			float, 
+	`CLASSCADASTRE`			int, 
+	`PRENOM`			varchar (100), 
+	`IdExploitant`			int, 
+	`DIV_SUBDIV`			varchar (20), 
+	`COMMENTAIRES`			varchar (510)
+);
+
+DROP TABLE IF EXISTS `NumGfa`;
+CREATE TABLE `NumGfa`
+ (
+	`IdNumGfa`			int NOT NULL, 
+	`Numero`			int, 
+	`Libelle`			varchar (40), 
+	`Couleur`			int, 
+	`AssocieSCTL`			char NOT NULL DEFAULT FALSE
+);
+
+DROP TABLE IF EXISTS `Options`;
+CREATE TABLE `Options`
+ (
+	`IdOption`			int NOT NULL, 
+	`Libelle1`			varchar (100), 
+	`Libelle2`			varchar (100), 
+	`Libelle3`			varchar (100), 
+	`Libelle4`			varchar (100), 
+	`Couleur1`			int, 
+	`Couleur2`			int, 
+	`Couleur3`			int, 
+	`Couleur4`			int, 
+	`Param1`			int, 
+	`Param2`			int, 
+	`Param3`			int, 
+	`Param4`			int, 
+	`RepWord`			varchar (256), 
+	`RepExcel`			varchar (256)
+);
+
+DROP TABLE IF EXISTS `Parcelle`;
+CREATE TABLE `Parcelle`
+ (
+	`PARCELLE`			varchar (20), 
+	`SURFACE`			float, 
+	`REVENU`			float, 
+	`SCTL`			char NOT NULL DEFAULT FALSE, 
+	`IdParcelle`			int NOT NULL, 
+	`IdGfa`			int, 
+	`IdCommune`			int, 
+	`IdLieuDit`			int, 
+	`IdTypeCad`			int, 
+	`IdClassCad`			int, 
+	`Observations`			varchar (510), 
+	`CodeMapInfo`			varchar (100)
+);
+
+DROP TABLE IF EXISTS `ParcelleSup`;
+CREATE TABLE `ParcelleSup`
+ (
+	`COMMUNE`			int, 
+	`PARCELLE`			varchar (20), 
+	`GFA`			varchar (2), 
+	`LIEUDIT`			varchar (100), 
+	`TYPECAD`			varchar (20), 
+	`SURFACE`			float, 
+	`REVENU`			float, 
+	`INFO`			text (255), 
+	`DATESUP`			datetime, 
+	`IdParcelleSup`			int NOT NULL, 
+	`IdGfa`			int, 
+	`IdTypeCad`			int, 
+	`IdClassCad`			int, 
+	`IdCommune`			int, 
+	`IdLieuDit`			int
+);
+
+DROP TABLE IF EXISTS `Recad`;
+CREATE TABLE `Recad`
+ (
+	`DIVISION`			int, 
+	`DUREE`			int, 
+	`SURFACE`			float, 
+	`REVENU`			float, 
+	`DUREEFERMAGE`			int, 
+	`SCTL`			char NOT NULL DEFAULT FALSE, 
+	`IdRecad`			int NOT NULL, 
+	`IdParcelle`			int, 
+	`IdGfa`			int, 
+	`IdTypeCad`			int, 
+	`IdFermage`			int, 
+	`IdExploitant`			int, 
+	`IdCommune`			int, 
+	`IdSubdivCadastre`			int
+);
+
+DROP TABLE IF EXISTS `SubdivCadastre`;
+CREATE TABLE `SubdivCadastre`
+ (
+	`DIVISION`			int, 
+	`SUBDIVISION`			int, 
+	`SURFACE`			float, 
+	`GFA`			varchar (20), 
+	`REVENU`			float, 
+	`IdSubdivCadastre`			int NOT NULL, 
+	`IdParcelle`			int, 
+	`IdTypeCad`			int, 
+	`IdClassCad`			int, 
+	`IdFermage`			int, 
+	`IdExploitant`			int, 
+	`IdCommune`			int, 
+	`IdLieuDit`			int, 
+	`DureeFermage`			int, 
+	`Point`			float, 
+	`IdRecad`			int
+);
+
+DROP TABLE IF EXISTS `Subdivision`;
+CREATE TABLE `Subdivision`
+ (
+	`DIVISION`			int, 
+	`SUBDIVISION`			int, 
+	`SURFACE`			float, 
+	`GFA`			varchar (20), 
+	`REVENU`			float, 
+	`IdSubdivision`			int NOT NULL, 
+	`IdParcelle`			int, 
+	`IdTypeCad`			int, 
+	`IdClassCad`			int, 
+	`IdFermage`			int, 
+	`IdExploitant`			int, 
+	`IdCommune`			int, 
+	`IdLieuDit`			int, 
+	`DureeFermage`			int, 
+	`Point`			float, 
+	`IdRecad`			int, 
+	`PointFermage`			float DEFAULT 0
+);
+
+DROP TABLE IF EXISTS `TypeCadastre`;
+CREATE TABLE `TypeCadastre`
+ (
+	`TypeCadastre`			varchar (20), 
+	`IdTypeCad`			int NOT NULL, 
+	`Libelle`			varchar (100), 
+	`Couleur`			int
+);
+
+DROP TABLE IF EXISTS `ValeurPointGFA`;
+CREATE TABLE `ValeurPointGFA`
+ (
+	`IdValeurPoint`			int NOT NULL, 
+	`Valeur`			float, 
+	`Num`			int, 
+	`Libelle`			varchar (40), 
+	`Couleur`			int
+);
+
+DROP TABLE IF EXISTS `ValeurPointSCTL`;
+CREATE TABLE `ValeurPointSCTL`
+ (
+	`IdValeurPoint`			int NOT NULL, 
+	`Valeur`			float, 
+	`Num`			int, 
+	`Libelle`			varchar (40), 
+	`Couleur`			int
+);
+
+DROP TABLE IF EXISTS `Coef`;
+CREATE TABLE `Coef`
+ (
+	`Coef`			float, 
+	`IdCoef`			int NOT NULL
+);
+
+DROP TABLE IF EXISTS `LieuDit`;
+CREATE TABLE `LieuDit`
+ (
+	`IdLieuDit`			int NOT NULL, 
+	`Libelle`			varchar (256), 
+	`Couleur`			int
+);
+
+DROP TABLE IF EXISTS `PSG`;
+CREATE TABLE `PSG`
+ (
+	`IdPSG`			int NOT NULL, 
+	`IdParcelle`			float, 
+	`Parcelle`			varchar (100), 
+	`Surface`			float, 
+	`LieuDit`			varchar (160), 
+	`TypeCadastre`			varchar (20), 
+	`NomExploitant`			varchar (100), 
+	`PrenomExploitant`			varchar (100), 
+	`Commune`			varchar (100), 
+	`CodeInsee`			varchar (40), 
+	`proprietaire`			varchar (40), 
+	`CeQuiDiffere`			varchar (510)
+);
+
+

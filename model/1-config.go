@@ -64,8 +64,6 @@ type serverEnv struct {
 	CMD_PGDUMP        string
 }
 
-// DATABASE_URL=postgresql://bdl:2222bdl4444@localhost:5433/bdlchantiers
-
 var SERVER_ENV serverEnv
 
 // MustLoadEnv charge les variables d'environnement spécifiques au serveur

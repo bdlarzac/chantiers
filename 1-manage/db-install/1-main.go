@@ -135,7 +135,6 @@ func main() {
 	}
 
 	ctx := ctxt.NewContext()
-	fmt.Printf("ctx.DB = %+v\n", ctx.DB)
 
 	// options ayant besoin de la version de la base SCTL utilisée
 	needFlagS := *flagInstall == "fermier" || *flagInstall == "commune" || *flagInstall == "parcelle" || *flagInstall == "all"

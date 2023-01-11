@@ -22,6 +22,7 @@ type Fermier struct {
 	Ville     string
 	Tel       string
 	Email     string
+	// Pas stocké en base
 	Parcelles []*Parcelle
 }
 
@@ -129,3 +130,61 @@ func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Fermier, error) {
 	}
 	return fermiers, nil
 }
+
+// ************************** CRUD *******************************
+
+// Pas un insert habituel car id est fourni
+func InsertFermier(db *sqlx.DB, f *Fermier) (err error) {
+	query := `insert into fermier(
+	    id,
+	    nom,
+	    prenom,
+	    adresse,
+	    cp,
+	    ville,
+	    tel,
+	    email
+    ) values($1,$2,$3,$4,$5,$6,$7,$8)`
+	_, err = db.Exec(
+		query,
+		f.Id,
+        f.Nom,
+        f.Prenom,
+        f.Adresse,
+        f.Cp,
+        f.Ville,
+        f.Tel,
+        f.Email)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func UpdateFermier(db *sqlx.DB, f *Fermier) (err error) {
+	query := `update fermier set(
+	    nom,
+	    prenom,
+	    adresse,
+	    cp,
+	    ville,
+	    tel,
+	    email
+    ) = ($1,$2,$3,$4,$5,$6,$7) where id=$8`
+	_, err = db.Exec(
+		query,
+        f.Nom,
+        f.Prenom,
+        f.Adresse,
+        f.Cp,
+        f.Ville,
+        f.Tel,
+        f.Email,
+		f.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+

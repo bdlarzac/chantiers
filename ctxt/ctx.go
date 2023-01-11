@@ -24,6 +24,7 @@ type Context struct {
 	Config       *model.Config
 }
 
+// Pour utiliser db, appeler ctxt.MustInitDB() avant de faire NewContext()
 func NewContext() *Context {
 	ctx := &Context{}
 	ctx.Template = tmpl // déclaré dans template.go

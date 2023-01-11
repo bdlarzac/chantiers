@@ -7,13 +7,7 @@ tmp
 # private data
 1-manage/db-install/data-private
 1-manage/sctl-analyse/results/evolution-Exploita.csv
-
-# update sctl - ne versionne pas les données mais versionne le code et la doc
-1-manage/sctl-update/*
-!1-manage/sctl-update/sctl-mdb2csv
-!1-manage/sctl-update/sctl-mdb2csv-all
-!1-manage/sctl-update/README
-!1-manage/sctl-update/mdb-doc.txt
+1-manage/sctl-data
 
 # convention, files marked for deletion
 z.*

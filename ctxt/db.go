@@ -36,7 +36,6 @@ func AjusteDbURL(url string, schema string) string {
 
 func MustInitDB() {
 	var err error
-
 	dbURL := AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
 	db, err = sqlx.Open("postgres", dbURL)
 	/* db, err = sqlx.Open(
@@ -54,18 +53,3 @@ func MustInitDB() {
 	}
 	//TODO: ici faire upgrade versions
 }
-
-/*
-/////////////// original function ////////////////////////////////
-func MustInitDB() {
-	var err error
-
-	dbURL := AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
-
-	db, err = sqlx.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatalf("Connexion DB impossible : %v", err)
-	}
-
-	//TODO: ici faire upgrade versions
-} */
