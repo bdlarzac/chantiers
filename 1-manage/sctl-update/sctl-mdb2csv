@@ -19,12 +19,12 @@ fi
 version=$1
 
 mdbfile="Sctl-Gfa-$version.mdb"
-if [ ! -f "$mdbfile" ]; then
-    echo "ERREUR - Le fichier $mdbfile doit exister dans le répertoire courant"
+if [ ! -f "../sctl-data/$mdbfile" ]; then
+    echo "ERREUR - Le fichier $mdbfile doit exister dans le répertoire sctl-data/"
     exit 1
 fi
 
-csvdir="csv-$version"
+csvdir="../sctl-data/csv-$version"
 if [ ! -d $csvdir ]; then
     mkdir $csvdir
     echo "Crée le répertoire $csvdir"
@@ -35,13 +35,14 @@ tables=("Commune" "Exploita" "LieuDit" "Recad" "SubdivCadastre" "Subdivision")
 for t in "${tables[@]}"
 do
     echo "Export $t ==> $csvdir/$t.csv"
-    mdb-export -d ';' -Q $mdbfile $t > $csvdir/$t.csv
+    mdb-export -d ';' -Q "../sctl-data/$mdbfile" $t > $csvdir/$t.csv
 done
 
 # Parcelle est traitée différemment à cause de la colonne Observations
 # qui contient des \n et perturbe l'export csv
 # La colonne CodeMapInfo n'est pas exportée car elle disparaît de la base entre le 2020-02-27 et le 2020-03-02
 echo "Export Parcelle ==> $csvdir/Parcelle.csv"
-echo "select PARCELLE,SURFACE,REVENU,SCTL,IdParcelle,IdGfa,IdCommune,IdLieuDit,IdTypeCad,IdClassCad from Parcelle" | mdb-sql -FP -d ';' -o $csvdir/Parcelle.csv $mdbfile
+echo "select PARCELLE,SURFACE,REVENU,SCTL,IdParcelle,IdGfa,IdCommune,IdLieuDit,IdTypeCad,IdClassCad from Parcelle" | \
+    mdb-sql -FP -d ';' -o $csvdir/Parcelle.csv ../sctl-data/$mdbfile
 
 exit 0

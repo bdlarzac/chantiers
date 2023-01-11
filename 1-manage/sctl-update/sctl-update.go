@@ -42,6 +42,7 @@ func main() {
 	ctx := ctxt.NewContext()
 	
 	report := ""
+	nUpdate, nInsert := 0, 0
 	for _, record := range records {
 		idExploitant, err := strconv.Atoi(record["IdExploitant"])
 		if idExploitant == 1 {
@@ -68,12 +69,22 @@ func main() {
 		dbFermier, err := model.GetFermier(ctx.DB, idExploitant)
 		if dbFermier.Id == 0 {
 		    err = model.InsertFermier(ctx.DB, &csvFermier)
+            if err != nil {
+                panic(err)
+            }
+		    nInsert++
 		    report += "INSERTED " + record["NOMEXP"] + " " + record["Prenom"] + "\n"
 		} else {
 		    err = model.UpdateFermier(ctx.DB, &csvFermier)
+            if err != nil {
+                panic(err)
+            }
+		    nUpdate++
 		    report += "Updated " + record["IdExploitant"] + " - "+ record["NOMEXP"] + " " + record["Prenom"] + "\n"
 		}
-//break;
 	}
+	report += "Inserted " + strconv.Itoa(nInsert) + "\n"
+	report += "Updated  " + strconv.Itoa(nUpdate) + "\n"
+	report += "Total    " + strconv.Itoa(nInsert + nUpdate) + "\n"
 	fmt.Println(report)
 }

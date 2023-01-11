@@ -26,6 +26,6 @@ Les fichiers générés se trouvent dans le répertoire appli/1-manage/sctl-data
 
 2 - Importer les fichiers csv dans la base BDL
 
-ENV_CONFIG_FILE='../../config.env' go run 1-main.go AAAA-MM-JJ
+ENV_CONFIG_FILE='../../config.env' go run sctl-update.go AAAA-MM-JJ
 ex :
-ENV_CONFIG_FILE='../../config.env' go run 1-main.go 2020-02-27
+ENV_CONFIG_FILE='../../config.env' go run sctl-update.go 2020-02-27
