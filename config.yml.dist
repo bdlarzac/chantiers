@@ -87,14 +87,4 @@ affacture:
     12100 La Roque Ste Marguerite
 
 # Nombre de chantiers affichés dans la partie "activités récentes" (page d'accueil)
-nb-recent: 5
-
-# -----------------------------------------------------------
-
-# Utiles uniquement pour le développement de l'application
-dev:
-  # Répertoire contenant les différents dumps de la base SCTL
-  # Doit contenir les différents .mdb et des sous-répertoires avec les exports csv correspondant
-  sctl-data: /path/to/sctl/data
-  # Répertoire contenant les résultats des tests effectués sur la base SCTL
-  sctl-analyse: /path/to/sctl/analyse
+nb-recent: 10

@@ -1,0 +1,8 @@
+
+Ce répertoire contient des fichiers et scripts utiles pour installer ou administrer la base, mais pas utilisés par l'application web.
+
+Les deux répertoires à utiliser régulièrement sont
+sctl-update/
+db-migrate/
+
+Les autres répertoires ne sont plus utiles, ils ont servi à la création de la base.

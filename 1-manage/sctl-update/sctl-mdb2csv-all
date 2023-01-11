@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Exécute sctl-mdb2csv pour toutes les versions disponibles de la base
+
+if [[ $# -ne 0 ]]; then
+    echo "ERREUR - Ce script s'exécute sans paramètre"
+    exit 1
+fi
+
+versions=('2018' '2020-02-27' '2020-03-02' '2020-03-06' '2020-12-16')
+
+for v in "${versions[@]}"
+do
+    echo "=== Export $v ==="
+    ./sctl-mdb2csv $v
+done
+
+exit 0

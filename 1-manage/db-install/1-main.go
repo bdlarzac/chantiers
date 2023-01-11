@@ -2,7 +2,7 @@
     
     Lancer l'exécution en utilisant des variables d'environnement :
     
-    ENV_CONFIG_FILE='../config.env' APPLI_CONFIG_FILE='../config.yml' go run install-bdl.go
+    ENV_CONFIG_FILE='../../../config.env' APPLI_CONFIG_FILE='../../../config.yml' go run 1-main.go
     
     Initialisation de l'environnement nécessaire au fonctionnement de l'application.
     - Installation de la base (package dbcreate)

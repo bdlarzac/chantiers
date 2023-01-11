@@ -5,14 +5,15 @@ dbdump
 tmp
 
 # private data
-install/data-private
-install/sctl-analyse/evolution-Exploita.csv
+1-manage/db-install/data-private
+1-manage/sctl-analyse/results/evolution-Exploita.csv
 
-# build sctl - ne versionne pas les données mais versionne certains fichiers
-install/sctl-data/*
-!install/sctl-data/sctl-mdb2csv
-!install/sctl-data/README
-!install/sctl-data/mdb-doc.txt
+# update sctl - ne versionne pas les données mais versionne le code et la doc
+1-manage/sctl-update/*
+!1-manage/sctl-update/sctl-mdb2csv
+!1-manage/sctl-update/sctl-mdb2csv-all
+!1-manage/sctl-update/README
+!1-manage/sctl-update/mdb-doc.txt
 
 # convention, files marked for deletion
 z.*

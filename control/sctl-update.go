@@ -22,15 +22,14 @@ func UpdateSCTL(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		// Process form
 		//
-		//		ctx.Redirect = "/acteur/" + strconv.Itoa(id)
 		return nil
 	default:
 		//
 		// Affiche form
 		//
-		if true {
+		if false {
 			// TODO supprimer
-			ctx.TemplateName = "update-sctl-form--tmp.html"
+			ctx.TemplateName = "sctl-update-form--tmp.html"
 			ctx.Page = &ctxt.Page{
 				Header: ctxt.Header{
 					Title:    "Mise à jour données foncières (SCTL)",
@@ -48,7 +47,7 @@ func UpdateSCTL(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			if err != nil {
 				return err
 			}
-			ctx.TemplateName = "update-sctl-form.html"
+			ctx.TemplateName = "sctl-update-form.html"
 			ctx.Page = &ctxt.Page{
 				Header: ctxt.Header{
 					Title:    "Mise à jour données foncières (SCTL)",
@@ -56,7 +55,7 @@ func UpdateSCTL(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				},
 				Menu: "accueil",
 				Details: detailsUpdateSCTLForm{
-					UrlAction: "/update-sctl",
+					UrlAction: "/sctl-update",
 					Items:     items,
 				},
 			}

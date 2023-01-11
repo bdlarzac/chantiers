@@ -45,10 +45,6 @@ type Config struct {
 		Adresse string `yaml:"adresse"`
 	} `yaml:"affacture"`
 	NbRecent int `yaml:"nb-recent"`
-	Dev      struct {
-		SCTLData    string `yaml:"sctl-data"`
-		SCTLAnalyse string `yaml:"sctl-analyse"`
-	} `yaml:"dev"`
 }
 
 // Configuration spécifique au déploiement

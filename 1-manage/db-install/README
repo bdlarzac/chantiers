@@ -1,0 +1,10 @@
+
+
+ATTENTION : répertoire issu d'une réorganisation des répertoires. Code non remis à jour, pas opérationnel.
+
+Code servant à initialiser la base de prod.
+Pas utilisé en fonctionnement normal
+
+fixture/ contient du code pour remplir avec des valeurs de test
+
+Va chercher des données à différents endroits (voir paths.go)
