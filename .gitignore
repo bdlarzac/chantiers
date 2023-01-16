@@ -5,9 +5,10 @@ dbdump
 tmp
 
 # private data
-1-manage/db-install/data-private
-1-manage/sctl-analyse/results/evolution-Exploita.csv
-1-manage/sctl-data
+manage/db-install/data-private
+manage/sctl-analyse/results/evolution-Exploita.csv
+manage/sctl-data
+manage/dbinstall/data-private
 
 # convention, files marked for deletion
 z.*

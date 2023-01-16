@@ -1,0 +1,31 @@
+
+
+Mise à jour des données SCTL dans la base BDL
+
+Utilise mdb-export
+sudo apt install mdbtools
+
+1 - Générer des fichiers csv à partir des tables de la base SCTL
+---------------------------------------------------------------------------------------------------
+
+- Récupérer la dernière version de la base = fichier .mdb présent sur le NAS du bureau BDL.
+
+- Renommer ce fichier Sctl-Gfa-AAAA-MM-JJ.mdb en utilisant la date du jour, par ex Sctl-Gfa-2020-02-27.mdb
+
+- Mettre le fichier renommé dans le répertoire appli/1-manage/sctl-data/
+
+- Créer un répertoire AAAA-MM-JJ dans appli/1-manage/sctl-data/
+ex : appli/1-manage/sctl-data/2020-02-27/
+
+- Exécuter le script en mettant la date AAAA-MM-JJ en paramètre.
+ex : mdb2csv 2020-02-27
+
+Les fichiers générés se trouvent dans le répertoire appli/1-manage/sctl-data/AAAA-MM-JJ
+
+---------------------------------------------------------------------------------------------------
+
+2 - Importer les fichiers csv dans la base BDL
+
+ENV_CONFIG_FILE='../../config.env' go run 1-main.go AAAA-MM-JJ
+ex :
+ENV_CONFIG_FILE='../../config.env' go run 1-main.go 2020-02-27

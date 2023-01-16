@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+
+#
+# Commande pour importer un dump postgres de la base de prod dans la base locale 
+#
+
+if [ $# -ne 1 ]; then
+    echo "Cette commande a besoin d'un argument : "
+    echo "le nom du fichier zip contenant le dump postgres SANS l'extension zip"
+    echo "Ex: $0 bdl-2021-11-10-155100.pgdump"
+    exit
+fi
+
+source ../../appli/config.env
+
+dumpfile=$1
+zipfile=$dumpfile.zip
+
+if [ ! -f $RESTORE_DIR/$zipfile ]; then
+    echo "Fichier inexistant: $RESTORE_DIR/$zipfile"
+    exit
+fi
+
+# unzip se fait dans le rep courant
+unzip $RESTORE_DIR/$zipfile
+
+export PGPASSWORD=$DATABASE_PASSWORD
+psql -d $DATABASE_DBNAME -U $DATABASE_USER -h $DATABASE_HOST -p $DATABASE_PORT -c "drop schema $DATABASE_SCHEMA cascade"
+psql $DATABASE_DBNAME -U $DATABASE_USER -h $DATABASE_HOST -p $DATABASE_PORT < $dumpfile
+
+rm $dumpfile
+
+echo "Done"
