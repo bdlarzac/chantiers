@@ -68,3 +68,18 @@ func migrate_2023_01_16_create_table_chantier_parcelle(db *sqlx.DB) {
 func migrate_2023_01_16_update(db *sqlx.DB) {
     
 }
+
+/* 
+select * from chaufer_parcelle
+ id_chaufer | id_parcelle | entiere | surface 
+------------+-------------+---------+---------
+          1 |        1577 | t       |       0
+          2 |        1025 | f       |       2
+          3 |        1262 | f       |       2
+          4 |        1262 | f       |       2
+          5 |        1319 | f       |       1
+          6 |        1253 | f       |       1
+          7 |        2203 | t       |       0
+
+*/
+

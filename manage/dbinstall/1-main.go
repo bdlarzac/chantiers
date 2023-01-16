@@ -101,7 +101,7 @@ func main() {
 	i := (*flagInstall != "")
 	f := (*flagFixture != "")
 	// si aucun flag ou 2 flags sont utilisés
-	if !i && !f {
+	if (!i && !f) || (i && f) {
 		fmt.Println(errorMsg)
 		return
 	}
@@ -220,14 +220,15 @@ func installParcelle(ctx *ctxt.Context) {
 	CreateTable(ctx, "parcelle")
 	CreateTable(ctx, "parcelle_lieudit")
 	CreateTable(ctx, "parcelle_fermier")
+	AddParcelleCode11(ctx, *flagSctlDataSource)
 	FillParcelle(ctx, *flagSctlDataSource)
 	FillLiensParcelleFermier(ctx, *flagSctlDataSource)
 	FillLiensParcelleLieudit(ctx, *flagSctlDataSource)
 }
 func installUG(ctx *ctxt.Context) {
-//	CreateTable(ctx, "ug")
-//	CreateTable(ctx, "parcelle_ug")
-//	FillUG(ctx)
+	// CreateTable(ctx, "ug")
+	// CreateTable(ctx, "parcelle_ug")
+	FillUG(ctx)
 	FillLiensParcelleUG(ctx)
 }
 func installStockage(ctx *ctxt.Context) {

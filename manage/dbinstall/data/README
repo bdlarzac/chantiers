@@ -7,8 +7,7 @@ D'autres fichiers sont utilisés :
 
 - data-private/ contient les acteurs initiaux saisis par Bastien - non versionné.
 
-- voir config.yml, dev / sctl-data, qui contient des fichiers qui pourraient
-  être remplacés par des accès à la base Access SCTL :
+- sctl-data/, qui contient :
 LieuDit.csv         sert à remplir la table lieudit
 Parcelle.csv        sert à remplir les tables parcelle et parcelle_lieudit
 SubdivCadastre.csv  sert à remplir la table commune_lieudit

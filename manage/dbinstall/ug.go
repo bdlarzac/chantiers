@@ -92,7 +92,7 @@ func FillLiensParcelleUG(ctx *ctxt.Context) {
 
 	records2 := make(map[string]map[string]string) // map[code parcelle][code ug] = code ug
 	for _, record := range records {
-		code_parcelle := record["PC"]
+		code_parcelle := record["ID_PARCELLE_11"]
 		code_ug := record["PG"]
 		if code_parcelle == "0" {
 			continue

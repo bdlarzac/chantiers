@@ -125,5 +125,7 @@ func FillLiensParcelleFermier(ctx *ctxt.Context, versionSCTL string) {
 			continue
 		}
 	}
-	fmt.Printf("  %d associations pas enregistrées (bugs SCTL ?)\n", n)
+	if n != 0 {
+        fmt.Printf("  %d associations pas enregistrées (bugs SCTL ?)\n", n)
+    }
 }

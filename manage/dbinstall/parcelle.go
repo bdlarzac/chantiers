@@ -19,6 +19,51 @@ import (
 	"strings"
 )
 
+
+/** 
+    Modifie Parcelle.csv an ajoutant une colonne code11 = code initial (6 caractères) précédé du code INSEE de la commune
+**/
+func AddParcelleCode11(ctx *ctxt.Context, versionSCTL string) {
+	fmt.Println("Modifie Parcelle.csv (ajoute colonne PARCELLE11)")
+	var dirCsv, filename, csvname string
+	var records []map[string]string
+	
+	// Prépare map id commune => code INSEE
+	csvname = "commune.csv"
+	dirCsv = GetDataDir()
+	filename = path.Join(dirCsv, csvname)
+	records, _ = tiglib.CsvMap(filename, ';')
+	id_insee := make(map[string]string)
+	for _, v := range records {
+	    id_insee[v["id"]] = v["code_insee"]
+	}
+	
+	// Charge le fichier à modifier
+	csvname = "Parcelle.csv"
+	dirCsv = GetSCTLDataDir(ctx, versionSCTL)
+	filename = path.Join(dirCsv, csvname)
+	records, _ = tiglib.CsvMap(filename, ';')
+	
+	// Génère le fichier modifié
+	keys := []string{"PARCELLE", "SURFACE", "REVENU", "SCTL", "IdParcelle", "IdGfa", "IdCommune", "IdLieuDit", "IdTypeCad", "IdClassCad", "PARCELLE11"}
+	res := strings.Join(keys, ";") + "\n"
+	for _, v := range records {
+	    for _, key := range(keys[:len(keys)-1]){
+            res += v[key] + ";"
+	    }
+	    res += id_insee[v["IdCommune"]] + v["PARCELLE"] + "\n"
+	}
+	file, err := os.Create(filename)
+	if err != nil {
+	    panic(err)
+	}
+	defer file.Close()
+	_, err = file.WriteString(res)
+	if err != nil {
+	    panic(err)
+	}
+}
+
 // *********************************************************
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
 func FillParcelle(ctx *ctxt.Context, versionSCTL string) {
@@ -64,7 +109,7 @@ func FillParcelle(ctx *ctxt.Context, versionSCTL string) {
 			"insert into %s(id,code,id_proprietaire,surface) values(%s, '%s', '%d', %7.4f)",
 			table,
 			v["IdParcelle"],
-			v["PARCELLE"],
+			v["PARCELLE11"],
 			idProprio,
 			surface)
 		if _, err = db.Exec(sql); err != nil {
@@ -124,9 +169,9 @@ func FillLiensParcelleLieudit(ctx *ctxt.Context, versionSCTL string) {
 	// insert db
 	db := ctx.DB
 	for _, record := range records {
-		idC := record["IdParcelle"]
+		idP := record["IdParcelle"]
 		idLD := record["IdLieuDit"]
-		sql := fmt.Sprintf("insert into %s(id_parcelle,id_lieudit) values(%s, '%s')", table, idC, idLD)
+		sql := fmt.Sprintf("insert into %s(id_parcelle,id_lieudit) values(%s, '%s')", table, idP, idLD)
 		if _, err = db.Exec(sql); err != nil {
 			panic(err)
 		}
