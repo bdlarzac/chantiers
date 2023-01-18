@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-08 08:45:03+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
-package main
+package install
 
 import (
 	"bufio"

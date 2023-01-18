@@ -5,7 +5,7 @@
     @license    GPL
     @history    2020-01-09 11:38:50+01:00, Thierry Graff : Creation
 ********************************************************************************/
-package main
+package fixture
 
 import (
 	"bdl.local/bdl/ctxt"

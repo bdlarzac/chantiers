@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-14 10:08:26+01:00, Thierry Graff : Creation
 ********************************************************************************/
-package main
+package install
 
 import (
 	"bdl.local/bdl/ctxt"
@@ -152,8 +152,13 @@ func FillLiensParcelleUG(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
+	
+    sql := fmt.Sprintf("truncate table %s", table)
+    if _, err = db.Exec(sql); err != nil {
+        panic(err)
+    }
 
-	sql := fmt.Sprintf("insert into %s(id_parcelle,id_ug) values($1, $2)", table)
+	sql = fmt.Sprintf("insert into %s(id_parcelle,id_ug) values($1, $2)", table)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		panic(err)

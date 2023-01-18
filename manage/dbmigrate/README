@@ -5,4 +5,6 @@ Le nom du fichier .go contenant une migration commence par sa date au format YYY
 Le nom de la fonction contenant la migration doit commencer par Migrate_YYYY_MM_DD (pour être identifiée comme migration possible par install-bdl.go)
 ex: Migrate_2022_02_07_unite_piquets()
 
-Pour ajouter une migration, rajouter un case dans le switch de la fonction handleMigration() dans install-bdl.go
+Pour ajouter une migration, 
+- créer un fichier dy type JJJJ-MM-MM-my-migration.go avec une fonction JJJJ_MM_MM_my_migration() 
+- rajouter un case dans le switch de la fonction main() dans 1.main.go

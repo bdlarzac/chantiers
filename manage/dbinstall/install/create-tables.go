@@ -3,7 +3,7 @@
     @license    GPL
     @history    2019-09-26 16:04:00+02:00, Thierry Graff : Creation
 ********************************************************************************/
-package main
+package install
 
 import (
 	"bdl.local/bdl/ctxt"

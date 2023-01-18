@@ -13,59 +13,25 @@ package main
 
 import (
 	"bdl.local/bdl/ctxt"
-	"github.com/jmoiron/sqlx"
+	"bdl.dbinstall/bdl/install"
 	"fmt"
-	
 )
 
 func Migrate_2023_01_16_fix_parcelle(ctx *ctxt.Context) {
-	db := ctx.DB
-//    migrate_2023_01_16_alter_table_parcelle(db)
-//    migrate_2023_01_16_create_table_chantier_parcelle(db)
-    migrate_2023_01_16_update(db)
+	// versionSCTL := "2023-01-11"
+	// install.CreateTable(ctx, "parcelle")
+	// install.AddParcelleCode11(ctx, versionSCTL)
+	// install.FillParcelle(ctx, versionSCTL)
+	// install.FillLiensParcelleLieudit(ctx, versionSCTL)
+	// install.FillLiensParcelleFermier(ctx, versionSCTL)
+	install.FillLiensParcelleUG(ctx)
 	fmt.Println("Migration effectuée : 2023-01-16-fix-parcelle")
+//	migrate_2023_01_16_refill_parcelle_ug(ctx)
 }
 
-// Fonctions auxiliaires (commencent par des minuscules)
+// Fonctions auxiliaires, commencent par une miniscule
 
-func migrate_2023_01_16_alter_table_parcelle(db *sqlx.DB) {
-	query := `alter table parcelle alter column code type char(11)`
-	_, err := db.Exec(query)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func migrate_2023_01_16_create_table_chantier_parcelle(db *sqlx.DB) {
-    var err error
-	query := `
-	    create table chantier_parcelle(
-        type_chantier           varchar(7), -- "plaq" ou "chautre" ou "chaufer"
-        id_chantier             int not null,
-        id_parcelle             int not null references parcelle(id),
-        primary key(type_chantier, id_chantier, id_parcelle)
-    )`
-	_, err = db.Exec(query)
-	if err != nil {
-		panic(err)
-	}
-	query = `CREATE INDEX chantier_parcelle_chantier_idx ON chantier_parcelle (type_chantier, id_chantier)`
-	_, err = db.Exec(query)
-	if err != nil {
-		panic(err)
-	}
-	query = `CREATE INDEX chantier_parcelle_parcelle_idx ON chantier_parcelle (type_chantier, id_parcelle)`
-	_, err = db.Exec(query)
-	if err != nil {
-		panic(err)
-	}
-}
-
-/**
-    - Vide la table parcelle et la remplit avec les nouveaux codes
-    - Vide la table parcelle_ug et la remplit à nouveau
-**/
-func migrate_2023_01_16_update(db *sqlx.DB) {
+func migrate_2023_01_16_refill_parcelle_ug(ctx *ctxt.Context) {
     
 }
 

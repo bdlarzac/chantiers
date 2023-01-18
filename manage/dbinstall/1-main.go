@@ -1,23 +1,17 @@
 /******************************************************************************
 
-    Installation de la base BDL
-    Code pas utilisé en fonctionnement normal.
+    Installation et initialisation de la base BDL
     
-    Lancer l'exécution en utilisant des variables d'environnement et en utilisant *.go :
-    ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run *.go
+    Lancer l'exécution en utilisant des variables d'environnement :
+    ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run 1-main.go
 
     Utilisation :
     -i : install
     -f : fixture
-
-    -s est utilisée en lien avec la config (dev / sctl-data).
-    Correspond à un sous-répertoire de la valeur de la config.
-    Ex: Si la config contient
-    dev:
-      sctl-data: /path/to/db-sctl
-    Et que l'option -s contient 2020-12-23
-    Alors les exports de la base Access doivent se trouver dans /path/to/db-sctl/csv-2020-12-23
-    Ces exports sont des fichiers csv obtenus avec mdb-export
+    -s : version de la base SCTL à utiliser
+        Si l'option -s contient 2020-12-23
+        Alors les exports de la base Access situés dans manage/sctl-data/csv-2020-12-23 seront utilisés.
+        Ces exports sont des fichiers csv obtenus avec mdb-export
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -27,13 +21,14 @@
 package main
 
 import (
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/model"
+	"bdl.dbinstall/bdl/install"
+	"bdl.dbinstall/bdl/fixture"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
-
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/model"
 )
 
 var errorMsg string
@@ -117,7 +112,7 @@ func main() {
 			return
 		}
 		// check que le répertoire existe
-		dirCsv := GetSCTLDataDir(ctx, *flagSctlDataSource)
+		dirCsv := install.GetSCTLDataDir(ctx, *flagSctlDataSource)
 		_, err := os.Stat(dirCsv)
 		if os.IsNotExist(err) {
 			fmt.Println("REPERTOIRE SCTL INEXISTANT :", dirCsv)
@@ -188,88 +183,88 @@ func handleInstall(ctx *ctxt.Context) {
 	}
 }
 func installTypes(ctx *ctxt.Context) {
-	CreateTable(ctx, "typessence")
-	CreateTable(ctx, "typexploitation")
-	CreateTable(ctx, "typeop")
-	CreateTable(ctx, "typeunite")
-	CreateTable(ctx, "typevalorisation")
-	CreateTable(ctx, "typevente")
-	CreateTable(ctx, "typegranulo")
-	CreateTable(ctx, "typestockfrais")
+	install.CreateTable(ctx, "typessence")
+	install.CreateTable(ctx, "typexploitation")
+	install.CreateTable(ctx, "typeop")
+	install.CreateTable(ctx, "typeunite")
+	install.CreateTable(ctx, "typevalorisation")
+	install.CreateTable(ctx, "typevente")
+	install.CreateTable(ctx, "typegranulo")
+	install.CreateTable(ctx, "typestockfrais")
 }
 func installCommune(ctx *ctxt.Context) {
-	CreateTable(ctx, "commune")
-	CreateTable(ctx, "lieudit")
-	CreateTable(ctx, "commune_lieudit")
-	FillCommune(ctx)
-	FillLieudit(ctx, *flagSctlDataSource)
-	FillLiensCommuneLieudit(ctx, *flagSctlDataSource)
-	CreateTable(ctx, "lieudit_mot")
-	FillLieuditMot(ctx)
+	install.CreateTable(ctx, "commune")
+	install.CreateTable(ctx, "lieudit")
+	install.CreateTable(ctx, "commune_lieudit")
+	install.FillCommune(ctx)
+	install.FillLieudit(ctx, *flagSctlDataSource)
+	install.FillLiensCommuneLieudit(ctx, *flagSctlDataSource)
+	install.CreateTable(ctx, "lieudit_mot")
+	install.FillLieuditMot(ctx)
 }
 func installActeur(ctx *ctxt.Context) {
-	CreateTable(ctx, "acteur")
-	AddActeursInitiaux(ctx)
-	AddActeursFromCSV(ctx)
+	install.CreateTable(ctx, "acteur")
+	install.AddActeursInitiaux(ctx)
+	install.AddActeursFromCSV(ctx)
 }
 func installFermier(ctx *ctxt.Context) {
-	CreateTable(ctx, "fermier")
-	FillFermier(ctx, *flagSctlDataSource)
+	install.CreateTable(ctx, "fermier")
+	install.FillFermier(ctx, *flagSctlDataSource)
 }
 func installParcelle(ctx *ctxt.Context) {
-	CreateTable(ctx, "parcelle")
-	CreateTable(ctx, "parcelle_lieudit")
-	CreateTable(ctx, "parcelle_fermier")
-	AddParcelleCode11(ctx, *flagSctlDataSource)
-	FillParcelle(ctx, *flagSctlDataSource)
-	FillLiensParcelleFermier(ctx, *flagSctlDataSource)
-	FillLiensParcelleLieudit(ctx, *flagSctlDataSource)
+	install.CreateTable(ctx, "parcelle")
+	install.CreateTable(ctx, "parcelle_lieudit")
+	install.CreateTable(ctx, "parcelle_fermier")
+	install.AddParcelleCode11(ctx, *flagSctlDataSource)
+	install.FillParcelle(ctx, *flagSctlDataSource)
+	install.FillLiensParcelleFermier(ctx, *flagSctlDataSource)
+	install.FillLiensParcelleLieudit(ctx, *flagSctlDataSource)
 }
 func installUG(ctx *ctxt.Context) {
-	// CreateTable(ctx, "ug")
-	// CreateTable(ctx, "parcelle_ug")
-	FillUG(ctx)
-	FillLiensParcelleUG(ctx)
+	install.CreateTable(ctx, "ug")
+	install.CreateTable(ctx, "parcelle_ug")
+	install.FillUG(ctx)
+	install.FillLiensParcelleUG(ctx)
 }
 func installStockage(ctx *ctxt.Context) {
-	CreateTable(ctx, "stockage")
-	CreateTable(ctx, "stockfrais")
-	CreateTable(ctx, "plaq")
-	CreateTable(ctx, "tas")
-	CreateTable(ctx, "humid")
-	CreateTable(ctx, "humid_acteur")
-	FillHangarsInitiaux(ctx)
+	install.CreateTable(ctx, "stockage")
+	install.CreateTable(ctx, "stockfrais")
+	install.CreateTable(ctx, "plaq")
+	install.CreateTable(ctx, "tas")
+	install.CreateTable(ctx, "humid")
+	install.CreateTable(ctx, "humid_acteur")
+	install.FillHangarsInitiaux(ctx)
 }
 func installChantier(ctx *ctxt.Context) {
 	// liens pour plaq, chautre
-	CreateTable(ctx, "chantier_ug")
-	CreateTable(ctx, "chantier_fermier")
-	CreateTable(ctx, "chantier_lieudit")
+	install.CreateTable(ctx, "chantier_ug")
+	install.CreateTable(ctx, "chantier_fermier")
+	install.CreateTable(ctx, "chantier_lieudit")
 	// plaquettes
-	CreateTable(ctx, "plaqop")
-	CreateTable(ctx, "plaqtrans")
-	CreateTable(ctx, "plaqrange")
+	install.CreateTable(ctx, "plaqop")
+	install.CreateTable(ctx, "plaqtrans")
+	install.CreateTable(ctx, "plaqrange")
 	// autres valorisations
-	CreateTable(ctx, "chautre")
+	install.CreateTable(ctx, "chautre")
 	// chauffage fermier
-	CreateTable(ctx, "chaufer")
-	CreateTable(ctx, "chaufer_parcelle")
+	install.CreateTable(ctx, "chaufer")
+	install.CreateTable(ctx, "chaufer_parcelle")
 }
 func installVente(ctx *ctxt.Context) {
-	CreateTable(ctx, "venteplaq")
-	CreateTable(ctx, "ventelivre")
-	CreateTable(ctx, "ventecharge")
+	install.CreateTable(ctx, "venteplaq")
+	install.CreateTable(ctx, "ventelivre")
+	install.CreateTable(ctx, "ventecharge")
 }
 func installRecent(ctx *ctxt.Context) {
-	CreateTable(ctx, "recent")
+	install.CreateTable(ctx, "recent")
 }
 
 // *********************************************************
 func handleFixture(ctx *ctxt.Context) {
 	if *flagFixture == "stockage" {
-		FillStockage(ctx)
+		fixture.FillStockage(ctx)
 	} else if *flagFixture == "acteur" {
-		AnonymizeActeurs(ctx)
+		fixture.AnonymizeActeurs(ctx)
 	} else {
 		fmt.Println(errorMsg)
 	}

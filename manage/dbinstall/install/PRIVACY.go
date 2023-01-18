@@ -3,7 +3,7 @@
     @license    GPL
     @history    2021-02-09 09:38:14+01:00, Thierry Graff : Creation
 ********************************************************************************/
-package main
+package install
 
 // Utile que pour le dev
 // Mettre à true s'il y a une version en ligne

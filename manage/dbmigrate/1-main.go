@@ -4,8 +4,7 @@
     Code pas utilisé en fonctionnement normal.
     
     Lancer l'exécution en utilisant des variables d'environnement et en utilisant *.go :
-    ENV_CONFIG_FILE='../../../config.env' APPLI_CONFIG_FILE='../../../config.yml' go run *.go
-
+    ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run *.go
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -19,12 +18,9 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-
+	"sort"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
-
-	// "io/ioutil"
-	// "gopkg.in/yaml.v3"
 	"bdl.local/bdl/model"
 )
 
@@ -32,17 +28,17 @@ var possibleMigrations []string
 
 // *********************************************************
 func main() {
-
+	possibleMigrations = computeMigrations()
+    msgPossibles := "Migrations possibles : \n    " + strings.Join(possibleMigrations, "\n    ")
 	if len(os.Args) != 2 {
-	    fmt.Println("Cette commande a besoin d'un seul argument - voir fichier README")
+	    fmt.Println("Cette commande a besoin d'un argument, la migration à exécuter")
+		fmt.Println(msgPossibles)
 	    return
 	}
-	
 	migration := os.Args[1]
-	possibleMigrations = computeMigrations()
 	if !tiglib.InArrayString(migration, possibleMigrations) {
 		fmt.Println("MIGRATION INEXISTANTE : " + migration)
-		fmt.Println("Migrations possibles : " + strings.Join(possibleMigrations, " "))
+		fmt.Println(msgPossibles)
 		return
 	}
 	
@@ -83,7 +79,10 @@ func computeMigrations() (res []string) {
 	r := regexp.MustCompile(`func (Migrate_.*?)\s*\(`)
 	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
 		m := r.FindStringSubmatch(line)
-		res = append(res, m[1])
+		if !strings.Contains(m[1], "Output") { // virer la ligne avec exec.Command du grep !!!
+            res = append(res, m[1])
+        }
 	}
+	sort.Strings(res)
 	return res
 }

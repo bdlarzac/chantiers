@@ -6,7 +6,7 @@
     @license    GPL
     @history    2019-11-07 07:54:17+01:00, Thierry Graff : Creation from a split
 ********************************************************************************/
-package main
+package install
 
 import (
 	"bdl.local/bdl/ctxt"
@@ -168,6 +168,10 @@ func FillLiensParcelleLieudit(ctx *ctxt.Context, versionSCTL string) {
 
 	// insert db
 	db := ctx.DB
+    sql := fmt.Sprintf("truncate table %s", table)
+    if _, err = db.Exec(sql); err != nil {
+        panic(err)
+    }
 	for _, record := range records {
 		idP := record["IdParcelle"]
 		idLD := record["IdLieuDit"]

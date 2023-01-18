@@ -11,7 +11,7 @@ if [ $# -ne 1 ]; then
     exit
 fi
 
-source ../../appli/config.env
+source ../config.env
 
 dumpfile=$1
 zipfile=$dumpfile.zip
