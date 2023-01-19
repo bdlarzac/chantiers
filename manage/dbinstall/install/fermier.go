@@ -23,7 +23,7 @@ func FillFermier(ctx *ctxt.Context, versionSCTL string) {
 	table := "fermier"
 	fmt.Println("Remplit " + table + " à partir de Exploita.csv")
 
-	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(versionSCTL)
 	filename := path.Join(dirCsv, "Exploita.csv")
 	records, err := tiglib.CsvMap(filename, ';')
 
@@ -93,7 +93,7 @@ func FillLiensParcelleFermier(ctx *ctxt.Context, versionSCTL string) {
 	table := "parcelle_fermier"
 	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
 
-	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(versionSCTL)
 	filename := path.Join(dirCsv, "Subdivision.csv")
 
 	records, err := tiglib.CsvMap(filename, ';') // N = 2844

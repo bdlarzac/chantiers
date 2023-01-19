@@ -215,7 +215,6 @@ func installParcelle(ctx *ctxt.Context) {
 	install.CreateTable(ctx, "parcelle")
 	install.CreateTable(ctx, "parcelle_lieudit")
 	install.CreateTable(ctx, "parcelle_fermier")
-	install.AddParcelleCode11(ctx, *flagSctlDataSource)
 	install.FillParcelle(ctx, *flagSctlDataSource)
 	install.FillLiensParcelleFermier(ctx, *flagSctlDataSource)
 	install.FillLiensParcelleLieudit(ctx, *flagSctlDataSource)

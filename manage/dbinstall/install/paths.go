@@ -10,7 +10,6 @@ package install
 import (
 	"path"
 	"runtime"
-	"bdl.local/bdl/ctxt"
 )
 
 // GetCreateTableDir renvoie le chemin absolu vers le répertoire contenant
@@ -37,7 +36,7 @@ func GetPrivateDir() string {
 
 // GetSCTLDataDir renvoie le chemin absolu vers le répertoire contenant
 // des exports de la base SCTL
-func GetSCTLDataDir(ctx *ctxt.Context, versionSCTL string) string {
+func GetSCTLDataDir(versionSCTL string) string {
 	_, filename, _, _ := runtime.Caller(0) // path to current go file
 	return path.Join(path.Dir(path.Dir(path.Dir(filename))), "sctl-data", "csv-"+versionSCTL)
 }

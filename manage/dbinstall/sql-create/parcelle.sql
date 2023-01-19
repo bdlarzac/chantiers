@@ -3,6 +3,6 @@
 create table parcelle (
     id                      int primary key,
     id_proprietaire         int not null references acteur(id),
-    code                    char(11) not null, -- = code INSEE commune + code à 6 car.
+    code                    char(6) not null,
     surface                 numeric
 );

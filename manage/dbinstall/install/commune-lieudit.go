@@ -21,6 +21,10 @@ import (
 // Prend les données dans install/data/commune.csv
 // A la différence des autres données venant de la SCTL,
 // commune.csv est versionné (car modifié, ajout de colonne nom_court)
+//
+// Note : La base initiale ne contient pas code insee
+//        Voir manage/dbmigrate/2023-01-16-fix-parcelle.go
+//
 func FillCommune(ctx *ctxt.Context) {
 	fmt.Println("Remplit table commune à partir de commune.csv")
 	dirCsv := GetDataDir()
@@ -45,7 +49,7 @@ func FillCommune(ctx *ctxt.Context) {
 func FillLieudit(ctx *ctxt.Context, versionSCTL string) {
 	fmt.Println("Remplit table lieudit à partir de LieuDit.csv")
 
-	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(versionSCTL)
 	filename := path.Join(dirCsv, "LieuDit.csv")
 	records, err := tiglib.CsvMap(filename, ';')
 	if err != nil {
@@ -68,7 +72,7 @@ func FillLiensCommuneLieudit(ctx *ctxt.Context, versionSCTL string) {
 	table := "commune_lieudit"
 	fmt.Println("Remplit table " + table + " à partir de SubdivCadastre.csv")
 
-	dirCsv := GetSCTLDataDir(ctx, versionSCTL)
+	dirCsv := GetSCTLDataDir(versionSCTL)
 	filename := path.Join(dirCsv, "SubdivCadastre.csv")
 	//
 	records, err := tiglib.CsvMap(filename, ';') // N = 2844 pour base 2018

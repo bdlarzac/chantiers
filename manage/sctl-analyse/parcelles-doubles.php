@@ -26,17 +26,19 @@ function teste_parcelles(&$csv){
     $all = []; // assoc code parcelle => nb occurence
     foreach($csv as $line){
         $codeP = $line['PARCELLE'];
+        $idP = $line['IdParcelle'];
         if(!isset($all[$codeP])){
             $all[$codeP] = 1;
         } else {
             $all[$codeP]++;
         }
     }
-    echo "Parcelles en double :\n";
+    echo "Liste des codes parcelle à 6 caractères apparaîssant plusieurs fois :\n";
     $N = 0;
-    foreach($all as $code => $n){
+    ksort($all);
+    foreach($all as $codeP => $n){
         if($n > 1){
-            echo "$code : $n\n";
+            echo "$codeP : $n\n";
             $N++;
         }
     }
@@ -63,9 +65,7 @@ function teste_parcelles(&$csv){
     ];
     foreach($prods as $prod){
         if($all[$prod] > 1){
-            echo "PROBLEM sur la prod : $prod\n";
+            echo "Impliqué dans chantier chauffage fermier : $prod\n";
         }
     }
-    
-    
 }
