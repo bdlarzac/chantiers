@@ -16,6 +16,7 @@ type Commune struct {
 	Id       int // IdCommune de la base SCTL
 	Nom      string
 	NomCourt string
+	CodeInsee string
 	Lieudits []*Lieudit
 }
 

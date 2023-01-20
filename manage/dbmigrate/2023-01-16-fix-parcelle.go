@@ -22,17 +22,17 @@ import (
 
 func Migrate_2023_01_16_fix_parcelle(ctx *ctxt.Context) {
 	versionSCTL := "2023-01-11"
-//	alterTableParcelle(ctx)
-//	fillTableParcelle(ctx, versionSCTL)
-//	 alterTableCommune(ctx)
-//	fillTableCommune(ctx, versionSCTL)
-	fillLiensParcelleUG(ctx, versionSCTL)
+	alterTableParcelle_2023_01_16(ctx)
+	fillTableParcelle_2023_01_16(ctx, versionSCTL)
+	alterTableCommune_2023_01_16(ctx)
+	fillTableCommune_2023_01_16(ctx, versionSCTL)
+	fillLiensParcelleUG_2023_01_16(ctx, versionSCTL)
 	fmt.Println("Migration effectuée : 2023-01-16-fix-parcelle")
 }
 
 // Fonctions auxiliaires, commencent par des minuscules
 
-func alterTableParcelle(ctx *ctxt.Context) {
+func alterTableParcelle_2023_01_16(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
@@ -48,7 +48,7 @@ func alterTableParcelle(ctx *ctxt.Context) {
 	}
 }
 
-func fillTableParcelle(ctx *ctxt.Context, versionSCTL string) {
+func fillTableParcelle_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	var dirCsv, filename, csvname string
 	var err error
 	// Charge parcelles
@@ -72,7 +72,7 @@ func fillTableParcelle(ctx *ctxt.Context, versionSCTL string) {
 	}	
 }
 
-func alterTableCommune(ctx *ctxt.Context) {
+func alterTableCommune_2023_01_16(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
@@ -88,7 +88,7 @@ func alterTableCommune(ctx *ctxt.Context) {
 	}
 }
 
-func fillTableCommune(ctx *ctxt.Context, versionSCTL string) {
+func fillTableCommune_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
  	var dirCsv, filename, csvname string
 	csvname = "commune.csv"
 	dirCsv = install.GetDataDir()
@@ -104,14 +104,14 @@ func fillTableCommune(ctx *ctxt.Context, versionSCTL string) {
 	}
 }
 
-func fillLiensParcelleUG(ctx *ctxt.Context, versionSCTL string) {
+func fillLiensParcelleUG_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	var dirCsv, filename, csvname string
 	var err error
 	db := ctx.DB
     var query string
 	
 	// Prépare code parcelle 11 => id parcelle
-	parcelle11_id := make(map[string]string, 2351) // 2351 = nb de parcelles en base
+	parcelle11_id := make(map[string]int, 2351) // 2351 = nb de parcelles en base
 	query = "select concat(c.codeinsee, p.code) as code11, p.id as idParcelle from commune as c,parcelle as p where c.id=p.id_commune"
 	rows, err := db.Query(query)
 	if err != nil {
@@ -125,12 +125,12 @@ func fillLiensParcelleUG(ctx *ctxt.Context, versionSCTL string) {
         if err != nil {
             panic(err)
         }
-        parcelle11_id[code11] = strconv.Itoa(idParcelle)
+        parcelle11_id[code11] = idParcelle
 	}
 	
 	// Prépare code ug => id ug
-	ug_code_id := make(map[string]string, 659) // 659 = nb de ugs en base
-	query = "select id,code from ug limit 10"
+	ug_code_id := make(map[string]int, 659) // 659 = nb de ugs en base
+	query = "select id,code from ug"
 	rows, err = db.Query(query)
 	if err != nil {
 		panic(err)
@@ -143,7 +143,7 @@ func fillLiensParcelleUG(ctx *ctxt.Context, versionSCTL string) {
         if err != nil {
             panic(err)
         }
-        ug_code_id[codeUG] = strconv.Itoa(idUG)
+        ug_code_id[codeUG] = idUG
 	}
 	
 	// Charge UGs
@@ -162,58 +162,20 @@ func fillLiensParcelleUG(ctx *ctxt.Context, versionSCTL string) {
 		panic(err)
 	}
 	
-	// Remplit parcelle_ug en utilisant code à 11 caractères
+	// Remplit trable parcelle_ug en utilisant code à 11 caractères
+	stmt, err := db.Prepare("insert into parcelle_ug(id_parcelle, id_ug) values($1,$2)")
 	for _, ug := range(ugs) {
-fmt.Printf("%+v\n",ug)
-break
-	}
-    
-}
-
-
-/** 
-    Modifie Parcelle.csv an ajoutant une colonne code11 = code initial (6 caractères) précédé du code INSEE de la commune
-**/
-/* 
-func AddParcelleCode11(ctx *ctxt.Context, versionSCTL string) {
-	fmt.Println("Modifie Parcelle.csv (ajoute colonne PARCELLE11)")
-	var dirCsv, filename, csvname string
-	var records []map[string]string
-	
-	// Prépare map id commune => code INSEE
-	csvname = "commune.csv"
-	dirCsv = GetDataDir()
-	filename = path.Join(dirCsv, csvname)
-	records, _ = tiglib.CsvMap(filename, ';')
-	id_insee := make(map[string]string)
-	for _, v := range records {
-	    id_insee[v["id"]] = v["code_insee"]
-	}
-	
-	// Charge le fichier à modifier
-	csvname = "Parcelle.csv"
-	dirCsv = GetSCTLDataDir(versionSCTL)
-	filename = path.Join(dirCsv, csvname)
-	records, _ = tiglib.CsvMap(filename, ';')
-	
-	// Génère le fichier modifié
-	keys := []string{"PARCELLE", "SURFACE", "REVENU", "SCTL", "IdParcelle", "IdGfa", "IdCommune", "IdLieuDit", "IdTypeCad", "IdClassCad", "PARCELLE11"}
-	res := strings.Join(keys, ";") + "\n"
-	for _, v := range records {
-	    for _, key := range(keys[:len(keys)-1]){
-            res += v[key] + ";"
+	    codeUG = ug["PG"]
+	    if codeUG == "" || codeUG == "0" {
+	        continue
 	    }
-	    res += id_insee[v["IdCommune"]] + v["PARCELLE"] + "\n"
-	}
-	file, err := os.Create(filename)
-	if err != nil {
-	    panic(err)
-	}
-	defer file.Close()
-	_, err = file.WriteString(res)
-	if err != nil {
-	    panic(err)
+	    code11 = ug["ID_PARCELLE_11"]
+	    idUG = ug_code_id[codeUG]
+	    idParcelle = parcelle11_id[code11]
+		_, err = stmt.Exec(idParcelle, idUG)
+        if err != nil {
+            //panic(err)
+            //fmt.Printf("ERREUR insert parcelle_ug : codeUG = %s - code11 = %s - idParcelle=%d\n",codeUG, code11, idParcelle)
+        }
 	}
 }
-
-*/

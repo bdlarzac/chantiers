@@ -6,10 +6,15 @@
 <h1>Lieu-dit {{.Details.Nom}}</h1>
 
 <div class="page-content">
+{{/* 
+{{range .Details.Communes}}
+    <div>{{.Nom}}</div>
+{{end}}
+*/}}
 
 <table class="entities">
     
-    <tr><th>Parcelle</th><th>Fermier(s)</th><th>Unités de gestion</th><th>Commune(s)</th></tr>
+    <tr><th>Parcelle</th><th>Fermier(s)</th><th>Unités de gestion</th><th>Commune</th></tr>
 
     {{range .Details.Parcelles}}
     <tr>
@@ -25,10 +30,8 @@
             {{end}}
         </td>
         <td>
-        {{with $.Details.Communes}}
-            {{range .}}
-                {{.Nom}}
-            {{end}}
+        {{range .Communes}}
+            {{.Nom}}
         {{end}}
         </td>
     </tr>

@@ -9,7 +9,7 @@
     <tr><th>Commune</th><th>Lieux-dits</th></tr>
     {{range .Details}}
     <tr>
-        <td class="whitespace-pre">{{.Nom}}</td>
+        <td class="whitespace-pre">{{.Nom}}<br>{{.CodeInsee}}</td>
         <td class="padding05">
         {{range .Lieudits}}
             <a class="whitespace-pre padding-right" href="/lieudit/{{.Id}}">{{.Nom}}</a>

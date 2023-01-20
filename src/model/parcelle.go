@@ -19,6 +19,7 @@ type Parcelle struct {
 	IdProprietaire int `db:"id_proprietaire"`
 	Code           string
 	Surface        float32
+	IdCommune      int `db:"id_commune"`
 	// Pas en base
 	Proprietaire *Acteur
 	Lieudits     []*Lieudit
@@ -84,12 +85,8 @@ func (p *Parcelle) ComputeCommunes(db *sqlx.DB) (err error) {
 		return nil // déjà calculé
 	}
 	query := `
-	    select * from commune where id in(
-            select id_commune from commune_lieudit where id_lieudit in(
-                select id_lieudit from parcelle_lieudit where id_parcelle=$1
-            )
-        ) order by nom`
-	err = db.Select(&p.Communes, query, p.Id)
+	    select * from commune where id=$1`
+	err = db.Select(&p.Communes, query, p.IdCommune)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

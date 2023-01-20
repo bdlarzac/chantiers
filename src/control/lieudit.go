@@ -43,11 +43,15 @@ func ShowLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel ComputeFermiers()")
 		}
+		err = lieudit.Parcelles[i].ComputeCommunes(ctx.DB)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel Parcelle.ComputeCommunes()")
+		}
 	}
 
-	err = lieudit.ComputeCommunes(ctx.DB)
+	err = lieudit.ComputeCommune(ctx.DB)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel ComputeCommunes()")
+		return werr.Wrapf(err, "Erreur appel Lieudit.ComputeCommunes()")
 	}
 
 	ctx.TemplateName = "lieudit-show.html"

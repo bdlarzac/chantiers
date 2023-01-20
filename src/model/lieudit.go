@@ -83,7 +83,7 @@ func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) (lds []*Lieudit, err erro
 		return lds, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	for _, ld := range lds {
-		err = ld.ComputeCommunes(db)
+		err = ld.ComputeCommune(db)
 		if err != nil {
 			return lds, werr.Wrapf(err, "Erreur appel ComputeCommunes()")
 		}
@@ -110,7 +110,7 @@ func (ld *Lieudit) ComputeParcelles(db *sqlx.DB) (err error) {
 }
 
 // Remplit le champ Communes d'un Lieudit
-func (ld *Lieudit) ComputeCommunes(db *sqlx.DB) (err error) {
+func (ld *Lieudit) ComputeCommune(db *sqlx.DB) (err error) {
 	if len(ld.Communes) != 0 {
 		return nil // déjà calculé
 	}

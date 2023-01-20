@@ -31,9 +31,9 @@ func ShowParcelle(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	}
 
 	for i, _ := range parcelle.Lieudits {
-		err = parcelle.Lieudits[i].ComputeCommunes(ctx.DB)
+		err = parcelle.Lieudits[i].ComputeCommune(ctx.DB)
 		if err != nil {
-			return werr.Wrapf(err, "Erreur appel ComputeCommunes()")
+			return werr.Wrapf(err, "Erreur appel LieuDit.ComputeCommune()")
 		}
 	}
 
