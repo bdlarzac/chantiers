@@ -2,11 +2,11 @@ module bdl.dbinstall/bdl
 
 go 1.18
 
-replace bdl.local/bdl => ../../src/
-replace bdl.dbmigrate/bdl => ../dbmigrate
+// replace bdl.local/bdl => ../../src/
+// replace bdl.dbmigrate/bdl => ../db-migrate
 
 require (
-	bdl.local/bdl v0.0.0-00010101000000-000000000000
+//	bdl.local/bdl v0.0.0-00010101000000-000000000000
 	golang.org/x/text v0.6.0
 )
 

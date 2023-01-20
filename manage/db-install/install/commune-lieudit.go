@@ -23,7 +23,7 @@ import (
 // commune.csv est versionné (car modifié, ajout de colonne nom_court)
 //
 // Note : La base initiale ne contient pas code insee
-//        Voir manage/dbmigrate/2023-01-16-fix-parcelle.go
+//        Voir manage/db-migrate/2023-01-16-fix-parcelle.go
 //
 func FillCommune(ctx *ctxt.Context) {
 	fmt.Println("Remplit table commune à partir de commune.csv")

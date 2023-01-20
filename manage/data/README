@@ -1,5 +1,7 @@
 
 Données servant à fabriquer la première base de prod
+Données "stables", ne dépendant pas de la version de la base SCTL
+
 - ug.csv
     Issu du PSG. Doit être remplacé à chaque modification du PSG
 - commune.csv

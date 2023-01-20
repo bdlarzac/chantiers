@@ -60,9 +60,8 @@ func main() {
 		Migrate_2022_09_24_km_livraison(ctx)
 	case "Migrate_2023_01_16_fix_parcelle":
 	    Migrate_2023_01_16_fix_parcelle(ctx)
-	    
-	case "Migrate_2023_01_chantier_parcelle":
-		Migrate_2023_01_chantier_parcelle(ctx)
+	case "Migrate_2023_01_23_chantier_parcelle":
+		Migrate_2023_01_23_chantier_parcelle(ctx)
 	}
     
 }

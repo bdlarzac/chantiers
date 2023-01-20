@@ -12,11 +12,13 @@ package main
 
 import (
 	"bdl.local/bdl/ctxt"
+	"bdl.dbinstall/bdl/install"
 	"fmt"
 )
 
-func Migrate_2023_01_chantier_parcelle(ctx *ctxt.Context) {
+func Migrate_2023_01_23_chantier_parcelle(ctx *ctxt.Context) {
 	fmt.Println("ok, ici")
+	fmt.Println("install.GetDataDir() = " + install.GetDataDir())
 	return
 	db := ctx.DB
 	query := `alter table venteplaq add column facturelivraisonnbkm numeric not null default 0`

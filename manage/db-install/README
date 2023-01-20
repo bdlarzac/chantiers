@@ -2,4 +2,4 @@
 Code servant à initialiser la base de prod.
 Pas utilisé en fonctionnement normal
 
-Va chercher des données à différents endroits (voir paths.go)
+Va chercher des données à différents endroits (voir install/paths.go)
