@@ -13,7 +13,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	//"fmt"
 )
 
 type Chaufer struct {
@@ -161,7 +160,7 @@ func (chantier *Chaufer) ComputeLiensParcelles(db *sqlx.DB) error {
 		return nil
 	}
 	var err error
-	query := "select * from chaufer_parcelle where id_chaufer=$1"
+	query := "select * from chantier_parcelle where type_chantier='chaufer' and id_chantier=$1"
 	err = db.Select(&chantier.LiensParcelles, query, chantier.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
@@ -203,14 +202,15 @@ func InsertChaufer(db *sqlx.DB, chantier *Chaufer) (int, error) {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	query = "insert into chaufer_parcelle values($1,$2,$3,$4)"
+	query = "insert into chantier_parcelle values($1,$2,$3,$4,$5)"
 	for _, lien := range chantier.LiensParcelles {
 		_, err = db.Exec(
 			query,
 			id,
 			lien.IdParcelle,
 			lien.Entiere,
-			lien.Surface)
+			lien.Surface,
+			"chaufer")
 		if err != nil {
 			return id, werr.Wrapf(err, "Erreur query : "+query)
 		}
@@ -243,19 +243,20 @@ func UpdateChaufer(db *sqlx.DB, chantier *Chaufer) error {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	query = "delete from chaufer_parcelle where id_chaufer=$1"
+	query = "delete from chantier_parcelle where type_chantier='chaufer' and id_chantier=$1"
 	_, err = db.Exec(query, chantier.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	query = "insert into chaufer_parcelle values($1,$2,$3,$4)"
+	query = "insert into chantier_parcelle values($1,$2,$3,$4,$5)"
 	for _, lien := range chantier.LiensParcelles {
 		_, err = db.Exec(
 			query,
 			lien.IdChantier,
 			lien.IdParcelle,
 			lien.Entiere,
-			lien.Surface)
+			lien.Surface,
+			"chaufer")
 		if err != nil {
 			return werr.Wrapf(err, "Erreur query : "+query)
 		}
@@ -264,7 +265,7 @@ func UpdateChaufer(db *sqlx.DB, chantier *Chaufer) error {
 }
 
 func DeleteChaufer(db *sqlx.DB, id int) error {
-	query := "delete from chaufer_parcelle where id_chaufer=$1"
+	query := "delete from chantier_parcelle where type_chantier='chaufer' and id_chantier=$1"
 	_, err := db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

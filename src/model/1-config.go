@@ -81,7 +81,7 @@ func MustLoadEnv() {
 	if err != nil {
 		log.Printf("Chargement env %s : %s\n", configFile, err)
 	} else {
-		log.Printf("Chargement env %s OK\n", configFile)
+		//log.Printf("Chargement env %s OK\n", configFile)
 	}
 	SERVER_ENV = serverEnv{
 		DATABASE_URL:      os.Getenv("DATABASE_URL"),
