@@ -115,10 +115,10 @@ func FillLiensParcelleFermier(ctx *ctxt.Context, versionSCTL string) {
 
 	// insert db
 	db := ctx.DB
-    sql := fmt.Sprintf("truncate table %s", table)
-    if _, err = db.Exec(sql); err != nil {
-        panic(err)
-    }
+	sql := fmt.Sprintf("truncate table %s", table)
+	if _, err = db.Exec(sql); err != nil {
+		panic(err)
+	}
 	n := 0
 	for _, unique := range uniques {
 		idP := unique[0]
@@ -130,6 +130,6 @@ func FillLiensParcelleFermier(ctx *ctxt.Context, versionSCTL string) {
 		}
 	}
 	if n != 0 {
-        fmt.Printf("  %d associations pas enregistrées (bugs SCTL ?)\n", n)
-    }
+		fmt.Printf("  %d associations pas enregistrées (bugs SCTL ?)\n", n)
+	}
 }

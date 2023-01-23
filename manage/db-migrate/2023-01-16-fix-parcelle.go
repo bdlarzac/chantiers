@@ -12,12 +12,12 @@
 package main
 
 import (
+	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
-	"bdl.dbinstall/bdl/install"
+	"fmt"
 	"path"
 	"strconv"
-	"fmt"
 )
 
 func Migrate_2023_01_16_fix_parcelle(ctx *ctxt.Context) {
@@ -63,13 +63,13 @@ func fillTableParcelle_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	}
 	stmt, err := db.Prepare("update parcelle set id_commune=$1 where id=$2")
 	for _, parcelle := range parcelles {
-        idCommune, _ := strconv.Atoi(parcelle["IdCommune"])
-        idParcelle, _ := strconv.Atoi(parcelle["IdParcelle"])
+		idCommune, _ := strconv.Atoi(parcelle["IdCommune"])
+		idParcelle, _ := strconv.Atoi(parcelle["IdParcelle"])
 		_, err = stmt.Exec(idCommune, idParcelle)
 		if err != nil {
 			panic(err)
 		}
-	}	
+	}
 }
 
 func alterTableCommune_2023_01_16(ctx *ctxt.Context) {
@@ -89,18 +89,18 @@ func alterTableCommune_2023_01_16(ctx *ctxt.Context) {
 }
 
 func fillTableCommune_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
- 	var dirCsv, filename, csvname string
+	var dirCsv, filename, csvname string
 	csvname = "commune.csv"
 	dirCsv = install.GetDataDir()
 	filename = path.Join(dirCsv, csvname)
 	communes, _ := tiglib.CsvMap(filename, ';')
-    db := ctx.DB
+	db := ctx.DB
 	stmt, err := db.Prepare("update commune set codeinsee=$1 where id=$2")
 	for _, commune := range communes {
 		_, err = stmt.Exec(commune["code_insee"], commune["id"])
-        if err != nil {
-            panic(err)
-        }
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -108,8 +108,8 @@ func fillLiensParcelleUG_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	var dirCsv, filename, csvname string
 	var err error
 	db := ctx.DB
-    var query string
-	
+	var query string
+
 	// Prépare code parcelle 11 => id parcelle
 	parcelle11_id := make(map[string]int, 2351) // 2351 = nb de parcelles en base
 	query = "select concat(c.codeinsee, p.code) as code11, p.id as idParcelle from commune as c,parcelle as p where c.id=p.id_commune"
@@ -121,13 +121,13 @@ func fillLiensParcelleUG_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	var idParcelle int
 	var code11 string
 	for rows.Next() {
-        err := rows.Scan(&code11, &idParcelle)
-        if err != nil {
-            panic(err)
-        }
-        parcelle11_id[code11] = idParcelle
+		err := rows.Scan(&code11, &idParcelle)
+		if err != nil {
+			panic(err)
+		}
+		parcelle11_id[code11] = idParcelle
 	}
-	
+
 	// Prépare code ug => id ug
 	ug_code_id := make(map[string]int, 659) // 659 = nb de ugs en base
 	query = "select id,code from ug"
@@ -139,13 +139,13 @@ func fillLiensParcelleUG_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	var idUG int
 	var codeUG string
 	for rows.Next() {
-        err := rows.Scan(&idUG, &codeUG)
-        if err != nil {
-            panic(err)
-        }
-        ug_code_id[codeUG] = idUG
+		err := rows.Scan(&idUG, &codeUG)
+		if err != nil {
+			panic(err)
+		}
+		ug_code_id[codeUG] = idUG
 	}
-	
+
 	// Charge UGs
 	csvname = "ug.csv"
 	dirCsv = install.GetDataDir()
@@ -154,28 +154,28 @@ func fillLiensParcelleUG_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Vide table parcelle_ug
 	query = `truncate table parcelle_ug`
 	_, err = db.Exec(query)
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Remplit trable parcelle_ug en utilisant code à 11 caractères
 	stmt, err := db.Prepare("insert into parcelle_ug(id_parcelle, id_ug) values($1,$2)")
-	for _, ug := range(ugs) {
-	    codeUG = ug["PG"]
-	    if codeUG == "" || codeUG == "0" {
-	        continue
-	    }
-	    code11 = ug["ID_PARCELLE_11"]
-	    idUG = ug_code_id[codeUG]
-	    idParcelle = parcelle11_id[code11]
+	for _, ug := range ugs {
+		codeUG = ug["PG"]
+		if codeUG == "" || codeUG == "0" {
+			continue
+		}
+		code11 = ug["ID_PARCELLE_11"]
+		idUG = ug_code_id[codeUG]
+		idParcelle = parcelle11_id[code11]
 		_, err = stmt.Exec(idParcelle, idUG)
-        if err != nil {
-            //panic(err)
-            //fmt.Printf("ERREUR insert parcelle_ug : codeUG = %s - code11 = %s - idParcelle=%d\n",codeUG, code11, idParcelle)
-        }
+		if err != nil {
+			//panic(err)
+			//fmt.Printf("ERREUR insert parcelle_ug : codeUG = %s - code11 = %s - idParcelle=%d\n",codeUG, code11, idParcelle)
+		}
 	}
 }

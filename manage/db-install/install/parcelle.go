@@ -123,10 +123,10 @@ func FillLiensParcelleLieudit(ctx *ctxt.Context, versionSCTL string) {
 
 	// insert db
 	db := ctx.DB
-    sql := fmt.Sprintf("truncate table %s", table)
-    if _, err = db.Exec(sql); err != nil {
-        panic(err)
-    }
+	sql := fmt.Sprintf("truncate table %s", table)
+	if _, err = db.Exec(sql); err != nil {
+		panic(err)
+	}
 	for _, record := range records {
 		idP := record["IdParcelle"]
 		idLD := record["IdLieuDit"]

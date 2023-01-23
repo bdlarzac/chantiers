@@ -1,8 +1,8 @@
-    /******************************************************************************
+/******************************************************************************
 
     Modifications (migrations) de la base BDL
     Code pas utilisé en fonctionnement normal.
-    
+
     Lancer l'exécution en utilisant des variables d'environnement et en utilisant *.go :
     ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run *.go
 
@@ -13,15 +13,15 @@
 package main
 
 import (
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/model"
 	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
-	"strings"
 	"sort"
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/tiglib"
-	"bdl.local/bdl/model"
+	"strings"
 )
 
 var possibleMigrations []string
@@ -29,11 +29,11 @@ var possibleMigrations []string
 // *********************************************************
 func main() {
 	possibleMigrations = computeMigrations()
-    msgPossibles := "Migrations possibles : \n    " + strings.Join(possibleMigrations, "\n    ")
+	msgPossibles := "Migrations possibles : \n    " + strings.Join(possibleMigrations, "\n    ")
 	if len(os.Args) != 2 {
-	    fmt.Println("Cette commande a besoin d'un argument, la migration à exécuter")
+		fmt.Println("Cette commande a besoin d'un argument, la migration à exécuter")
 		fmt.Println(msgPossibles)
-	    return
+		return
 	}
 	migration := os.Args[1]
 	if !tiglib.InArrayString(migration, possibleMigrations) {
@@ -41,7 +41,7 @@ func main() {
 		fmt.Println(msgPossibles)
 		return
 	}
-	
+
 	model.MustLoadEnv()
 	ctxt.MustLoadConfig()
 	ctxt.MustInitDB()
@@ -59,11 +59,11 @@ func main() {
 	case "Migrate_2022_09_24_km_livraison":
 		Migrate_2022_09_24_km_livraison(ctx)
 	case "Migrate_2023_01_16_fix_parcelle":
-	    Migrate_2023_01_16_fix_parcelle(ctx)
+		Migrate_2023_01_16_fix_parcelle(ctx)
 	case "Migrate_2023_01_23_chantier_parcelle":
 		Migrate_2023_01_23_chantier_parcelle(ctx)
 	}
-    
+
 }
 
 // *********************************************************
@@ -79,8 +79,8 @@ func computeMigrations() (res []string) {
 	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
 		m := r.FindStringSubmatch(line)
 		if !strings.Contains(m[1], "Output") { // virer la ligne avec exec.Command du grep !!!
-            res = append(res, m[1])
-        }
+			res = append(res, m[1])
+		}
 	}
 	sort.Strings(res)
 	return res

@@ -14,14 +14,14 @@ import (
 )
 
 type Fermier struct {
-	Id        int // IdExploitant de la base SCTL
-	Nom       string
-	Prenom    string
-	Adresse   string
-	Cp        string
-	Ville     string
-	Tel       string
-	Email     string
+	Id      int // IdExploitant de la base SCTL
+	Nom     string
+	Prenom  string
+	Adresse string
+	Cp      string
+	Ville   string
+	Tel     string
+	Email   string
 	// Pas stocké en base
 	Parcelles []*Parcelle
 }
@@ -148,13 +148,13 @@ func InsertFermier(db *sqlx.DB, f *Fermier) (err error) {
 	_, err = db.Exec(
 		query,
 		f.Id,
-        f.Nom,
-        f.Prenom,
-        f.Adresse,
-        f.Cp,
-        f.Ville,
-        f.Tel,
-        f.Email)
+		f.Nom,
+		f.Prenom,
+		f.Adresse,
+		f.Cp,
+		f.Ville,
+		f.Tel,
+		f.Email)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -173,18 +173,16 @@ func UpdateFermier(db *sqlx.DB, f *Fermier) (err error) {
     ) = ($1,$2,$3,$4,$5,$6,$7) where id=$8`
 	_, err = db.Exec(
 		query,
-        f.Nom,
-        f.Prenom,
-        f.Adresse,
-        f.Cp,
-        f.Ville,
-        f.Tel,
-        f.Email,
+		f.Nom,
+		f.Prenom,
+		f.Adresse,
+		f.Cp,
+		f.Ville,
+		f.Tel,
+		f.Email,
 		f.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return nil
 }
-
-

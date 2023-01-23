@@ -1,7 +1,7 @@
 /******************************************************************************
 
     Installation et initialisation de la base BDL
-    
+
     Lancer l'exécution en utilisant des variables d'environnement :
     ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run 1-main.go
 
@@ -21,10 +21,10 @@
 package main
 
 import (
+	"bdl.dbinstall/bdl/fixture"
+	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"bdl.dbinstall/bdl/install"
-	"bdl.dbinstall/bdl/fixture"
 	"flag"
 	"fmt"
 	"os"
@@ -134,18 +134,18 @@ func handleInstall(ctx *ctxt.Context) {
 	if *flagInstall == "all" {
 
 		/*
-		//fmt.Printf("db = %+v\n",ctx)
-				db := ctx.DB
-				var err error
-				_, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
-				if err != nil {
-					panic(err)
-				}
-				_, err = db.Exec(fmt.Sprintf("create schema %s", ctx.Config.Database.Schema))
-				if err != nil {
-					panic(err)
-				}
-				_, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
+			//fmt.Printf("db = %+v\n",ctx)
+					db := ctx.DB
+					var err error
+					_, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
+					if err != nil {
+						panic(err)
+					}
+					_, err = db.Exec(fmt.Sprintf("create schema %s", ctx.Config.Database.Schema))
+					if err != nil {
+						panic(err)
+					}
+					_, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
 		*/
 
 		installTypes(ctx)

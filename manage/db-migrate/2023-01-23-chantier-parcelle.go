@@ -11,8 +11,8 @@
 package main
 
 import (
-	"bdl.local/bdl/ctxt"
 	"bdl.dbinstall/bdl/install"
+	"bdl.local/bdl/ctxt"
 	"fmt"
 )
 

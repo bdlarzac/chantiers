@@ -13,11 +13,11 @@ import (
 )
 
 type Commune struct {
-	Id       int // IdCommune de la base SCTL
-	Nom      string
-	NomCourt string
+	Id        int // IdCommune de la base SCTL
+	Nom       string
+	NomCourt  string
 	CodeInsee string
-	Lieudits []*Lieudit
+	Lieudits  []*Lieudit
 }
 
 const N_COMMUNES = 13
