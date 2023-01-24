@@ -1,6 +1,6 @@
 module bdl.dbmigrate/bdl
 
-go 1.18
+go 1.19
 
 // replace bdl.local/bdl => ../../src/
 // replace bdl.dbinstall/bdl => ../dbinstall
