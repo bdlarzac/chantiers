@@ -78,6 +78,7 @@ func ListPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 }
 
 // *********************************************************
+// Affichage d'un chantier plaquettes
 func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	tab := vars["tab"]
@@ -153,13 +154,13 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
-		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertPlaq()
-		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à InsertPlaq()
+		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
 		if err != nil {
 			return err
 		}
 		//
-		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
+		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUGs, idsParcelles, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -242,13 +243,13 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
-		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdatePlaq()
-		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à UpdatePlaq()
+		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
 		if err != nil {
 			return err
 		}
 		//
-		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
+		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUGs, idsParcelles, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -331,8 +332,8 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 // Fabrique un Plaq à partir des valeurs d'un formulaire.
 // Auxiliaire de NewPlaq() et UpdatePlaq()
 // Ne gère pas le champ Id
-// Ne gère pas les stockages (tas) (parce que besoinde DB pour le calculer)
-// Ne gère pas liens vers UGs, lieux-dits, fermiers (parce que model.Plaq ne possède pas ces champs)
+// Ne gère pas les stockages (tas) (parce que besoin de DB pour le calculer)
+// Ne gère pas liens vers UGs, parcelles, lieux-dits, fermiers (parce que model.Plaq ne possède pas ces champs)
 func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 	ch := &model.Plaq{}
 	var err error

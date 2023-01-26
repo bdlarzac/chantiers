@@ -29,19 +29,7 @@ type Chaufer struct {
 	// Pas stocké dans la table
 	Fermier        *Fermier
 	UG             *UG
-	LiensParcelles []*ChauferParcelle
-}
-
-// Lien entre une parcelle et un chaufer
-// Pour chaque parcelle, on doit préciser s'il s'agit d'une parcelle entière ou pas.
-// S'il ne s'agit pas d'une parcelle entière, il faut préciser la surface concernée par la coupe.
-type ChauferParcelle struct {
-	IdChaufer  int `db:"id_chaufer"`
-	IdParcelle int `db:"id_parcelle"`
-	Entiere    bool
-	Surface    float64
-	// Pas stocké en base
-	Parcelle *Parcelle
+	LiensParcelles []*ChantierParcelle
 }
 
 // ************************** Nom *******************************
@@ -264,7 +252,7 @@ func UpdateChaufer(db *sqlx.DB, chantier *Chaufer) error {
 	for _, lien := range chantier.LiensParcelles {
 		_, err = db.Exec(
 			query,
-			lien.IdChaufer,
+			lien.IdChantier,
 			lien.IdParcelle,
 			lien.Entiere,
 			lien.Surface)

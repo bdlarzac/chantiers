@@ -116,7 +116,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		chantier := &model.Chaufer{}
 		chantier.Fermier = &model.Fermier{}
 		chantier.UG = &model.UG{}
-		chantier.LiensParcelles = []*model.ChauferParcelle{}
+		chantier.LiensParcelles = []*model.ChantierParcelle{}
 		weboFermier, err := WeboFermier(ctx)
 		if err != nil {
 			return err
@@ -236,8 +236,8 @@ func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 // Fabrique un Chaufer à partir des valeurs d'un formulaire.
 // Auxiliaire de NewChaufer() et UpdateChaufer()
 // Ne gère pas le champ Id
-// Attention : construit des ChauferParcelle ;
-//     pour form new, IdChaufer = 0 ; pour form update, IdChaufer a la bonne valeur
+// Attention : construit des ChantierParcelle ;
+//     pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
 func chantierChauferForm2var(r *http.Request) (*model.Chaufer, error) {
 	chantier := &model.Chaufer{}
 	var err error
@@ -260,8 +260,8 @@ func chantierChauferForm2var(r *http.Request) (*model.Chaufer, error) {
 	idChaufer, _ := strconv.Atoi(r.PostFormValue("id-chantier"))
 	for k, v := range r.PostForm {
 		if strings.HasPrefix(k, "radio-parcelle-") {
-			lien := model.ChauferParcelle{}
-			lien.IdChaufer = idChaufer
+			lien := model.ChantierParcelle{}
+			lien.IdChantier = idChaufer
 			idPString := strings.Replace(k, "radio-parcelle-", "", -1)
 			idP, _ := strconv.Atoi(idPString)
 			lien.IdParcelle = idP

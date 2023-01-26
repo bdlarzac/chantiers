@@ -15,10 +15,14 @@
         {{template "chantier-lien.html" $.Details}}
         
         {{/*
-            divs pour contenir lieux-dits et fermiers
+            divs pour contenir parcelles, lieux-dits et fermiers
+            empty-parcelle contiendra la liste des parcelles avec les checkboxes
             empty-lieudit contiendra la liste des lieux-dits avec les checkboxes
             empty-fermier contiendra la liste des fermiers avec les checkboxes
         */}}
+        <label>Parcelles</label>
+        <div id="empty-parcelle"></div>
+        
         <label>Lieux-dits</label>
         <div id="empty-lieudit"></div>
         
@@ -98,6 +102,7 @@
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
     <input type="hidden" name="ids-stockages" id="ids-stockages" value="">
     <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+    <input type="hidden" name="ids-parcelles" id="ids-parcelles" value="">
     <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
     <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
     

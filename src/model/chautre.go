@@ -35,6 +35,7 @@ type Chautre struct {
 	Notes         string
 	// pas stocké en base
 	UGs           []*UG
+	Parcelles     []*Parcelle
 	Lieudits      []*Lieudit
 	Fermiers      []*Fermier
 	Proprietaires []*Acteur
@@ -56,7 +57,7 @@ func (ch *Chautre) FullString() string {
 
 // ************************** Get *******************************
 
-// Renvoie un chantier bois sur pied
+// Renvoie un chantier autres valorisations
 // contenant uniquement les données stockées en base
 func GetChautre(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	ch := &Chautre{}
@@ -69,11 +70,12 @@ func GetChautre(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	return ch, nil
 }
 
-// Renvoie un chantier bois sur pied contenant :
+// Renvoie un chantier autres valorisations contenant :
 //      - les données stockées dans la table
 //      - Acheteur
-//      - les lieux-dits
 //      - les UGs
+//      - les parcelles
+//      - les lieux-dits
 //      - les fermiers
 func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	ch, err := GetChautre(db, idChantier)
@@ -84,13 +86,17 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeAcheteur()")
 	}
-	err = ch.ComputeLieudits(db)
-	if err != nil {
-		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeLieuDits()")
-	}
 	err = ch.ComputeUGs(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeUGs()")
+	}
+	err = ch.ComputeParcelles(db)
+	if err != nil {
+		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeParcelles()")
+	}
+	err = ch.ComputeLieudits(db)
+	if err != nil {
+		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeLieuDits()")
 	}
 	err = ch.ComputeFermiers(db)
 	if err != nil {
@@ -103,7 +109,7 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	return ch, nil
 }
 
-// Renvoie la liste des années ayant des chantiers bois sur pied,
+// Renvoie la liste des années ayant des chantiers autres valorisations,
 // @param exclude   Année à exclure du résultat
 func GetChautreDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	res := []string{}
@@ -122,7 +128,7 @@ func GetChautreDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	return res, nil
 }
 
-// Renvoie la liste des chantiers bois sur pied pour une année donnée,
+// Renvoie la liste des chantiers autres valorisations pour une année donnée,
 // triés par ordre chronologique inverse.
 // Chaque chantier contient les mêmes champs que ceux renvoyés par GetChautreFull()
 func GetChautresOfYear(db *sqlx.DB, annee string) ([]*Chautre, error) {
@@ -169,6 +175,20 @@ func (ch *Chautre) ComputeUGs(db *sqlx.DB) error {
 	    select id_ug from chantier_ug where type_chantier='chautre' and id_chantier=$1
     )`
 	err := db.Select(&ch.UGs, query, &ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func (ch *Chautre) ComputeParcelles(db *sqlx.DB) error {
+	if len(ch.Parcelles) != 0 {
+		return nil // déjà calculé
+	}
+	query := `select * from parcelle where id in(
+	    select id_parcelle from chantier_parcelle where type_chantier='chautre' and id_chantier=$1
+    )`
+	err := db.Select(&ch.Parcelles, query, &ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -229,7 +249,7 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) error {
 
 // ************************** CRUD *******************************
 
-func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (int, error) {
+func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) (int, error) {
 	query := `insert into chautre(
         id_acheteur,
         typevente,
@@ -267,7 +287,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	// UGs
+	// Liens avec UGs
 	//
 	query = `insert into chantier_ug(
         type_chantier,
@@ -284,7 +304,24 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		}
 	}
 	//
-	// Lieudits
+	// Liens avec Parcelles
+	//
+	query = `insert into chantier_parcelle(
+        type_chantier,
+        id_chantier,
+        id_parcelle) values($1,$2,$3)`
+	for _, idParcelle := range idsParcelles {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			id,
+			idParcelle)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
+	// Liens avec Lieudits
 	//
 	query = `insert into chantier_lieudit(
         type_chantier,
@@ -301,7 +338,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		}
 	}
 	//
-	// Fermiers
+	// Liens avec Fermiers
 	//
 	query = `insert into chantier_fermier(
         type_chantier,
@@ -321,7 +358,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 	return id, nil
 }
 
-func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) error {
+func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) error {
 	query := `update chautre set(
         id_acheteur,
         typevente,
@@ -381,6 +418,28 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		}
 	}
 	//
+	// Parcelles
+	//
+	query = "delete from chantier_parcelle where type_chantier='chautre' and id_chantier=$1"
+	_, err = db.Exec(query, ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	query = `insert into chantier_parcelle(
+        type_chantier,
+        id_chantier,
+        id_parcelle) values($1,$2,$3)`
+	for _, idParcelle := range idsUG {
+		_, err = db.Exec(
+			query,
+			"chautre",
+			ch.Id,
+			idParcelle)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
 	// Lieudits
 	//
 	query = "delete from chantier_lieudit where type_chantier='chautre' and id_chantier=$1"
@@ -430,11 +489,17 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 
 func DeleteChautre(db *sqlx.DB, id int) error {
 	//
-	// delete UGs, Lieudits, Fermiers associés à ce chantier
+	// delete UGs, parcelles, Lieudits, Fermiers associés à ce chantier
 	//
 	var query string
 	var err error
 	query = "delete from chantier_ug where type_chantier='chautre' and id_chantier=$1"
+	_, err = db.Exec(query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	//
+	query = "delete from chantier_parcelle where type_chantier='chautre' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

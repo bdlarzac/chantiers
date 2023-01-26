@@ -20,7 +20,7 @@ import (
 // UpdatePlaq()
 // NewChautre()
 // UpdateChautre()
-func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsLieudits, idsFermiers []int, err error) {
+func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsParcelles, idsLieudits, idsFermiers []int, err error) {
 	rien := []int{}
 	var tmp []string
 	var str string
@@ -30,16 +30,25 @@ func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsLieudits, idsFermiers 
 	for _, str = range tmp {
 		id, err = strconv.Atoi(str)
 		if err != nil {
-			return rien, rien, rien, err
+			return rien, rien, rien, rien, err
 		}
 		idsUGs = append(idsUGs, id)
+	}
+	//
+	tmp = strings.Split(r.PostFormValue("ids-parcelles"), ",")
+	for _, str = range tmp {
+		id, err = strconv.Atoi(str)
+		if err != nil {
+			return rien, rien, rien, rien, err
+		}
+		idsParcelles = append(idsParcelles, id)
 	}
 	//
 	tmp = strings.Split(r.PostFormValue("ids-lieudits"), ",")
 	for _, str = range tmp {
 		id, err = strconv.Atoi(str)
 		if err != nil {
-			return rien, rien, rien, err
+			return rien, rien, rien, rien, err
 		}
 		idsLieudits = append(idsLieudits, id)
 	}
@@ -48,9 +57,9 @@ func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsLieudits, idsFermiers 
 	for _, str = range tmp {
 		id, err = strconv.Atoi(str)
 		if err != nil {
-			return rien, rien, rien, err
+			return rien, rien, rien, rien, err
 		}
 		idsFermiers = append(idsFermiers, id)
 	}
-	return idsUGs, idsLieudits, idsFermiers, nil
+	return idsUGs, idsParcelles, idsLieudits, idsFermiers, nil
 }

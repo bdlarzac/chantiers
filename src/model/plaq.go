@@ -31,6 +31,7 @@ type Plaq struct {
 	Notes           string
 	// pas stocké en base
 	UGs        []*UG
+	Parcelles  []*Parcelle
 	Lieudits   []*Lieudit
 	Fermiers   []*Fermier
 	Volume     float64
@@ -107,6 +108,7 @@ func GetPlaq(db *sqlx.DB, idChantier int) (*Plaq, error) {
 //      - les données stockées dans la table
 //      - les lieux-dits
 //      - les UGs
+//      - les parcelles
 //      - les fermiers
 //      - les Tas
 //      - les opérations simples (abattage...)
@@ -124,6 +126,10 @@ func GetPlaqFull(db *sqlx.DB, idChantier int) (*Plaq, error) {
 	err = ch.ComputeUGs(db)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Plaq.ComputeUGs()")
+	}
+	err = ch.ComputeParcelles(db)
+	if err != nil {
+		return ch, werr.Wrapf(err, "Erreur appel Plaq.ComputeParcelles()")
 	}
 	err = ch.ComputeLieudits(db)
 	if err != nil {
@@ -253,6 +259,20 @@ func (ch *Plaq) ComputeUGs(db *sqlx.DB) error {
 	    select id_ug from chantier_ug where type_chantier='plaq' and id_chantier=$1
     )`
 	err := db.Select(&ch.UGs, query, &ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func (ch *Plaq) ComputeParcelles(db *sqlx.DB) error {
+	if len(ch.Parcelles) != 0 {
+		return nil // déjà calculé
+	}
+	query := `select * from parcelle where id in(
+	    select id_parcelle from chantier_parcelle where type_chantier='plaq' and id_chantier=$1
+    )`
+	err := db.Select(&ch.Parcelles, query, &ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -575,8 +595,8 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 
 // Insère un chantier plaquette en base
 // + crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
-// + insère en base les liens UGs, lieux-dits, fermiers
-func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (int, error) {
+// + insère en base les liens UGs, parcelles, lieux-dits, fermiers
+func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) (int, error) {
 	var err error
 	var query string
 	query = `insert into plaq(
@@ -616,7 +636,7 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 		}
 	}
 	//
-	// UGs
+	// Liens avec UGs
 	//
 	query = `insert into chantier_ug(
         type_chantier,
@@ -633,7 +653,24 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 		}
 	}
 	//
-	// Lieudits
+	// Liens avec Parcelles
+	//
+	query = `insert into chantier_parcelle(
+        type_chantier,
+        id_chantier,
+        id_parcelle) values($1,$2,$3)`
+	for _, idParcelle := range idsParcelles {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			id,
+			idParcelle)
+		if err != nil {
+			return id, werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
+	// Liens avec Lieudits
 	//
 	query = `insert into chantier_lieudit(
         type_chantier,
@@ -650,7 +687,7 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 		}
 	}
 	//
-	// Fermiers
+	// Liens avec Fermiers
 	//
 	query = `insert into chantier_fermier(
         type_chantier,
@@ -672,9 +709,9 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 
 // MAJ un chantier plaquette en base
 // + Gère aussi les tas
-// + MAJ en base les liens UGs, lieux-dits, fermiers
+// + MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
 // @param idsStockages ids tas APRÈS update
-func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) error {
+func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) error {
 	query := `update plaq set(
         datedeb,
         datefin,
@@ -762,6 +799,28 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 			"plaq",
 			ch.Id,
 			idUG)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	//
+	// Parcelles
+	//
+	query = "delete from chantier_parcelle where type_chantier='plaq' and id_chantier=$1"
+	_, err = db.Exec(query, ch.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	query = `insert into chantier_parcelle(
+        type_chantier,
+        id_chantier,
+        id_parcelle) values($1,$2,$3)`
+	for _, idParcelle := range idsParcelles {
+		_, err = db.Exec(
+			query,
+			"plaq",
+			ch.Id,
+			idParcelle)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur query : "+query)
 		}
@@ -876,9 +935,15 @@ func DeletePlaq(db *sqlx.DB, id int) error {
 		}
 	}
 	//
-	// delete UGs, Lieudits, Fermiers associés à ce chantier
+	// delete associations avec UGs, Parcelles, Lieudits, Fermiers associées à ce chantier
 	//
 	query = "delete from chantier_ug where type_chantier='plaq' and id_chantier=$1"
+	_, err = db.Exec(query, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	//
+	query = "delete from chantier_parcelle where type_chantier='plaq' and id_chantier=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

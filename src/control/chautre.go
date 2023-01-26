@@ -96,13 +96,13 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		// calcul des ids UG, Lieudit et Fermier, pour transmettre à InsertChautre()
-		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à InsertChautre()
+		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
 		if err != nil {
 			return err
 		}
 		//
-		_, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
+		_, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsParcelles, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -169,13 +169,13 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
-		// calcul des ids UG, Lieudit et Fermier, pour transmettre à UpdateChautre()
-		idsUGs, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à UpdateChautre()
+		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
 		if err != nil {
 			return err
 		}
 		//
-		err = model.UpdateChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
+		err = model.UpdateChautre(ctx.DB, chantier, idsUGs, idsParcelles, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
