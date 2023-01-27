@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
@@ -98,11 +97,11 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		// Process form
 		//
-		chantier, err := chantierChauferForm2var(r)
+		chantier, idsUG, err := chantierChauferForm2var(r)
 		if err != nil {
 			return err
 		}
-		_, err = model.InsertChaufer(ctx.DB, chantier)
+		_, err = model.InsertChaufer(ctx.DB, chantier, idsUG)
 		if err != nil {
 			return err
 		}
@@ -115,7 +114,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		chantier := &model.Chaufer{}
 		chantier.Fermier = &model.Fermier{}
-		chantier.UG = &model.UG{}
+		chantier.UGs = []*model.UG{}
 		chantier.LiensParcelles = []*model.ChantierParcelle{}
 		weboFermier, err := WeboFermier(ctx)
 		if err != nil {
@@ -126,8 +125,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			Header: ctxt.Header{
 				Title: "Nouveau chantier chauffage fermier",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Details: detailsChauferForm{
 				Chantier:            chantier,
@@ -156,7 +154,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		//
 		// Process form
 		//
-		chantier, err := chantierChauferForm2var(r)
+		chantier, idsUG, err := chantierChauferForm2var(r)
 		if err != nil {
 			return err
 		}
@@ -164,7 +162,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
-		err = model.UpdateChaufer(ctx.DB, chantier)
+		err = model.UpdateChaufer(ctx.DB, chantier, idsUG)
 		if err != nil {
 			return err
 		}
@@ -190,8 +188,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Header: ctxt.Header{
 				Title: "Modifier un chantier chauffage fermier",
 				CSSFiles: []string{
-					"/static/css/form.css",
-					"/static/autocomplete/autocomplete.css"},
+					"/static/css/form.css"},
 			},
 			Details: detailsChauferForm{
 				Chantier:            chantier,
@@ -220,7 +217,7 @@ func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	if err != nil {
 		return err
 	}
-	chantier, err := model.GetChaufer(ctx.DB, id) // on retient l'année pour le redirect
+	chantier, err := model.GetChaufer(ctx.DB, id) // chantier sert pour l'année du redirect
 	if err != nil {
 		return err
 	}
@@ -232,55 +229,32 @@ func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-// *********************************************************
-// Fabrique un Chaufer à partir des valeurs d'un formulaire.
-// Auxiliaire de NewChaufer() et UpdateChaufer()
-// Ne gère pas le champ Id
-// Attention : construit des ChantierParcelle ;
-//     pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
-func chantierChauferForm2var(r *http.Request) (*model.Chaufer, error) {
-	chantier := &model.Chaufer{}
-	var err error
+/** 
+    Fabrique un Chaufer à partir des valeurs d'un formulaire.
+    Auxiliaire de NewChaufer() et UpdateChaufer()
+    Ne gère pas le champ Id
+    Renvoie idsUG car pas stockés dans model.chaufer
+    Attention : construit des ChantierParcelle ;
+        pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+**/
+func chantierChauferForm2var(r *http.Request) (chantier *model.Chaufer, idsUG []int, err error) {
+	chantier = &model.Chaufer{}
 	if err = r.ParseForm(); err != nil {
-		return chantier, err
+		return chantier, []int{}, err
 	}
 	//
 	chantier.IdFermier, err = strconv.Atoi(r.PostFormValue("id-fermier"))
 	if err != nil {
-		return chantier, err
+		return chantier, []int{}, err
 	}
 	//
-	chantier.IdUG, _ = strconv.Atoi(strings.Replace(r.PostFormValue("ug"), "ug-", "", -1))
-	// parcelles ; ex de valeurs :
-	// radio-parcelle-148:[radio-parcelle-entiere-148]
-	// parcelle-surface-148:[]
-	// radio-parcelle-337:[radio-parcelle-surface-337]
-	// parcelle-surface-337:[3.5]
-	//  => parcelle 148 entière et parcelle 337 = surface de 3.5 ha
-	idChaufer, _ := strconv.Atoi(r.PostFormValue("id-chantier"))
-	for k, v := range r.PostForm {
-		if strings.HasPrefix(k, "radio-parcelle-") {
-			lien := model.ChantierParcelle{}
-			lien.IdChantier = idChaufer
-			idPString := strings.Replace(k, "radio-parcelle-", "", -1)
-			idP, _ := strconv.Atoi(idPString)
-			lien.IdParcelle = idP
-			if v[0] == "radio-parcelle-entiere-"+idPString {
-				lien.Entiere = true
-			} else if v[0] == "radio-parcelle-surface-"+idPString {
-				lien.Entiere = false
-				lien.Surface, _ = strconv.ParseFloat(r.PostFormValue("parcelle-surface-"+idPString), 32)
-				lien.Surface = tiglib.Round(lien.Surface, 2)
-			} else {
-				continue
-			}
-			chantier.LiensParcelles = append(chantier.LiensParcelles, &lien)
-		}
-	}
+	idsUG = form2IdsUG(r)
+	//
+	chantier.LiensParcelles = form2LienParcelles(r)
 	//
 	chantier.DateChantier, err = time.Parse("2006-01-02", r.PostFormValue("datechantier"))
 	if err != nil {
-		return chantier, err
+		return chantier, []int{}, err
 	}
 	//
 	chantier.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
@@ -289,7 +263,7 @@ func chantierChauferForm2var(r *http.Request) (*model.Chaufer, error) {
 	//
 	chantier.Volume, err = strconv.ParseFloat(r.PostFormValue("volume"), 32)
 	if err != nil {
-		return chantier, err
+		return chantier, []int{}, err
 	}
 	chantier.Volume = tiglib.Round(chantier.Volume, 2)
 	//
@@ -297,5 +271,5 @@ func chantierChauferForm2var(r *http.Request) (*model.Chaufer, error) {
 	//
 	chantier.Notes = r.PostFormValue("notes")
 	//
-	return chantier, nil
+	return chantier, idsUG, nil
 }

@@ -1,0 +1,148 @@
+
+
+
+
+
+
+<script>
+// ***************************************
+/** 
+    Récup en ajax les parcelles correspondant à une ou plusieurs UGs et les affiche.
+    Aucune parcelle n'est sélectionnée.
+    @param  idsUG           Tableau d'entiers, ex [3, 87, 19]
+    @param  parcellesElt    Element du DOM dans lequel la liste des parcelles est affichée
+**/
+async function afficheParcelles(idsUG, parcellesElt){
+    const nCol = 2; // nb de colonne pour l'affichage des parcelles
+    const strIdsUG = idsUG.join(',');
+    const url = "/ajax/get/parcelles-from-ugs/" + strIdsUG;
+    // Ajax pour écup parcelles correspondant à l'UG
+    let response = await fetch(url);
+    if(response == null){
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+            + "Problème de récupération " + url);
+        return;                                                                     
+    }
+    response = await response.json();
+    if(response == null){
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+            + "Mauvais format de retour de " + url);
+        return;
+    }
+    if(response.length == 0){
+        parcellesElt.innerHTML = "Aucune parcelle pour cette UG";
+        return;
+    }
+    parcellesElt.innerHTML = "";
+    //
+    let limit = Math.floor(response.length / nCol); // nb max par colonne
+    if(response.length / nCol != limit){
+        limit += 1;
+    }
+    // chaque parcelle est dans une grid2
+    // les grid2 sont ajoutées au td
+    const table = document.createElement("table");
+    parcellesElt.appendChild(table);
+    const tr = document.createElement("tr");
+    table.appendChild(tr);
+    let td = document.createElement("td");
+    td.setAttribute("class", "vertical-align-top padding-right2");
+    tr.appendChild(td);
+    let grid2Elt = document.createElement("div");
+    grid2Elt.setAttribute("class", "grid2-form");
+    //
+    let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
+    let i = 1;
+    let curCommune, curSurfaceTotale, tmp;
+    response.forEach(function(item){
+        curdiv = document.createElement("div");
+        //
+        curdiv.innerHTML = "<b>" + item.name + "</b>";
+        curdiv.innerHTML += "<br>" + item.commune.NomCourt;
+        
+        grid2Elt.appendChild(curdiv);
+        //
+        curdiv = document.createElement("div");
+        // class et id de curdiv servent dans validateForm()
+        curdiv.setAttribute("class", "parcelle");
+        curdiv.setAttribute("id", "parcelle-" + item.id);
+        surfaceInputNameId = "parcelle-surface-" + item.id;
+        radioName = "radio-parcelle-" + item.id;
+        strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
+            + "document.getElementById('"+surfaceInputNameId+"').value = '';"
+        // non sélectionnée - radio
+        subdiv = document.createElement("div");
+        radio = document.createElement("input");
+        radioValueId = "radio-parcelle-non-selectionne-" + item.id;
+        radio.setAttribute("type", "radio");
+        radio.setAttribute("name", radioName);
+        radio.setAttribute("value", radioValueId);
+        radio.setAttribute("id", radioValueId);
+        radio.setAttribute("checked", true);
+        radio.setAttribute("onclick", strOnclick);
+        subdiv.appendChild(radio);
+        // non sélectionnée - label
+        label = document.createElement("label");
+        label.setAttribute("for", radioValueId);
+        label.innerHTML = "Non sélectionnée";
+        subdiv.appendChild(label);
+        //
+        curdiv.appendChild(subdiv);
+        // entière - radio
+        subdiv = document.createElement("div");
+        radio = document.createElement("input");
+        radioValueId = "radio-parcelle-entiere-" + item.id;
+        radio.setAttribute("type", "radio");
+        radio.setAttribute("name", radioName);
+        radio.setAttribute("value", radioValueId);
+        radio.setAttribute("id", radioValueId);
+        radio.setAttribute("onclick", strOnclick);
+        subdiv.appendChild(radio);
+        // entière - label
+        label = document.createElement("label");
+        label.setAttribute("for", radioValueId);
+        label.innerHTML = "Entière (" + round(item.surface, 2) + " ha)";
+        subdiv.appendChild(label);
+        //
+        curdiv.appendChild(subdiv);
+        // surface - radio
+        subdiv = document.createElement("div");
+        radio = document.createElement("input");
+        radioValueId = "radio-parcelle-surface-" + item.id;
+        radio.setAttribute("type", "radio");
+        radio.setAttribute("name", radioName);
+        radio.setAttribute("value", radioValueId);
+        radio.setAttribute("id", radioValueId);
+        radio.setAttribute("onclick", "document.getElementById('"+surfaceInputNameId+"').readOnly = false;");
+        subdiv.appendChild(radio);
+        // surface - label
+        label = document.createElement("label");
+        label.setAttribute("for", radioValueId);
+        label.setAttribute("class", "padding-right");
+        label.innerHTML = "Surface";
+        subdiv.appendChild(label);
+        // surface - input type=number
+        surfaceInput = document.createElement("input");
+        surfaceInput.setAttribute("type", "number");
+        surfaceInput.setAttribute("min", "0");
+        surfaceInput.setAttribute("step", "0.01");
+        surfaceInput.setAttribute("class", "width5");
+        surfaceInput.setAttribute("name", surfaceInputNameId);
+        surfaceInput.setAttribute("id", surfaceInputNameId);
+        surfaceInput.setAttribute("readonly", true);
+        subdiv.appendChild(surfaceInput);
+        //
+        curdiv.appendChild(subdiv);
+        grid2Elt.appendChild(curdiv);
+        td.appendChild(grid2Elt);
+        if(i == limit){
+            td = document.createElement("td");
+            td.setAttribute("class", "vertical-align-top");
+            tr.appendChild(td);
+            grid2Elt = document.createElement("div");
+            grid2Elt.setAttribute("class", "grid2-form");
+        }
+        i++;
+    });
+}
+</script>

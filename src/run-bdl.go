@@ -46,7 +46,8 @@ func main() {
 	r.HandleFunc("/ajax/get/fermiers-from-code-ug/{code}", Hajax(ajax.GetFermiersFromCodeUG))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
-	r.HandleFunc("/ajax/get/parcelles-from-ug/{id}", Hajax(ajax.GetParcellesFromUG))
+	r.HandleFunc("/ajax/get/parcelles-from-ug/{id}", Hajax(ajax.GetParcellesFromUG))    // TODO à priori, supprimer après #9
+	r.HandleFunc("/ajax/get/parcelles-from-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromUGs))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))

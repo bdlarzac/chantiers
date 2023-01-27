@@ -8,9 +8,8 @@
 package model
 
 import (
-	"time"
-
 	"bdl.local/bdl/generic/wilk/werr"
+	"time"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -22,8 +21,9 @@ type Parcelle struct {
 	IdCommune      int `db:"id_commune"`
 	// Pas en base
 	Proprietaire *Acteur
+	Commune      *Commune
 	Lieudits     []*Lieudit
-	Communes     []*Commune
+	Communes     []*Commune    // A supprimer et adapter dans tout le code
 	Fermiers     []*Fermier
 	UGs          []*UG
 }
@@ -37,7 +37,7 @@ type ParcelleActivite struct {
 	NomActivite string
 }
 
-// ************************** Get *******************************
+// ************************** Get one *******************************
 
 // Renvoie une Parcelle contenant Id, Nom et surface.
 // Les autres champs ne sont pas remplis.
@@ -52,9 +52,20 @@ func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	return p, nil
 }
 
+// ************************** Get many *******************************
+
+/** 
+    Utilisé par ajax
+    @param  idsUG  string, par ex : "12,432,35"
+**/
+func GetParcellesFromUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err error) {
+	query := `select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(`+idsUG+`)) order by code`
+	err = db.Select(&result, query)
+    return result, nil
+}
+
 // ************************** Compute *******************************
 
-// Remplit le champ Proprietaire d'une parcelle
 func (p *Parcelle) ComputeProprietaire(db *sqlx.DB) (err error) {
 	p.Proprietaire, err = GetActeur(db, p.IdProprietaire)
 	if err != nil {
@@ -63,7 +74,6 @@ func (p *Parcelle) ComputeProprietaire(db *sqlx.DB) (err error) {
 	return nil
 }
 
-// Remplit le champ Lieudits d'une parcelle
 func (p *Parcelle) ComputeLieudits(db *sqlx.DB) (err error) {
 	if len(p.Lieudits) != 0 {
 		return nil // déjà calculé
@@ -79,7 +89,18 @@ func (p *Parcelle) ComputeLieudits(db *sqlx.DB) (err error) {
 	return nil
 }
 
-// Remplit le champ Communes d'une parcelle
+func (p *Parcelle) ComputeCommune(db *sqlx.DB) (err error) {
+	if p.Commune != nil {
+		return nil // déjà calculé
+	}
+	p.Commune, err = GetCommune(db, p.IdCommune)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetCommune()")
+	}
+	return nil
+}
+
+// A SUPPRIMER
 func (p *Parcelle) ComputeCommunes(db *sqlx.DB) (err error) {
 	if len(p.Communes) != 0 {
 		return nil // déjà calculé
@@ -93,7 +114,6 @@ func (p *Parcelle) ComputeCommunes(db *sqlx.DB) (err error) {
 	return nil
 }
 
-// Remplit le champ Fermiers d'une parcelle
 func (p *Parcelle) ComputeFermiers(db *sqlx.DB) (err error) {
 	if len(p.Fermiers) != 0 {
 		return nil // déjà calculé
@@ -109,7 +129,6 @@ func (p *Parcelle) ComputeFermiers(db *sqlx.DB) (err error) {
 	return nil
 }
 
-// Remplit le champ UGs d'une parcelle
 func (p *Parcelle) ComputeUGs(db *sqlx.DB) (err error) {
 	query := `
 	    select * from ug where id in(

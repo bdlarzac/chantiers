@@ -3,6 +3,8 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
+{{template "choix-parcelles.html"}}
+
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.Chantier}}
@@ -92,14 +94,15 @@ async function initialize(){
     // form new
     if({{.Fermier.Id}} == 0){
         actionAfterChangeFermier();
+        actionAfterChangeUG();
     }
     // form update
     else{
         const idFermier = document.getElementById("id-fermier").value;
         document.getElementById("fermier-" + idFermier).selected = "selected";
         await actionAfterChangeFermier();
-        document.getElementById("ug-" + "{{.IdUG}}").checked = true;
-        await afficheParcelles({{.IdUG}});
+        document.getElementById("ug-" + "{{/* .IdUG */}}").checked = true;
+        await afficheParcelles({{.UGs}});
         {{range .LiensParcelles}}
             document.getElementById("radio-parcelle-non-selectionne-" + "{{.IdParcelle}}").checked = true;
             {{if .Entiere}}
@@ -116,10 +119,11 @@ async function initialize(){
 // ******************************************************
 /**
     Lorsqu'un fermier change, met à jour les ugs possibles
-    Affiche les UGs sur 2 colonnes
+    Affiche les UGs sur nCol colonnes
     Aucune UG n'est sélectionnée
 **/
 async function actionAfterChangeFermier(){
+    const nCol = 3;
     const fermierElt = document.getElementById("fermier");
     const idFermier = fermierElt.children[fermierElt.selectedIndex].id.replace("fermier-", "");
     let ugsElt = document.getElementById("ugs");
@@ -138,24 +142,12 @@ async function actionAfterChangeFermier(){
         return;                                                                     
     }
     response = await response.json();
-/* 
-    // NOTE : commenté, mais pas complètement sûr
-    if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
-            + "Mauvais format de retour de " + url + " dans chaufer-form.html");
-        return;
-    }
-    if(response.length == 0){
-        ugsElt.innerHTML = "Aucune UG pour ce fermier";
-        return;
-    }
-*/
     if(response == null || response.length == 0){
         ugsElt.innerHTML = "Aucune UG pour ce fermier";
         return;
     }
-    let limit = Math.floor(response.length / 2); // nb max par colonne
-    if(response.length / 2 != limit){
+    let limit = Math.floor(response.length / nCol); // nb max par colonne
+    if(response.length / nCol != limit){
         limit += 1;
     }
     ugsElt.innerHTML = "";
@@ -165,29 +157,32 @@ async function actionAfterChangeFermier(){
     const tr = document.createElement("tr");
     table.appendChild(tr);
     let td = document.createElement("td");
+    td.classList.add("vertical-align-top");
     tr.appendChild(td);                             
     let i = 1;
-    let name, radio, label, span;
+    let name, checkbox, label, span;
     response.forEach(function(item) {
         name = "ug-" + item.id;
-        radio = document.createElement("input");
-        radio.setAttribute("type", "radio");
-        radio.setAttribute("name", "ug");
-        radio.setAttribute("id", name);
-        radio.setAttribute("value", name);
-        radio.setAttribute("onclick", "afficheParcelles(" + item.id + ");");
+        checkbox = document.createElement("input");
+        checkbox.setAttribute("type", "checkbox");
+        checkbox.setAttribute("name", "ug");
+        checkbox.setAttribute("id", name);
+        checkbox.setAttribute("value", name);
+        checkbox.setAttribute("onchange", "actionAfterChangeUG();");
         label = document.createElement("label");
         label.setAttribute("for", name);
         label.innerHTML = item.name;
         label.style["font-weight"] = "normal";
         span = document.createElement("span");
         span.style["padding-right"] = "1em";
-        span.appendChild(radio);
+        span.appendChild(checkbox);
         span.appendChild(label);
         //
         td.appendChild(span);
-        if(i == limit){
+        if(i % limit == 0){
             td = document.createElement("td");
+            td.classList.add("vertical-align-top");
+            td.classList.add("padding-left");
             tr.appendChild(td);
         }
         else{
@@ -199,146 +194,18 @@ async function actionAfterChangeFermier(){
 
 // ***************************************
 /** 
-    Récup en ajax les parcelles correspondant à une UG et les affiche.
-    Déclenché qd on sélectionne une UG.
-    Aucune parcelle n'est sélectionnée.
+    Récupère les ids des UGs sélectionnées et appelle afficheParcelles()
 **/
-async function afficheParcelles(idUG){
-    const url = "/ajax/get/parcelles-from-ug/" + idUG;
-    // Ajax pour écup parcelles correspondant à l'UG
-    let response = await fetch(url);
-    if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
-            + "Problème de récupération " + url + " dans chaufer-form.html");
-        return;                                                                     
-    }
-    response = await response.json();
-    if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
-            + "Mauvais format de retour de " + url + " dans chaufer-form.html");
-        return;
-    }
-    if(response.length == 0){
-        ugsElt.innerHTML = "Aucune parcelle pour cette UG";
-        return;
-    }
-    let parcellesElt = document.getElementById("parcelles");
-    parcellesElt.innerHTML = "";
-    //
-    let limit = Math.floor(response.length / 2); // nb max par colonne
-    if(response.length / 2 != limit){
-        limit += 1;
-    }
-    // chaque parcelle est dans une grid2
-    // les grid2 sont ajoutées au td
-    const table = document.createElement("table");
-    parcellesElt.appendChild(table);
-    const tr = document.createElement("tr");
-    table.appendChild(tr);
-    let td = document.createElement("td");
-    td.setAttribute("class", "vertical-align-top padding-right2");
-    tr.appendChild(td);
-    let grid2Elt = document.createElement("div");
-    grid2Elt.setAttribute("class", "grid2-form");
-    //
-    let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
-    let i = 1;
-    let curCommune, curSurfaceTotale, tmp;
-    response.forEach(function(item){
-        curdiv = document.createElement("div");
-        //
-        curdiv.innerHTML = "<b>" + item.name + "</b>";
-        // communes de la parcelle
-        tmp = [];
-        item.communes.forEach(function(curCommune){
-            tmp.push(curCommune.NomCourt)
-        });
-        curdiv.innerHTML += "<br>" + tmp.join(", ");
-        
-        grid2Elt.appendChild(curdiv);
-        //
-        curdiv = document.createElement("div");
-        // class et id de curdiv servent dans validateForm()
-        curdiv.setAttribute("class", "parcelle");
-        curdiv.setAttribute("id", "parcelle-" + item.id);
-        surfaceInputNameId = "parcelle-surface-" + item.id;
-        radioName = "radio-parcelle-" + item.id;
-        strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
-            + "document.getElementById('"+surfaceInputNameId+"').value = '';"
-        // non sélectionnée - radio
-        subdiv = document.createElement("div");
-        radio = document.createElement("input");
-        radioValueId = "radio-parcelle-non-selectionne-" + item.id;
-        radio.setAttribute("type", "radio");
-        radio.setAttribute("name", radioName);
-        radio.setAttribute("value", radioValueId);
-        radio.setAttribute("id", radioValueId);
-        radio.setAttribute("checked", true);
-        radio.setAttribute("onclick", strOnclick);
-        subdiv.appendChild(radio);
-        // non sélectionnée - label
-        label = document.createElement("label");
-        label.setAttribute("for", radioValueId);
-        label.innerHTML = "Non sélectionnée";
-        subdiv.appendChild(label);
-        //
-        curdiv.appendChild(subdiv);
-        // entière - radio
-        subdiv = document.createElement("div");
-        radio = document.createElement("input");
-        radioValueId = "radio-parcelle-entiere-" + item.id;
-        radio.setAttribute("type", "radio");
-        radio.setAttribute("name", radioName);
-        radio.setAttribute("value", radioValueId);
-        radio.setAttribute("id", radioValueId);
-        radio.setAttribute("onclick", strOnclick);
-        subdiv.appendChild(radio);
-        // entière - label
-        label = document.createElement("label");
-        label.setAttribute("for", radioValueId);
-        label.innerHTML = "Entière (" + round(item.surface, 2) + " ha)";
-        subdiv.appendChild(label);
-        //
-        curdiv.appendChild(subdiv);
-        // surface - radio
-        subdiv = document.createElement("div");
-        radio = document.createElement("input");
-        radioValueId = "radio-parcelle-surface-" + item.id;
-        radio.setAttribute("type", "radio");
-        radio.setAttribute("name", radioName);
-        radio.setAttribute("value", radioValueId);
-        radio.setAttribute("id", radioValueId);
-        radio.setAttribute("onclick", "document.getElementById('"+surfaceInputNameId+"').readOnly = false;");
-        subdiv.appendChild(radio);
-        // surface - label
-        label = document.createElement("label");
-        label.setAttribute("for", radioValueId);
-        label.setAttribute("class", "padding-right");
-        label.innerHTML = "Surface";
-        subdiv.appendChild(label);
-        // surface - input type=number
-        surfaceInput = document.createElement("input");
-        surfaceInput.setAttribute("type", "number");
-        surfaceInput.setAttribute("min", "0");
-        surfaceInput.setAttribute("step", "0.01");
-        surfaceInput.setAttribute("class", "width5");
-        surfaceInput.setAttribute("name", surfaceInputNameId);
-        surfaceInput.setAttribute("id", surfaceInputNameId);
-        surfaceInput.setAttribute("readonly", true);
-        subdiv.appendChild(surfaceInput);
-        //
-        curdiv.appendChild(subdiv);
-        grid2Elt.appendChild(curdiv);
-        td.appendChild(grid2Elt);
-        if(i == limit){
-            td = document.createElement("td");
-            td.setAttribute("class", "vertical-align-top");
-            tr.appendChild(td);
-            grid2Elt = document.createElement("div");
-            grid2Elt.setAttribute("class", "grid2-form");
+async function actionAfterChangeUG(){
+    const tmpElts = document.getElementsByName('ug');
+    const idsUG = [];
+    for (const item of tmpElts) {
+        const idUG = item.getAttribute('id').replace('ug-', '');
+        if(item.checked == true){
+            idsUG.push(idUG);
         }
-        i++;
-    });
+    }
+    await afficheParcelles(idsUG, document.getElementById('parcelles')); // dans view/common/choix-parcelles.html
 }
 
 // ***************************************

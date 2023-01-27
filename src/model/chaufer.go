@@ -18,7 +18,6 @@ import (
 type Chaufer struct {
 	Id           int
 	IdFermier    int `db:"id_fermier"`
-	IdUG         int `db:"id_ug"`
 	DateChantier time.Time
 	Exploitation string // de 1 à 5
 	Essence      string
@@ -27,21 +26,21 @@ type Chaufer struct {
 	Notes        string
 	// Pas stocké dans la table
 	Fermier        *Fermier
-	UG             *UG
+	UGs            []*UG
 	LiensParcelles []*ChantierParcelle
 }
 
 // ************************** Nom *******************************
 
-func (chantier *Chaufer) String() string {
-	if chantier.Fermier == nil {
+func (ch *Chaufer) String() string {
+	if ch.Fermier == nil {
 		panic("Erreur dans le code - Le fermier d'un chantier chauffage fermier doit être calculé avant d'appeler String()")
 	}
-	return chantier.Fermier.String() + " " + tiglib.DateFr(chantier.DateChantier)
+	return ch.Fermier.String() + " " + tiglib.DateFr(ch.DateChantier)
 }
 
-func (chantier *Chaufer) FullString() string {
-	return "Chantier chauffage fermier " + chantier.String()
+func (ch *Chaufer) FullString() string {
+	return "Chantier chauffage fermier " + ch.String()
 }
 
 // ************************** Get *******************************
@@ -49,14 +48,14 @@ func (chantier *Chaufer) FullString() string {
 // Renvoie un chantier chauffage fermier
 // contenant uniquement les données stockées en base
 func GetChaufer(db *sqlx.DB, idChantier int) (*Chaufer, error) {
-	chantier := &Chaufer{}
+	ch := &Chaufer{}
 	query := "select * from chaufer where id=$1"
 	row := db.QueryRowx(query, idChantier)
-	err := row.StructScan(chantier)
+	err := row.StructScan(ch)
 	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur query : "+query)
+		return ch, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return chantier, nil
+	return ch, nil
 }
 
 // Renvoie un chantier chauffage fermier contenant :
@@ -65,23 +64,23 @@ func GetChaufer(db *sqlx.DB, idChantier int) (*Chaufer, error) {
 //      - UG
 //      - LiensParcelles
 func GetChauferFull(db *sqlx.DB, idChantier int) (*Chaufer, error) {
-	chantier, err := GetChaufer(db, idChantier)
+	ch, err := GetChaufer(db, idChantier)
 	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur appel Chaufer()")
+		return ch, werr.Wrapf(err, "Erreur appel Chaufer()")
 	}
-	err = chantier.ComputeFermier(db)
+	err = ch.ComputeFermier(db)
 	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur appel Chaufer.ComputeFermier()")
+		return ch, werr.Wrapf(err, "Erreur appel Chaufer.ComputeFermier()")
 	}
-	err = chantier.ComputeUG(db)
+	err = ch.ComputeUGs(db)
 	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur appel Chaufer.ComputeUG()")
+		return ch, werr.Wrapf(err, "Erreur appel Chaufer.ComputeUgs()")
 	}
-	err = chantier.ComputeLiensParcelles(db)
+	err = ch.ComputeLiensParcelles(db)
 	if err != nil {
-		return chantier, werr.Wrapf(err, "Erreur appel Chaufer.ComputeLiensParcelles()")
+		return ch, werr.Wrapf(err, "Erreur appel Chaufer.ComputeLiensParcelles()")
 	}
-	return chantier, nil
+	return ch, nil
 }
 
 // Renvoie la liste des années ayant des chantiers chauffage fermier,
@@ -120,108 +119,103 @@ func GetChaufersOfYear(db *sqlx.DB, annee string) ([]*Chaufer, error) {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, tmp2 := range tmp1 {
-		chantier, err := GetChauferFull(db, tmp2.Id)
+		ch, err := GetChauferFull(db, tmp2.Id)
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetChauferFull()")
 		}
-		res = append(res, chantier)
+		res = append(res, ch)
 	}
 	return res, nil
 }
 
 // ************************** Compute *******************************
 
-func (chantier *Chaufer) ComputeFermier(db *sqlx.DB) error {
-	if chantier.Fermier != nil {
+func (ch *Chaufer) ComputeFermier(db *sqlx.DB) error {
+	if ch.Fermier != nil {
 		return nil
 	}
 	var err error
-	chantier.Fermier, err = GetFermier(db, chantier.IdFermier)
+	ch.Fermier, err = GetFermier(db, ch.IdFermier)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetFermier()")
 	}
 	return nil
 }
 
-func (chantier *Chaufer) ComputeUG(db *sqlx.DB) error {
-	if chantier.UG != nil {
-		return nil
+func (ch *Chaufer) ComputeUGs(db *sqlx.DB) (err error) {
+	if len(ch.UGs) != 0 {
+		return nil // déjà calculé
 	}
-	var err error
-	chantier.UG, err = GetUG(db, chantier.IdUG)
+	ch.UGs, err = computeChantierUGs(db, "chaufer", ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetUG()")
+		return werr.Wrapf(err, "Erreur appel computeChantierUGs")
 	}
 	return nil
 }
 
-func (chantier *Chaufer) ComputeLiensParcelles(db *sqlx.DB) error {
-	if len(chantier.LiensParcelles) != 0 {
+func (ch *Chaufer) ComputeLiensParcelles(db *sqlx.DB) (err error) {
+	if len(ch.LiensParcelles) != 0 {
 		return nil
 	}
-	var err error
-	query := "select * from chantier_parcelle where type_chantier='chaufer' and id_chantier=$1"
-	err = db.Select(&chantier.LiensParcelles, query, chantier.Id)
+	ch.LiensParcelles, err = computeChantierLiensParcelles(db, "chaufer", ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for i, lien := range chantier.LiensParcelles {
-		chantier.LiensParcelles[i].Parcelle, err = GetParcelle(db, lien.IdParcelle)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur appel LienParcelle()")
-		}
+		return werr.Wrapf(err, "Erreur appel computeChantierLiensParcelles")
 	}
 	return nil
 }
+
+// Auxiliaire de CRUD
+func (ch *Chaufer) computeIdsUG() ([]int){
+    result := []int{}
+    for _, ug := range(ch.UGs) {
+        result = append(result, ug.Id)
+    }
+    return result
+}
+
 
 // ************************** CRUD *******************************
 
-func InsertChaufer(db *sqlx.DB, chantier *Chaufer) (int, error) {
+func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (int, error) {
 	query := `insert into chaufer(
         id_fermier,
-        id_ug,
         datechantier,
         exploitation,
         essence,
         volume,
         unite,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
-		chantier.IdFermier,
-		chantier.IdUG,
-		chantier.DateChantier,
-		chantier.Exploitation,
-		chantier.Essence,
-		chantier.Volume,
-		chantier.Unite,
-		chantier.Notes).Scan(&id)
+		ch.IdFermier,
+		ch.DateChantier,
+		ch.Exploitation,
+		ch.Essence,
+		ch.Volume,
+		ch.Unite,
+		ch.Notes).Scan(&id)
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	//
-	query = "insert into chantier_parcelle values($1,$2,$3,$4,$5)"
-	for _, lien := range chantier.LiensParcelles {
-		_, err = db.Exec(
-			query,
-			id,
-			lien.IdParcelle,
-			lien.Entiere,
-			lien.Surface,
-			"chaufer")
-		if err != nil {
-			return id, werr.Wrapf(err, "Erreur query : "+query)
-		}
+	ch.Id = id
+	// Liens avec UGs
+	err = insertLiensChantierUG(db, "chaufer", ch.Id, idsUG)
+	if err != nil {
+		return id, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
 	}
-	return id, nil
+	// Liens avec Parcelles
+	err = insertLiensChantierParcelle(db, "chaufer", ch.Id, ch.LiensParcelles)
+	if err != nil {
+		return id, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
+	}
+	return ch.Id, nil
 }
 
-func UpdateChaufer(db *sqlx.DB, chantier *Chaufer) error {
+func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) error {
 	query := `update chaufer set(
         id_fermier,
-        id_ug,
         datechantier,
         exploitation,
         essence,
@@ -231,36 +225,28 @@ func UpdateChaufer(db *sqlx.DB, chantier *Chaufer) error {
         ) = ($1,$2,$3,$4,$5,$6,$7,$8) where id=$9`
 	_, err := db.Exec(
 		query,
-		chantier.IdFermier,
-		chantier.IdUG,
-		chantier.DateChantier,
-		chantier.Exploitation,
-		chantier.Essence,
-		chantier.Volume,
-		chantier.Unite,
-		chantier.Notes,
-		chantier.Id)
+		ch.IdFermier,
+		ch.DateChantier,
+		ch.Exploitation,
+		ch.Essence,
+		ch.Volume,
+		ch.Unite,
+		ch.Notes,
+		ch.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	query = "delete from chantier_parcelle where type_chantier='chaufer' and id_chantier=$1"
-	_, err = db.Exec(query, chantier.Id)
+	// Liens avec UGs
+	err = updateLiensChantierUG(db, "chaufer", ch.Id, idsUG)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel updateLiensChantierUG()")
 	}
-	query = "insert into chantier_parcelle values($1,$2,$3,$4,$5)"
-	for _, lien := range chantier.LiensParcelles {
-		_, err = db.Exec(
-			query,
-			lien.IdChantier,
-			lien.IdParcelle,
-			lien.Entiere,
-			lien.Surface,
-			"chaufer")
-		if err != nil {
-			return werr.Wrapf(err, "Erreur query : "+query)
-		}
+	// Liens avec Parcelles
+	err = updateLiensChantierParcelle(db, "chaufer", ch.Id, ch.LiensParcelles)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel updateLiensChantierParcelle()")
 	}
+	//
 	return nil
 }
 
