@@ -4,6 +4,7 @@
 */}}
 
 {{template "choix-parcelles.html" .Details.Chantier}}
+{{template "choix-ugs.html" .Details.Chantier}}
 
 <h1>{{.Header.Title}}</h1>
 
@@ -80,12 +81,7 @@
 
 <script>
 window.addEventListener("load", function(){
-    document.getElementById("fermier").addEventListener("change", function() {
-        actionAfterChangeFermier();
-    });        
-    // document.getElementById("fermier").onChange = function(e){
-        // actionAfterChangeFermier();
-    // };
+    document.getElementById("fermier").addEventListener("change", actionAfterChangeFermier);        
     initialize();
 });
 
@@ -94,36 +90,44 @@ async function initialize(){
     // form new
     if({{.Fermier.Id}} == 0){
         actionAfterChangeFermier();
-        actionAfterChangeUG();
     }
     // form update
     else{
         const idFermier = document.getElementById("id-fermier").value;
         document.getElementById("fermier-" + idFermier).selected = "selected";
         await actionAfterChangeFermier();
-        document.getElementById("ug-" + "{{/* .IdUG */}}").checked = true;
-        await afficheParcelles(
+        actionAfterChangeUG(computeLiensParcellesFromChantier());
+        await afficheParcelles( // dans view/common/choix-parcelles.html
             document.getElementById('parcelles'),
-            {{.UGs}},
+            computeIdsUGsFromChantier(),
             computeLiensParcellesFromChantier()
         );
     }
 }
 
+// ***************************************
+async function actionAfterChangeUG(liensParcelles){
+    await afficheParcelles( // dans view/common/choix-parcelles.html
+        document.getElementById('parcelles'),
+        computeIdsUGsFromForm(),
+        liensParcelles
+    );
+}
+
 // ******************************************************
 /**
-    Lorsqu'un fermier change, met à jour les ugs possibles
-    Affiche les UGs sur nCol colonnes
-    Aucune UG n'est sélectionnée
+    Lorsqu'un fermier change, met à jour les ugs possibles.
+    Affiche les UGs sur nCol colonnes.
+    Aucune UG n'est sélectionnée.
+    Aucune parcelle n'est affichée.
 **/
 async function actionAfterChangeFermier(){
     const nCol = 3;
     const fermierElt = document.getElementById("fermier");
     const idFermier = fermierElt.children[fermierElt.selectedIndex].id.replace("fermier-", "");
     let ugsElt = document.getElementById("ugs");
-    let parcellesElt = document.getElementById("parcelles");
+    let parcellesElt = document.getElementById("parcelles").innerHTML = "Choisissez d'abord une UG";;
     ugsElt.innerHTML = "Choisissez d'abord un fermier";
-    parcellesElt.innerHTML = "Choisissez d'abord une UG";
     if(idFermier == "CHOOSE_FERMIER"){
         return;
     }
@@ -162,7 +166,7 @@ async function actionAfterChangeFermier(){
         checkbox.setAttribute("name", "ug");
         checkbox.setAttribute("id", name);
         checkbox.setAttribute("value", name);
-        checkbox.setAttribute("onchange", "actionAfterChangeUG();");
+        checkbox.setAttribute("onchange", "actionAfterChangeUG(computeIdsUGsFromForm());");
         label = document.createElement("label");
         label.setAttribute("for", name);
         label.innerHTML = item.name;
@@ -184,22 +188,6 @@ async function actionAfterChangeFermier(){
         }
         i++;
     });
-}
-
-// ***************************************
-/** 
-    Récupère les ids des UGs sélectionnées et appelle afficheParcelles()
-**/
-async function actionAfterChangeUG(){
-    const tmpElts = document.getElementsByName('ug');
-    const idsUG = [];
-    for (const item of tmpElts) {
-        const idUG = item.getAttribute('id').replace('ug-', '');
-        if(item.checked == true){
-            idsUG.push(idUG);
-        }
-    }
-    await afficheParcelles(document.getElementById('parcelles'), idsUG, ); // dans view/common/choix-parcelles.html
 }
 
 // ***************************************

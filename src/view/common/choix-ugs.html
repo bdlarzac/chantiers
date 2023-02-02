@@ -1,0 +1,37 @@
+{{/* 
+
+    La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates appelantes).
+    Utilisé uniquement par computeIdsUGsFromChantier()
+    
+*/}}
+<script>
+
+/** 
+    Sélectionne les UGs associées au chantier.
+    Utilisé uniquement lorsqu'on arrive sur form update.
+**/
+function computeIdsUGsFromChantier(){
+    const idsUGs = [];
+    {{range .UGs}}
+        idsUGs.push({{.Id}});
+    {{end}}
+    return idsUGs;
+}
+
+// ***************************************
+/** 
+    Calcule les ids des UGs sélectionnées
+**/
+function computeIdsUGsFromForm(){
+    const tmpElts = document.getElementsByName('ug');
+    const idsUG = [];
+    for (const item of tmpElts) {
+        const idUG = item.getAttribute('id').replace('ug-', '');
+        if(item.checked == true){
+            idsUG.push(idUG);
+        }
+    }
+    return idsUG;
+}
+
+</script>

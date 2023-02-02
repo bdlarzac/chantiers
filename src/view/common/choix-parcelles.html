@@ -29,16 +29,55 @@
     
 */}}
 <script>
+
+/** 
+    Transfère les donées go Chantier.LiensParcelles dans un tableau d'objets js
+    @return     Le tableau js de liens parcelles.
+**/
+function computeLiensParcellesFromChantier(){
+    const liensParcelles = [];
+    {{range .LiensParcelles}}
+        const lien = {};
+        lien.idParcelle = {{.IdParcelle}};
+        lien.entiere = {{.Entiere}};
+        lien.surface = lien.entiere ? 0 : {{.Surface}};
+        liensParcelles.push(lien);
+    {{end}}
+    return liensParcelles;
+}
+
+/**
+    Calcule les liens parcelles à partir des champs sélectionnés dans le formulaire
+    @return  liensParcelles  Voir commentaire de ce fichier.
+**/
+function computeLiensParcellesFromForm(){
+    const parcelleDivs = document.getElementsByClassName("parcelle");
+    for(div of parcelleDivs.entries){
+        const idParcelle = div.getAttribute("id");
+        if (!document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked){
+            continue;
+        }
+        const lien = {};
+        lien.entiere = document.getElementById("radio-parcelle-entiere-" + idParcelle).checked;
+        lien.surface = lien.entiere ? 0 : document.getElementById("parcelle-surface-" + idParcelle).value;
+        liensParcelles.push(lien);
+    }
+    return liensParcelles;
+}
+
 // ***************************************
 /** 
-    Récup en ajax les parcelles correspondant à une ou plusieurs UGs et les affiche.
-    Aucune parcelle n'est sélectionnée.
+    - Récup en ajax les parcelles correspondant à une ou plusieurs UGs et les affiche.
+    - Restaure les sélections éventuelles des parcelles avant l'appel.
     @param  parcellesElt    Element du DOM dans lequel la liste des parcelles est affichée
     @param  idsUG           Tableau d'entiers, ex [3, 87, 19]
-    @param  liensParcelles  Voir commentaire de ce fichier.
+    @param  liensParcelles  Voir commentaire de ce fichier - sert à restaurer l'affichage précédant l'appel.
 
 **/
 async function afficheParcelles(parcellesElt, idsUG, liensParcelles){
+    //
+    // 1 - Affichage nouvelles parcelles
+    //
     const nCol = 2; // nb de colonne pour l'affichage des parcelles
     const strIdsUG = idsUG.join(',');
     const url = "/ajax/get/parcelles-from-ugs/" + strIdsUG;
@@ -170,40 +209,15 @@ async function afficheParcelles(parcellesElt, idsUG, liensParcelles){
         }
         i++;
     });
-}
-
-/** 
-    Trasfère les donées go Chantier.LiensParcelles dans un tableau d'objets js
-**/
-function computeLiensParcellesFromChantier(){
-    const liensParcelles = [];
-    {{range .LiensParcelles}}
-        const lien = {};
-        lien.idParcelle = {{.IdParcelle}};
-        lien.entiere = {{.Entiere}};
-        lien.surface = lien.entiere ? 0 : {{.Surface}};
-        liensParcelles.push(lien);
-    {{end}}
-    return liensParcelles;
-}
-
-/**
-    Calcule les liens parcelles à partir des champs sélectionnés dans le formulaire
-    @return  liensParcelles  Voir commentaire de ce fichier.
-**/
-function computeLiensParcellesFromForm(){
-    const parcelleDivs = document.getElementsByClassName("parcelle");
-    parcelleDivs.forEach(function(div){
-        const idParcelle = div.getAttribute("id");
-        if (!document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked){
-            continue;
-        }
-        const lien = {};
-        lien.entiere = document.getElementById("radio-parcelle-entiere-" + idParcelle).checked;
-        lien.surface = lien.entiere ? 0 : document.getElementById("parcelle-surface-" + idParcelle).value;
-        liensParcelles.push(lien);
-    });
-    return liensParcelles;
+    //
+    // 2 - Restauration de la sélection des parcelles avant appel
+    //
+console.log("liensParcelles =", liensParcelles);
+    for(const lien in liensParcelles) {
+        const idP = lien.idParcelle;
+        const element = document.getElementsByName("radio-parcelle-" + idP);
+console.log("idP =", idP, " - element = ", element);
+    }
 }
 
 </script>
