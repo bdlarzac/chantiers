@@ -105,7 +105,7 @@ async function initialize(){
         await afficheParcelles(
             document.getElementById('parcelles'),
             {{.UGs}},
-            {{.LiensParcelles}}
+            computeLiensParcellesFromChantier()
         );
     }
 }
@@ -136,8 +136,6 @@ async function actionAfterChangeFermier(){
         return;                                                                     
     }
     response = await response.json();
-///// factoriser à partir de là (à confirmer)
-// afficheParcelles(liste id ug)
     if(response == null || response.length == 0){
         ugsElt.innerHTML = "Aucune UG pour ce fermier";
         return;
@@ -201,7 +199,7 @@ async function actionAfterChangeUG(){
             idsUG.push(idUG);
         }
     }
-    await afficheParcelles(idsUG, document.getElementById('parcelles')); // dans view/common/choix-parcelles.html
+    await afficheParcelles(document.getElementById('parcelles'), idsUG, ); // dans view/common/choix-parcelles.html
 }
 
 // ***************************************
