@@ -157,9 +157,9 @@ func (ch *Chaufer) ComputeLiensParcelles(db *sqlx.DB) (err error) {
 	if len(ch.LiensParcelles) != 0 {
 		return nil
 	}
-	ch.LiensParcelles, err = computeChantierLiensParcelles(db, "chaufer", ch.Id)
+	ch.LiensParcelles, err = computeLiensChantierParcelles(db, "chaufer", ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel computeChantierLiensParcelles")
+		return werr.Wrapf(err, "Erreur appel computeLiensChantierParcelles")
 	}
 	return nil
 }

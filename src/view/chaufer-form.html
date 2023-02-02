@@ -3,7 +3,7 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-{{template "choix-parcelles.html"}}
+{{template "choix-parcelles.html" .Details.Chantier}}
 
 <h1>{{.Header.Title}}</h1>
 
@@ -102,17 +102,11 @@ async function initialize(){
         document.getElementById("fermier-" + idFermier).selected = "selected";
         await actionAfterChangeFermier();
         document.getElementById("ug-" + "{{/* .IdUG */}}").checked = true;
-        await afficheParcelles({{.UGs}});
-        {{range .LiensParcelles}}
-            document.getElementById("radio-parcelle-non-selectionne-" + "{{.IdParcelle}}").checked = true;
-            {{if .Entiere}}
-                document.getElementById("radio-parcelle-entiere-" + "{{.IdParcelle}}").checked = true;
-            {{else}}
-                document.getElementById("radio-parcelle-surface-" + "{{.IdParcelle}}").checked = true;
-                document.getElementById("parcelle-surface-" + "{{.IdParcelle}}").readOnly = false;
-                document.getElementById("parcelle-surface-" + "{{.IdParcelle}}").value = "{{.Surface}}";
-            {{end}}
-        {{end}}
+        await afficheParcelles(
+            document.getElementById('parcelles'),
+            {{.UGs}},
+            {{.LiensParcelles}}
+        );
     }
 }
 
@@ -142,6 +136,8 @@ async function actionAfterChangeFermier(){
         return;                                                                     
     }
     response = await response.json();
+///// factoriser à partir de là (à confirmer)
+// afficheParcelles(liste id ug)
     if(response == null || response.length == 0){
         ugsElt.innerHTML = "Aucune UG pour ce fermier";
         return;
@@ -158,7 +154,7 @@ async function actionAfterChangeFermier(){
     table.appendChild(tr);
     let td = document.createElement("td");
     td.classList.add("vertical-align-top");
-    tr.appendChild(td);                             
+    tr.appendChild(td);
     let i = 1;
     let name, checkbox, label, span;
     response.forEach(function(item) {

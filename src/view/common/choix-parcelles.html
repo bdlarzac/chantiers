@@ -1,18 +1,44 @@
+{{/* 
 
-
-
-
-
-
+    La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates appelantes).
+    Utilisé uniquement par computeLiensParcellesFromChantier()
+    
+    Les variables liensParcelles sont des tableaux d'objets ayant comme champs :
+        idParcelle
+        entiere
+        surface
+    Calculés soit à partir d'une variiable go, soit à partir des parcelles sélectionnées dans un formulaire.
+    
+    Ex de html généré et traité par cette template :
+    <div><b>0K0111</b><br>Millau</div>
+    <div class="parcelle" id="parcelle-1027">
+        <div>
+            <input type="radio" name="radio-parcelle-1027" value="radio-parcelle-non-selectionne-1027" id="radio-parcelle-non-selectionne-1027" checked="true" onclick="document.getElementById('parcelle-surface-1027').readOnly = true;document.getElementById('parcelle-surface-1027').value = '';">
+            <label for="radio-parcelle-non-selectionne-1027">Non sélectionnée</label>
+        </div>
+        <div>
+            <input type="radio" name="radio-parcelle-1027" value="radio-parcelle-entiere-1027" id="radio-parcelle-entiere-1027" onclick="document.getElementById('parcelle-surface-1027').readOnly = true;document.getElementById('parcelle-surface-1027').value = '';">
+            <label for="radio-parcelle-entiere-1027">Entière (25.51 ha)</label>
+        </div>
+        <div>
+            <input type="radio" name="radio-parcelle-1027" value="radio-parcelle-surface-1027" id="radio-parcelle-surface-1027" onclick="document.getElementById('parcelle-surface-1027').readOnly = false;">
+            <label for="radio-parcelle-surface-1027" class="padding-right">Surface</label>
+            <input type="number" min="0" step="0.01" class="width5" name="parcelle-surface-1027" id="parcelle-surface-1027" readonly="true">    
+        </div>
+    </div>
+    
+*/}}
 <script>
 // ***************************************
 /** 
     Récup en ajax les parcelles correspondant à une ou plusieurs UGs et les affiche.
     Aucune parcelle n'est sélectionnée.
-    @param  idsUG           Tableau d'entiers, ex [3, 87, 19]
     @param  parcellesElt    Element du DOM dans lequel la liste des parcelles est affichée
+    @param  idsUG           Tableau d'entiers, ex [3, 87, 19]
+    @param  liensParcelles  Voir commentaire de ce fichier.
+
 **/
-async function afficheParcelles(idsUG, parcellesElt){
+async function afficheParcelles(parcellesElt, idsUG, liensParcelles){
     const nCol = 2; // nb de colonne pour l'affichage des parcelles
     const strIdsUG = idsUG.join(',');
     const url = "/ajax/get/parcelles-from-ugs/" + strIdsUG;
@@ -145,4 +171,39 @@ async function afficheParcelles(idsUG, parcellesElt){
         i++;
     });
 }
+
+/** 
+    Trasfère les donées go Chantier.LiensParcelles dans un tableau d'objets js
+**/
+function computeLiensParcellesFromChantier(){
+    const liensParcelles = [];
+    {{range .LiensParcelles}}
+        const lien = {};
+        lien.idParcelle = {{.IdParcelle}};
+        lien.entiere = {{.Entiere}};
+        lien.surface = lien.entiere ? 0 : {{.Surface}};
+        liensParcelles.push(lien);
+    {{end}}
+    return liensParcelles;
+}
+
+/**
+    Calcule les liens parcelles à partir des champs sélectionnés dans le formulaire
+    @return  liensParcelles  Voir commentaire de ce fichier.
+**/
+function computeLiensParcellesFromForm(){
+    const parcelleDivs = document.getElementsByClassName("parcelle");
+    parcelleDivs.forEach(function(div){
+        const idParcelle = div.getAttribute("id");
+        if (!document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked){
+            continue;
+        }
+        const lien = {};
+        lien.entiere = document.getElementById("radio-parcelle-entiere-" + idParcelle).checked;
+        lien.surface = lien.entiere ? 0 : document.getElementById("parcelle-surface-" + idParcelle).value;
+        liensParcelles.push(lien);
+    });
+    return liensParcelles;
+}
+
 </script>

@@ -33,7 +33,7 @@ type ChantierParcelle struct {
 // ************************** Liens chantier parcelle *******************************
 
 // pour factoriser chantier.ComputeLiensParcelles()
-func computeChantierLiensParcelles(db *sqlx.DB, typeChantier string, idChantier int) (result []*ChantierParcelle, err error) {
+func computeLiensChantierParcelles(db *sqlx.DB, typeChantier string, idChantier int) (result []*ChantierParcelle, err error) {
 	query := `select * from chantier_parcelle where type_chantier='`+typeChantier+`' and id_chantier=$1`
 	err = db.Select(&result, query, idChantier)
 	if err != nil {
