@@ -2,10 +2,9 @@
 
     Modifications (migrations) de la base BDL
     Code pas utilisé en fonctionnement normal.
-
-    Lancer l'exécution en utilisant des variables d'environnement et en utilisant *.go :
-    ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run *.go
-
+    
+    Voir fichier README pour ajouter ou exécuter une migration
+    
     @copyright  BDL, Bois du Larzac
     @license    GPL
     @history    2019-09-26 17:41:35+02:00, Thierry Graff : Creation
