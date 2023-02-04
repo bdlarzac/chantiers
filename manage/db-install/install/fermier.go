@@ -90,6 +90,7 @@ func FillFermier(ctx *ctxt.Context, versionSCTL string) {
 // Remplit les liens parcelle - exploitant à partir d'un export de la base SCTL
 // @param   versionSCTL ex "2020-12-23" - voir commentaire de install-bdl.go
 func FillLiensParcelleFermier(ctx *ctxt.Context, versionSCTL string) {
+    
 	table := "parcelle_fermier"
 	fmt.Println("Remplit table " + table + " à partir de Subdivision.csv")
 

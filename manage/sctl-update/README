@@ -12,15 +12,15 @@ sudo apt install mdbtools
 
 - Renommer ce fichier Sctl-Gfa-AAAA-MM-JJ.mdb en utilisant la date du jour, par ex Sctl-Gfa-2020-02-27.mdb
 
-- Mettre le fichier renommé dans le répertoire appli/1-manage/sctl-data/
+- Mettre le fichier renommé dans le répertoire appli/manage/sctl-data/
 
-- Créer un répertoire AAAA-MM-JJ dans appli/1-manage/sctl-data/
-ex : appli/1-manage/sctl-data/2020-02-27/
+- Créer un répertoire AAAA-MM-JJ dans appli/manage/sctl-data/
+ex : appli/manage/sctl-data/2020-02-27/
 
-- Exécuter le script en mettant la date AAAA-MM-JJ en paramètre.
-ex : mdb2csv 2020-02-27
+- Exécuter sctl-mdb2csv en mettant la date AAAA-MM-JJ en paramètre.
+ex : sctl-mdb2csv 2020-02-27
 
-Les fichiers générés se trouvent dans le répertoire appli/1-manage/sctl-data/AAAA-MM-JJ
+Les fichiers générés se trouvent dans le répertoire appli/manage/sctl-data/AAAA-MM-JJ
 
 ---------------------------------------------------------------------------------------------------
 
