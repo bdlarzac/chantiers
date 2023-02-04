@@ -3,8 +3,8 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-{{template "choix-parcelles.html" .Details.Chantier}}
-{{template "choix-ugs.html" .Details.Chantier}}
+{{template "liens-parcelles.html" .Details.Chantier}}
+{{template "liens-ugs.html" .Details.Chantier}}
 
 <h1>{{.Header.Title}}</h1>
 
@@ -65,6 +65,8 @@
     
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
     <input type="hidden" name="id-fermier" id="id-fermier" value="{{.IdFermier}}">
+    <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+    <input type="hidden" name="ids-parcelles" id="ids-parcelles" value="">
     
 </form>
 
@@ -97,7 +99,7 @@ async function initialize(){
         document.getElementById("fermier-" + idFermier).selected = "selected";
         await actionAfterChangeFermier();
         actionAfterChangeUG(computeLiensParcellesFromChantier());
-        await afficheParcelles( // dans view/common/choix-parcelles.html
+        await afficheParcelles( // dans view/common/liens-parcelles.html
             document.getElementById('parcelles'),
             computeIdsUGsFromChantier(),
             computeLiensParcellesFromChantier()
@@ -107,7 +109,8 @@ async function initialize(){
 
 // ***************************************
 async function actionAfterChangeUG(liensParcelles){
-    await afficheParcelles( // dans view/common/choix-parcelles.html
+console.log("actionAfterChangeUG(), liensParcelles = ", liensParcelles);
+    await afficheParcelles( // dans view/common/liens-parcelles.html
         document.getElementById('parcelles'),
         computeIdsUGsFromForm(),
         liensParcelles
@@ -120,6 +123,8 @@ async function actionAfterChangeUG(liensParcelles){
     Affiche les UGs sur nCol colonnes.
     Aucune UG n'est sélectionnée.
     Aucune parcelle n'est affichée.
+    
+    Code de fabrication des ugs pas factorisé dans liens-ugs.html car spécifique à chaufer
 **/
 async function actionAfterChangeFermier(){
     const nCol = 3;
@@ -166,7 +171,7 @@ async function actionAfterChangeFermier(){
         checkbox.setAttribute("name", "ug");
         checkbox.setAttribute("id", name);
         checkbox.setAttribute("value", name);
-        checkbox.setAttribute("onchange", "actionAfterChangeUG(computeIdsUGsFromForm());");
+        checkbox.setAttribute("onchange", "actionAfterChangeUG(computeLiensParcellesFromForm());");
         label = document.createElement("label");
         label.setAttribute("for", name);
         label.innerHTML = item.name;

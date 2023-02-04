@@ -2,6 +2,20 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+
+#9 lien chantier parcelle
+--------------------------------------------------------------------------------------------------
+
+Erreur appel UG.ComputeRecap()
+Erreur query : select id from chaufer where id_ug =$1
+pq: la colonne « id_ug » n'existe pas
+=> écrire func (ug *UG) ComputeChantiers(db *sqlx.DB, typeChantier string) error {}
+
+
+
+
+--------------------------------------------------------------------------------------------------
+
 - view/common/chantier-lien.html : baseURL est initialisé à 2 endroits => supprimer le 2e et tester
 
 - page d'erreur : prendre en compte version prod / dev (fond bleu)

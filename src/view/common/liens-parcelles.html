@@ -1,13 +1,17 @@
 {{/* 
 
-    La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates appelantes).
+    La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates utilisatrices).
     Utilisé uniquement par computeLiensParcellesFromChantier()
     
     Les variables liensParcelles sont des tableaux d'objets ayant comme champs :
-        idParcelle
-        entiere
-        surface
+        idParcelle  int
+        entiere     bool
+        surface     float
     Calculés soit à partir d'une variiable go, soit à partir des parcelles sélectionnées dans un formulaire.
+    
+    Conventions à respecter par les templates utilisatrices :
+    - les parcelles se trouvent dans une <div id="parcelles"></div>
+    
     
     Ex de html généré et traité par cette template :
     <div><b>0K0111</b><br>Millau</div>
@@ -32,7 +36,7 @@
 
 /** 
     Transfère les donées go Chantier.LiensParcelles dans un tableau d'objets js
-    @return     Le tableau js de liens parcelles.
+    @return  Le tableau js de liens parcelles. Voir structure en début de ce fichier.
 **/
 function computeLiensParcellesFromChantier(){
     const liensParcelles = [];
@@ -43,25 +47,33 @@ function computeLiensParcellesFromChantier(){
         lien.surface = lien.entiere ? 0 : {{.Surface}};
         liensParcelles.push(lien);
     {{end}}
+console.log("computeLiensParcellesFromChantier() - liensParcelles = ", liensParcelles);
     return liensParcelles;
 }
 
 /**
-    Calcule les liens parcelles à partir des champs sélectionnés dans le formulaire
-    @return  liensParcelles  Voir commentaire de ce fichier.
+    Calcule les liens parcelles à partir des champs sélectionnés dans le formulaire.
+    Ne calcule que les parcelles sélectionnées.
+    @return  Le tableau js de liens parcelles. Voir structure en début de ce fichier.
 **/
 function computeLiensParcellesFromForm(){
+    const liensParcelles = [];
     const parcelleDivs = document.getElementsByClassName("parcelle");
-    for(div of parcelleDivs.entries){
-        const idParcelle = div.getAttribute("id");
-        if (!document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked){
-            continue;
+//console.log("computeLiensParcellesFromForm() - parcelleDivs =", parcelleDivs);
+    for(const div of parcelleDivs){
+        const idP = div.getAttribute("id").replace("parcelle-", "");
+//console.log("computeLiensParcellesFromForm() - idP =", idP);
+//console.log("checked = ", document.getElementById("radio-parcelle-non-selectionne-" + idP).checked);
+        if (document.getElementById("radio-parcelle-non-selectionne-" + idP).checked){
+            continue; // Ne calcule que les parcelles sélectionnées.
         }
         const lien = {};
-        lien.entiere = document.getElementById("radio-parcelle-entiere-" + idParcelle).checked;
-        lien.surface = lien.entiere ? 0 : document.getElementById("parcelle-surface-" + idParcelle).value;
+        lien.idParcelle = idP;
+        lien.entiere = document.getElementById("radio-parcelle-entiere-" + idP).checked;
+        lien.surface = lien.entiere ? 0 : document.getElementById("parcelle-surface-" + idP).value;
         liensParcelles.push(lien);
     }
+//console.log("computeLiensParcellesFromForm() - liensParcelles = ", liensParcelles);
     return liensParcelles;
 }
 
@@ -77,6 +89,7 @@ function computeLiensParcellesFromForm(){
 async function afficheParcelles(parcellesElt, idsUG, liensParcelles){
     //
     // 1 - Affichage nouvelles parcelles
+    //     Elles sont toutes à "non sélectionnée"
     //
     const nCol = 2; // nb de colonne pour l'affichage des parcelles
     const strIdsUG = idsUG.join(',');
@@ -143,7 +156,7 @@ async function afficheParcelles(parcellesElt, idsUG, liensParcelles){
         radio.setAttribute("name", radioName);
         radio.setAttribute("value", radioValueId);
         radio.setAttribute("id", radioValueId);
-        radio.setAttribute("checked", true);
+        radio.setAttribute("checked", true);        // ICI, parcelle non sélectionnée
         radio.setAttribute("onclick", strOnclick);
         subdiv.appendChild(radio);
         // non sélectionnée - label
@@ -192,7 +205,7 @@ async function afficheParcelles(parcellesElt, idsUG, liensParcelles){
         surfaceInput.setAttribute("min", "0");
         surfaceInput.setAttribute("step", "0.01");
         surfaceInput.setAttribute("class", "width5");
-        surfaceInput.setAttribute("name", surfaceInputNameId);
+//        surfaceInput.setAttribute("name", surfaceInputNameId);
         surfaceInput.setAttribute("id", surfaceInputNameId);
         surfaceInput.setAttribute("readonly", true);
         subdiv.appendChild(surfaceInput);
@@ -212,11 +225,29 @@ async function afficheParcelles(parcellesElt, idsUG, liensParcelles){
     //
     // 2 - Restauration de la sélection des parcelles avant appel
     //
-console.log("liensParcelles =", liensParcelles);
-    for(const lien in liensParcelles) {
+//console.log("Restauration - liensParcelles =", liensParcelles);
+    for(const lien of liensParcelles) {
         const idP = lien.idParcelle;
-        const element = document.getElementsByName("radio-parcelle-" + idP);
-console.log("idP =", idP, " - element = ", element);
+//console.log("Restauration - idP =", idP);
+        // on teste undefined pour le cas où des parcelles précédemment sélectionnées ne sont plus visibles
+        // (si on a dé-sélectionné une ug)
+        if(lien.entiere){
+            const test = document.getElementById("radio-parcelle-entiere-" + idP);
+            if(test != undefined){
+                document.getElementById("radio-parcelle-entiere-" + idP).checked = true;
+            }
+            else {
+                continue;
+            }
+        }
+        else {
+            const test = document.getElementById("radio-parcelle-surface-" + idP);
+            if(test != undefined){
+                document.getElementById("radio-parcelle-surface-" + idP).checked = true;
+                document.getElementById("parcelle-surface-" + idP).readonly = false;
+                document.getElementById("parcelle-surface-" + idP).value = lien.surface;
+            }
+        }
     }
 }
 

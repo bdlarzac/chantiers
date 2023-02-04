@@ -15,6 +15,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
+"fmt"
 )
 
 type detailsChauferForm struct {
@@ -242,6 +243,7 @@ func chantierChauferForm2var(r *http.Request) (chantier *model.Chaufer, idsUG []
 	if err = r.ParseForm(); err != nil {
 		return chantier, []int{}, err
 	}
+fmt.Printf("%+v\n",r.PostForm)
 	//
 	chantier.IdFermier, err = strconv.Atoi(r.PostFormValue("id-fermier"))
 	if err != nil {
