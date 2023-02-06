@@ -22,17 +22,14 @@ function computeIdsUGsFromChantier(){
     Calcule les ids des UGs sélectionnées
 **/
 function computeIdsUGsFromForm(){
-console.log("computeIdsUGsFromForm()");
     const tmpElts = document.getElementsByClassName('chk-ug');
     const idsUG = [];
     for (const item of tmpElts) {
-//        const idUG = item.getAttribute('id').replace('ug-', '');
         const idUG = item.getAttribute('data-ug-id');
         if(item.checked == true){
             idsUG.push(idUG);
         }
     }
-console.log("idsUG =", idsUG);
     return idsUG;
 }
 

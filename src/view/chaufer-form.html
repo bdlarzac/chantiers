@@ -100,22 +100,16 @@ async function initialize(){
         document.getElementById("fermier-" + idFermier).selected = "selected";
         await actionAfterChangeFermier();
         actionAfterChangeUG(computeLiensParcellesFromChantier());
-        await afficheParcelles( // dans view/common/liens-parcelles.html
-            document.getElementById('parcelles'),
-            computeIdsUGsFromChantier(),
-            computeLiensParcellesFromChantier()
-        );
+        // dans view/common/liens-parcelles.html
+        await afficheParcelles(computeIdsUGsFromChantier(), computeLiensParcellesFromChantier());
     }
 }
 
 // ***************************************
 async function actionAfterChangeUG(liensParcelles){
 //console.log("actionAfterChangeUG(), liensParcelles = ", liensParcelles);
-    await afficheParcelles( // dans view/common/liens-parcelles.html
-        document.getElementById('parcelles'),
-        computeIdsUGsFromForm(),
-        liensParcelles
-    );
+    // dans view/common/liens-parcelles.html
+    await afficheParcelles(computeIdsUGsFromForm(), liensParcelles);
 }
 
 // ******************************************************
@@ -164,19 +158,17 @@ async function actionAfterChangeFermier(){
     td.classList.add("vertical-align-top");
     tr.appendChild(td);
     let i = 1;
-    let name, checkbox, label, span;
+    let checkboxId, checkbox, label, span;
     response.forEach(function(item) {
-        name = "ug-" + item.id;
+        checkboxId = "ug-" + item.id;
         checkbox = document.createElement("input");
         checkbox.setAttribute("type", "checkbox");
         checkbox.classList.add("chk-ug");
-//        checkbox.setAttribute("name", "ug");
-        checkbox.setAttribute("id", name);
-//        checkbox.setAttribute("value", name);
+        checkbox.setAttribute("id", checkboxId); // nécessaire pour label for
         checkbox.setAttribute("data-ug-id", item.id);
         checkbox.setAttribute("onchange", "actionAfterChangeUG(computeLiensParcellesFromForm());");
         label = document.createElement("label");
-        label.setAttribute("for", name);
+        label.setAttribute("for", checkboxId);
         label.innerHTML = item.name;
         label.style["font-weight"] = "normal";
         span = document.createElement("span");
@@ -200,7 +192,6 @@ async function actionAfterChangeFermier(){
 
 // ***************************************
 function validateForm(){
-console.log("validateForm()");
     let msg = "", check;
     let i, elt;
     // vérifie fermier
@@ -209,16 +200,15 @@ console.log("validateForm()");
         msg += "- Vous devez sélectionner un fermier.\n";
     }
     else{
-        const tmp = checkUGsAndFillHiddenField();
+        const tmp = checkUGsAndFillHiddenField(); // dans view/common/liens-ugs.html
         if(tmp != ''){
             msg += tmp;
         }
         else{
-            msg += checkParcellesAndFillHiddenField(); // dans view/common/liens-parcelles.html
+//            msg += checkParcellesAndFillHiddenField(); // dans view/common/liens-parcelles.html
+            msg += checkParcelles(); // dans view/common/liens-parcelles.html
         }
     }
-return false;
-/* 
     //
     if(document.getElementById("datechantier").value == ""){
         msg += "- Vous devez choisir la date de chantier.\n";
@@ -245,7 +235,6 @@ return false;
         return false;
     }
     return true;
-*/
 }
 </script>
 
