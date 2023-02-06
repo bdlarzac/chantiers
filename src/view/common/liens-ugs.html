@@ -18,20 +18,53 @@ function computeIdsUGsFromChantier(){
     return idsUGs;
 }
 
-// ***************************************
 /** 
     Calcule les ids des UGs sélectionnées
 **/
 function computeIdsUGsFromForm(){
-    const tmpElts = document.getElementsByName('ug');
+console.log("computeIdsUGsFromForm()");
+    const tmpElts = document.getElementsByClassName('chk-ug');
     const idsUG = [];
     for (const item of tmpElts) {
-        const idUG = item.getAttribute('id').replace('ug-', '');
+//        const idUG = item.getAttribute('id').replace('ug-', '');
+        const idUG = item.getAttribute('data-ug-id');
         if(item.checked == true){
             idsUG.push(idUG);
         }
     }
+console.log("idsUG =", idsUG);
     return idsUG;
 }
+
+/** 
+    Fait 2 choses :
+    - Fabrique le message d'erreur pour le choix des ugs.
+    - Remplit l'attribut value de l'élément "ids-ugs" du formulaire appelant :
+        <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+      Cette value est de la forme : "12;352;41"
+    @return message d'erreur ; vide si la sélection de ugs est ok.
+**/
+function checkUGsAndFillHiddenField(){
+    let msg = "";
+    const elts = document.getElementsByClassName("chk-ug");
+    const hiddenValues = []; // tableau pour fabriquer value de hidden field
+    //
+    document.getElementById("ids-ugs").value = ""; // réinitialise hidden field
+    //
+    for(let i = 0; i < elts.length; i++) {
+        if(elts[i].checked){
+            hiddenValues.push(elts[i].getAttribute("data-ug-id"));
+        }
+    }
+    if(hiddenValues.length == 0){
+        msg += "- Vous devez au moins choisir une UG.\n";
+    }
+    else {
+        document.getElementById("ids-ugs").value = hiddenValues.join(";");
+    }
+    return msg;
+}
+
+
 
 </script>

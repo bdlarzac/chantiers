@@ -29,7 +29,7 @@ func form2IdsUG(r *http.Request)(ids []int) {
 	var str string
 	var id int
 	//
-	tmp = strings.Split(r.PostFormValue("ids-ugs"), ",")
+	tmp = strings.Split(r.PostFormValue("ids-ugs"), ";")
 	for _, str = range tmp {
 		id, _ = strconv.Atoi(str)
 		ids = append(ids, id)
