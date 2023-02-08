@@ -10,11 +10,9 @@ package control
 
 import (
 	"bdl.local/bdl/model"
-	"bdl.local/bdl/generic/tiglib"
 	"strconv"
 	"strings"
 	"net/http"
-"fmt"
 )
 
 
@@ -81,19 +79,11 @@ func form2IdsFermier(r *http.Request)(ids []int) {
     Utilise la variable liens-parcelles pour calculer les model.ChantierParcelle
     ex de liens-parcelles : [1025:entiere;1239:surface-0.10]
 **/
-func form2LienParcelles__TEST(r *http.Request) (result []*model.ChantierParcelle) {
-	//
-	// parcelles ; ex de valeurs :
-	// radio-parcelle-148:[radio-parcelle-entiere-148]
-	// parcelle-surface-148:[]
-	// radio-parcelle-337:[radio-parcelle-surface-337]
-	// parcelle-surface-337:[3.5]
-	//  => parcelle 148 entière et parcelle 337 = surface de 3.5 ha
+func form2LienParcelles(r *http.Request) (result []*model.ChantierParcelle) {
 	result = []*model.ChantierParcelle{}
-/* 	idChaufer, _ := strconv.Atoi(r.PostFormValue("id-chantier"))
+ 	idChaufer, _ := strconv.Atoi(r.PostFormValue("id-chantier"))
 	strLiens := r.PostFormValue("liens-parcelles")
 	liens := strings.Split(strLiens, ";")
-fmt.Printf("liens = %+v\n",liens)
 	for _, lien := range(liens) {
 	    newChantierParcelle := model.ChantierParcelle{}
         newChantierParcelle.IdChantier = idChaufer
@@ -103,60 +93,9 @@ fmt.Printf("liens = %+v\n",liens)
 	    what := tmp[1]
 	    newChantierParcelle.Entiere = what == "entiere"
 	    if ! newChantierParcelle.Entiere {
-            lien.Surface, _ = strconv.ParseFloat(strings.Replace(lien, "surface-", ""), 32)
+            newChantierParcelle.Surface, _ = strconv.ParseFloat(strings.Replace(what, "surface-", "", -1), 32)
 	    }
-fmt.Printf("what = %+v\n",what)
-	}
-	for k, v := range r.PostForm {
-		if strings.HasPrefix(k, "radio-parcelle-") {
-			lien := model.ChantierParcelle{}
-			lien.IdChantier = idChaufer
-			idPString := strings.Replace(k, "radio-parcelle-", "", -1)
-			idP, _ := strconv.Atoi(idPString)
-			lien.IdParcelle = idP
-			if v[0] == "radio-parcelle-entiere-"+idPString {
-				lien.Entiere = true
-			} else if v[0] == "radio-parcelle-surface-"+idPString {
-				lien.Entiere = false
-				lien.Surface, _ = strconv.ParseFloat(r.PostFormValue("parcelle-surface-"+idPString), 32)
-				lien.Surface = tiglib.Round(lien.Surface, 2)
-			} else {
-				continue
-			}
-			result = append(result, &lien)
-		}
-	} */
-	return result
-}
-
-func form2LienParcelles(r *http.Request) (result []*model.ChantierParcelle) {
-	//
-	// parcelles ; ex de valeurs :
-	// radio-parcelle-148:[radio-parcelle-entiere-148]
-	// parcelle-surface-148:[]
-	// radio-parcelle-337:[radio-parcelle-surface-337]
-	// parcelle-surface-337:[3.5]
-	//  => parcelle 148 entière et parcelle 337 = surface de 3.5 ha
-	result = []*model.ChantierParcelle{}
-	idChaufer, _ := strconv.Atoi(r.PostFormValue("id-chantier"))
-	for k, v := range r.PostForm {
-		if !strings.HasPrefix(k, "radio-parcelle-") {
-		    continue
-		}
-        lien := model.ChantierParcelle{}
-        lien.IdChantier = idChaufer
-        idPString := strings.Replace(k, "radio-parcelle-", "", -1)
-        idP, _ := strconv.Atoi(idPString)
-        lien.IdParcelle = idP
-        if v[0] == "radio-parcelle-entiere-"+idPString {
-            lien.Entiere = true
-        } else if v[0] == "radio-parcelle-surface-"+idPString {
-            lien.Entiere = false
-            lien.Surface, _ = strconv.ParseFloat(r.PostFormValue("parcelle-surface-"+idPString), 32)
-            lien.Surface = tiglib.Round(lien.Surface, 2)
-        }
-fmt.Printf("form2LienParcelles() - lien = %+v\n",&lien)
-        result = append(result, &lien)
+	    result = append(result, &newChantierParcelle);
 	}
 	return result
 }

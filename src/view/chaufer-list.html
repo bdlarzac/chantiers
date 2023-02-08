@@ -46,9 +46,12 @@
         <td>{{.Volume}} {{.Unite | labelUnite}}</td>
         <td>
             <div class="grid2-pres">
-                <div>UG</div>
-                <div><a href="/ug/{{.IdUG}}">{{.UG.String}}</a></div>
-                
+                <div>UGs</div>
+                <div>
+                    {{range .UGs}}
+                        <div><a href="/ug/{{.Id}}">{{.String}}</a></div>
+                    {{end}}
+                </div>
                 <div>Essence</div>
                 <div>{{.Essence | labelEssence}}</div>
                 
@@ -60,7 +63,7 @@
             <div class="grid2-pres">
             {{range .LiensParcelles}}
                 <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
-                <div>{{if .Entiere}}Entière{{else}}{{.Surface}} ha{{end}}</div>
+                <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
             {{end}}
             </div>
         </td>

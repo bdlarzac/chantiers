@@ -329,19 +329,15 @@ func (ug *UG) ComputeProprietaires(db *sqlx.DB) error {
 
 // Pas inclus dans GetUGFull()
 func (ug *UG) ComputeRecap(db *sqlx.DB) error {
-	var query string
 	var err error
+	ids := []int{}
 	ug.Recaps = make(map[string]RecapUG)
 	//
 	// Chantiers plaquettes
 	//
-	ids := []int{}
-	query = `select id from plaq where id in(
-	    select id_chantier from chantier_ug where type_chantier='plaq' and id_ug =$1
-    )`
-	err = db.Select(&ids, query, ug.Id)
+	ids, err = computeIdsChantiersFromUG(db, "plaq", ug.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel computeIdsChantiersFromUG()")
 	}
 	for _, idChantier := range ids {
 		chantier, err := GetPlaqFull(db, idChantier)
@@ -360,11 +356,9 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 	//
 	// Chantiers chauffage fermier
 	//
-	ids = []int{}
-	query = `select id from chaufer where id_ug =$1`
-	err = db.Select(&ids, query, ug.Id)
+	ids, err = computeIdsChantiersFromUG(db, "chaufer", ug.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel computeIdsChantiersFromUG()")
 	}
 	for _, idChantier := range ids {
 		chantier, err := GetChauferFull(db, idChantier)
@@ -383,13 +377,9 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 	//
 	// Chantier autres valorisations
 	//
-	ids = []int{}
-	query = `select id from chautre where id in(
-	    select id_chantier from chantier_ug where type_chantier='chautre' and id_ug =$1
-    )`
-	err = db.Select(&ids, query, ug.Id)
+	ids, err = computeIdsChantiersFromUG(db, "chaufer", ug.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel computeIdsChantiersFromUG()")
 	}
 	for _, idChantier := range ids {
 		chantier, err := GetChautreFull(db, idChantier)
@@ -485,7 +475,9 @@ func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
 	// Chantiers Chauffage fermier
 	//
 	list4 := []Chaufer{}
-	query = `select * from chaufer where id_ug=$1`
+	query = `select * from chaufer where id in(
+	    select id_chantier from chantier_ug where type_chantier='chaufer' and id_ug =$1
+    )`
 	err = db.Select(&list4, query, u.Id)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)

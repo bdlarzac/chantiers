@@ -99,6 +99,9 @@ async function initialize(){
         const idFermier = document.getElementById("id-fermier").value;
         document.getElementById("fermier-" + idFermier).selected = "selected";
         await actionAfterChangeFermier();
+        {{range .UGs}}
+            document.getElementById("ug-" + {{.Id}}).checked = true;
+        {{end}}
         actionAfterChangeUG(computeLiensParcellesFromChantier());
         // dans view/common/liens-parcelles.html
         await afficheParcelles(computeIdsUGsFromChantier(), computeLiensParcellesFromChantier());
@@ -125,6 +128,7 @@ async function actionAfterChangeFermier(){
     const nCol = 3;
     const fermierElt = document.getElementById("fermier");
     const idFermier = fermierElt.children[fermierElt.selectedIndex].id.replace("fermier-", "");
+    document.getElementById("id-fermier").value = idFermier;
     let ugsElt = document.getElementById("ugs");
     let parcellesElt = document.getElementById("parcelles").innerHTML = "Choisissez d'abord une UG";;
     ugsElt.innerHTML = "Choisissez d'abord un fermier";
@@ -205,8 +209,7 @@ function validateForm(){
             msg += tmp;
         }
         else{
-//            msg += checkParcellesAndFillHiddenField(); // dans view/common/liens-parcelles.html
-            msg += checkParcelles(); // dans view/common/liens-parcelles.html
+            msg += checkParcellesAndFillHiddenField(); // dans view/common/liens-parcelles.html
         }
     }
     //

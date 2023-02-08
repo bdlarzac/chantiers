@@ -40,14 +40,14 @@
 **/
 function computeLiensParcellesFromChantier(){
     const liensParcelles = [];
+    let lien;
     {{range .LiensParcelles}}
-        const lien = {};
+        lien = {};
         lien.idParcelle = {{.IdParcelle}};
         lien.entiere = {{.Entiere}};
         lien.surface = lien.entiere ? 0 : {{.Surface}};
         liensParcelles.push(lien);
     {{end}}
-console.log("computeLiensParcellesFromChantier() - liensParcelles = ", liensParcelles);
     return liensParcelles;
 }
 
@@ -59,11 +59,8 @@ console.log("computeLiensParcellesFromChantier() - liensParcelles = ", liensParc
 function computeLiensParcellesFromForm(){
     const liensParcelles = [];
     const parcelleDivs = document.getElementsByClassName("parcelle");
-//console.log("computeLiensParcellesFromForm() - parcelleDivs =", parcelleDivs);
     for(const div of parcelleDivs){
         const idParcelle = div.getAttribute("id").replace("parcelle-", "");
-//console.log("computeLiensParcellesFromForm() - idParcelle =", idParcelle);
-//console.log("checked = ", document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked);
         if (document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked){
             continue; // Ne calcule que les parcelles sélectionnées.
         }
@@ -73,7 +70,6 @@ function computeLiensParcellesFromForm(){
         lien.surface = lien.entiere ? 0 : document.getElementById("parcelle-surface-" + idParcelle).value;
         liensParcelles.push(lien);
     }
-//console.log("computeLiensParcellesFromForm() - liensParcelles = ", liensParcelles);
     return liensParcelles;
 }
 
@@ -265,45 +261,6 @@ async function afficheParcelles(idsUG, liensParcelles){
       Cette value est de la forme : "1027:surface-10;1025:entiere"
     @return message d'erreur ; vide si la sélection de parcelles est ok.
 **/
-// A SUPPRIMER
-function checkParcelles(){
-    let msg = "";
-    let parcelleChecked = false;
-    let surfaceZero = false;
-    const elts = document.getElementsByClassName("parcelle");
-    for(let i = 0; i < elts.length; i++) {
-        idParcelle = elts[i].getAttribute("id").replace("parcelle-", "");
-        if(document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked == true){
-            continue;
-        }
-        parcelleChecked = true; // ok, au moins une pacelle sélectionnée
-        if(document.getElementById("radio-parcelle-surface-" + idParcelle).checked){
-            surface = surfaceInputElt = document.getElementById("parcelle-surface-" + idParcelle).value;
-            if(surface <= 0 || surface == ""){
-                surfaceZero = true;
-            }
-        }
-    }
-    //
-    if(!parcelleChecked){
-        msg += "- Vous devez au moins choisir une parcelle.\n";
-    }
-    if(surfaceZero){
-        msg += "- La surface des parcelles doit être positive.\n";
-    }
-    return msg;
-}
-
-
-/** 
-    Fait 2 choses :
-    - Fabrique le message d'erreur pour le choix des parcelles.
-    - Remplit l'attribut value de l'élément "liens-parcelles" du formulaire appelant :
-        <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
-      Cette value est de la forme : "1027:surface-10;1025:entiere"
-    @return message d'erreur ; vide si la sélection de parcelles est ok.
-**/
-// A SUPPRIMER
 function checkParcellesAndFillHiddenField(){
     let idParcelle, surface;
     const hiddenValues = []; // tableau pour fabriquer value de hidden field
@@ -345,6 +302,44 @@ function checkParcellesAndFillHiddenField(){
     }
     return msg;
 }
+
+/** 
+    Fait 2 choses :
+    - Fabrique le message d'erreur pour le choix des parcelles.
+    - Remplit l'attribut value de l'élément "liens-parcelles" du formulaire appelant :
+        <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
+      Cette value est de la forme : "1027:surface-10;1025:entiere"
+    @return message d'erreur ; vide si la sélection de parcelles est ok.
+**/
+// A SUPPRIMER
+/* function checkParcelles(){
+    let msg = "";
+    let parcelleChecked = false;
+    let surfaceZero = false;
+    const elts = document.getElementsByClassName("parcelle");
+    for(let i = 0; i < elts.length; i++) {
+        idParcelle = elts[i].getAttribute("id").replace("parcelle-", "");
+        if(document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked == true){
+            continue;
+        }
+        parcelleChecked = true; // ok, au moins une pacelle sélectionnée
+        if(document.getElementById("radio-parcelle-surface-" + idParcelle).checked){
+            surface = surfaceInputElt = document.getElementById("parcelle-surface-" + idParcelle).value;
+            if(surface <= 0 || surface == ""){
+                surfaceZero = true;
+            }
+        }
+    }
+    //
+    if(!parcelleChecked){
+        msg += "- Vous devez au moins choisir une parcelle.\n";
+    }
+    if(surfaceZero){
+        msg += "- La surface des parcelles doit être positive.\n";
+    }
+    return msg;
+} */
+
 
 
 </script>

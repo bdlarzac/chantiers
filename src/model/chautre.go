@@ -35,7 +35,7 @@ type Chautre struct {
 	Notes         string
 	// pas stocké en base
 	UGs           []*UG
-	Parcelles     []*Parcelle
+	LiensParcelles []*ChantierParcelle
 	Lieudits      []*Lieudit
 	Fermiers      []*Fermier
 	Proprietaires []*Acteur
@@ -90,9 +90,9 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeUGs()")
 	}
-	err = ch.ComputeParcelles(db)
+	err = ch.ComputeLiensParcelles(db)
 	if err != nil {
-		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeParcelles()")
+		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeLiensParcelles()")
 	}
 	err = ch.ComputeLieudits(db)
 	if err != nil {
@@ -167,67 +167,55 @@ func (ch *Chautre) ComputeAcheteur(db *sqlx.DB) error {
 	return nil
 }
 
-func (ch *Chautre) ComputeUGs(db *sqlx.DB) error {
+func (ch *Chautre) ComputeUGs(db *sqlx.DB) (err error) {
 	if len(ch.UGs) != 0 {
 		return nil // déjà calculé
 	}
-	query := `select * from ug where id in(
-	    select id_ug from chantier_ug where type_chantier='chautre' and id_chantier=$1
-    )`
-	err := db.Select(&ch.UGs, query, &ch.Id)
+	ch.UGs, err = computeUGsOfChantier(db, "chautre", ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel computeUGsOfChantier")
 	}
 	return nil
 }
 
-func (ch *Chautre) ComputeParcelles(db *sqlx.DB) error {
-	if len(ch.Parcelles) != 0 {
-		return nil // déjà calculé
+func (ch *Chautre) ComputeLiensParcelles(db *sqlx.DB) (err error) {
+	if len(ch.LiensParcelles) != 0 {
+		return nil
 	}
-	query := `select * from parcelle where id in(
-	    select id_parcelle from chantier_parcelle where type_chantier='chautre' and id_chantier=$1
-    )`
-	err := db.Select(&ch.Parcelles, query, &ch.Id)
+	ch.LiensParcelles, err = computeLiensParcellesOfChantier(db, "chautre", ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier")
 	}
 	return nil
 }
 
-func (ch *Chautre) ComputeLieudits(db *sqlx.DB) error {
+func (ch *Chautre) ComputeLieudits(db *sqlx.DB) (err error) {
 	if len(ch.Lieudits) != 0 {
 		return nil // déjà calculé
 	}
-	query := `select * from lieudit where id in(
-	    select id_lieudit from chantier_lieudit where type_chantier='chautre' and id_chantier=$1
-    )`
-	err := db.Select(&ch.Lieudits, query, &ch.Id)
+	ch.Lieudits, err = computeLieuditsOfChantier(db, "chautre", ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel computeLieuditsOfChantier")
 	}
 	return nil
 }
 
-func (ch *Chautre) ComputeFermiers(db *sqlx.DB) error {
+func (ch *Chautre) ComputeFermiers(db *sqlx.DB) (err error) {
 	if len(ch.Fermiers) != 0 {
 		return nil // déjà calculé
 	}
-	query := `select * from fermier where id in(
-	    select id_fermier from chantier_fermier where type_chantier='chautre' and id_chantier=$1
-    )`
-	err := db.Select(&ch.Fermiers, query, &ch.Id)
+	ch.Fermiers, err = computeFermiersOfChantier(db, "chautre", ch.Id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel computeFermiersOfChantier")
 	}
 	return nil
 }
 
-func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) error {
+func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 	if len(ch.Proprietaires) != 0 {
 		return nil // déjà calculé
 	}
-	err := ch.ComputeUGs(db)
+	err = ch.ComputeUGs(db)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ch.ComputeUGs()")
 	}
@@ -286,74 +274,35 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, id
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur query : "+query)
 	}
+	ch.Id = id
 	//
 	// Liens avec UGs
 	//
-	query = `insert into chantier_ug(
-        type_chantier,
-        id_chantier,
-        id_ug) values($1,$2,$3)`
-	for _, idUG := range idsUG {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			id,
-			idUG)
-		if err != nil {
-			return id, werr.Wrapf(err, "Erreur query : "+query)
-		}
-	}
+	err = insertLiensChantierUG(db, "chautre", ch.Id, idsUG)
+    if err != nil {
+        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
+    }
 	//
 	// Liens avec Parcelles
 	//
-	query = `insert into chantier_parcelle(
-        type_chantier,
-        id_chantier,
-        id_parcelle) values($1,$2,$3)`
-	for _, idParcelle := range idsParcelles {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			id,
-			idParcelle)
-		if err != nil {
-			return id, werr.Wrapf(err, "Erreur query : "+query)
-		}
+	err = insertLiensChantierParcelle(db, "chautre", ch.Id, ch.LiensParcelles)
+	if err != nil {
+		return ch.Id, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
 	}
 	//
 	// Liens avec Lieudits
 	//
-	query = `insert into chantier_lieudit(
-        type_chantier,
-        id_chantier,
-        id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range idsLieudit {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			id,
-			idLieudit)
-		if err != nil {
-			return id, werr.Wrapf(err, "Erreur query : "+query)
-		}
-	}
+	err = insertLiensChantierLieudit(db, "chautre", ch.Id, idsLieudit)
+    if err != nil {
+        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
+    }
 	//
 	// Liens avec Fermiers
 	//
-	query = `insert into chantier_fermier(
-        type_chantier,
-        id_chantier,
-        id_fermier) values($1,$2,$3)`
-	for _, idFermier := range idsFermier {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			id,
-			idFermier)
-		if err != nil {
-			return id, werr.Wrapf(err, "Erreur query : "+query)
-		}
-	}
+	err = insertLiensChantierFermier(db, "chautre", ch.Id, idsFermier)
+    if err != nil {
+        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
+    }
 	//
 	return id, nil
 }
@@ -396,130 +345,58 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, id
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	// UGs
+	// update associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-	query = "delete from chantier_ug where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, ch.Id)
+	err = updateLiensChantierUG(db, "chautre", ch.Id, idsUG)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel updateLiensChantierUG()")
+    }
+	//
+	err = updateLiensChantierParcelle(db, "chautre", ch.Id, ch.LiensParcelles)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	query = `insert into chantier_ug(
-        type_chantier,
-        id_chantier,
-        id_ug) values($1,$2,$3)`
-	for _, idUG := range idsUG {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			ch.Id,
-			idUG)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur query : "+query)
-		}
+		return werr.Wrapf(err, "Erreur appel updateLiensChantierParcelle()")
 	}
 	//
-	// Parcelles
-	//
-	query = "delete from chantier_parcelle where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, ch.Id)
+	err = updateLiensChantierLieudit(db, "chautre", ch.Id, idsLieudit)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	query = `insert into chantier_parcelle(
-        type_chantier,
-        id_chantier,
-        id_parcelle) values($1,$2,$3)`
-	for _, idParcelle := range idsUG {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			ch.Id,
-			idParcelle)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur query : "+query)
-		}
+		return werr.Wrapf(err, "Erreur appel updateLiensChantierLieudit()")
 	}
 	//
-	// Lieudits
-	//
-	query = "delete from chantier_lieudit where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, ch.Id)
+	err = updateLiensChantierFermier(db, "chautre", ch.Id, idsFermier)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	query = `insert into chantier_lieudit(
-        type_chantier,
-        id_chantier,
-        id_lieudit) values($1,$2,$3)`
-	for _, idLieudit := range idsLieudit {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			ch.Id,
-			idLieudit)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur query : "+query)
-		}
-	}
-	//
-	// Fermiers
-	//
-	query = "delete from chantier_fermier where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, ch.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	query = `insert into chantier_fermier(
-        type_chantier,
-        id_chantier,
-        id_fermier) values($1,$2,$3)`
-	for _, idFermier := range idsFermier {
-		_, err = db.Exec(
-			query,
-			"chautre",
-			ch.Id,
-			idFermier)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur query : "+query)
-		}
+		return werr.Wrapf(err, "Erreur appel updateLiensChantierFermier()")
 	}
 	//
 	return nil
 }
 
-func DeleteChautre(db *sqlx.DB, id int) error {
+func DeleteChautre(db *sqlx.DB, id int) (err error) {
 	//
-	// delete UGs, parcelles, Lieudits, Fermiers associés à ce chantier
+	// delete associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-	var query string
-	var err error
-	query = "delete from chantier_ug where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, id)
+    err = deleteLiensChantierUG(db, "chautre", id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierUG()")
 	}
 	//
-	query = "delete from chantier_parcelle where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, id)
+    err = deleteLiensChantierParcelle(db, "chautre", id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierParcelle()")
 	}
 	//
-	query = "delete from chantier_lieudit where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, id)
+    err = deleteLiensChantierLieudit(db, "chautre", id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierLieudit()")
 	}
 	//
-	query = "delete from chantier_fermier where type_chantier='chautre' and id_chantier=$1"
-	_, err = db.Exec(query, id)
+    err = deleteLiensChantierFermier(db, "chautre", id)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierFermier()")
 	}
 	//
-	// delete le chantier
+	// delete le chantier, fait à la fin pour respecter les clés étrangères
 	//
-	query = "delete from chautre where id=$1"
+	query := "delete from chautre where id=$1"
 	_, err = db.Exec(query, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)

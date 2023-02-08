@@ -11,12 +11,12 @@ package ctxt
 
 import (
 	"fmt"
-	"html/template"
+	"math"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
-
+	"html/template"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/model"
 	"bdl.local/bdl/view"
@@ -33,6 +33,7 @@ func MustInitTemplates() {
 		"modulo":     modulo,
 		"nl2br":      nl2br,
 		"plus":       plus,
+		"round":      round,
 		"safeHTML":   safeHTML,
 		"twoDigits":  twoDigits,
 		"ucFirst":    ucFirst,
@@ -100,6 +101,12 @@ func nl2br(t string) template.HTML {
 **/
 func plus(a, b int) int {
 	return a + b
+}
+
+func round(x float64, precision int) float64 {
+	x = x * math.Pow10(precision)
+	x = math.Round(x)
+	return x / math.Pow10(precision)
 }
 
 /**
