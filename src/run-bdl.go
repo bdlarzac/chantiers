@@ -142,7 +142,7 @@ func main() {
 	r.HandleFunc("/lieudit/{id:[0-9]+}", H(control.ShowLieudit))
 	r.HandleFunc("/parcelle/{id:[0-9]+}", H(control.ShowParcelle))
 
-	r.PathPrefix("/doc/").Handler(http.StripPrefix("/doc/", http.FileServer(http.Dir(filepath.Join("doc")))))
+	r.PathPrefix("/doc/").Handler(http.StripPrefix("/doc/", http.FileServer(http.Dir(filepath.Join("..", "doc")))))
 	r.HandleFunc("/dbdump/", notFound) // pour empêcher de lister le rep contenant les db dumps
 	r.PathPrefix("/dbdump/").Handler(http.StripPrefix("/dbdump/", http.FileServer(http.Dir(model.SERVER_ENV.BACKUP_DIR))))
 
