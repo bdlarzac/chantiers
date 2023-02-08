@@ -237,7 +237,7 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 
 // ************************** CRUD *******************************
 
-func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) (int, error) {
+func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) (idChantier int, err error) {
 	query := `insert into chautre(
         id_acheteur,
         typevente,
@@ -254,8 +254,8 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, id
         numfacture,
         notes
         ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	idChantier = int(0)
+	err = db.QueryRow(
 		query,
 		ch.IdAcheteur,
 		ch.TypeVente,
@@ -270,44 +270,37 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, id
 		ch.TVA,
 		ch.DateFacture,
 		ch.NumFacture,
-		ch.Notes).Scan(&id)
+		ch.Notes).Scan(&idChantier)
 	if err != nil {
-		return id, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	ch.Id = id
-	//
-	// Liens avec UGs
-	//
-	err = insertLiensChantierUG(db, "chautre", ch.Id, idsUG)
-    if err != nil {
-        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
-    }
-	//
-	// Liens avec Parcelles
-	//
-	err = insertLiensChantierParcelle(db, "chautre", ch.Id, ch.LiensParcelles)
-	if err != nil {
-		return ch.Id, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
+		return idChantier, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	// Liens avec Lieudits
+	// insert associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-	err = insertLiensChantierLieudit(db, "chautre", ch.Id, idsLieudit)
+	err = insertLiensChantierUG(db, "chautre", idChantier, idsUG)
     if err != nil {
-        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
+        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
     }
 	//
-	// Liens avec Fermiers
+	err = insertLiensChantierParcelle(db, "chautre", idChantier, ch.LiensParcelles)
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
+	}
 	//
-	err = insertLiensChantierFermier(db, "chautre", ch.Id, idsFermier)
+	err = insertLiensChantierLieudit(db, "chautre", idChantier, idsLieudit)
     if err != nil {
-        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
+        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
     }
 	//
-	return id, nil
+	err = insertLiensChantierFermier(db, "chautre", idChantier, idsFermier)
+    if err != nil {
+        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
+    }
+	//
+	return idChantier, nil
 }
 
-func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) error {
+func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) (err error) {
 	query := `update chautre set(
         id_acheteur,
         typevente,
@@ -324,7 +317,7 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, id
         numfacture,
         notes    
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) where id=$15`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		ch.IdAcheteur,
 		ch.TypeVente,

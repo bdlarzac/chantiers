@@ -164,19 +164,9 @@ func (ch *Chaufer) ComputeLiensParcelles(db *sqlx.DB) (err error) {
 	return nil
 }
 
-// Auxiliaire de CRUD
-func (ch *Chaufer) computeIdsUG() ([]int){
-    result := []int{}
-    for _, ug := range(ch.UGs) {
-        result = append(result, ug.Id)
-    }
-    return result
-}
-
-
 // ************************** CRUD *******************************
 
-func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (int, error) {
+func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (idChantier int, err error) {
 	query := `insert into chaufer(
         id_fermier,
         datechantier,
@@ -186,8 +176,8 @@ func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (int, error) {
         unite,
         notes
         ) values($1,$2,$3,$4,$5,$6,$7) returning id`
-	id := int(0)
-	err := db.QueryRow(
+	idChantier = int(0)
+	err = db.QueryRow(
 		query,
 		ch.IdFermier,
 		ch.DateChantier,
@@ -195,29 +185,26 @@ func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (int, error) {
 		ch.Essence,
 		ch.Volume,
 		ch.Unite,
-		ch.Notes).Scan(&id)
+		ch.Notes).Scan(&idChantier)
 	if err != nil {
-		return id, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	ch.Id = id
-	//
-	// Liens avec UGs
-	//
-	err = insertLiensChantierUG(db, "chaufer", ch.Id, idsUG)
-	if err != nil {
-		return ch.Id, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
+		return idChantier, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	// Liens avec Parcelles
+	// insert associations avec UGs, Parcelles
 	//
-	err = insertLiensChantierParcelle(db, "chaufer", ch.Id, ch.LiensParcelles)
+	err = insertLiensChantierUG(db, "chaufer", idChantier, idsUG)
 	if err != nil {
-		return ch.Id, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
 	}
-	return ch.Id, nil
+	//
+	err = insertLiensChantierParcelle(db, "chaufer", idChantier, ch.LiensParcelles)
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
+	}
+	return idChantier, nil
 }
 
-func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) error {
+func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (err error) {
 	query := `update chaufer set(
         id_fermier,
         datechantier,
@@ -227,7 +214,7 @@ func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) error {
         unite,
         notes
         ) = ($1,$2,$3,$4,$5,$6,$7) where id=$8`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		ch.IdFermier,
 		ch.DateChantier,
@@ -241,14 +228,12 @@ func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) error {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	//
-	// Liens avec UGs
+	// update associations avec UGs, Parcelles
 	//
 	err = updateLiensChantierUG(db, "chaufer", ch.Id, idsUG)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel updateLiensChantierUG()")
 	}
-	//
-	// Liens avec Parcelles
 	//
 	err = updateLiensChantierParcelle(db, "chaufer", ch.Id, ch.LiensParcelles)
 	if err != nil {
@@ -259,6 +244,9 @@ func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) error {
 }
 
 func DeleteChaufer(db *sqlx.DB, id int) (err error) {
+	//
+	// delete associations avec UGs, Parcelles
+	//
     err = deleteLiensChantierUG(db, "chaufer", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierUG()")
@@ -268,6 +256,8 @@ func DeleteChaufer(db *sqlx.DB, id int) (err error) {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierParcelle()")
 	}
+	//
+	// delete le chantier, fait à la fin pour respecter les clés étrangères
 	//
 	query := "delete from chaufer where id=$1"
 	_, err = db.Exec(query, id)

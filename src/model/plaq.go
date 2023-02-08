@@ -584,10 +584,8 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 // Insère un chantier plaquette en base
 // + crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
 // + insère en base les liens UGs, parcelles, lieux-dits, fermiers
-func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) (int, error) {
-	var err error
-	var query string
-	query = `insert into plaq(
+func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) (idChantier int, err error) {
+	query := `insert into plaq(
         datedeb,
         datefin,
         surface,
@@ -598,7 +596,7 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLie
         fraisreparation,
         notes
         ) values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning id`
-	id := int(0)
+	idChantier = int(0)
 	err = db.QueryRow(
 		query,
 		ch.DateDebut,
@@ -609,58 +607,51 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLie
 		ch.Essence,
 		ch.FraisRepas,
 		ch.FraisReparation,
-		ch.Notes).Scan(&id)
+		ch.Notes).Scan(&idChantier)
 	if err != nil {
-		return id, werr.Wrapf(err, "Erreur query : "+query)
+		return idChantier, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	ch.Id = id
 	//
 	// tas - crée un tas par lieu de stockage sélectionné
 	//
 	for _, idStockage := range idsStockages {
-		tas := NewTas(idStockage, ch.Id, 0, true)
+		tas := NewTas(idStockage, idChantier, 0, true)
 		_, err = InsertTas(db, tas)
 		if err != nil {
-			return id, werr.Wrapf(err, "Erreur appel InsertTas()")
+			return idChantier, werr.Wrapf(err, "Erreur appel InsertTas()")
 		}
 	}
 	//
-	// Liens avec UGs
+	// insert associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-	err = insertLiensChantierUG(db, "plaq", ch.Id, idsUG)
+	err = insertLiensChantierUG(db, "plaq", idChantier, idsUG)
     if err != nil {
-        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
+        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
     }
 	//
-	// Liens avec Parcelles
-	//
-	err = insertLiensChantierParcelle(db, "plaq", ch.Id, ch.LiensParcelles)
+	err = insertLiensChantierParcelle(db, "plaq", idChantier, ch.LiensParcelles)
 	if err != nil {
-		return ch.Id, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle()")
 	}
 	//
-	// Liens avec Lieudits
-	//
-	err = insertLiensChantierLieudit(db, "plaq", ch.Id, idsLieudit)
+	err = insertLiensChantierLieudit(db, "plaq", idChantier, idsLieudit)
     if err != nil {
-        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
+        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
     }
 	//
-	// Liens avec Fermiers
-	//
-	err = insertLiensChantierFermier(db, "plaq", ch.Id, idsFermier)
+	err = insertLiensChantierFermier(db, "plaq", idChantier, idsFermier)
     if err != nil {
-        return id, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
+        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
     }
 	//
-	return ch.Id, nil
+	return idChantier, nil
 }
 
 // MAJ un chantier plaquette en base
 // + Gère aussi les tas
 // + MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
 // @param idsStockages ids tas APRÈS update
-func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) error {
+func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) (err error) {
 	query := `update plaq set(
         datedeb,
         datefin,
@@ -672,7 +663,7 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLie
         fraisreparation,
         notes
         ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9) where id=$10`
-	_, err := db.Exec(
+	_, err = db.Exec(
 		query,
 		ch.DateDebut,
 		ch.DateFin,
