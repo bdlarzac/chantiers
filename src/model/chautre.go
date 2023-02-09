@@ -14,7 +14,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	//	"fmt"
+	"fmt"
 )
 
 type Chautre struct {
@@ -237,7 +237,7 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 
 // ************************** CRUD *******************************
 
-func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) (idChantier int, err error) {
+func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (idChantier int, err error) {
 	query := `insert into chautre(
         id_acheteur,
         typevente,
@@ -277,6 +277,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, id
 	//
 	// insert associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
+fmt.Printf("InsertChautre() - idsUG = %+v\n",idsUG)
 	err = insertLiensChantierUG(db, "chautre", idChantier, idsUG)
     if err != nil {
         return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
@@ -300,7 +301,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, id
 	return idChantier, nil
 }
 
-func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsParcelles, idsLieudit, idsFermier []int) (err error) {
+func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (err error) {
 	query := `update chautre set(
         id_acheteur,
         typevente,

@@ -5,16 +5,15 @@
 package control
 
 import (
-	"html/template"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+	"html/template"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
 )
@@ -92,17 +91,12 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		// Process form
 		//
-		chantier, err := chautreForm2var(r)
-		if err != nil {
-			return err
-		}
-		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à InsertChautre()
-		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
+		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(r)
 		if err != nil {
 			return err
 		}
 		//
-		_, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsParcelles, idsLieudits, idsFermiers)
+		_, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -161,7 +155,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		//
 		// Process form
 		//
-		chantier, err := chautreForm2var(r)
+		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(r)
 		if err != nil {
 			return err
 		}
@@ -169,13 +163,8 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
-		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à UpdateChautre()
-		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
-		if err != nil {
-			return err
-		}
 		//
-		err = model.UpdateChautre(ctx.DB, chantier, idsUGs, idsParcelles, idsLieudits, idsFermiers)
+		err = model.UpdateChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -254,27 +243,39 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 }
 
 // *********************************************************
-// Fabrique un Chautre à partir des valeurs d'un formulaire.
-// Auxiliaire de NewChautre() et UpdateChautre()
-// Ne gère pas le champ Id
-// Ne gère pas liens vers UGs, lieux-dits, fermiers (parce que model.Chautre ne possède pas ces champs)
-func chautreForm2var(r *http.Request) (*model.Chautre, error) {
-	ch := &model.Chautre{}
-	var err error
+/** 
+    Fabrique un Chautre à partir des valeurs d'un formulaire.
+    Auxiliaire de NewChautre() et UpdateChautre()
+    Ne gère pas le champ Id
+    Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+    Renvoie idsUG, idsLieudits, idsFermiers car ils ne sont pas stockés dans model.chautre
+    Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
+**/
+func chautreForm2var(r *http.Request) (ch *model.Chautre, idsUG, idsLieudits, idsFermiers []int, err error) {
+    ch = &model.Chautre{}
+    vide := []int{}
 	if err = r.ParseForm(); err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
+	//
+	idsUG = form2IdsUG(r)
+	//
+	ch.LiensParcelles = form2LienParcelles(r)
+	//
+	idsLieudits = form2IdsLieudit(r)
+	//
+	idsFermiers = form2IdsFermier(r)
 	//
 	ch.IdAcheteur, err = strconv.Atoi(r.PostFormValue("id-acheteur"))
 	if err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
 	//
 	ch.TypeVente = strings.Replace(r.PostFormValue("typevente"), "typevente-", "", -1)
 	//
 	ch.DateContrat, err = time.Parse("2006-01-02", r.PostFormValue("datecontrat"))
 	if err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
 	//
 	ch.TypeValo = strings.Replace(r.PostFormValue("typevalo"), "valorisation-", "", -1)
@@ -284,14 +285,14 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	} else {
 		ch.VolumeContrat, err = strconv.ParseFloat(r.PostFormValue("volume-contrat"), 32)
 		if err != nil {
-			return ch, err
+			return ch, vide, vide, vide, err
 		}
 	}
 	ch.VolumeContrat = tiglib.Round(ch.VolumeContrat, 2)
 	//
 	ch.VolumeRealise, err = strconv.ParseFloat(r.PostFormValue("volume-realise"), 32)
 	if err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
 	//
@@ -307,19 +308,19 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	//
 	ch.PUHT, err = strconv.ParseFloat(r.PostFormValue("puht"), 32)
 	if err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
 	ch.PUHT = tiglib.Round(ch.PUHT, 2)
 	//
 	ch.TVA, err = strconv.ParseFloat(strings.ReplaceAll(r.PostFormValue("tva"), "tva-", ""), 32)
 	if err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
 	//
 	if r.PostFormValue("datefacture") != "" {
 		ch.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
 		if err != nil {
-			return ch, err
+			return ch, vide, vide, vide, err
 		}
 	}
 	//
@@ -327,7 +328,7 @@ func chautreForm2var(r *http.Request) (*model.Chautre, error) {
 	//
 	ch.Notes = r.PostFormValue("notes")
 	//
-	return ch, nil
+	return ch, idsUG, idsLieudits, idsFermiers, nil
 }
 
 // *********************************************************

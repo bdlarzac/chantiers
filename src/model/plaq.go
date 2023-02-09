@@ -581,10 +581,12 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 
 // ************************** CRUD *******************************
 
-// Insère un chantier plaquette en base
-// + crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
-// + insère en base les liens UGs, parcelles, lieux-dits, fermiers
-func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) (idChantier int, err error) {
+/** 
+    Insère un chantier plaquette en base
+    + Crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
+    + Insère en base les liens UGs, parcelles, lieux-dits, fermiers
+**/
+func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (idChantier int, err error) {
 	query := `insert into plaq(
         datedeb,
         datefin,
@@ -647,11 +649,14 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLie
 	return idChantier, nil
 }
 
-// MAJ un chantier plaquette en base
-// + Gère aussi les tas
-// + MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
-// @param idsStockages ids tas APRÈS update
-func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsParcelles, idsLieudit, idsFermier []int) (err error) {
+/** 
+    MAJ un chantier plaquette en base
+    + Gère aussi les tas
+    + MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
+    
+    @param idsStockages ids tas APRÈS update
+**/
+func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (err error) {
 	query := `update plaq set(
         datedeb,
         datefin,

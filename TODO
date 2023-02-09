@@ -18,6 +18,8 @@ Utiliser insert / update LiensChantier UG / Parcelle dans model/chantier-lien.go
 Noter dans la doc : convention : type_chantier = nom de la table duchantier
 Utilisé dans model.computeIdsChantiersFromUG()
 
+https://naturagis.fr/qgis/qgis-connexion-base-de-donnees-postgresql-postgis/
+
 --------------------------------------------------------------------------------------------------
 
 - view/common/chantier-lien.html : baseURL est initialisé à 2 endroits => supprimer le 2e et tester

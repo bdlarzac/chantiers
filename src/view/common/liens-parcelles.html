@@ -258,7 +258,8 @@ async function afficheParcelles(idsUG, liensParcelles){
     - Fabrique le message d'erreur pour le choix des parcelles.
     - Remplit l'attribut value de l'élément "liens-parcelles" du formulaire appelant :
         <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
-      Cette value est de la forme : "1027:surface-10;1025:entiere"
+        Cette value est de la forme : "1027:surface-10;1025:entiere"
+        Utile pour faciliter le traitement dans le back en go.
     @return message d'erreur ; vide si la sélection de parcelles est ok.
 **/
 function checkParcellesAndFillHiddenField(){

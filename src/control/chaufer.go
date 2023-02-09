@@ -234,43 +234,44 @@ func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
     Fabrique un Chaufer à partir des valeurs d'un formulaire.
     Auxiliaire de NewChaufer() et UpdateChaufer()
     Ne gère pas le champ Id
-    Renvoie idsUG car pas stockés dans model.chaufer
-    Attention : construit des ChantierParcelle ;
-        pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+    Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+    Renvoie idsUG car ils ne sont pas stockés dans model.chaufer
+    Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
 **/
-func chantierChauferForm2var(r *http.Request) (chantier *model.Chaufer, idsUG []int, err error) {
-	chantier = &model.Chaufer{}
+func chantierChauferForm2var(r *http.Request) (ch *model.Chaufer, idsUG []int, err error) {
+	ch = &model.Chaufer{}
+	vide := []int{}
 	if err = r.ParseForm(); err != nil {
-		return chantier, []int{}, err
+		return ch, vide, err
 	}
 	//
-	chantier.IdFermier, err = strconv.Atoi(r.PostFormValue("id-fermier"))
+	ch.IdFermier, err = strconv.Atoi(r.PostFormValue("id-fermier"))
 	if err != nil {
-		return chantier, []int{}, err
+		return ch, vide, err
 	}
 	//
 	idsUG = form2IdsUG(r)
 	//
-	chantier.LiensParcelles = form2LienParcelles(r)
+	ch.LiensParcelles = form2LienParcelles(r)
 	//
-	chantier.DateChantier, err = time.Parse("2006-01-02", r.PostFormValue("datechantier"))
+	ch.DateChantier, err = time.Parse("2006-01-02", r.PostFormValue("datechantier"))
 	if err != nil {
-		return chantier, []int{}, err
+		return ch, vide, err
 	}
 	//
-	chantier.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
+	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//
-	chantier.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
+	ch.Essence = strings.ReplaceAll(r.PostFormValue("essence"), "essence-", "")
 	//
-	chantier.Volume, err = strconv.ParseFloat(r.PostFormValue("volume"), 32)
+	ch.Volume, err = strconv.ParseFloat(r.PostFormValue("volume"), 32)
 	if err != nil {
-		return chantier, []int{}, err
+		return ch, vide, err
 	}
-	chantier.Volume = tiglib.Round(chantier.Volume, 2)
+	ch.Volume = tiglib.Round(ch.Volume, 2)
 	//
-	chantier.Unite = strings.Replace(r.PostFormValue("unite"), "unite-", "", -1)
+	ch.Unite = strings.Replace(r.PostFormValue("unite"), "unite-", "", -1)
 	//
-	chantier.Notes = r.PostFormValue("notes")
+	ch.Notes = r.PostFormValue("notes")
 	//
-	return chantier, idsUG, nil
+	return ch, idsUG, nil
 }

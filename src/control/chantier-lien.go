@@ -48,7 +48,7 @@ func form2IdsLieudit(r *http.Request)(ids []int) {
 	var str string
 	var id int
 	//
-	tmp = strings.Split(r.PostFormValue("ids-lieudits"), ",")
+	tmp = strings.Split(r.PostFormValue("ids-lieudits"), ";")
 	for _, str = range tmp {
 		id, _ = strconv.Atoi(str)
 		ids = append(ids, id)
@@ -67,7 +67,7 @@ func form2IdsFermier(r *http.Request)(ids []int) {
 	var str string
 	var id int
 	//
-	tmp = strings.Split(r.PostFormValue("ids-fermiers"), ",")
+	tmp = strings.Split(r.PostFormValue("ids-fermiers"), ";")
 	for _, str = range tmp {
 		id, _ = strconv.Atoi(str)
 		ids = append(ids, id)
@@ -83,6 +83,9 @@ func form2LienParcelles(r *http.Request) (result []*model.ChantierParcelle) {
 	result = []*model.ChantierParcelle{}
  	idChaufer, _ := strconv.Atoi(r.PostFormValue("id-chantier"))
 	strLiens := r.PostFormValue("liens-parcelles")
+	if strLiens == "" {
+	    return result // ne se produit pas si le choix des parcelles est obligatoire dans le form
+	}
 	liens := strings.Split(strLiens, ";")
 	for _, lien := range(liens) {
 	    newChantierParcelle := model.ChantierParcelle{}
@@ -121,7 +124,8 @@ func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsParcelles, idsLieudits
 		idsUGs = append(idsUGs, id)
 	}
 	//
-	tmp = strings.Split(r.PostFormValue("ids-parcelles"), ",")
+	tmp = strings.Split(r.PostFormValue("liens-parcelles"), ",")
+/* 
 	for _, str = range tmp {
 		id, err = strconv.Atoi(str)
 		if err != nil {
@@ -129,6 +133,7 @@ func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsParcelles, idsLieudits
 		}
 		idsParcelles = append(idsParcelles, id)
 	}
+*/
 	//
 	tmp = strings.Split(r.PostFormValue("ids-lieudits"), ",")
 	for _, str = range tmp {

@@ -6,6 +6,10 @@
 {{template "listeActeurs.html" .Details}}
 <script>{{template "checkActeur.js.html" .Details}}</script>
 
+{{template "liens-parcelles.html" $.Details.Chantier}}
+{{template "liens-ugs.html" $.Details.Chantier}}
+
+
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.Chantier}}
@@ -16,11 +20,15 @@
         {{/* Affiche la zone des UGs */}}
         {{template "chantier-lien.html" $.Details}}
         
+        <label>Parcelles</label>
+        <div id="parcelles"></div>
+        
         {{/*
             divs pour contenir lieux-dits et fermiers
             empty-lieudit contiendra la liste des lieux-dits avec les checkboxes
             empty-fermier contiendra la liste des fermiers avec les checkboxes
         */}}
+        
         <label>Lieux-dits</label>
         <div id="empty-lieudit"></div>
         
@@ -118,7 +126,7 @@
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
     <input type="hidden" name="id-acheteur" id="id-acheteur" value="{{.IdAcheteur}}">
     <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
-    <input type="hidden" name="ids-parcelles" id="ids-parcelles" value="">
+    <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
     <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
     <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
     
@@ -154,6 +162,7 @@ function initialize(){
     // form new
     if({{.Id}} == 0){
         document.getElementById("typevente-NON").checked = true;
+        valorisationChanged();
     }
     // form update
     else{
@@ -179,7 +188,7 @@ function initialize(){
 **/
 function valorisationChanged(){
     if(document.getElementById("CHOOSE_VALORISATION").selected){
-        document.getElementById("unite-volume").innerHTML = "";
+        document.getElementById("unite-volume").innerHTML = "Non spécifiée (dépend de la valorisation)";
     }
     else if(document.getElementById("valorisation-BO").selected){
         document.getElementById("unite-volume").innerHTML = "{{"BO" | valorisation2uniteLabel}}";
@@ -215,6 +224,7 @@ function validateForm(){
     const check = checkActeur("acheteur", "- Vous devez renseigner l'acheteur.\n");
     document.getElementById("id-acheteur").value = check[0];
     msg += check[1];
+//return false;
     //
     if(document.getElementById("datecontrat").value == ""){
         msg += "- Vous devez renseigner la date du contrat.\n";

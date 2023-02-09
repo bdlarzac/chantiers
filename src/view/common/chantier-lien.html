@@ -82,7 +82,7 @@
 {{with .Chantier}}
 <script>
 
-/** Pour faire fonctionner le modal UG **/
+/** Pour faire fonctionner la modale UG **/
 window.addEventListener("load", function(){
     let modal = document.getElementById("modal-ug");
     let close = document.getElementsByClassName("modal-close")[0];
@@ -373,7 +373,7 @@ function chantierLienFillHiddenFields(){
             tmp.push(elts[i].getAttribute("data-ug-id"));
         }
     }
-    document.getElementById("ids-ugs").value = tmp.join(",");
+    document.getElementById("ids-ugs").value = tmp.join(";");
     //
     elts = document.getElementsByClassName("chk-lieudit");
     tmp = [];
@@ -382,7 +382,7 @@ function chantierLienFillHiddenFields(){
             tmp.push(elts[i].getAttribute("data-lieudit-id"));
         }
     }
-    document.getElementById("ids-lieudits").value = tmp.join(",");
+    document.getElementById("ids-lieudits").value = tmp.join(";");
     //
     elts = document.getElementsByClassName("chk-fermier");
     tmp = [];
@@ -391,7 +391,7 @@ function chantierLienFillHiddenFields(){
             tmp.push(elts[i].getAttribute("data-fermier-id"));
         }
     }
-    document.getElementById("ids-fermiers").value = tmp.join(",");
+    document.getElementById("ids-fermiers").value = tmp.join(";");
 }
 
 </script>

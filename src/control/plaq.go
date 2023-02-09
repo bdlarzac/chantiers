@@ -139,7 +139,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		//
 		// Process form
 		//
-		chantier, err := chantierPlaquetteForm2var(r)
+		chantier, idsUGs, idsLieudits, idsFermiers, err := plaqForm2var(r)
 		if err != nil {
 			return err
 		}
@@ -154,13 +154,8 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
-		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à InsertPlaq()
-		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
-		if err != nil {
-			return err
-		}
 		//
-		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUGs, idsParcelles, idsLieudits, idsFermiers)
+		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -223,7 +218,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		// Process form
 		//
-		chantier, err := chantierPlaquetteForm2var(r)
+		chantier, idsUGs, idsLieudits, idsFermiers, err := plaqForm2var(r)
 		if err != nil {
 			return err
 		}
@@ -243,13 +238,8 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				idsStockages = append(idsStockages, stockage.Id)
 			}
 		}
-		// calcul des ids UG, Parcelle, Lieudit et Fermier, pour transmettre à UpdatePlaq()
-		idsUGs, idsParcelles, idsLieudits, idsFermiers, err := calculeIdsLiensChantier(r)
-		if err != nil {
-			return err
-		}
 		//
-		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUGs, idsParcelles, idsLieudits, idsFermiers)
+		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
@@ -329,32 +319,43 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 }
 
 // *********************************************************
-// Fabrique un Plaq à partir des valeurs d'un formulaire.
-// Auxiliaire de NewPlaq() et UpdatePlaq()
-// Ne gère pas le champ Id
-// Ne gère pas les stockages (tas) (parce que besoin de DB pour le calculer)
-// Ne gère pas liens vers UGs, parcelles, lieux-dits, fermiers (parce que model.Plaq ne possède pas ces champs)
-func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
-	ch := &model.Plaq{}
-	var err error
+/** 
+    Fabrique un Plaq à partir des valeurs d'un formulaire.
+    Auxiliaire de NewPlaq() et UpdatePlaq()
+    Ne gère pas le champ Id
+    Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+    Renvoie idsUG, idsLieudits, idsFermiers car ils ne sont pas stockés dans model.plaq
+    Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
+**/
+func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermiers []int, err error) {
+	ch = &model.Plaq{}
+    vide := []int{}
 	if err = r.ParseForm(); err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
+	//
+	idsUG = form2IdsUG(r)
+	//
+	ch.LiensParcelles = form2LienParcelles(r)
+	//
+	idsLieudits = form2IdsLieudit(r)
+	//
+	idsFermiers = form2IdsFermier(r)
 	//
 	ch.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
 	if err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
 	//
 	ch.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
-		return ch, err
+		return ch, vide, vide, vide, err
 	}
 	//
 	if r.PostFormValue("surface") != "" {
 		ch.Surface, err = strconv.ParseFloat(r.PostFormValue("surface"), 32)
 		if err != nil {
-			return ch, err
+		return ch, vide, vide, vide, err
 		}
 		ch.Surface = tiglib.Round(ch.Surface, 2)
 	}
@@ -368,7 +369,7 @@ func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 	if r.PostFormValue("frais-repas") != "" {
 		ch.FraisRepas, err = strconv.ParseFloat(r.PostFormValue("frais-repas"), 32)
 		if err != nil {
-			return ch, err
+		    return ch, vide, vide, vide, err
 		}
 		ch.FraisRepas = tiglib.Round(ch.FraisRepas, 2)
 	}
@@ -376,12 +377,12 @@ func chantierPlaquetteForm2var(r *http.Request) (*model.Plaq, error) {
 	if r.PostFormValue("frais-reparation") != "" {
 		ch.FraisReparation, err = strconv.ParseFloat(r.PostFormValue("frais-reparation"), 32)
 		if err != nil {
-			return ch, err
+            return ch, vide, vide, vide, err
 		}
 		ch.FraisReparation = tiglib.Round(ch.FraisReparation, 2)
 	}
 	//
 	ch.Notes = r.PostFormValue("notes")
 	//
-	return ch, nil
+	return ch, idsUG, idsLieudits, idsFermiers, nil
 }
