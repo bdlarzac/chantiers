@@ -58,11 +58,11 @@
                 <input 
                     type="checkbox"
                     class="chk-ug"
-                    id="chk-ug-{{$ug.Code}}"
+                    id="chk-ug-{{$ug.Id}}"
                     data-ug-id="{{$ug.Id}}"
                     data-ug-surface="{{$ug.SurfaceSIG}}"
                     >
-                <label for="chk-ug-{{$ug.Code}}">{{$ug.Code}}<label>
+                <label for="chk-ug-{{$ug.Id}}">{{$ug.Code}}<label>
             </td>
             {{if eq (modulo $i 9) 8}}
             </tr>
@@ -107,7 +107,7 @@ function showModalUG(){
 async function chantierLienInitialize() {
     // mêmes initialisations pour form new et form update
     {{range .UGs}}
-        document.getElementById("chk-ug-{{.Code}}").checked = true;
+        document.getElementById("chk-ug-{{.Id}}").checked = true;
     {{end}}
     await drawListUGs();
     {{range .Lieudits}} // vide pour form new
@@ -155,6 +155,7 @@ async function drawListUGs(){
     elts = document.getElementsByClassName("chk-ug");
     for(i = 0; i < elts.length; i++) {
         if(elts[i].checked){
+//////////////// #9 codeUG contient un id
             codeUG = elts[i].getAttribute("id").substring(7); // 7 pour "chk-ug-"
             selectedUGs.push(codeUG);
         }
@@ -196,16 +197,18 @@ async function drawListUGs(){
         //
         listeUgsElt.appendChild(elt);
     }
+    afficheParcelles(computeIdsUGsFromForm(), computeLiensParcellesFromForm());
     //
     // Affiche lieux-dits
     //
     // 1 - récup id, noms en ajax dans tableau assoc
     //     Permet de supprimer les doublons (arrive par ex. si UGs = XIX-54 et XIV-20)
-    baseURL = "/ajax/get/lieudits-from-code-ug/"
+//    baseURL = "/ajax/get/lieudits-from-code-ug/"
+    baseURL = "/ajax/get/lieudits-from-id-ug/"
     dbRows = new Array();
     for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
-        codeUG = elt.getAttribute("data-ug-code");
+        codeUG = elt.getAttribute("data-ug-id");
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){
@@ -260,11 +263,12 @@ async function drawListUGs(){
     //
     // 1 - récup id, noms en ajax dans tableau assoc
     //     Permet de supprimer les doublons (arrive par ex. si UGs = XIX-54 et XIV-20)
-    baseURL = "/ajax/get/fermiers-from-code-ug/"
+//    baseURL = "/ajax/get/fermiers-from-code-ug/"
+    baseURL = "/ajax/get/fermiers-from-id-ug/"
     dbRows = new Array();
     for(i=0; i < listeUgsElt.childNodes.length; i++){
         elt = listeUgsElt.childNodes[i];
-        codeUG = elt.getAttribute("data-ug-code");
+        codeUG = elt.getAttribute("data-ug-id");
         url = baseURL + codeUG;
         response = await fetch(url);
         if(response == null){

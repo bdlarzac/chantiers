@@ -62,7 +62,7 @@
         <div><input type="date" name="datecontrat" id="datecontrat" value="{{.DateContrat | dateIso}}"></div>
         
         <label for="typevalo">Valorisation</label>
-        <select name="typevalo" id="typevalo" class="width10" onchange="valorisationChanged();">
+        <select name="typevalo" id="typevalo" class="width10" onchange="actionAfterChangeValorisation();">
             {{$.Details.ValorisationOptions}}
         </select>
 
@@ -162,13 +162,14 @@ function initialize(){
     // form new
     if({{.Id}} == 0){
         document.getElementById("typevente-NON").checked = true;
-        valorisationChanged();
+        actionAfterChangeValorisation();
     }
     // form update
     else{
+        afficheParcelles(computeIdsUGsFromForm(), computeLiensParcellesFromChantier());
         document.getElementById("acheteur").value = "{{.Acheteur.String}}";
         document.getElementById("tva-{{.TVA}}").selected = true;
-        valorisationChanged();
+        actionAfterChangeValorisation();
         document.getElementById("typevente-{{.TypeVente}}").checked = true;
         if(document.getElementById("valorisation-PI").selected){
             if('{{.Unite}}' == 'NP'){
@@ -186,7 +187,7 @@ function initialize(){
     Déclenché lorsqu'on change le choix de la valorisation
     => le champ unite change
 **/
-function valorisationChanged(){
+function actionAfterChangeValorisation(){
     if(document.getElementById("CHOOSE_VALORISATION").selected){
         document.getElementById("unite-volume").innerHTML = "Non spécifiée (dépend de la valorisation)";
     }
@@ -219,12 +220,14 @@ function valorisationChanged(){
 function validateForm(){
     let msg = "";
     //
+    // #9 remplacerpar checkUGsAndFillHiddenField()
     msg += chantierLienValidateForm(); // dans view/common/chantier-lien.html
+    //
+    msg += checkParcellesAndFillHiddenField(); // dans view/common/liens-parcelles.html
     //
     const check = checkActeur("acheteur", "- Vous devez renseigner l'acheteur.\n");
     document.getElementById("id-acheteur").value = check[0];
     msg += check[1];
-//return false;
     //
     if(document.getElementById("datecontrat").value == ""){
         msg += "- Vous devez renseigner la date du contrat.\n";

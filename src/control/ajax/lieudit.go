@@ -3,9 +3,10 @@ package ajax
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
+	"strconv"
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
 func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -50,10 +51,30 @@ func CheckNomLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-func GetLieuditsFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+///// remove apres #9 
+/* func GetLieuditsFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	code := vars["code"]
 	lds, err := model.GetLieuditsFromCodeUG(ctx.DB, code)
+	if err != nil {
+		return err
+	}
+	json, err := json.Marshal(lds)
+	if err != nil {
+		return err
+	}
+	w.Write(json)
+	return nil
+} */
+
+func GetLieuditsFromIdUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	strId := vars["id"]
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		return err
+	}
+	lds, err := model.GetLieuditsFromIdUG(ctx.DB, id)
 	if err != nil {
 		return err
 	}

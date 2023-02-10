@@ -70,6 +70,14 @@
                 <div>UGs</div>
                 <div>{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
                 
+                <div>Parcelles</div>
+                <div class="grid2-pres">
+                {{range .LiensParcelles}}
+                    <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
+                    <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
+                {{end}}
+                </div>
+                
                 <div>Lieux-dits</div>
                 <div>{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
                 

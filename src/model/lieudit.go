@@ -68,7 +68,8 @@ func GetLieuditsAutocomplete(db *sqlx.DB, str string) (lds []*Lieudit, err error
 // Ne contient que les champs de la table lieudit
 // + le champ Communes.
 // Les autres champs ne sont pas remplis.
-func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) (lds []*Lieudit, err error) {
+////////////////// remove apres #9
+/* func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) (lds []*Lieudit, err error) {
 	lds = []*Lieudit{}
 	query := `
 	    select * from lieudit where id in(
@@ -79,6 +80,32 @@ func GetLieuditsFromCodeUG(db *sqlx.DB, codeUG string) (lds []*Lieudit, err erro
             )
         )`
 	err = db.Select(&lds, query, codeUG)
+	if err != nil {
+		return lds, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	for _, ld := range lds {
+		err = ld.ComputeCommune(db)
+		if err != nil {
+			return lds, werr.Wrapf(err, "Erreur appel ComputeCommunes()")
+		}
+	}
+	return lds, nil
+} */
+
+// Renvoie des Lieudit à partir d'un code UG.
+// Utilise les parcelles pour faire le lien
+// Ne contient que les champs de la table lieudit
+// + le champ Communes.
+// Les autres champs ne sont pas remplis.
+func GetLieuditsFromIdUG(db *sqlx.DB, idUG int) (lds []*Lieudit, err error) {
+	lds = []*Lieudit{}
+	query := `
+	    select * from lieudit where id in(
+            select id_lieudit from parcelle_lieudit where id_parcelle in(
+                select id_parcelle from parcelle_ug where id_ug=$1
+            )
+        )`
+	err = db.Select(&lds, query, idUG)
 	if err != nil {
 		return lds, werr.Wrapf(err, "Erreur query : "+query)
 	}

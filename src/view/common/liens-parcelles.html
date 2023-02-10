@@ -137,7 +137,7 @@ async function afficheParcelles(idsUG, liensParcelles){
         //
         curdiv.innerHTML = "<b>" + item.name + "</b>";
         curdiv.innerHTML += "<br>" + item.commune.NomCourt;
-        
+        //
         grid2Elt.appendChild(curdiv);
         //
         curdiv = document.createElement("div");
@@ -145,6 +145,7 @@ async function afficheParcelles(idsUG, liensParcelles){
         curdiv.setAttribute("class", "parcelle");
         curdiv.setAttribute("id", "parcelle-" + item.id);
         surfaceInputNameId = "parcelle-surface-" + item.id;
+//curdiv.style="background:red;"
         radioName = "radio-parcelle-" + item.id;
         strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
             + "document.getElementById('"+surfaceInputNameId+"').value = '';"
@@ -163,6 +164,7 @@ async function afficheParcelles(idsUG, liensParcelles){
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.innerHTML = "Non sélectionnée";
+label.style="font-weight:normal;"
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
@@ -180,6 +182,7 @@ async function afficheParcelles(idsUG, liensParcelles){
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.innerHTML = "Entière (" + round(item.surface, 2) + " ha)";
+label.style="font-weight:normal;"
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
@@ -198,6 +201,7 @@ async function afficheParcelles(idsUG, liensParcelles){
         label.setAttribute("for", radioValueId);
         label.setAttribute("class", "padding-right");
         label.innerHTML = "Surface";
+label.style="font-weight:normal;"
         subdiv.appendChild(label);
         // surface - input type=number
         surfaceInput = document.createElement("input");
@@ -225,11 +229,9 @@ async function afficheParcelles(idsUG, liensParcelles){
     //
     // 2 - Restauration de la sélection des parcelles avant appel
     //
-//console.log("Restauration - liensParcelles =", liensParcelles);
     let idParcelle;
     for(const lien of liensParcelles) {
         idParcelle = lien.idParcelle;
-//console.log("Restauration - idParcelle =", idParcelle);
         // on teste undefined pour le cas où des parcelles précédemment sélectionnées ne sont plus visibles
         // (si on a dé-sélectionné une ug)
         if(lien.entiere){

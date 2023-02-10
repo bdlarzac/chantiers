@@ -114,7 +114,8 @@ func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Fermier, error) {
 // Ne contient que les champs de la table fermier.
 // Les autres champs ne sont pas remplis.
 // Utilisé par ajax
-func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Fermier, error) {
+////////////////// remove apres #9
+/* func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Fermier, error) {
 	fermiers := []*Fermier{}
 	query := `
 	    select * from fermier where id in(
@@ -125,6 +126,26 @@ func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Fermier, error) {
             )
         ) order by nom`
 	err := db.Select(&fermiers, query, codeUG)
+	if err != nil {
+		return fermiers, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return fermiers, nil
+} */
+
+// Renvoie des Fermiers à partir d'une UG.
+// Utilise les parcelles pour faire le lien
+// Ne contient que les champs de la table fermier.
+// Les autres champs ne sont pas remplis.
+// Utilisé par ajax
+func GetFermiersFromIdUG(db *sqlx.DB, idUG int) ([]*Fermier, error) {
+	fermiers := []*Fermier{}
+	query := `
+	    select * from fermier where id in(
+            select distinct id_fermier from parcelle_fermier where id_parcelle in(
+                select id_parcelle from parcelle_ug where id_ug=$1
+            )
+        ) order by nom`
+	err := db.Select(&fermiers, query, idUG)
 	if err != nil {
 		return fermiers, werr.Wrapf(err, "Erreur query : "+query)
 	}
