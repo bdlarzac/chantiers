@@ -16,10 +16,10 @@
     Cette partie de formulaire est contenue dans un <div class="grid2-form">
     
     Les formulaires appelants doivent avoir ces divs :
-        <div id="empty-lieudit"></div>
-        <div id="empty-fermier"></div>
-    empty-lieudit contiendra la liste des lieux-dits avec les checkboxes
-    empty-fermier contiendra la liste des fermiers avec les checkboxes
+        <div id="zone-lieudits"></div>
+        <div id="zone-fermiers"></div>
+    zone-lieudits contiendra la liste des lieux-dits avec les checkboxes
+    zone-fermiers contiendra la liste des fermiers avec les checkboxes
     
     Ils doivent aussi avoir les champs :
     <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
@@ -43,7 +43,7 @@
     />
 </div>
 <div>
-    <div id="liste-ugs"></div>
+    <div id="zone-ugs"></div>
 </div>
 
 <!-- ********************************** Modale choix ug ************************************* -->
@@ -143,13 +143,13 @@ async function drawListUGs(){
         }
     }
     //
-    const listeUgsElt = document.getElementById("liste-ugs");
-    const listeLieuxditsElt = document.getElementById("empty-lieudit");
-    const listeFermiersElt = document.getElementById("empty-fermier");
+    const zoneUgsElt = document.getElementById("zone-ugs");
+    const zoneLieuditsElt = document.getElementById("zone-lieudits");
+    const zoneFermiersElt = document.getElementById("zone-fermiers");
     // Vide les zones
-    listeUgsElt.innerHTML = "";
-    listeLieuxditsElt.innerHTML = "";
-    listeFermiersElt.innerHTML = "";
+    zoneUgsElt.innerHTML = "";
+    zoneLieuditsElt.innerHTML = "";
+    zoneFermiersElt.innerHTML = "";
     // calcule les ugs sélectionnées dans le modal
     const selectedUGs = [];
     elts = document.getElementsByClassName("chk-ug");
@@ -161,8 +161,8 @@ async function drawListUGs(){
         }
     }
     if(selectedUGs.length == 0){
-        listeLieuxditsElt.innerHTML = "Sélectionnez d'abord une UG.";
-        listeFermiersElt.innerHTML = "Sélectionnez d'abord une UG.";
+        zoneLieuditsElt.innerHTML = "Sélectionnez d'abord une UG.";
+        zoneFermiersElt.innerHTML = "Sélectionnez d'abord une UG.";
         return;
     }
     //
@@ -195,7 +195,7 @@ async function drawListUGs(){
         elt.appendChild(aElt);
         elt.appendChild(spanElt);
         //
-        listeUgsElt.appendChild(elt);
+        zoneUgsElt.appendChild(elt);
     }
     afficheParcelles(computeIdsUGsFromForm(), computeLiensParcellesFromForm());
     //
@@ -206,8 +206,8 @@ async function drawListUGs(){
 //    baseURL = "/ajax/get/lieudits-from-code-ug/"
     baseURL = "/ajax/get/lieudits-from-id-ug/"
     dbRows = new Array();
-    for(i=0; i < listeUgsElt.childNodes.length; i++){
-        elt = listeUgsElt.childNodes[i];
+    for(i=0; i < zoneUgsElt.childNodes.length; i++){
+        elt = zoneUgsElt.childNodes[i];
         codeUG = elt.getAttribute("data-ug-id");
         url = baseURL + codeUG;
         response = await fetch(url);
@@ -256,7 +256,7 @@ async function drawListUGs(){
         divElt = document.createElement("div");
         divElt.appendChild(checkElt);
         divElt.appendChild(labelElt);
-        listeLieuxditsElt.appendChild(divElt);
+        zoneLieuditsElt.appendChild(divElt);
     }
     //
     // Affiche fermiers
@@ -266,8 +266,8 @@ async function drawListUGs(){
 //    baseURL = "/ajax/get/fermiers-from-code-ug/"
     baseURL = "/ajax/get/fermiers-from-id-ug/"
     dbRows = new Array();
-    for(i=0; i < listeUgsElt.childNodes.length; i++){
-        elt = listeUgsElt.childNodes[i];
+    for(i=0; i < zoneUgsElt.childNodes.length; i++){
+        elt = zoneUgsElt.childNodes[i];
         codeUG = elt.getAttribute("data-ug-id");
         url = baseURL + codeUG;
         response = await fetch(url);
@@ -311,7 +311,7 @@ async function drawListUGs(){
         divElt = document.createElement("div");
         divElt.appendChild(checkElt);
         divElt.appendChild(labelElt);
-        listeFermiersElt.appendChild(divElt);
+        zoneFermiersElt.appendChild(divElt);
     }
     //
     if(errorMsg != ""){

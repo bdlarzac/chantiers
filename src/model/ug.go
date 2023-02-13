@@ -138,6 +138,9 @@ func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
 // Ne contient que les champs de la table ug.
 // Les autres champs ne sont pas remplis.
 // Utilisé par ajax
+//
+// TODO bizarre, pourquoi ne pas écrire avec une jointure ?
+//
 func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) (ugs []*UG, err error) {
 	ugs = []*UG{}
 	// parcelles

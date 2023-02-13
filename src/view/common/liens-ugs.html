@@ -62,4 +62,21 @@ function checkUGsAndFillHiddenField(){
     return msg;
 }
 
+
+function drawZoneUGs(){
+    document.write(`
+    <div>
+        <label class="block margin-bottom">Unités de gestion</label>
+        <img 
+            class="float-right vertical-align-middle bigicon margin-right"
+            src="/static/img/new.png"
+            title="Associer ce chantier avec une UG"
+            onclick="showModalUG();"
+        />
+    </div>
+    <div>
+        <div id="zone-ugs"></div>
+    </div>
+    `);
+}
 </script>

@@ -10,7 +10,7 @@
     Calculés soit à partir d'une variiable go, soit à partir des parcelles sélectionnées dans un formulaire.
     
     Conventions à respecter par les templates utilisatrices :
-    - les parcelles se trouvent dans une <div id="parcelles"></div>
+    - les parcelles se trouvent dans une <div id="zone-parcelles"></div>
     
     
     Ex de html généré et traité par cette template :
@@ -82,7 +82,7 @@ function computeLiensParcellesFromForm(){
 
 **/
 async function afficheParcelles(idsUG, liensParcelles){
-    const parcellesElt = document.getElementById('parcelles'); // ICI convention <div id="parcelles"> dans template utilisatrice
+    const parcellesElt = document.getElementById('zone-parcelles'); // ICI convention <div id="zone-parcelles"> dans template utilisatrice
     if(idsUG.length == 0){
         parcellesElt.innerHTML = "Choisissez d'abord une UG";
         return;
@@ -247,13 +247,12 @@ label.style="font-weight:normal;"
             const test = document.getElementById("radio-parcelle-surface-" + idParcelle);
             if(test != undefined){
                 document.getElementById("radio-parcelle-surface-" + idParcelle).checked = true;
-                document.getElementById("parcelle-surface-" + idParcelle).readonly = false;
+                document.getElementById("parcelle-surface-" + idParcelle). removeAttribute('readonly'); // mettre à false ne marche pas
                 document.getElementById("parcelle-surface-" + idParcelle).value = lien.surface;
             }
         }
     }
 }
-
 
 /** 
     Fait 2 choses :

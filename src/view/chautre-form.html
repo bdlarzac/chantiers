@@ -21,19 +21,13 @@
         {{template "chantier-lien.html" $.Details}}
         
         <label>Parcelles</label>
-        <div id="parcelles"></div>
-        
-        {{/*
-            divs pour contenir lieux-dits et fermiers
-            empty-lieudit contiendra la liste des lieux-dits avec les checkboxes
-            empty-fermier contiendra la liste des fermiers avec les checkboxes
-        */}}
+        <div id="zone-parcelles"></div>
         
         <label>Lieux-dits</label>
-        <div id="empty-lieudit"></div>
+        <div id="zone-lieudits"></div>
         
         <label>Fermiers</label>
-        <div id="empty-fermier"></div>
+        <div id="zone-fermiers"></div>
         
         <label for="acheteur">Acheteur</label>
         <input list="liste-acteurs" name="acheteur" id="acheteur" class="width25">
@@ -166,7 +160,7 @@ function initialize(){
     }
     // form update
     else{
-        afficheParcelles(computeIdsUGsFromForm(), computeLiensParcellesFromChantier());
+        afficheParcelles(computeIdsUGsFromForm(), computeLiensParcellesFromChantier()); // dans view/common/liens-parcelles.html
         document.getElementById("acheteur").value = "{{.Acheteur.String}}";
         document.getElementById("tva-{{.TVA}}").selected = true;
         actionAfterChangeValorisation();

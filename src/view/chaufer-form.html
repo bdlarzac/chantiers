@@ -25,8 +25,8 @@
         <label for="ugs">UG</label>
         <div id="ugs"></div>
         
-        <label for="parcelles">Parcelles</label>
-        <div id="parcelles"></div>
+        <label>Parcelles</label>
+        <div id="zone-parcelles"></div>
         
         <label for="datechantier">Date chantier</label>
         <div><input type="date" name="datechantier" id="datechantier" value="{{.DateChantier | dateIso}}"></div>
@@ -130,7 +130,7 @@ async function actionAfterChangeFermier(){
     const idFermier = fermierElt.children[fermierElt.selectedIndex].id.replace("fermier-", "");
     document.getElementById("id-fermier").value = idFermier;
     let ugsElt = document.getElementById("ugs");
-    let parcellesElt = document.getElementById("parcelles").innerHTML = "Choisissez d'abord une UG";;
+    let parcellesElt = document.getElementById("zone-parcelles").innerHTML = "Choisissez d'abord une UG";;
     ugsElt.innerHTML = "Choisissez d'abord un fermier";
     if(idFermier == "CHOOSE_FERMIER"){
         return;

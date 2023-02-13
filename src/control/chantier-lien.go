@@ -10,6 +10,7 @@ package control
 
 import (
 	"bdl.local/bdl/model"
+	"bdl.local/bdl/generic/tiglib"
 	"strconv"
 	"strings"
 	"net/http"
@@ -96,7 +97,10 @@ func form2LienParcelles(r *http.Request) (result []*model.ChantierParcelle) {
 	    what := tmp[1]
 	    newChantierParcelle.Entiere = what == "entiere"
 	    if ! newChantierParcelle.Entiere {
-            newChantierParcelle.Surface, _ = strconv.ParseFloat(strings.Replace(what, "surface-", "", -1), 32)
+            tmp2, _ := strconv.ParseFloat(strings.Replace(what, "surface-", "", -1), 32)
+	        // round à 4 chiffres => précision de 1m2
+	        // round nécessaire car sinon peut stocker des valeurs comme 1.5199999999999
+            newChantierParcelle.Surface = tiglib.Round(tmp2, 4)
 	    }
 	    result = append(result, &newChantierParcelle);
 	}
