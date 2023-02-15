@@ -58,7 +58,7 @@ func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
     Utilisé par ajax
     @param  idsUG  string, par ex : "12,432,35"
 **/
-func GetParcellesFromUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err error) {
+func GetParcellesFromIdsUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err error) {
 	query := `select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(`+idsUG+`)) order by code`
 	err = db.Select(&result, query)
     return result, nil

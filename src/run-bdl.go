@@ -42,14 +42,12 @@ func main() {
 
 	r := mux.NewRouter()
 
-//r.HandleFunc("/ajax/get/lieudits-from-code-ug/{code}", Hajax(ajax.GetLieuditsFromCodeUG))    // TODO à priori, supprimer après #9
-	r.HandleFunc("/ajax/get/lieudits-from-id-ug/{id}", Hajax(ajax.GetLieuditsFromIdUG))
-//r.HandleFunc("/ajax/get/fermiers-from-code-ug/{code}", Hajax(ajax.GetFermiersFromCodeUG))    // TODO à priori, supprimer après #9
-	r.HandleFunc("/ajax/get/fermiers-from-id-ug/{id}", Hajax(ajax.GetFermiersFromIdUG))
-	r.HandleFunc("/ajax/get/ugs-from-fermier/{id}", Hajax(ajax.GetUGsFromFermier))
+	r.HandleFunc("/ajax/get/lieudits-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetLieuditsFromIdsUGs))
+//	r.HandleFunc("/ajax/get/fermiers-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetFermiersFromIdsUGs))
+	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
-	r.HandleFunc("/ajax/get/parcelles-from-ug/{id}", Hajax(ajax.GetParcellesFromUG))    // TODO à priori, supprimer après #9
-	r.HandleFunc("/ajax/get/parcelles-from-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromUGs))
+//	r.HandleFunc("/ajax/get/parcelles-from-id-ug/{id:[0-9]+}", Hajax(ajax.GetParcellesFromIdUG))    // TODO à priori, supprimer après #9
+	r.HandleFunc("/ajax/get/parcelles-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromIdsUGs))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))

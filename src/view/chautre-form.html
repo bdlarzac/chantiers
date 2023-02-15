@@ -6,8 +6,10 @@
 {{template "listeActeurs.html" .Details}}
 <script>{{template "checkActeur.js.html" .Details}}</script>
 
-{{template "liens-parcelles.html" $.Details.Chantier}}
 {{template "liens-ugs.html" $.Details.Chantier}}
+{{template "liens-parcelles.html" $.Details.Chantier}}
+{{template "liens-lieudits.html" $.Details.Chantier}}
+{{template "liens-fermiers.html" $.Details.Chantier}}
 
 
 <h1>{{.Header.Title}}</h1>
@@ -18,7 +20,7 @@
     <div class="grid2-form">
 
         {{/* Affiche la zone des UGs */}}
-        {{template "chantier-lien.html" $.Details}}
+        {{template "liens-ugs-modal.html" $.Details}}
         
         <label>Parcelles</label>
         <div id="zone-parcelles"></div>
@@ -151,16 +153,22 @@ window.addEventListener("load", function(){
 });
 
 // ***************************************
-function initialize(){
-    chantierLienInitialize(); // dans view/common/chantier-lien.html   
+async function initialize(){
     // form new
     if({{.Id}} == 0){
+        await afficheParcelles([], []);
+        await afficheLieudits([], []);
+//        await afficheFermiers([], []);
         document.getElementById("typevente-NON").checked = true;
         actionAfterChangeValorisation();
     }
     // form update
     else{
-        afficheParcelles(computeIdsUGsFromForm(), computeLiensParcellesFromChantier()); // dans view/common/liens-parcelles.html
+        const idsUGs = computeIdsUGsFromForm();
+        afficheUGs(idsUGs);
+        await afficheParcelles(idsUGs, computeLiensParcellesFromChantier()); // dans view/common/liens-parcelles.html
+        await afficheLieudits(idsUGs, computeIdsLieuditsFromChantier()); // dans view/common/liens-lieudits.html
+//        await afficheFermiers(idsUGs, computeIdsFermiersFromChantier()); // dans view/common/liens-fermiers.html
         document.getElementById("acheteur").value = "{{.Acheteur.String}}";
         document.getElementById("tva-{{.TVA}}").selected = true;
         actionAfterChangeValorisation();

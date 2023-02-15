@@ -1,0 +1,25 @@
+{{/* 
+
+    La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates utilisatrices).
+    
+    Conventions à respecter par les templates utilisatrices :
+    - les fermiers se trouvent dans une <div id="zone-fermiers"></div>
+
+    
+*/}}
+<script>
+
+/** 
+    Calcule les ids des fermiers associées au chantier.
+    Transfère des données go dans une variable js.
+    Utilisé lorsqu'on arrive sur form update.
+**/
+function computeIdsFermiersFromChantier(){
+    const idsFermiers = [];
+    {{range .Fermiers}}
+        idsFermiers.push({{.Id}});
+    {{end}}
+    return idsFermiers;
+}
+
+</script>

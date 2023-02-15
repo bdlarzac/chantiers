@@ -83,11 +83,11 @@ func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
     @param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
             ex : 12,35,87
 **/
-func GetParcellesFromUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	// pas terrible, vars["ids"] est directement utilisé pour fabriquer le sql
 	// risque d'injection, mais le routing impose [1-9,]
-	parcelles, err := model.GetParcellesFromUGs(ctx.DB, vars["ids"])
+	parcelles, err := model.GetParcellesFromIdsUGs(ctx.DB, vars["ids"])
 	if err != nil {
 		return err
 	}

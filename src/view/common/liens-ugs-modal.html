@@ -1,0 +1,92 @@
+{{/* 
+    
+    Code de la modale de choix des ugs
+
+    Partie de formulaire utilisé par plaq-form.html et chautre-form.html
+    
+    Cette template doit être appelée avec une struct contenant les champs :
+    - AllUGs, tel que renvoyé par model.GetUGsSortedByCode()
+    - Chantier
+    
+    Cette partie de formulaire est contenue dans un <div class="grid2-form">
+    
+    Les chk-ug servent de variables globales pour stocker les ugs sélectionnées
+    
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+
+<div>
+    <label class="block margin-bottom">Unités de gestion</label>
+    <img 
+        class="float-right vertical-align-middle bigicon margin-right"
+        src="/static/img/new.png"
+        title="Associer ce chantier avec une UG"
+        onclick="showModalUG();"
+    />
+</div>
+<div>
+    <div id="zone-ugs"></div>
+</div>
+
+<!-- ********************************** Modale choix ug ************************************* -->
+<div id="modal-ug" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div class="bold margin-bottom margin-top">Sélectionnez les UGs concernées par le chantier.</div>
+        <table>
+        <tr>
+        {{range $i, $ug := .AllUGs}}
+            <td>
+                <input 
+                    type="checkbox"
+                    class="chk-ug"
+                    id="chk-ug-{{$ug.Id}}"
+                    data-ug-id="{{$ug.Id}}"
+                    data-ug-code="{{$ug.Code}}"
+                    data-ug-surface="{{$ug.SurfaceSIG}}"
+                    >
+                <label for="chk-ug-{{$ug.Id}}">{{$ug.Code}}<label>
+            </td>
+            {{if eq (modulo $i 9) 8}}
+            </tr>
+            <tr>
+            {{end}}
+        {{end}}
+        </tr>
+        </table>
+        <div class="margin-top">
+            <input type="button" id="cancel-modal-ug" value="Annuler">
+            <input class="margin-left2" type="button" id="validate-modal-ug" value="Valider">
+        </div>
+    </div>
+</div>
+
+{{with .Chantier}}
+<script>
+
+/** Pour faire fonctionner la modale UG **/
+window.addEventListener("load", function(){
+    const modal = document.getElementById("modal-ug");
+    let close = document.getElementsByClassName("modal-close")[0];
+    modal.style.display = "none";
+    close.onclick = function() {
+        modal.style.display = "none";
+    }
+    document.getElementById("cancel-modal-ug").onclick = function() {
+        modal.style.display = "none";
+    }
+    document.getElementById("validate-modal-ug").onclick = function() {
+        modal.style.display = "none";
+        afficheUGs(computeIdsUGsFromForm());
+    }
+});
+
+function showModalUG(){
+    let modal = document.getElementById("modal-ug");
+    modal.style.display = "block";
+}
+
+</script>
+{{end}}

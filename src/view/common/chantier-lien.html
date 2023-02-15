@@ -33,90 +33,9 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<div>
-    <label class="block margin-bottom">Unités de gestion</label>
-    <img 
-        class="float-right vertical-align-middle bigicon margin-right"
-        src="/static/img/new.png"
-        title="Associer ce chantier avec une UG"
-        onclick="showModalUG();"
-    />
-</div>
-<div>
-    <div id="zone-ugs"></div>
-</div>
-
-<!-- ********************************** Modale choix ug ************************************* -->
-<div id="modal-ug" class="modal">
-    <div class="modal-content">
-        <span class="modal-close">&times;</span>
-        <div class="bold margin-bottom margin-top">Sélectionnez les UGs concernées par le chantier.</div>
-        <table>
-        <tr>
-        {{range $i, $ug := .AllUGs}}
-            <td>
-                <input 
-                    type="checkbox"
-                    class="chk-ug"
-                    id="chk-ug-{{$ug.Id}}"
-                    data-ug-id="{{$ug.Id}}"
-                    data-ug-surface="{{$ug.SurfaceSIG}}"
-                    >
-                <label for="chk-ug-{{$ug.Id}}">{{$ug.Code}}<label>
-            </td>
-            {{if eq (modulo $i 9) 8}}
-            </tr>
-            <tr>
-            {{end}}
-        {{end}}
-        </tr>
-        </table>
-        <div class="margin-top">
-            <input type="button" id="cancel-modal-ug" value="Annuler">
-            <input class="margin-left2" type="button" id="validate-modal-ug" value="Valider">
-        </div>
-    </div>
-</div>
-
 
 {{with .Chantier}}
 <script>
-
-/** Pour faire fonctionner la modale UG **/
-window.addEventListener("load", function(){
-    let modal = document.getElementById("modal-ug");
-    let close = document.getElementsByClassName("modal-close")[0];
-    modal.style.display = "none";
-    close.onclick = function() {
-        modal.style.display = "none";
-    }
-    document.getElementById("cancel-modal-ug").onclick = function() {
-        modal.style.display = "none";
-    }
-    document.getElementById("validate-modal-ug").onclick = function() {
-        modal.style.display = "none";
-        drawListUGs();
-    }
-});
-
-function showModalUG(){
-    let modal = document.getElementById("modal-ug");
-    modal.style.display = "block";
-}
-
-async function chantierLienInitialize() {
-    // mêmes initialisations pour form new et form update
-    {{range .UGs}}
-        document.getElementById("chk-ug-{{.Id}}").checked = true;
-    {{end}}
-    await drawListUGs();
-    {{range .Lieudits}} // vide pour form new
-        document.getElementById("lieudit-{{.Id}}").checked = true;
-    {{end}}
-    {{range .Fermiers}} // vide pour form update
-        document.getElementById("fermier-{{.Id}}").checked = true;
-    {{end}}
-}
 
 async function drawListUGs(){
     let codeUG, idUG, surfaceUG;
@@ -155,9 +74,8 @@ async function drawListUGs(){
     elts = document.getElementsByClassName("chk-ug");
     for(i = 0; i < elts.length; i++) {
         if(elts[i].checked){
-//////////////// #9 codeUG contient un id
-            codeUG = elts[i].getAttribute("id").substring(7); // 7 pour "chk-ug-"
-            selectedUGs.push(codeUG);
+            idUG = elts[i].getAttribute("data-ug-id");
+            selectedUGs.push(idUG);
         }
     }
     if(selectedUGs.length == 0){
@@ -169,9 +87,9 @@ async function drawListUGs(){
     // Affiche UGs
     //
     for(i = 0; i < selectedUGs.length; i++) {
-        codeUG = selectedUGs[i];
-        idUG = document.getElementById("chk-ug-" + codeUG).getAttribute("data-ug-id");
-        surfaceUG = round(document.getElementById("chk-ug-" + codeUG).getAttribute("data-ug-surface"), 2);
+        idUG = selectedUGs[i];
+        codeUG = document.getElementById("chk-ug-" + idUG).getAttribute("data-ug-code");
+        surfaceUG = round(document.getElementById("chk-ug-" + idUG).getAttribute("data-ug-surface"), 2);
         //
         const imgElt = document.createElement("img");
         imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
@@ -181,7 +99,7 @@ async function drawListUGs(){
         //
         const aElt = document.createElement("a");
         aElt.setAttribute("href", "#");
-        aElt.setAttribute("onclick", "removeUG('" + codeUG + "');");
+        aElt.setAttribute("onclick", "removeUG('" + idUG + "');");
         aElt.setAttribute("class", "padding-right");
         aElt.appendChild(imgElt);
         //
@@ -204,7 +122,7 @@ async function drawListUGs(){
     // 1 - récup id, noms en ajax dans tableau assoc
     //     Permet de supprimer les doublons (arrive par ex. si UGs = XIX-54 et XIV-20)
 //    baseURL = "/ajax/get/lieudits-from-code-ug/"
-    baseURL = "/ajax/get/lieudits-from-id-ug/"
+    baseURL = "/ajax/get/lieudits-from-ids-ugs/"
     dbRows = new Array();
     for(i=0; i < zoneUgsElt.childNodes.length; i++){
         elt = zoneUgsElt.childNodes[i];
@@ -236,7 +154,7 @@ async function drawListUGs(){
             dbRows[item.Id] = item.Nom + " (" + tmp.join(", ") + ")";
         });
     }
-    // 2 - Recrée la liste html
+    // 2 - Recrée la liste html des lieudits
     for(idDB in dbRows){
         nom = dbRows[idDB];
         idDansForm = "lieudit-" + idDB
@@ -291,7 +209,7 @@ async function drawListUGs(){
             dbRows[item.id] = item.name;
         });
     }
-    // 2 - Recrée la liste html
+    // 2 - Recrée la liste html des fermiers
     for(idDB in dbRows){
         nom = dbRows[idDB];
         idDansForm = "fermier-" + idDB

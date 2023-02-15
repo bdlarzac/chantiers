@@ -1,0 +1,167 @@
+{{/* 
+
+    La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates utilisatrices).
+    
+    Conventions à respecter par les templates utilisatrices :
+    - les lieudits se trouvent dans une <div id="zone-lieudits"></div>
+
+    
+*/}}
+<script>
+
+/** 
+    Calcule les ids des Lieudits associées au chantier.
+    Transfère des données go dans une variable js.
+    Utilisé lorsqu'on arrive sur form update.
+**/
+function computeIdsLieuditsFromChantier(){
+    const idsLieudits = [];
+    {{range .Lieudits}}
+        idsLieudits.push({{.Id}});
+    {{end}}
+    return idsLieudits;
+}
+
+/** 
+    Calcule les ids des Lieudits sélectionnés dans le formulaire
+**/
+function computeIdsLieuditsFromForm(){
+    const tmpElts = document.getElementsByClassName('chk-lieudit');
+    const idsLieudit = [];
+    for (const item of tmpElts) {
+        const idLieudit = item.getAttribute('data-lieudit-id');
+        if(item.checked){
+            idsLieudit.push(idLieudit);
+        }
+    }
+console.log("computeIdsLieuditsFromForm() - idsLieudit =", idsLieudit);
+    return idsLieudit;
+}
+
+// ***************************************
+/** 
+    - Récup en ajax les lieudits correspondant à une ou plusieurs UGs et les affiche.
+    - Restaure les sélections éventuelles des lieudits avant l'appel.
+    @param  idsUG           Tableau d'entiers, ex [3, 87, 19] = ids des UGs permettant de récupérer les lieudits
+    @param  idsLieudits     Sert à restaurer l'affichage (= cocher les lieudits cochés avant l'appel).
+
+**/
+async function afficheLieudits(idsUGs, idsLieudits){
+console.log("afficheLieudits() - idsLieudits = ", idsLieudits);
+    const zoneLieuditsElt = document.getElementById('zone-lieudits'); // ICI convention <div id="zone-lieudits"> dans template utilisatrice
+    if(idsUGs.length == 0){
+        zoneLieuditsElt.innerHTML = "Choisissez d'abord une UG";
+        return;
+    }
+    //
+    // 1 - Ajax pour récup lieudits correspondant aux UGs
+    //
+    const strIdsUG = idsUGs.join(',');
+    const url = "/ajax/get/lieudits-from-ids-ugs/" + strIdsUG;
+    let response = await fetch(url);
+    if(response == null){
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+            + "Problème de récupération " + url);
+        return;                                                                     
+    }
+    response = await response.json();
+    if(response == null){
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+            + "Mauvais format de retour de " + url);
+        return;
+    }
+    if(response.length == 0){
+        zoneLieuditsElt.innerHTML = "Aucun lieu-dit pour ces UGs";
+        return;
+    }
+    dbRows = new Array();
+    tmp = [];
+    // nom affiché = nom lieudit + nom(s) communes(s)
+    response.forEach(function(item){
+        item.Communes.forEach(function(curCommune){
+            tmp.push(curCommune.NomCourt)
+        });
+        tmp = [...new Set(tmp)]; // = array_unique
+        dbRows[item.Id] = item.Nom + " (" + tmp.join(", ") + ")";
+    });
+    //
+    // 2 - Recrée la liste html des lieudits
+    //
+    zoneLieuditsElt.innerHTML = "";
+    //
+    for(idDB in dbRows){
+        nom = dbRows[idDB];
+        idDansForm = "lieudit-" + idDB
+        const checkElt = document.createElement("input");
+        checkElt.setAttribute("type", "checkbox");
+        checkElt.setAttribute("id", idDansForm);
+        checkElt.setAttribute("name", idDansForm);
+        checkElt.setAttribute("class", "chk-lieudit"); // utilisé par computeIdsLieuditsFromForm()
+        checkElt.setAttribute("data-lieudit-id", idDB);
+        if(idsLieudits.includes(idDB)){
+            checkElt.setAttribute("checked", true); // ICI restore le checked
+        }
+        labelElt = document.createElement("label");
+        labelElt.setAttribute("for", idDansForm);
+        labelElt.style.fontWeight = "normal";
+        labelElt.innerHTML = nom;
+        divElt = document.createElement("div");
+        divElt.appendChild(checkElt);
+        divElt.appendChild(labelElt);
+        zoneLieuditsElt.appendChild(divElt);
+    }
+}
+
+/** 
+    Fait 2 choses :
+    - Fabrique le message d'erreur pour le choix des parcelles.
+    - Remplit l'attribut value de l'élément "liens-parcelles" du formulaire appelant :
+        <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
+        Cette value est de la forme : "1027:surface-10;1025:entiere"
+        Utile pour faciliter le traitement dans le back en go.
+    @return message d'erreur ; vide si la sélection de parcelles est ok.
+**/
+// TODO #9 adapter le code aux lieudits
+function checkLieuditsAndFillHiddenField(){
+    let idParcelle, surface;
+    const hiddenValues = []; // tableau pour fabriquer value de hidden field
+    let msg = "";
+    let parcelleChecked = false;
+    let surfaceZero = false;
+    //
+    document.getElementById("liens-parcelles").value = ""; // réinitialise hidden field
+    //
+    const elts = document.getElementsByClassName("parcelle");
+    for(let i = 0; i < elts.length; i++) {
+        idParcelle = elts[i].getAttribute("id").replace("parcelle-", "");
+        if(document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked == true){
+            continue;
+        }
+        parcelleChecked = true; // ok, au moins une pacelle sélectionnée
+        if(document.getElementById("radio-parcelle-surface-" + idParcelle).checked){
+            surface = surfaceInputElt = document.getElementById("parcelle-surface-" + idParcelle).value;
+            if(surface <= 0 || surface == ""){
+                surfaceZero = true;
+            }
+            hiddenValues.push(idParcelle + ":surface-" + surface);
+        }
+        else{
+            // parcelle entière
+            hiddenValues.push(idParcelle + ":entiere");
+        }
+    }
+    //
+    if(!parcelleChecked){
+        msg += "- Vous devez au moins choisir une parcelle.\n";
+    }
+    if(surfaceZero){
+        msg += "- La surface des parcelles doit être positive.\n";
+    }
+    if(msg == ""){
+        // remplit la value du hidden field
+        document.getElementById("liens-parcelles").value = hiddenValues.join(";");
+    }
+    return msg;
+}
+
+</script>

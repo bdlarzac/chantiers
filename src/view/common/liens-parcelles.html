@@ -1,7 +1,7 @@
 {{/* 
 
     La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates utilisatrices).
-    Utilisé uniquement par computeLiensParcellesFromChantier()
+    (variable go utilisé uniquement par computeLiensParcellesFromChantier())
     
     Les variables liensParcelles sont des tableaux d'objets ayant comme champs :
         idParcelle  int
@@ -77,13 +77,15 @@ function computeLiensParcellesFromForm(){
 /** 
     - Récup en ajax les parcelles correspondant à une ou plusieurs UGs et les affiche.
     - Restaure les sélections éventuelles des parcelles avant l'appel.
-    @param  idsUG           Tableau d'entiers, ex [3, 87, 19]
+    @param  idsUGs          Tableau d'entiers, ex [3, 87, 19]
+                            = ids des UGs permettant de récupérer les parcelles
     @param  liensParcelles  Voir commentaire de ce fichier - sert à restaurer l'affichage précédant l'appel.
 
 **/
-async function afficheParcelles(idsUG, liensParcelles){
+async function afficheParcelles(idsUGs, liensParcelles){
+//console.log("afficheParcelles", idsUGs);
     const parcellesElt = document.getElementById('zone-parcelles'); // ICI convention <div id="zone-parcelles"> dans template utilisatrice
-    if(idsUG.length == 0){
+    if(idsUGs.length == 0){
         parcellesElt.innerHTML = "Choisissez d'abord une UG";
         return;
     }
@@ -92,9 +94,9 @@ async function afficheParcelles(idsUG, liensParcelles){
     //     Elles sont toutes à "non sélectionnée"
     //
     const nCol = 2; // nb de colonne pour l'affichage des parcelles
-    const strIdsUG = idsUG.join(',');
-    const url = "/ajax/get/parcelles-from-ugs/" + strIdsUG;
-    // Ajax pour écup parcelles correspondant à l'UG
+    const strIdsUG = idsUGs.join(',');
+    const url = "/ajax/get/parcelles-from-ids-ugs/" + strIdsUG;
+    // Ajax pour écup parcelles correspondant aux UGs
     let response = await fetch(url);
     if(response == null){
         alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
@@ -304,44 +306,5 @@ function checkParcellesAndFillHiddenField(){
     }
     return msg;
 }
-
-/** 
-    Fait 2 choses :
-    - Fabrique le message d'erreur pour le choix des parcelles.
-    - Remplit l'attribut value de l'élément "liens-parcelles" du formulaire appelant :
-        <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
-      Cette value est de la forme : "1027:surface-10;1025:entiere"
-    @return message d'erreur ; vide si la sélection de parcelles est ok.
-**/
-// A SUPPRIMER
-/* function checkParcelles(){
-    let msg = "";
-    let parcelleChecked = false;
-    let surfaceZero = false;
-    const elts = document.getElementsByClassName("parcelle");
-    for(let i = 0; i < elts.length; i++) {
-        idParcelle = elts[i].getAttribute("id").replace("parcelle-", "");
-        if(document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked == true){
-            continue;
-        }
-        parcelleChecked = true; // ok, au moins une pacelle sélectionnée
-        if(document.getElementById("radio-parcelle-surface-" + idParcelle).checked){
-            surface = surfaceInputElt = document.getElementById("parcelle-surface-" + idParcelle).value;
-            if(surface <= 0 || surface == ""){
-                surfaceZero = true;
-            }
-        }
-    }
-    //
-    if(!parcelleChecked){
-        msg += "- Vous devez au moins choisir une parcelle.\n";
-    }
-    if(surfaceZero){
-        msg += "- La surface des parcelles doit être positive.\n";
-    }
-    return msg;
-} */
-
-
 
 </script>

@@ -3,13 +3,12 @@ package ajax
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"strconv"
 	"encoding/json"
 	"net/http"
 	"github.com/gorilla/mux"
 )
 
-func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	str := vars["str"]
 	type respElement struct {
@@ -32,9 +31,11 @@ func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reque
 	return nil
 }
 
-// @return  Json contenant id du lieu-dit correspondant à str,
-//          ou 0 si lieu-dit pas trouvé.
-func CheckNomLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+/** 
+    @return  Json contenant id du lieu-dit correspondant à str,
+             ou 0 si lieu-dit pas trouvé.
+**/
+func CheckNomLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	str := vars["str"]
 	ld, err := model.GetLieuditByNom(ctx.DB, str)
@@ -51,30 +52,9 @@ func CheckNomLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-///// remove apres #9 
-/* func GetLieuditsFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func GetLieuditsFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
-	code := vars["code"]
-	lds, err := model.GetLieuditsFromCodeUG(ctx.DB, code)
-	if err != nil {
-		return err
-	}
-	json, err := json.Marshal(lds)
-	if err != nil {
-		return err
-	}
-	w.Write(json)
-	return nil
-} */
-
-func GetLieuditsFromIdUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-	vars := mux.Vars(r)
-	strId := vars["id"]
-	id, err := strconv.Atoi(strId)
-	if err != nil {
-		return err
-	}
-	lds, err := model.GetLieuditsFromIdUG(ctx.DB, id)
+	lds, err := model.GetLieuditsFromIdsUGs(ctx.DB, vars["ids"])
 	if err != nil {
 		return err
 	}

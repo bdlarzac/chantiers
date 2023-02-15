@@ -7,8 +7,9 @@
 <script>
 
 /** 
-    Sélectionne les UGs associées au chantier.
-    Utilisé uniquement lorsqu'on arrive sur form update.
+    Calcule les ids des UGs associées au chantier.
+    Transfère des données go dans une variable js.
+    Utilisé lorsqu'on arrive sur form update.
 **/
 function computeIdsUGsFromChantier(){
     const idsUGs = [];
@@ -19,19 +20,74 @@ function computeIdsUGsFromChantier(){
 }
 
 /** 
-    Calcule les ids des UGs sélectionnées
+    Calcule les ids des UGs sélectionnées dans le formulaire
 **/
 function computeIdsUGsFromForm(){
     const tmpElts = document.getElementsByClassName('chk-ug');
-    const idsUG = [];
+    const idsUGs = [];
     for (const item of tmpElts) {
         const idUG = item.getAttribute('data-ug-id');
-        if(item.checked == true){
-            idsUG.push(idUG);
+        if(item.checked){
+            idsUGs.push(idUG);
         }
     }
-    return idsUG;
+    return idsUGs;
 }
+
+/** 
+    Utilisé par chautre-form.html et plaq-form.html - pas chaufer-form.html
+    Affiche la zone des UGs sélectionnées.
+    Pas besoin d'appel ajax car les données sont stockées dans la modale UG (attributs data-*)
+    @param  idsUGs   Tableau d'entiers, ex [3, 87, 19]
+                    Sert à restaurer les UGs précédemment sélectionnées
+**/
+function afficheUGs(idsUGs){
+//console.log("afficheUGs(idsUGs) =", idsUGs);
+    const zoneUGsElt = document.getElementById('zone-ugs'); // ICI convention <div id="zone-ugs"> dans template utilisatrice
+    zoneUGsElt.innerHTML = "";
+    //
+    for(const idUG of idsUGs) {
+        const codeUG = document.getElementById("chk-ug-" + idUG).getAttribute("data-ug-code");
+        const surfaceUG = round(document.getElementById("chk-ug-" + idUG).getAttribute("data-ug-surface"), 2);
+        //
+        const imgElt = document.createElement("img");
+        imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
+        imgElt.setAttribute("src", "/static/img/delete.png");
+        imgElt.setAttribute("title", "Supprimer l'association avec cette UG");
+        imgElt.style.cursor = "pointer";
+        //
+        const aElt = document.createElement("a");
+        aElt.setAttribute("href", "#");
+        aElt.setAttribute("onclick", "removeUG('" + idUG + "');");
+        aElt.setAttribute("class", "padding-right");
+        aElt.appendChild(imgElt);
+        //
+        const spanElt = document.createElement("span");
+        spanElt.innerHTML = codeUG + " (" + surfaceUG + " ha)";
+        //
+        elt = document.createElement("div");
+        elt.setAttribute("class", "form-ug padding-top05"); // form-ug sert dans validateForm()
+        elt.setAttribute("data-ug-id", idUG);
+        elt.setAttribute("data-ug-code", codeUG);
+        elt.appendChild(aElt);
+        elt.appendChild(spanElt);
+        //
+        zoneUGsElt.appendChild(elt);
+    }
+    afficheParcelles(idsUGs, computeLiensParcellesFromForm());
+    afficheLieudits(idsUGs, computeIdsLieuditsFromForm());
+}
+
+function removeUG(idUG){
+    const chkElt = document.getElementById("chk-ug-" + idUG);
+    const codeUG = chkElt.getAttribute('data-ug-code');
+    var ok = confirm("Voulez-vous vraiment enlever l'association avec l'UG " + codeUG + " ?");
+    if(ok){
+        chkElt.checked = false;
+        afficheUGs(computeIdsUGsFromForm());
+    }
+}
+
 
 /** 
     Fait 2 choses :
@@ -62,21 +118,4 @@ function checkUGsAndFillHiddenField(){
     return msg;
 }
 
-
-function drawZoneUGs(){
-    document.write(`
-    <div>
-        <label class="block margin-bottom">Unités de gestion</label>
-        <img 
-            class="float-right vertical-align-middle bigicon margin-right"
-            src="/static/img/new.png"
-            title="Associer ce chantier avec une UG"
-            onclick="showModalUG();"
-        />
-    </div>
-    <div>
-        <div id="zone-ugs"></div>
-    </div>
-    `);
-}
 </script>
