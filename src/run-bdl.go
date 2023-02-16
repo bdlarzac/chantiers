@@ -43,11 +43,10 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/ajax/get/lieudits-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetLieuditsFromIdsUGs))
-//	r.HandleFunc("/ajax/get/fermiers-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetFermiersFromIdsUGs))
+	r.HandleFunc("/ajax/get/fermiers-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetFermiersFromIdsUGs))
+	r.HandleFunc("/ajax/get/parcelles-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromIdsUGs))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
-//	r.HandleFunc("/ajax/get/parcelles-from-id-ug/{id:[0-9]+}", Hajax(ajax.GetParcellesFromIdUG))    // TODO à priori, supprimer après #9
-	r.HandleFunc("/ajax/get/parcelles-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromIdsUGs))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))

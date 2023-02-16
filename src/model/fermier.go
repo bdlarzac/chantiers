@@ -114,29 +114,26 @@ func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Fermier, error) {
 	return fermiers, nil
 }
 */
-
-// Renvoie des Fermiers à partir d'une UG.
-// Utilise les parcelles pour faire le lien
-// Ne contient que les champs de la table fermier.
-// Les autres champs ne sont pas remplis.
-// Utilisé par ajax
-////////////////// remove apres #9
-/* func GetFermiersFromCodeUG(db *sqlx.DB, codeUG string) ([]*Fermier, error) {
-	fermiers := []*Fermier{}
+/** 
+    Renvoie des fermiers à partir d'un id UG.
+    Contient les champs de la table fermier.
+    Les autres champs ne sont pas remplis.
+    @param      strIdsUGs   Chaîne contenant les ids séparés par des virgules. ex : "1, 34, 87"
+**/
+func GetFermiersFromIdsUGs(db *sqlx.DB, strIdsUGs string) (fermiers []*Fermier, err error) {
+	fermiers = []*Fermier{}
 	query := `
 	    select * from fermier where id in(
-            select distinct id_fermier from parcelle_fermier where id_parcelle in(
-                select id_parcelle from parcelle_ug where id_ug in(
-                    select id from ug where code=$1
-                )
+            select id_fermier from parcelle_fermier where id_parcelle in(
+                select id_parcelle from parcelle_ug where id_ug in(`+strIdsUGs+`)
             )
-        ) order by nom`
-	err := db.Select(&fermiers, query, codeUG)
+        )`
+	err = db.Select(&fermiers, query)
 	if err != nil {
 		return fermiers, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return fermiers, nil
-} */
+}
 
 /** 
     Renvoie des Fermiers à partir d'une UG.

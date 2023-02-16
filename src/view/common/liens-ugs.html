@@ -35,14 +35,13 @@ function computeIdsUGsFromForm(){
 }
 
 /** 
-    Utilisé par chautre-form.html et plaq-form.html - pas chaufer-form.html
+    Utilisé par chautre-form.html et plaq-form.html - PAS par chaufer-form.html
     Affiche la zone des UGs sélectionnées.
     Pas besoin d'appel ajax car les données sont stockées dans la modale UG (attributs data-*)
     @param  idsUGs   Tableau d'entiers, ex [3, 87, 19]
                     Sert à restaurer les UGs précédemment sélectionnées
 **/
 function afficheUGs(idsUGs){
-//console.log("afficheUGs(idsUGs) =", idsUGs);
     const zoneUGsElt = document.getElementById('zone-ugs'); // ICI convention <div id="zone-ugs"> dans template utilisatrice
     zoneUGsElt.innerHTML = "";
     //
@@ -74,8 +73,6 @@ function afficheUGs(idsUGs){
         //
         zoneUGsElt.appendChild(elt);
     }
-    afficheParcelles(idsUGs, computeLiensParcellesFromForm());
-    afficheLieudits(idsUGs, computeIdsLieuditsFromForm());
 }
 
 function removeUG(idUG){
@@ -99,14 +96,13 @@ function removeUG(idUG){
 **/
 function checkUGsAndFillHiddenField(){
     let msg = "";
-    const elts = document.getElementsByClassName("chk-ug");
     const hiddenValues = []; // tableau pour fabriquer value de hidden field
     //
     document.getElementById("ids-ugs").value = ""; // réinitialise hidden field
     //
-    for(let i = 0; i < elts.length; i++) {
-        if(elts[i].checked){
-            hiddenValues.push(elts[i].getAttribute("data-ug-id"));
+    for(element of document.getElementsByClassName("chk-ug")){
+        if(element.checked){
+            hiddenValues.push(element.getAttribute("data-ug-id"));
         }
     }
     if(hiddenValues.length == 0){

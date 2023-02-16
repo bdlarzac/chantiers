@@ -19,9 +19,20 @@
 
     <div class="grid2-form">
 
-        {{/* Affiche la zone des UGs */}}
+        <div>
+            <label class="block margin-bottom">Unités de gestion</label>
+            <img 
+                class="float-right vertical-align-middle bigicon margin-right"
+                src="/static/img/new.png"
+                title="Associer ce chantier avec une UG"
+                onclick="showModalUG();"
+            />
+        </div>
+        <div>
+            <div id="zone-ugs"></div>
+        </div>
         {{template "liens-ugs-modal.html" $.Details}}
-        
+
         <label>Parcelles</label>
         <div id="zone-parcelles"></div>
         
@@ -156,19 +167,23 @@ window.addEventListener("load", function(){
 async function initialize(){
     // form new
     if({{.Id}} == 0){
-        await afficheParcelles([], []);
-        await afficheLieudits([], []);
-//        await afficheFermiers([], []);
+        await afficheParcelles([], []); // dans view/common/liens-parcelles.html
+        await afficheLieudits([], []);  // dans view/common/liens-lieudits.html
+        await afficheFermiers([], []);  // dans view/common/liens-fermiers.html
         document.getElementById("typevente-NON").checked = true;
         actionAfterChangeValorisation();
     }
     // form update
     else{
-        const idsUGs = computeIdsUGsFromForm();
+        const idsUGs = computeIdsUGsFromChantier();
+         // checkboxes dans la modale (invisible)
+        for(const idUG of idsUGs){
+            document.getElementById("chk-ug-" + idUG).checked = true;
+        }
         afficheUGs(idsUGs);
-        await afficheParcelles(idsUGs, computeLiensParcellesFromChantier()); // dans view/common/liens-parcelles.html
-        await afficheLieudits(idsUGs, computeIdsLieuditsFromChantier()); // dans view/common/liens-lieudits.html
-//        await afficheFermiers(idsUGs, computeIdsFermiersFromChantier()); // dans view/common/liens-fermiers.html
+        await afficheParcelles(idsUGs, computeLiensParcellesFromChantier());    // dans view/common/liens-parcelles.html
+        await afficheLieudits(idsUGs, computeIdsLieuditsFromChantier());        // dans view/common/liens-lieudits.html
+        await afficheFermiers(idsUGs, computeIdsFermiersFromChantier());        // dans view/common/liens-fermiers.html
         document.getElementById("acheteur").value = "{{.Acheteur.String}}";
         document.getElementById("tva-{{.TVA}}").selected = true;
         actionAfterChangeValorisation();
@@ -222,10 +237,10 @@ function actionAfterChangeValorisation(){
 function validateForm(){
     let msg = "";
     //
-    // #9 remplacerpar checkUGsAndFillHiddenField()
-    msg += chantierLienValidateForm(); // dans view/common/chantier-lien.html
-    //
-    msg += checkParcellesAndFillHiddenField(); // dans view/common/liens-parcelles.html
+    msg += checkUGsAndFillHiddenField();        // dans view/common/liens-ugs.html
+    msg += checkParcellesAndFillHiddenField();  // dans view/common/liens-parcelles.html
+    msg += checkLieuditsAndFillHiddenField();   // dans view/common/liens-lieudits.html
+    msg += checkFermiersAndFillHiddenField();   // dans view/common/liens-fermiers.html
     //
     const check = checkActeur("acheteur", "- Vous devez renseigner l'acheteur.\n");
     document.getElementById("id-acheteur").value = check[0];
@@ -264,8 +279,6 @@ function validateForm(){
         alert(msg);
         return false;
     }
-    //
-    chantierLienFillHiddenFields(); // dans view/common/chantier-lien.html
     //
     return true;
 }

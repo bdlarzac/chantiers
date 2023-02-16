@@ -34,7 +34,6 @@ function computeIdsLieuditsFromForm(){
             idsLieudit.push(idLieudit);
         }
     }
-console.log("computeIdsLieuditsFromForm() - idsLieudit =", idsLieudit);
     return idsLieudit;
 }
 
@@ -47,7 +46,6 @@ console.log("computeIdsLieuditsFromForm() - idsLieudit =", idsLieudit);
 
 **/
 async function afficheLieudits(idsUGs, idsLieudits){
-console.log("afficheLieudits() - idsLieudits = ", idsLieudits);
     const zoneLieuditsElt = document.getElementById('zone-lieudits'); // ICI convention <div id="zone-lieudits"> dans template utilisatrice
     if(idsUGs.length == 0){
         zoneLieuditsElt.innerHTML = "Choisissez d'abord une UG";
@@ -98,7 +96,7 @@ console.log("afficheLieudits() - idsLieudits = ", idsLieudits);
         checkElt.setAttribute("name", idDansForm);
         checkElt.setAttribute("class", "chk-lieudit"); // utilisé par computeIdsLieuditsFromForm()
         checkElt.setAttribute("data-lieudit-id", idDB);
-        if(idsLieudits.includes(idDB)){
+        if(idsLieudits.includes(parseInt(idDB, 10))){
             checkElt.setAttribute("checked", true); // ICI restore le checked
         }
         labelElt = document.createElement("label");
@@ -114,52 +112,33 @@ console.log("afficheLieudits() - idsLieudits = ", idsLieudits);
 
 /** 
     Fait 2 choses :
-    - Fabrique le message d'erreur pour le choix des parcelles.
-    - Remplit l'attribut value de l'élément "liens-parcelles" du formulaire appelant :
-        <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
-        Cette value est de la forme : "1027:surface-10;1025:entiere"
-        Utile pour faciliter le traitement dans le back en go.
-    @return message d'erreur ; vide si la sélection de parcelles est ok.
+    - Fabrique le message d'erreur pour le choix des lieudits.
+    - Remplit l'attribut value de l'élément "ids-lieudits" du formulaire appelant :
+        <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
+    @return message d'erreur ; vide si la sélection de lieudit est ok.
 **/
-// TODO #9 adapter le code aux lieudits
 function checkLieuditsAndFillHiddenField(){
-    let idParcelle, surface;
+    let idLieudit;
     const hiddenValues = []; // tableau pour fabriquer value de hidden field
     let msg = "";
-    let parcelleChecked = false;
-    let surfaceZero = false;
+    let lieuditChecked = false;
     //
-    document.getElementById("liens-parcelles").value = ""; // réinitialise hidden field
+    document.getElementById("ids-lieudits").value = ""; // réinitialise hidden field
     //
-    const elts = document.getElementsByClassName("parcelle");
-    for(let i = 0; i < elts.length; i++) {
-        idParcelle = elts[i].getAttribute("id").replace("parcelle-", "");
-        if(document.getElementById("radio-parcelle-non-selectionne-" + idParcelle).checked == true){
-            continue;
-        }
-        parcelleChecked = true; // ok, au moins une pacelle sélectionnée
-        if(document.getElementById("radio-parcelle-surface-" + idParcelle).checked){
-            surface = surfaceInputElt = document.getElementById("parcelle-surface-" + idParcelle).value;
-            if(surface <= 0 || surface == ""){
-                surfaceZero = true;
-            }
-            hiddenValues.push(idParcelle + ":surface-" + surface);
-        }
-        else{
-            // parcelle entière
-            hiddenValues.push(idParcelle + ":entiere");
+    for(element of document.getElementsByClassName("chk-lieudit")){
+        idLieudit = element.getAttribute("data-lieudit-id");
+        if(document.getElementById("lieudit-" + idLieudit).checked == true){
+            lieuditChecked = true; // ok, au moins un lieu-dit sélectionné
+            hiddenValues.push(idLieudit);
         }
     }
     //
-    if(!parcelleChecked){
-        msg += "- Vous devez au moins choisir une parcelle.\n";
-    }
-    if(surfaceZero){
-        msg += "- La surface des parcelles doit être positive.\n";
+    if(!lieuditChecked){
+        msg += "- Vous devez au moins choisir un lieu-dit.\n";
     }
     if(msg == ""){
         // remplit la value du hidden field
-        document.getElementById("liens-parcelles").value = hiddenValues.join(";");
+        document.getElementById("ids-lieudits").value = hiddenValues.join(";");
     }
     return msg;
 }

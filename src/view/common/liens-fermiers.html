@@ -22,4 +22,121 @@ function computeIdsFermiersFromChantier(){
     return idsFermiers;
 }
 
+/** 
+    Calcule les ids des fermiers sélectionnés dans le formulaire
+**/
+function computeIdsFermiersFromForm(){
+    const tmpElts = document.getElementsByClassName('chk-fermier');
+    const idsFermier = [];
+    for (const item of tmpElts) {
+        const idFermier = item.getAttribute('data-fermier-id');
+        if(item.checked){
+            idsFermier.push(idFermier);
+        }
+    }
+    return idsFermier;
+}
+
+// ***************************************
+/** 
+    - Récup en ajax les fermiers correspondant à une ou plusieurs UGs et les affiche.
+    - Restaure les sélections éventuelles des fermiers avant l'appel.
+    @param  idsUG           Tableau d'entiers, ex [3, 87, 19] = ids des UGs permettant de récupérer les fermiers
+    @param  idsFermiers     Sert à restaurer l'affichage (= cocher les fermiers cochés avant l'appel).
+
+**/
+async function afficheFermiers(idsUGs, idsFermiers){
+    const zoneFermiersElt = document.getElementById('zone-fermiers'); // ICI convention <div id="zone-fermiers"> dans template utilisatrice
+    if(idsUGs.length == 0){
+        zoneFermiersElt.innerHTML = "Choisissez d'abord une UG";
+        return;
+    }
+    //
+    // 1 - Ajax pour récup fermiers correspondant aux UGs
+    //
+    const strIdsUG = idsUGs.join(',');
+    const url = "/ajax/get/fermiers-from-ids-ugs/" + strIdsUG;
+    let response = await fetch(url);
+    if(response == null){
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+            + "Problème de récupération " + url);
+        return;                                                                     
+    }
+    response = await response.json();
+    if(response == null){
+        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+            + "Mauvais format de retour de " + url);
+        return;
+    }
+    if(response.length == 0){
+        zoneFermiersElt.innerHTML = "Aucun lieu-dit pour ces UGs";
+        return;
+    }
+    dbRows = new Array();
+    tmp = [];
+    // nom affiché = nom fermier + nom(s) communes(s)
+    response.forEach(function(item){
+        dbRows[item.Id] = item.Prenom + ' ' + item.Nom;
+    });
+    //
+    // 2 - Recrée la liste html des fermiers
+    //
+    zoneFermiersElt.innerHTML = "";
+    //
+    for(idDB in dbRows){
+        nom = dbRows[idDB];
+        idDansForm = "fermier-" + idDB
+        const checkElt = document.createElement("input");
+        checkElt.setAttribute("type", "checkbox");
+        checkElt.setAttribute("id", idDansForm);
+        checkElt.setAttribute("name", idDansForm);
+        checkElt.setAttribute("class", "chk-fermier"); // utilisé par computeIdsFermiersFromForm()
+        checkElt.setAttribute("data-fermier-id", idDB);
+        if(idsFermiers.includes(parseInt(idDB, 10))){
+            checkElt.setAttribute("checked", true); // ICI restore le checked
+        }
+        labelElt = document.createElement("label");
+        labelElt.setAttribute("for", idDansForm);
+        labelElt.style.fontWeight = "normal";
+        labelElt.innerHTML = nom;
+        divElt = document.createElement("div");
+        divElt.appendChild(checkElt);
+        divElt.appendChild(labelElt);
+        zoneFermiersElt.appendChild(divElt);
+    }
+}
+
+/** 
+    Fait 2 choses :
+    - Fabrique le message d'erreur pour le choix des fermiers.
+    - Remplit l'attribut value de l'élément "ids-fermiers" du formulaire appelant :
+        <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
+    @return message d'erreur ; vide si la sélection de fermier est ok.
+**/
+function checkFermiersAndFillHiddenField(){
+    let idFermier;
+    const hiddenValues = []; // tableau pour fabriquer value de hidden field
+    let msg = "";
+    let fermierChecked = false;
+    //
+    document.getElementById("ids-fermiers").value = ""; // réinitialise hidden field
+    //
+    for(element of document.getElementsByClassName("chk-fermier")){
+        idFermier = element.getAttribute("data-fermier-id");
+        if(document.getElementById("fermier-" + idFermier).checked == true){
+            fermierChecked = true; // ok, au moins un fermier sélectionné
+            hiddenValues.push(idFermier);
+        }
+    }
+    //
+    if(!fermierChecked){
+        msg += "- Vous devez au moins choisir un fermier.\n";
+    }
+    if(msg == ""){
+        // remplit la value du hidden field
+        document.getElementById("ids-fermiers").value = hiddenValues.join(";");
+    }
+    return msg;
+}
+
 </script>

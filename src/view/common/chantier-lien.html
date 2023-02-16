@@ -204,7 +204,7 @@ async function drawListUGs(){
             errorMsg += "- L'UG \"" + codeUG + "\" n'est associée à aucun lieu-dit.\n";
             continue;
         }
-        // nom affiché = nom lieudit + nom(s) communes(s)
+        // nom affiché = nom fermier
         response.forEach(function(item){
             dbRows[item.id] = item.name;
         });
