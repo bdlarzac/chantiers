@@ -30,6 +30,18 @@
     </tr>
     
     <tr>
+        <th>Parcelles</th>
+        <td>
+        {{range .LiensParcelles}}
+            <div>
+                <a href="/parcelle/{{.IdParcelle}}">{{.Parcelle.Code}}</a>
+                ({{if .Entiere}}Entière{{else}}{{.Surface}} ha{{end}})
+            </div>
+        {{end}}
+        </td>
+    </tr>
+    
+    <tr>
         <th>Fermiers</th>
         <td>
         {{range .Fermiers}}

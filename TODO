@@ -11,8 +11,6 @@ Erreur query : select id from chaufer where id_ug =$1
 pq: la colonne « id_ug » n'existe pas
 => écrire func (ug *UG) ComputeChantiers(db *sqlx.DB, typeChantier string) error {}
 
-Lien cassé vers doc
-
 Utiliser insert / update LiensChantier UG / Parcelle dans model/chantier-lien.go dans insert / update de model / plaq et chautre 
 
 Noter dans la doc : convention : type_chantier = nom de la table duchantier

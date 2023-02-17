@@ -3,6 +3,11 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
+{{template "liens-ugs.html" $.Details.Chantier}}
+{{template "liens-parcelles.html" $.Details.Chantier}}
+{{template "liens-lieudits.html" $.Details.Chantier}}
+{{template "liens-fermiers.html" $.Details.Chantier}}
+
 <h1>{{.Header.Title}}</h1>
 
 {{with .Details.Chantier}}
@@ -11,15 +16,20 @@
 
     <div class="grid2-form">
         
-        {{/* Affiche la zone des UGs */}}
-        {{template "chantier-lien.html" $.Details}}
+        <div>
+            <label class="block margin-bottom">Unités de gestion</label>
+            <img 
+                class="float-right vertical-align-middle bigicon margin-right"
+                src="/static/img/new.png"
+                title="Associer ce chantier avec une UG"
+                onclick="showModalUG();"
+            />
+        </div>
+        <div>
+            <div id="zone-ugs"></div>
+        </div>
+        {{template "liens-ugs-modal.html" $.Details}}
         
-        {{/*
-            divs pour contenir parcelles, lieux-dits et fermiers
-            zone-parcelle contiendra la liste des parcelles avec les checkboxes
-            zone-lieudits contiendra la liste des lieux-dits avec les checkboxes
-            zone-fermiers contiendra la liste des fermiers avec les checkboxes
-        */}}
         <label>Parcelles</label>
         <div id="zone-parcelles"></div>
         
@@ -102,7 +112,7 @@
     <input type="hidden" name="id-chantier" id="id-chantier" value="{{.Id}}">
     <input type="hidden" name="ids-stockages" id="ids-stockages" value="">
     <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
-    <input type="hidden" name="ids-parcelles" id="ids-parcelles" value="">
+    <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
     <input type="hidden" name="ids-lieudits" id="ids-lieudits" value="">
     <input type="hidden" name="ids-fermiers" id="ids-fermiers" value="">
     
@@ -112,9 +122,7 @@
 <div id="help" class="margin display-none">
     <div class="help-content">
         <div class="help-title">Aide</div>
-        
-        {{template "chantier-lien-help.html"}}
-        
+        {{/* {{template "chantier-lien-help.html"}} */}}
         <div class="section">
             <b>Lieu de stockage (tas)</b> : permet de spécifier les hangars contenant les tas associés au chantier.
             <br>Un chantier peut être associé à plusieurs tas mais ne peut être associé qu'à un seul tas par hangar.
@@ -140,10 +148,12 @@ window.addEventListener("load", function(){
 });
 
 // ***************************************
-function initialize() {
-    chantierLienInitialize(); // dans view/common/chantier-lien.html    
+async function initialize() {
     // form new
     if({{.Id}} == 0){
+        await afficheParcelles([], []); // dans view/common/liens-parcelles.html
+        await afficheLieudits([], []);  // dans view/common/liens-lieudits.html
+        await afficheFermiers([], []);  // dans view/common/liens-fermiers.html
         // essence initalisée à pin sylvestre car c'est le cas le plus fréquent
         document.getElementById("essence-PS").setAttribute("selected", "selected");
         // Si un seul lieu de stockage possible, il est sélectionné par défaut
@@ -153,6 +163,15 @@ function initialize() {
     }
     // form update
     else{
+        const idsUGs = computeIdsUGsFromChantier();
+         // checkboxes dans la modale (invisible)
+        for(const idUG of idsUGs){
+            document.getElementById("chk-ug-" + idUG).checked = true;
+        }
+        afficheUGs(idsUGs);
+        await afficheParcelles(idsUGs, computeLiensParcellesFromChantier());    // dans view/common/liens-parcelles.html
+        await afficheLieudits(idsUGs, computeIdsLieuditsFromChantier());        // dans view/common/liens-lieudits.html
+        await afficheFermiers(idsUGs, computeIdsFermiersFromChantier());        // dans view/common/liens-fermiers.html
         // lieux de stockage
         {{range .Tas}}
             document.getElementById("stockage-{{.Stockage.Id}}").setAttribute("checked", "checked")
@@ -164,7 +183,10 @@ function initialize() {
 function validateForm(){
     let msg = "";
     //
-    msg += chantierLienValidateForm(); // dans view/common/chantier-lien.html
+    msg += checkUGsAndFillHiddenField();        // dans view/common/liens-ugs.html
+    msg += checkParcellesAndFillHiddenField();  // dans view/common/liens-parcelles.html
+    msg += checkLieuditsAndFillHiddenField();   // dans view/common/liens-lieudits.html
+    msg += checkFermiersAndFillHiddenField();   // dans view/common/liens-fermiers.html
     //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;
@@ -204,8 +226,6 @@ function validateForm(){
         alert("Impossible de valider ce formulaire : \n" + msg);
         return false;
     }
-    //
-    chantierLienFillHiddenFields(); // dans view/common/chantier-lien.html
     //
     return true;
 }
