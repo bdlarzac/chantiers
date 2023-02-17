@@ -137,7 +137,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
     response.forEach(function(item){
         curdiv = document.createElement("div");
         //
-        curdiv.innerHTML = "<b>" + item.name + "</b>";
+        curdiv.innerHTML = '<a class="bold" href="/parcelle/' + item.id + '">' + item.name + '</b>';
         curdiv.innerHTML += "<br>" + item.commune.NomCourt;
         //
         grid2Elt.appendChild(curdiv);
@@ -151,8 +151,11 @@ async function afficheParcelles(idsUGs, liensParcelles){
         radioName = "radio-parcelle-" + item.id;
         strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
             + "document.getElementById('"+surfaceInputNameId+"').value = '';"
+        //
         // non sélectionnée - radio
+        //
         subdiv = document.createElement("div");
+        //
         radio = document.createElement("input");
         radioValueId = "radio-parcelle-non-selectionne-" + item.id;
         radio.setAttribute("type", "radio");
@@ -162,7 +165,9 @@ async function afficheParcelles(idsUGs, liensParcelles){
         radio.setAttribute("checked", true);        // ICI, parcelle non sélectionnée
         radio.setAttribute("onclick", strOnclick);
         subdiv.appendChild(radio);
+        //
         // non sélectionnée - label
+        //
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.innerHTML = "Non sélectionnée";
@@ -170,8 +175,11 @@ label.style="font-weight:normal;"
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
+        //
         // entière - radio
+        //
         subdiv = document.createElement("div");
+        //
         radio = document.createElement("input");
         radioValueId = "radio-parcelle-entiere-" + item.id;
         radio.setAttribute("type", "radio");
@@ -180,7 +188,9 @@ label.style="font-weight:normal;"
         radio.setAttribute("id", radioValueId);
         radio.setAttribute("onclick", strOnclick);
         subdiv.appendChild(radio);
+        //
         // entière - label
+        //
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.innerHTML = "Entière (" + round(item.surface, 2) + " ha)";
@@ -188,8 +198,11 @@ label.style="font-weight:normal;"
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
+        //
         // surface - radio
+        //
         subdiv = document.createElement("div");
+        //
         radio = document.createElement("input");
         radioValueId = "radio-parcelle-surface-" + item.id;
         radio.setAttribute("type", "radio");
@@ -198,14 +211,18 @@ label.style="font-weight:normal;"
         radio.setAttribute("id", radioValueId);
         radio.setAttribute("onclick", "document.getElementById('"+surfaceInputNameId+"').readOnly = false;");
         subdiv.appendChild(radio);
+        //
         // surface - label
+        //
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.setAttribute("class", "padding-right");
         label.innerHTML = "Surface";
 label.style="font-weight:normal;"
         subdiv.appendChild(label);
+        //
         // surface - input type=number
+        //
         surfaceInput = document.createElement("input");
         surfaceInput.setAttribute("type", "number");
         surfaceInput.setAttribute("min", "0");

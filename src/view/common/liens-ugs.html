@@ -49,11 +49,15 @@ function afficheUGs(idsUGs){
         const codeUG = document.getElementById("chk-ug-" + idUG).getAttribute("data-ug-code");
         const surfaceUG = round(document.getElementById("chk-ug-" + idUG).getAttribute("data-ug-surface"), 2);
         //
+        // img remove
+        //
         const imgElt = document.createElement("img");
         imgElt.classList.add("inline", "vertical-align-middle", "bigicon");
         imgElt.setAttribute("src", "/static/img/delete.png");
         imgElt.setAttribute("title", "Supprimer l'association avec cette UG");
         imgElt.style.cursor = "pointer";
+        //
+        // lien vers remove
         //
         const aElt = document.createElement("a");
         aElt.setAttribute("href", "#");
@@ -61,8 +65,12 @@ function afficheUGs(idsUGs){
         aElt.setAttribute("class", "padding-right");
         aElt.appendChild(imgElt);
         //
+        // label avec code ug
+        //
         const spanElt = document.createElement("span");
-        spanElt.innerHTML = codeUG + " (" + surfaceUG + " ha)";
+        spanElt.innerHTML = '<a href="/ug/' + idUG + '">' + codeUG + ' (' + surfaceUG + ' ha)</a>';
+        //
+        // div contenant img et label
         //
         elt = document.createElement("div");
         elt.setAttribute("class", "form-ug padding-top05"); // form-ug sert dans validateForm()
@@ -81,7 +89,11 @@ function removeUG(idUG){
     var ok = confirm("Voulez-vous vraiment enlever l'association avec l'UG " + codeUG + " ?");
     if(ok){
         chkElt.checked = false;
-        afficheUGs(computeIdsUGsFromForm());
+        const idsUGs = computeIdsUGsFromForm();
+        afficheUGs(idsUGs);
+        afficheParcelles(idsUGs, computeLiensParcellesFromForm());
+        afficheLieudits(idsUGs, computeIdsLieuditsFromForm());
+        afficheFermiers(idsUGs, computeIdsFermiersFromForm());
     }
 }
 

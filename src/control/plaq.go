@@ -160,7 +160,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			return err
 		}
 		//
-		redirect := "/chantier/plaquette/" + strconv.Itoa(id)
+		redirect := "/chantier/plaquette/" + strconv.Itoa(id) + "/general"
 		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
 		if err != nil {
 			return err
@@ -244,7 +244,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		//
-		redirect := "/chantier/plaquette/" + r.PostFormValue("id-chantier")
+		redirect := "/chantier/plaquette/" + r.PostFormValue("id-chantier") + "/general"
 		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
 		if err != nil {
 			return err

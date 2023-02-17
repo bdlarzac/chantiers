@@ -27,14 +27,15 @@ function computeIdsLieuditsFromChantier(){
 **/
 function computeIdsLieuditsFromForm(){
     const tmpElts = document.getElementsByClassName('chk-lieudit');
-    const idsLieudit = [];
+    const idsLieudits = [];
     for (const item of tmpElts) {
         const idLieudit = item.getAttribute('data-lieudit-id');
         if(item.checked){
-            idsLieudit.push(idLieudit);
+            idsLieudits.push(Number(idLieudit));
         }
     }
-    return idsLieudit;
+console.log("computeIdsLieuditsFromForm(), idsLieudits = ", idsLieudits);
+    return idsLieudits;
 }
 
 // ***************************************
@@ -46,6 +47,7 @@ function computeIdsLieuditsFromForm(){
 
 **/
 async function afficheLieudits(idsUGs, idsLieudits){
+console.log("afficheLieudits(), idsLieudits = ", idsLieudits);
     const zoneLieuditsElt = document.getElementById('zone-lieudits'); // ICI convention <div id="zone-lieudits"> dans template utilisatrice
     if(idsUGs.length == 0){
         zoneLieuditsElt.innerHTML = "Choisissez d'abord une UG";
@@ -102,7 +104,7 @@ async function afficheLieudits(idsUGs, idsLieudits){
         labelElt = document.createElement("label");
         labelElt.setAttribute("for", idDansForm);
         labelElt.style.fontWeight = "normal";
-        labelElt.innerHTML = nom;
+        labelElt.innerHTML = '<a href="/lieudit/' + idDB + '">' + nom + '</a>';
         divElt = document.createElement("div");
         divElt.appendChild(checkElt);
         divElt.appendChild(labelElt);

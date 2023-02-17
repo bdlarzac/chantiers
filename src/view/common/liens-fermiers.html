@@ -31,7 +31,7 @@ function computeIdsFermiersFromForm(){
     for (const item of tmpElts) {
         const idFermier = item.getAttribute('data-fermier-id');
         if(item.checked){
-            idsFermier.push(idFermier);
+            idsFermier.push(Number(idFermier));
         }
     }
     return idsFermier;
@@ -98,7 +98,7 @@ async function afficheFermiers(idsUGs, idsFermiers){
         labelElt = document.createElement("label");
         labelElt.setAttribute("for", idDansForm);
         labelElt.style.fontWeight = "normal";
-        labelElt.innerHTML = nom;
+        labelElt.innerHTML = '<a href="/fermier/' + idDB + '">' + nom + '</a>';
         divElt = document.createElement("div");
         divElt.appendChild(checkElt);
         divElt.appendChild(labelElt);
