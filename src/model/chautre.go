@@ -20,6 +20,7 @@ import (
 type Chautre struct {
 	Id            int
 	IdAcheteur    int `db:"id_acheteur"`
+	Titre         string
 	TypeVente     string
 	TypeValo      string
 	DateContrat   time.Time

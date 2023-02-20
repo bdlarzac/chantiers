@@ -18,6 +18,7 @@ import (
 type Chaufer struct {
 	Id           int
 	IdFermier    int `db:"id_fermier"`
+	Titre        string
 	DateChantier time.Time
 	Exploitation string // de 1 à 5
 	Essence      string

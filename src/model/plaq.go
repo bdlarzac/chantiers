@@ -20,6 +20,7 @@ import (
 // Représente un chantier plaquettes
 type Plaq struct {
 	Id              int
+	Titre           string
 	DateDebut       time.Time `db:"datedeb"`
 	DateFin         time.Time
 	Surface         float64
