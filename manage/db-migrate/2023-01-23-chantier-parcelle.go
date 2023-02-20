@@ -2,7 +2,7 @@
 
     Ajoute un lien entre les chantiers (plaquettes et autres valorisations)
 
-    Intégration : commit
+    Intégration : commit a2d9d68
 
     @copyright  BDL, Bois du Larzac
     @license    GPL

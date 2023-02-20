@@ -5,7 +5,7 @@
     Mais en fait écrite le 2023-02-04 alors que la migration 2023-01-23-chantier-parcelle était en cours de développement.
     Mais la présente migration a bien été appliquée avant sur la base de prod
 
-    Intégration : commit
+    Intégration : commit b0ee806
 
     @copyright  BDL, Bois du Larzac
     @license    GPL
@@ -25,5 +25,5 @@ func Migrate_2023_01_20_fix_non_agricoles(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Migration effectuée : 2023-01-23-chantier-parcelle")
+	fmt.Println("Migration effectuée : 2023-01-20-fix-non-agricole")
 }
