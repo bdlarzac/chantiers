@@ -1,6 +1,7 @@
 /******************************************************************************
     Affacture = "facture à l'envers", que BDL doit payer à un acteur
-    Pas stocké en base
+    Les affacures ne sont pas stockées en base
+    mais la table affacture permet la génération automatique du numéro de facture
 
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -16,6 +17,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+"fmt"
 )
 
 // Contient les données nécessaires pour afficher le PDF
@@ -841,3 +843,38 @@ func (aff *Affacture) computeItemsLivraisonOutil(db *sqlx.DB) (err error) {
 	}
 	return nil
 }
+
+
+//
+// Génération des numéros de facture
+//
+
+/** 
+    Si l'année demandée est déjà présente en base :
+        - récupère lastnum
+        - incrémente de 1,
+        - enregistre la nouvelle valeur de lastnum
+        - renvoie cette nouvelle valeur
+    Si l'année demandée est déjà présente en base :
+        - crée une nouvelle ligne avec l'année
+        - met lastnum à 1
+        - renvoie 1
+    @param  year    Format AAAA, ex 2023
+    @return String du genre "2023-054"
+**/
+func NouveauNumeroAffacture(db *sqlx.DB, year string) (result string, err error){
+    var lastnum int
+    err = db.QueryRow("select lastnum from affacture where annee=$1").Scan(&lastnum)
+    if lastnum == 0 {
+        // année pas présente en base
+    }
+fmt.Printf("lastnum = %+v\n",lastnum)
+    
+    
+    return "toto", nil
+}
+
+func LabelNumeroAffacture(year string, num int) string {
+    return "2023001"
+}
+
