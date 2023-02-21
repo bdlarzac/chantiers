@@ -245,6 +245,8 @@ func chantierChauferForm2var(r *http.Request) (ch *model.Chaufer, idsUG []int, e
 		return ch, vide, err
 	}
 	//
+	ch.Titre = r.PostFormValue("titre")
+	//
 	ch.IdFermier, err = strconv.Atoi(r.PostFormValue("id-fermier"))
 	if err != nil {
 		return ch, vide, err

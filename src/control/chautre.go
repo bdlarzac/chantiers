@@ -258,6 +258,8 @@ func chautreForm2var(r *http.Request) (ch *model.Chautre, idsUG, idsLieudits, id
 		return ch, vide, vide, vide, err
 	}
 	//
+	ch.Titre = r.PostFormValue("titre")
+	//
 	idsUG = form2IdsUG(r)
 	//
 	ch.LiensParcelles = form2LienParcelles(r)

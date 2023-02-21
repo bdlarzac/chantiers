@@ -34,11 +34,18 @@ type Chaufer struct {
 // ************************** Nom *******************************
 
 func (ch *Chaufer) String() string {
+    return ch.Titre
+}
+
+/* 
+// #13 - transféré dans 2023-02-20-titre-chantier - supprimer si inutile
+func (ch *Chaufer) String() string {
 	if ch.Fermier == nil {
 		panic("Erreur dans le code - Le fermier d'un chantier chauffage fermier doit être calculé avant d'appeler String()")
 	}
 	return ch.Fermier.String() + " " + tiglib.DateFr(ch.DateChantier)
 }
+*/
 
 func (ch *Chaufer) FullString() string {
 	return "Chantier chauffage fermier " + ch.String()
@@ -169,6 +176,7 @@ func (ch *Chaufer) ComputeLiensParcelles(db *sqlx.DB) (err error) {
 
 func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (idChantier int, err error) {
 	query := `insert into chaufer(
+	    titre,
         id_fermier,
         datechantier,
         exploitation,
@@ -176,10 +184,11 @@ func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (idChantier int, err e
         volume,
         unite,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8) returning id`
 	idChantier = int(0)
 	err = db.QueryRow(
 		query,
+		ch.Titre,
 		ch.IdFermier,
 		ch.DateChantier,
 		ch.Exploitation,
@@ -207,6 +216,7 @@ func InsertChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (idChantier int, err e
 
 func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (err error) {
 	query := `update chaufer set(
+	    titre,
         id_fermier,
         datechantier,
         exploitation,
@@ -214,9 +224,10 @@ func UpdateChaufer(db *sqlx.DB, ch *Chaufer, idsUG []int) (err error) {
         volume,
         unite,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7) where id=$8`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8) where id=$9`
 	_, err = db.Exec(
 		query,
+		ch.Titre,
 		ch.IdFermier,
 		ch.DateChantier,
 		ch.Exploitation,

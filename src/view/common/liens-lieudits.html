@@ -34,7 +34,6 @@ function computeIdsLieuditsFromForm(){
             idsLieudits.push(Number(idLieudit));
         }
     }
-console.log("computeIdsLieuditsFromForm(), idsLieudits = ", idsLieudits);
     return idsLieudits;
 }
 
@@ -47,7 +46,6 @@ console.log("computeIdsLieuditsFromForm(), idsLieudits = ", idsLieudits);
 
 **/
 async function afficheLieudits(idsUGs, idsLieudits){
-console.log("afficheLieudits(), idsLieudits = ", idsLieudits);
     const zoneLieuditsElt = document.getElementById('zone-lieudits'); // ICI convention <div id="zone-lieudits"> dans template utilisatrice
     if(idsUGs.length == 0){
         zoneLieuditsElt.innerHTML = "Choisissez d'abord une UG";

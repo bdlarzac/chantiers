@@ -19,6 +19,9 @@
 
     <div class="grid2-form">
 
+        <label for="titre">Titre</span></label>
+        <input type="text" name="titre" id="titre" value="{{.Titre}}">
+        
         <div>
             <label class="block margin-bottom">Unités de gestion</label>
             <img 
@@ -234,6 +237,10 @@ function actionAfterChangeValorisation(){
 // ***************************************
 function validateForm(){
     let msg = "";
+    //
+    if(document.getElementById("titre").value.trim() == ''){
+        msg += "- Vous devez renseigner le titre du chantier.\n";
+    }
     //
     msg += checkUGsAndFillHiddenField();        // dans view/common/liens-ugs.html
     msg += checkParcellesAndFillHiddenField();  // dans view/common/liens-parcelles.html

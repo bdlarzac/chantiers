@@ -13,6 +13,9 @@
 
     <div class="grid2-form">
 
+        <label for="titre">Titre</span></label>
+        <input type="text" name="titre" id="titre" value="{{.Titre}}">
+        
         <label for="fermier">Fermier</label>
         {{/* div pour éviter que le select devienne trop large qd la liste des parcelle devient large */}}
         <div>
@@ -196,6 +199,10 @@ async function actionAfterChangeFermier(){
 function validateForm(){
     let msg = "", check;
     let i, elt;
+    //
+    if(document.getElementById("titre").value.trim() == ''){
+        msg += "- Vous devez renseigner le titre du chantier.\n";
+    }
     // vérifie fermier
     const fermierElt = document.getElementById("fermier");
     if(fermierElt.selectedIndex == 0){

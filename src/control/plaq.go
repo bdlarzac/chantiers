@@ -5,16 +5,15 @@
 package control
 
 import (
-	"html/template"
-	"net/http"
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/model"
+	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/wilk/webo"
 	"strconv"
 	"strings"
 	"time"
-
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/tiglib"
-	"bdl.local/bdl/generic/wilk/webo"
-	"bdl.local/bdl/model"
+	"html/template"
+	"net/http"
 	"github.com/gorilla/mux"
 )
 
@@ -333,6 +332,8 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	if err = r.ParseForm(); err != nil {
 		return ch, vide, vide, vide, err
 	}
+	//
+	ch.Titre = r.PostFormValue("titre")
 	//
 	idsUG = form2IdsUG(r)
 	//

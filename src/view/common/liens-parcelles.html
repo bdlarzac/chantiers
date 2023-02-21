@@ -83,7 +83,6 @@ function computeLiensParcellesFromForm(){
 
 **/
 async function afficheParcelles(idsUGs, liensParcelles){
-//console.log("afficheParcelles", idsUGs);
     const parcellesElt = document.getElementById('zone-parcelles'); // ICI convention <div id="zone-parcelles"> dans template utilisatrice
     if(idsUGs.length == 0){
         parcellesElt.innerHTML = "Choisissez d'abord une UG";

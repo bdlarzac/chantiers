@@ -2,4 +2,4 @@
 Ce répertoire contient du code partagé par plusieurs templates.
 Le code situé ici est spécifique à l'appli BDL.
 
-Pour le code js générique, voir dans static/js
+Pour le code js générique, voir dans static/js ou static/lib

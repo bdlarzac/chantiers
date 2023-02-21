@@ -13,13 +13,15 @@ package main
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
+	"bdl.local/bdl/generic/tiglib"
 	"fmt"
+	"strings"
 )
 
 func Migrate_2023_02_20_titre_chantier(ctx *ctxt.Context) {
-//    alter_tables_2023_02_20(ctx)
-//    update_plaq_2023_02_20(ctx)
-//    update_chautre_2023_02_20(ctx)
+    alter_tables_2023_02_20(ctx)
+    update_plaq_2023_02_20(ctx)
+    update_chautre_2023_02_20(ctx)
     update_chaufer_2023_02_20(ctx)
 	fmt.Println("Migration effectuée : 2023-02-20-titre-chantier")
 }
@@ -45,7 +47,9 @@ func alter_tables_2023_02_20(ctx *ctxt.Context) {
 	}
 }
 
-// Met des valeurs par défaut aux titres
+//
+// Met des valeurs par défaut aux titres - plaq
+//
 
 func update_plaq_2023_02_20(ctx *ctxt.Context) {
 	db := ctx.DB
@@ -62,12 +66,31 @@ func update_plaq_2023_02_20(ctx *ctxt.Context) {
             panic(err)
         }
         ch.ComputeLieudits(db)
-        _, err = stmt.Exec(ch.String(), id)
+        _, err = stmt.Exec(plaq_titreParDefaut_2023_02_20(ch), id)
         if err != nil {
             panic(err)
         }
 	}
 }
+
+// Ancienne fonction plaq.String()
+func plaq_titreParDefaut_2023_02_20(ch *model.Plaq) string {
+	if len(ch.Lieudits) == 0 {
+		panic("Erreur dans le code - Les lieux-dits d'un chantier plaquettes doivent être calculés avant d'appeler TitreParDefaut()")
+	}
+	res := ""
+	var noms []string
+	for _, ld := range ch.Lieudits {
+		noms = append(noms, ld.Nom)
+	}
+	res += strings.Join(noms, " - ")
+	res += " " + tiglib.DateFr(ch.DateDebut)
+	return res
+}
+
+//
+// Met des valeurs par défaut aux titres - chautre
+//
 
 func update_chautre_2023_02_20(ctx *ctxt.Context) {
 	db := ctx.DB
@@ -84,12 +107,24 @@ func update_chautre_2023_02_20(ctx *ctxt.Context) {
             panic(err)
         }
         ch.ComputeAcheteur(db)
-        _, err = stmt.Exec(ch.String(), id)
+        _, err = stmt.Exec(chautre_titreParDefaut_2023_02_20(ch), id)
         if err != nil {
             panic(err)
         }
 	}
 }
+
+// Ancienne fonction chautre.String()
+func chautre_titreParDefaut_2023_02_20(ch *model.Chautre) string {
+	if ch.Acheteur == nil {
+		panic("Erreur dans le code - L'acheteur d'un chantier autre valorisation doit être calculé avant d'appeler String()")
+	}
+	return model.LabelValorisation(ch.TypeValo) + " " + ch.Acheteur.String() + " " + tiglib.DateFr(ch.DateContrat)
+}
+
+//
+// Met des valeurs par défaut aux titres - chaufer
+//
 
 func update_chaufer_2023_02_20(ctx *ctxt.Context) {
 	db := ctx.DB
@@ -106,10 +141,17 @@ func update_chaufer_2023_02_20(ctx *ctxt.Context) {
             panic(err)
         }
         ch.ComputeFermier(db)
-        _, err = stmt.Exec(ch.String(), id)
+        _, err = stmt.Exec(chaufer_titreParDefaut_2023_02_20(ch), id)
         if err != nil {
             panic(err)
         }
 	}
 }
 
+// Ancienne fonction chaufer.String()
+func chaufer_titreParDefaut_2023_02_20(ch *model.Chaufer) string {
+	if ch.Fermier == nil {
+		panic("Erreur dans le code - Le fermier d'un chantier chauffage fermier doit être calculé avant d'appeler String()")
+	}
+	return ch.Fermier.String() + " " + tiglib.DateFr(ch.DateChantier)
+}

@@ -15,6 +15,9 @@
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
 
     <div class="grid2-form">
+    
+        <label for="titre">Titre</span></label>
+        <input type="text" name="titre" id="titre" value="{{.Titre}}">
         
         <div>
             <label class="block margin-bottom">Unités de gestion</label>
@@ -187,6 +190,10 @@ function validateForm(){
     msg += checkParcellesAndFillHiddenField();  // dans view/common/liens-parcelles.html
     msg += checkLieuditsAndFillHiddenField();   // dans view/common/liens-lieudits.html
     msg += checkFermiersAndFillHiddenField();   // dans view/common/liens-fermiers.html
+    //
+    if(document.getElementById("titre").value.trim() == ''){
+        msg += "- Vous devez renseigner le titre du chantier.\n";
+    }
     //
     const deb = document.getElementsByName("date-debut")[0].value;
     const fin = document.getElementsByName("date-fin")[0].value;

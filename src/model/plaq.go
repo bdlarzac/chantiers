@@ -9,7 +9,6 @@ package model
 
 import (
 	"strconv"
-	"strings"
 	"time"
 
 	"bdl.local/bdl/generic/tiglib"
@@ -70,11 +69,21 @@ func (ch *Plaq) ModifierVolume(db *sqlx.DB, vol float64) {
 	ch.Volume += vol
 }
 
-// ************************** Nom *******************************
+// ************************** Titre *******************************
 
 func (ch *Plaq) String() string {
+    return ch.Titre
+}
+
+func (ch *Plaq) FullString() string {
+	return "Chantier plaquettes " + ch.String()
+}
+
+/* 
+// #13 - transféré dans 2023-02-20-titre-chantier - supprimer si inutile
+func (ch *Plaq) String() string {
 	if len(ch.Lieudits) == 0 {
-		panic("Erreur dans le code - Les lieux-dits d'un chantier plaquettes doivent être calculés avant d'appeler String()")
+		panic("Erreur dans le code - Les lieux-dits d'un chantier plaquettes doivent être calculés avant d'appeler TitreParDefaut()")
 	}
 	res := ""
 	var noms []string
@@ -85,10 +94,7 @@ func (ch *Plaq) String() string {
 	res += " " + tiglib.DateFr(ch.DateDebut)
 	return res
 }
-
-func (ch *Plaq) FullString() string {
-	return "Chantier plaquettes " + ch.String()
-}
+*/
 
 // ************************** Get one *******************************
 
@@ -589,6 +595,7 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 **/
 func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (idChantier int, err error) {
 	query := `insert into plaq(
+        titre,
         datedeb,
         datefin,
         surface,
@@ -598,10 +605,11 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
         fraisrepas,
         fraisreparation,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning id`
 	idChantier = int(0)
 	err = db.QueryRow(
 		query,
+		ch.Titre,
 		ch.DateDebut,
 		ch.DateFin,
 		ch.Surface,
@@ -659,6 +667,7 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 **/
 func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (err error) {
 	query := `update plaq set(
+	    titre,
         datedeb,
         datefin,
         surface,
@@ -668,9 +677,10 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
         fraisrepas, 
         fraisreparation,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9) where id=$10`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) where id=$11`
 	_, err = db.Exec(
 		query,
+		ch.Titre,
 		ch.DateDebut,
 		ch.DateFin,
 		ch.Surface,

@@ -46,11 +46,18 @@ type Chautre struct {
 // ************************** Nom *******************************
 
 func (ch *Chautre) String() string {
+    return ch.Titre
+}
+
+/*
+// #13 - transféré dans 2023-02-20-titre-chantier - supprimer si inutile
+func (ch *Chautre) String() string {
 	if ch.Acheteur == nil {
 		panic("Erreur dans le code - L'acheteur d'un chantier autre valorisation doit être calculé avant d'appeler String()")
 	}
 	return LabelValorisation(ch.TypeValo) + " " + ch.Acheteur.String() + " " + tiglib.DateFr(ch.DateContrat)
 }
+*/
 
 func (ch *Chautre) FullString() string {
 	return "Chantier autre valorisation " + ch.String()
@@ -240,6 +247,7 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 
 func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (idChantier int, err error) {
 	query := `insert into chautre(
+        titre,
         id_acheteur,
         typevente,
         typevalo,
@@ -254,10 +262,11 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         datefacture,
         numfacture,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning id`
 	idChantier = int(0)
 	err = db.QueryRow(
 		query,
+		ch.Titre,
 		ch.IdAcheteur,
 		ch.TypeVente,
 		ch.TypeValo,
@@ -304,6 +313,7 @@ fmt.Printf("InsertChautre() - idsUG = %+v\n",idsUG)
 
 func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int) (err error) {
 	query := `update chautre set(
+        titre,
         id_acheteur,
         typevente,
         typevalo,
@@ -318,9 +328,10 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         datefacture,
         numfacture,
         notes    
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) where id=$15`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) where id=$16`
 	_, err = db.Exec(
 		query,
+		ch.Titre,
 		ch.IdAcheteur,
 		ch.TypeVente,
 		ch.TypeValo,
