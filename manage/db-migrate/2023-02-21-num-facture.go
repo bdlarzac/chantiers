@@ -13,21 +13,16 @@ package main
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	// "bdl.local/bdl/generic/tiglib"
 	"fmt"
-	// "strings"
+	"strconv"
+	"time"
 )
 
 func Migrate_2023_02_21_num_facture(ctx *ctxt.Context) {
-    
-test(ctx)
-    
-//    create_table_2023_02_21(ctx)
+    create_table_2023_02_21(ctx)
+    fill_num_vides_chautre_2023_02_21(ctx)
+    fill_num_vides_venteplaq_2023_02_21(ctx)
 	fmt.Println("Migration effectuée : 2023-02-21-num-facture")
-}
-
-func test(ctx *ctxt.Context){
-    _, _ = model.NouveauNumeroAffacture(ctx.DB, "2023")
 }
 
 func create_table_2023_02_21(ctx *ctxt.Context) {
@@ -35,7 +30,7 @@ func create_table_2023_02_21(ctx *ctxt.Context) {
 	var query string
 	var err error
 	query = `
-        create table affacture (
+        create table facture (
             annee   char(4) not null,
             lastnum int not null
         )
@@ -44,4 +39,61 @@ func create_table_2023_02_21(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func fill_num_vides_chautre_2023_02_21(ctx *ctxt.Context) {
+	db := ctx.DB
+    var err error
+    var query string
+    type rowStruct struct{
+        Id   int
+        DateContrat time.Time
+    }
+    rows := []*rowStruct{}
+    query = `select id,datecontrat from chautre where numfacture=''`
+	err = db.Select(&rows, query)
+	if err != nil {
+		panic(err)
+	}
+	stmt, err := db.Prepare(`update chautre set numfacture=$1 WHERE id=$2`)
+	for _, row := range(rows){
+	    annee := strconv.Itoa(row.DateContrat.Year())
+	    numFacture, err := model.NouveauNumeroFacture(db, annee)
+        if err != nil {
+            panic(err)
+        }
+        _, err = stmt.Exec(numFacture, row.Id)
+        if err != nil {
+            panic(err)
+        }
+	}
+}
+
+func fill_num_vides_venteplaq_2023_02_21(ctx *ctxt.Context) {
+	db := ctx.DB
+    var err error
+    var query string
+    type rowStruct struct{
+        Id   int
+        DateVente time.Time
+    }
+    rows := []*rowStruct{}
+    query = `select id,datevente from venteplaq where numfacture=''`
+	err = db.Select(&rows, query)
+	if err != nil {
+		panic(err)
+	}
+	stmt, err := db.Prepare(`update venteplaq set numfacture=$1 WHERE id=$2`)
+	for _, row := range(rows){
+	    annee := strconv.Itoa(row.DateVente.Year())
+	    numFacture, err := model.NouveauNumeroFacture(db, annee)
+        if err != nil {
+            panic(err)
+        }
+        _, err = stmt.Exec(numFacture, row.Id)
+        if err != nil {
+            panic(err)
+        }
+	}
+    
 }

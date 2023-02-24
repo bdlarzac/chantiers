@@ -114,7 +114,7 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		//
 		// Process form
 		//
-		vente, err := ventePlaqForm2var(r)
+		vente, err := ventePlaqForm2var(ctx, r)
 		if err != nil {
 			return err
 		}
@@ -171,7 +171,7 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		//
 		// Process form
 		//
-		vente, err := ventePlaqForm2var(r)
+		vente, err := ventePlaqForm2var(ctx, r)
 		if err != nil {
 			return err
 		}
@@ -252,7 +252,7 @@ func DeleteVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 // Auxiliaire de NewVentePlaq() et UpdateVentePlaq()
 // Ne gère pas le champ Id
 // Ne gère pas les champs TVA et FactureLivraisonTVA (car viennent de la config)
-func ventePlaqForm2var(r *http.Request) (*model.VentePlaq, error) {
+func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, error) {
 	vente := &model.VentePlaq{}
 	var err error
 	if err = r.ParseForm(); err != nil {
@@ -282,7 +282,15 @@ func ventePlaqForm2var(r *http.Request) (*model.VentePlaq, error) {
 	//
 	// Facture
 	//
-	vente.NumFacture = r.PostFormValue("numfacture")
+	// Création d'un nouveau numéro de facture, uniquement pour form new
+	if r.PostFormValue("numfacture") == "" {
+        vente.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(vente.DateVente.Year()))
+        if err != nil {
+            return vente, err
+        }
+    } else {
+        vente.NumFacture = r.PostFormValue("numfacture")
+    }
 	//
 	if r.PostFormValue("datefacture") != "" {
 		vente.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))

@@ -27,14 +27,14 @@ func Migrate_2023_02_20_titre_chantier(ctx *ctxt.Context) {
 }
 
 func alter_tables_2023_02_20(ctx *ctxt.Context) {
-	db := ctx.DB
-	var query string
-	var err error
-	query = `alter table plaq add column titre varchar(255) not null default ''`
-	_, err = db.Exec(query)
-	if err != nil {
-		panic(err)
-	}
+db := ctx.DB
+var query string
+var err error
+query = `alter table plaq add column titre varchar(255) not null default ''`
+_, err = db.Exec(query)
+if err != nil {
+    panic(err)
+}
 	query = `alter table chautre add column titre varchar(255) not null default ''`
 	_, err = db.Exec(query)
 	if err != nil {

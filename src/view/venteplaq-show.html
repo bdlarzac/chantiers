@@ -20,12 +20,14 @@
 
 <h1>
     {{.FullString}}
+    {{/* Voir script dans view/common/venteplaq.js */}}
     <a class="padding-left" href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
         <img class="bigicon inline" src="/static/img/facture.png" title="Voir la facture" />
     </a>
     <a href="/vente/update/{{.Id}}">
         <img class="bigicon inline" src="/static/img/update.png" title="Modifier cette vente">
     </a>
+    {{/* Voir script dans view/common/venteplaq.js */}}
     <a href="#" onclick='deleteVentePlaquette({{.Id}}, "{{.Client.String}}", "{{.DateVente | dateFr}}");'>
         <img class="bigicon inline" src="/static/img/delete.png" title="Supprimer cette vente">
     </a>
@@ -124,7 +126,7 @@
                     {{if not .DateFacture.IsZero}}
                         {{.DateFacture | dateFr}}
                     {{else}}
-                        NON SPECIFIE
+                        NON SPECIFIÉE
                     {{end}}
                 </span>
                 
@@ -133,7 +135,7 @@
                     {{if .NumFacture}}
                         {{.NumFacture}}
                     {{else}}
-                        NON SPECIFIE
+                        NON SPECIFIÉ
                     {{end}}
                 </span>
             </div>

@@ -91,7 +91,7 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		// Process form
 		//
-		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(r)
+		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(ctx, r)
 		if err != nil {
 			return err
 		}
@@ -155,7 +155,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		//
 		// Process form
 		//
-		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(r)
+		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(ctx, r)
 		if err != nil {
 			return err
 		}
@@ -251,7 +251,7 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
     Renvoie idsUG, idsLieudits, idsFermiers car ils ne sont pas stockés dans model.chautre
     Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
 **/
-func chautreForm2var(r *http.Request) (ch *model.Chautre, idsUG, idsLieudits, idsFermiers []int, err error) {
+func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, idsUG, idsLieudits, idsFermiers []int, err error) {
     ch = &model.Chautre{}
     vide := []int{}
 	if err = r.ParseForm(); err != nil {
@@ -326,7 +326,15 @@ func chautreForm2var(r *http.Request) (ch *model.Chautre, idsUG, idsLieudits, id
 		}
 	}
 	//
-	ch.NumFacture = r.PostFormValue("numfacture")
+	// Création d'un nouveau numéro de facture, uniquement pour form new
+	if r.PostFormValue("numfacture") == "" {
+        ch.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(ch.DateContrat.Year()))
+        if err != nil {
+            return ch, vide, vide, vide, err
+        }
+    } else {
+        ch.NumFacture = r.PostFormValue("numfacture")
+    }
 	//
 	ch.Notes = r.PostFormValue("notes")
 	//
