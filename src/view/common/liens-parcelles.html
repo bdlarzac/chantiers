@@ -92,7 +92,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
     // 1 - Affichage nouvelles parcelles
     //     Elles sont toutes à "non sélectionnée"
     //
-    const nCol = 2; // nb de colonne pour l'affichage des parcelles
+    const nCol = 3; // nb de colonne pour l'affichage des parcelles
     const strIdsUG = idsUGs.join(',');
     const url = "/ajax/get/parcelles-from-ids-ugs/" + strIdsUG;
     // Ajax pour écup parcelles correspondant aux UGs
@@ -114,39 +114,35 @@ async function afficheParcelles(idsUGs, liensParcelles){
     }
     parcellesElt.innerHTML = "";
     //
-    let limit = Math.floor(response.length / nCol); // nb max par colonne
-    if(response.length / nCol != limit){
-        limit += 1;
-    }
-    // chaque parcelle est dans une grid2
-    // les grid2 sont ajoutées au td
+let test = 13;
+let diviseur = 4;
+let res = test/diviseur;
+console.log("res =", res);
+console.log("response.length = ", response.length);
+    const limit = Math.ceil(response.length / nCol); // nb max par colonne
+console.log("limit = ", limit);
+    // chaque parcelle est dans une div, ajoutée au td
     const table = document.createElement("table");
     parcellesElt.appendChild(table);
     const tr = document.createElement("tr");
     table.appendChild(tr);
     let td = document.createElement("td");
-    td.setAttribute("class", "vertical-align-top padding-right2");
+    td.setAttribute("class", "vertical-align-top padding-right");
     tr.appendChild(td);
-    let grid2Elt = document.createElement("div");
-    grid2Elt.setAttribute("class", "grid2-form");
     //
     let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
-    let i = 1;
     let curCommune, curSurfaceTotale, tmp;
-    response.forEach(function(item){
+    for (let i = 0; i < response.length; i++) {
+        const item = response[i];
         curdiv = document.createElement("div");
+        curdiv.classList.add("parcelle"); // class "parcelle" et id de curdiv servent dans validateForm()
+        curdiv.classList.add("parcelle-form"); // pour le css
+        curdiv.setAttribute("id", "parcelle-" + item.id);
         //
         curdiv.innerHTML = '<a class="bold" href="/parcelle/' + item.id + '">' + item.name + '</b>';
-        curdiv.innerHTML += "<br>" + item.commune.NomCourt;
+        curdiv.innerHTML += " " + item.commune.NomCourt;
         //
-        grid2Elt.appendChild(curdiv);
-        //
-        curdiv = document.createElement("div");
-        // class et id de curdiv servent dans validateForm()
-        curdiv.setAttribute("class", "parcelle");
-        curdiv.setAttribute("id", "parcelle-" + item.id);
         surfaceInputNameId = "parcelle-surface-" + item.id;
-//curdiv.style="background:red;"
         radioName = "radio-parcelle-" + item.id;
         strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
             + "document.getElementById('"+surfaceInputNameId+"').value = '';"
@@ -170,7 +166,6 @@ async function afficheParcelles(idsUGs, liensParcelles){
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.innerHTML = "Non sélectionnée";
-label.style="font-weight:normal;"
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
@@ -193,7 +188,6 @@ label.style="font-weight:normal;"
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.innerHTML = "Entière (" + round(item.surface, 2) + " ha)";
-label.style="font-weight:normal;"
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
@@ -217,7 +211,6 @@ label.style="font-weight:normal;"
         label.setAttribute("for", radioValueId);
         label.setAttribute("class", "padding-right");
         label.innerHTML = "Surface";
-label.style="font-weight:normal;"
         subdiv.appendChild(label);
         //
         // surface - input type=number
@@ -233,17 +226,13 @@ label.style="font-weight:normal;"
         subdiv.appendChild(surfaceInput);
         //
         curdiv.appendChild(subdiv);
-        grid2Elt.appendChild(curdiv);
-        td.appendChild(grid2Elt);
-        if(i == limit){
+        td.appendChild(curdiv);
+        if((i+1) % limit == 0){
             td = document.createElement("td");
-            td.setAttribute("class", "vertical-align-top");
+            td.setAttribute("class", "vertical-align-top padding-right");
             tr.appendChild(td);
-            grid2Elt = document.createElement("div");
-            grid2Elt.setAttribute("class", "grid2-form");
         }
-        i++;
-    });
+    }
     //
     // 2 - Restauration de la sélection des parcelles avant appel
     //
