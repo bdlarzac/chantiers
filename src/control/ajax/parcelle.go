@@ -37,11 +37,15 @@ func GetParcellesFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.R
 }
 */
 
-/** 
-    Renvoie les parcelles d'une UG.
-    @param  vars["id"]  id numérique d'une UG
-    TODO A priori, supprimer après #9
-**/
+/*
+*
+
+	Renvoie les parcelles d'une UG.
+	@param  vars["id"]  id numérique d'une UG
+	TODO A priori, supprimer après #9
+
+*
+*/
 func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idUG, err := strconv.Atoi(vars["id"])
@@ -78,11 +82,15 @@ func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	return nil
 }
 
-/** 
-    Renvoie les parcelles correspondant à plusieurs UGs.
-    @param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
-            ex : 12,35,87
-**/
+/*
+*
+
+	Renvoie les parcelles correspondant à plusieurs UGs.
+	@param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
+	        ex : 12,35,87
+
+*
+*/
 func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	// pas terrible, vars["ids"] est directement utilisé pour fabriquer le sql
@@ -92,10 +100,10 @@ func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 	type respElement struct {
-		Id       int              `json:"id"`
-		Name     string           `json:"name"`
-		Commune  *model.Commune   `json:"commune"`
-		Surface  float32          `json:"surface"`
+		Id      int            `json:"id"`
+		Name    string         `json:"name"`
+		Commune *model.Commune `json:"commune"`
+		Surface float32        `json:"surface"`
 	}
 	var resp []respElement
 	for _, p := range parcelles {

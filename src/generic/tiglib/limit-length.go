@@ -1,23 +1,27 @@
-/******************************************************************************
-    Given a string, computes an array of strings whose length is maximum <limit>.
-    Existing newlines (\n) are preserved.
-    Only lines (substrings without \n) containing more than <limit> chars are split
-    Ex, limit = 20
-    0---------0---------0
-    This is the input string.
-    A short line.
-    The rest of the string
-    0---------0---------0
-    This is the input
-    string.
-    A new line.
-    The rest of the
-    string
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2020-04-07 14:39:39+02:00, Thierry Graff : Creation
-********************************************************************************/
+	Given a string, computes an array of strings whose length is maximum <limit>.
+	Existing newlines (\n) are preserved.
+	Only lines (substrings without \n) containing more than <limit> chars are split
+	Ex, limit = 20
+	0---------0---------0
+	This is the input string.
+	A short line.
+	The rest of the string
+	0---------0---------0
+	This is the input
+	string.
+	A new line.
+	The rest of the
+	string
+
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2020-04-07 14:39:39+02:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package tiglib
 
 import (

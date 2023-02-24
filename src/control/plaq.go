@@ -1,20 +1,24 @@
-/**
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-**/
+/*
+*
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+
+*
+*/
 package control
 
 import (
 	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/model"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
+	"html/template"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"html/template"
-	"net/http"
-	"github.com/gorilla/mux"
 )
 
 type detailsPlaqForm struct {
@@ -318,7 +322,7 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 }
 
 // *********************************************************
-/** 
+/**
     Fabrique un Plaq à partir des valeurs d'un formulaire.
     Auxiliaire de NewPlaq() et UpdatePlaq()
     Ne gère pas le champ Id
@@ -328,7 +332,7 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 **/
 func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermiers []int, err error) {
 	ch = &model.Plaq{}
-    vide := []int{}
+	vide := []int{}
 	if err = r.ParseForm(); err != nil {
 		return ch, vide, vide, vide, err
 	}
@@ -356,7 +360,7 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	if r.PostFormValue("surface") != "" {
 		ch.Surface, err = strconv.ParseFloat(r.PostFormValue("surface"), 32)
 		if err != nil {
-		return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, err
 		}
 		ch.Surface = tiglib.Round(ch.Surface, 2)
 	}
@@ -370,7 +374,7 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	if r.PostFormValue("frais-repas") != "" {
 		ch.FraisRepas, err = strconv.ParseFloat(r.PostFormValue("frais-repas"), 32)
 		if err != nil {
-		    return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, err
 		}
 		ch.FraisRepas = tiglib.Round(ch.FraisRepas, 2)
 	}
@@ -378,7 +382,7 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	if r.PostFormValue("frais-reparation") != "" {
 		ch.FraisReparation, err = strconv.ParseFloat(r.PostFormValue("frais-reparation"), 32)
 		if err != nil {
-            return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, err
 		}
 		ch.FraisReparation = tiglib.Round(ch.FraisReparation, 2)
 	}

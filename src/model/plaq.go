@@ -1,10 +1,14 @@
-/******************************************************************************
-    Chantier plaquettes - contient infos générales d'un chantier
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2019, Thierry Graff : Creation
-********************************************************************************/
+	Chantier plaquettes - contient infos générales d'un chantier
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2019, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (
@@ -30,20 +34,20 @@ type Plaq struct {
 	FraisReparation float64
 	Notes           string
 	// pas stocké en base
-	UGs        []*UG
+	UGs            []*UG
 	LiensParcelles []*ChantierParcelle
-	Lieudits   []*Lieudit
-	Fermiers   []*Fermier
-	Volume     float64
-	Tas        []*Tas
-	TasVides   []*Tas
-	TasActifs  []*Tas
-	Operations []*PlaqOp
-	Transports []*PlaqTrans
-	Rangements []*PlaqRange
-	Ventes     []*VentePlaq
-	CoutTotal  *CoutPlaq
-	CoutParMap *CoutPlaq
+	Lieudits       []*Lieudit
+	Fermiers       []*Fermier
+	Volume         float64
+	Tas            []*Tas
+	TasVides       []*Tas
+	TasActifs      []*Tas
+	Operations     []*PlaqOp
+	Transports     []*PlaqTrans
+	Rangements     []*PlaqRange
+	Ventes         []*VentePlaq
+	CoutTotal      *CoutPlaq
+	CoutParMap     *CoutPlaq
 }
 
 // Coût exploitation
@@ -72,14 +76,14 @@ func (ch *Plaq) ModifierVolume(db *sqlx.DB, vol float64) {
 // ************************** Titre *******************************
 
 func (ch *Plaq) String() string {
-    return ch.Titre
+	return ch.Titre
 }
 
 func (ch *Plaq) FullString() string {
 	return "Chantier plaquettes " + ch.String()
 }
 
-/* 
+/*
 // #13 - transféré dans 2023-02-20-titre-chantier - supprimer si inutile
 func (ch *Plaq) String() string {
 	if len(ch.Lieudits) == 0 {
@@ -112,15 +116,15 @@ func GetPlaq(db *sqlx.DB, idChantier int) (*Plaq, error) {
 }
 
 // Renvoie un chantier plaquette contenant
-//      - les données stockées dans la table
-//      - les lieux-dits
-//      - les UGs
-//      - les parcelles
-//      - les fermiers
-//      - les Tas
-//      - les opérations simples (abattage...)
-//      - les transports vers le stockage
-//      - les opérations de rangement
+//   - les données stockées dans la table
+//   - les lieux-dits
+//   - les UGs
+//   - les parcelles
+//   - les fermiers
+//   - les Tas
+//   - les opérations simples (abattage...)
+//   - les transports vers le stockage
+//   - les opérations de rangement
 func GetPlaqFull(db *sqlx.DB, idChantier int) (*Plaq, error) {
 	ch, err := GetPlaq(db, idChantier)
 	if err != nil {
@@ -588,11 +592,15 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 
 // ************************** CRUD *******************************
 
-/** 
-    Insère un chantier plaquette en base
-    + Crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
-    + Insère en base les liens UGs, parcelles, lieux-dits, fermiers
-**/
+/*
+*
+
+	Insère un chantier plaquette en base
+	+ Crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
+	+ Insère en base les liens UGs, parcelles, lieux-dits, fermiers
+
+*
+*/
 func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (idChantier int, err error) {
 	query := `insert into plaq(
         titre,
@@ -636,9 +644,9 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	// insert associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
 	err = insertLiensChantierUG(db, "plaq", idChantier, idsUG)
-    if err != nil {
-        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
-    }
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
+	}
 	//
 	err = insertLiensChantierParcelle(db, "plaq", idChantier, ch.LiensParcelles)
 	if err != nil {
@@ -646,25 +654,29 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	}
 	//
 	err = insertLiensChantierLieudit(db, "plaq", idChantier, idsLieudit)
-    if err != nil {
-        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
-    }
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
+	}
 	//
 	err = insertLiensChantierFermier(db, "plaq", idChantier, idsFermier)
-    if err != nil {
-        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
-    }
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
+	}
 	//
 	return idChantier, nil
 }
 
-/** 
-    MAJ un chantier plaquette en base
-    + Gère aussi les tas
-    + MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
-    
-    @param idsStockages ids tas APRÈS update
-**/
+/*
+*
+
+	MAJ un chantier plaquette en base
+	+ Gère aussi les tas
+	+ MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
+
+	@param idsStockages ids tas APRÈS update
+
+*
+*/
 func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (err error) {
 	query := `update plaq set(
 	    titre,
@@ -741,9 +753,9 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	// update associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
 	err = updateLiensChantierUG(db, "plaq", ch.Id, idsUG)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel updateLiensChantierUG()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel updateLiensChantierUG()")
+	}
 	//
 	err = updateLiensChantierParcelle(db, "plaq", ch.Id, ch.LiensParcelles)
 	if err != nil {
@@ -826,22 +838,22 @@ func DeletePlaq(db *sqlx.DB, id int) (err error) {
 	//
 	// delete associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-    err = deleteLiensChantierUG(db, "plaq", id)
+	err = deleteLiensChantierUG(db, "plaq", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierUG()")
 	}
 	//
-    err = deleteLiensChantierParcelle(db, "plaq", id)
+	err = deleteLiensChantierParcelle(db, "plaq", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierParcelle()")
 	}
 	//
-    err = deleteLiensChantierLieudit(db, "plaq", id)
+	err = deleteLiensChantierLieudit(db, "plaq", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierLieudit()")
 	}
 	//
-    err = deleteLiensChantierFermier(db, "plaq", id)
+	err = deleteLiensChantierFermier(db, "plaq", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierFermier()")
 	}

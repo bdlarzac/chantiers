@@ -1,8 +1,12 @@
-/**
-    Functions equivalent to php function in_array()
+/*
+*
 
-    Note: functions depending on in-array.go
-**/
+	Functions equivalent to php function in_array()
+
+	Note: functions depending on in-array.go
+
+*
+*/
 package tiglib
 
 // Equivalent of php function in_array for a slice of strings

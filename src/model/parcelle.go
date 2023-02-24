@@ -1,16 +1,20 @@
-/******************************************************************************
-    Parcelles
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2019-11-07, Thierry Graff : Creation
-********************************************************************************/
+	Parcelles
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2019-11-07, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
-	"time"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type Parcelle struct {
@@ -23,7 +27,7 @@ type Parcelle struct {
 	Proprietaire *Acteur
 	Commune      *Commune
 	Lieudits     []*Lieudit
-	Communes     []*Commune    // A supprimer et adapter dans tout le code
+	Communes     []*Commune // A supprimer et adapter dans tout le code
 	Fermiers     []*Fermier
 	UGs          []*UG
 }
@@ -54,14 +58,18 @@ func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 
 // ************************** Get many *******************************
 
-/** 
-    Utilisé par ajax
-    @param  idsUG  string, par ex : "12,432,35"
-**/
+/*
+*
+
+	Utilisé par ajax
+	@param  idsUG  string, par ex : "12,432,35"
+
+*
+*/
 func GetParcellesFromIdsUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err error) {
-	query := `select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(`+idsUG+`)) order by code`
+	query := `select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(` + idsUG + `)) order by code`
 	err = db.Select(&result, query)
-    return result, nil
+	return result, nil
 }
 
 // ************************** Compute *******************************

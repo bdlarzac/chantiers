@@ -1,20 +1,24 @@
-/**
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-**/
+/*
+*
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+
+*
+*/
 package control
 
 import (
-	"html/template"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
+	"html/template"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type detailsChauferForm struct {
@@ -230,7 +234,7 @@ func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 }
 
 // *********************************************************
-/** 
+/**
     Fabrique un Chaufer à partir des valeurs d'un formulaire.
     Auxiliaire de NewChaufer() et UpdateChaufer()
     Ne gère pas le champ Id

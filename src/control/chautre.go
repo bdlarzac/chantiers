@@ -1,7 +1,11 @@
-/**
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-**/
+/*
+*
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+
+*
+*/
 package control
 
 import (
@@ -9,13 +13,13 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
+	"github.com/jung-kurt/gofpdf"
+	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"html/template"
-	"github.com/gorilla/mux"
-	"github.com/jung-kurt/gofpdf"
 )
 
 type detailsChautreForm struct {
@@ -243,7 +247,7 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 }
 
 // *********************************************************
-/** 
+/**
     Fabrique un Chautre à partir des valeurs d'un formulaire.
     Auxiliaire de NewChautre() et UpdateChautre()
     Ne gère pas le champ Id
@@ -252,8 +256,8 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
     Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
 **/
 func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, idsUG, idsLieudits, idsFermiers []int, err error) {
-    ch = &model.Chautre{}
-    vide := []int{}
+	ch = &model.Chautre{}
+	vide := []int{}
 	if err = r.ParseForm(); err != nil {
 		return ch, vide, vide, vide, err
 	}
@@ -328,13 +332,13 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	//
 	// Création d'un nouveau numéro de facture, uniquement pour form new
 	if r.PostFormValue("numfacture") == "" {
-        ch.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(ch.DateContrat.Year()))
-        if err != nil {
-            return ch, vide, vide, vide, err
-        }
-    } else {
-        ch.NumFacture = r.PostFormValue("numfacture")
-    }
+		ch.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(ch.DateContrat.Year()))
+		if err != nil {
+			return ch, vide, vide, vide, err
+		}
+	} else {
+		ch.NumFacture = r.PostFormValue("numfacture")
+	}
 	//
 	ch.Notes = r.PostFormValue("notes")
 	//

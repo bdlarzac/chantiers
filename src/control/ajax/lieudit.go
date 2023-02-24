@@ -4,8 +4,8 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
 	"encoding/json"
-	"net/http"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
@@ -31,10 +31,14 @@ func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reque
 	return nil
 }
 
-/** 
-    @return  Json contenant id du lieu-dit correspondant à str,
-             ou 0 si lieu-dit pas trouvé.
-**/
+/*
+*
+
+	@return  Json contenant id du lieu-dit correspondant à str,
+	         ou 0 si lieu-dit pas trouvé.
+
+*
+*/
 func CheckNomLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	str := vars["str"]

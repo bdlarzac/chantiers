@@ -1,10 +1,14 @@
-/******************************************************************************
-    Chemins vers les répertoires utilisés par l'installation
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du
-    @license    GPL
-    @history    2019-11-05 05:50:37+01:00, Thierry Graff : Creation from a split
-********************************************************************************/
+	Chemins vers les répertoires utilisés par l'installation
+
+	@copyright  BDL, Bois du
+	@license    GPL
+	@history    2019-11-05 05:50:37+01:00, Thierry Graff : Creation from a split
+
+*******************************************************************************
+*/
 package install
 
 import (

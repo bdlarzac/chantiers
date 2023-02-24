@@ -1,13 +1,17 @@
-/******************************************************************************
-    Enums manipulées par le programme
-    En théorie, les fonctions All*Codes() devraient
-    renvoyer des valeurs tirées de la base avec des queries du type :
-    SELECT unnest(enum_range(NULL::my_type));
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2020-02-11 17:27:04+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Enums manipulées par le programme
+	En théorie, les fonctions All*Codes() devraient
+	renvoyer des valeurs tirées de la base avec des queries du type :
+	SELECT unnest(enum_range(NULL::my_type));
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2020-02-11 17:27:04+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 // ************************** Opérations simples *******************************

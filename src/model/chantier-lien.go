@@ -1,30 +1,38 @@
-/******************************************************************************
-    Code commun aux différents types de chantier
-    Pour gérer les liens entre chantiers et autres entités
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2023-01-26 11:16:37+01:00, Thierry Graff : Creation à partir de ChauferParcelle
-********************************************************************************/
+	Code commun aux différents types de chantier
+	Pour gérer les liens entre chantiers et autres entités
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2023-01-26 11:16:37+01:00, Thierry Graff : Creation à partir de ChauferParcelle
+
+*******************************************************************************
+*/
 package model
 
-import(
+import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 )
 
-/** 
-    Lien entre une parcelle et un chantier (table chantier_parcelle)
-    Utilisé par plaq, chautre, chaufer
-    Pour chaque parcelle, on doit préciser s'il s'agit d'une parcelle entière ou pas.
-    S'il ne s'agit pas d'une parcelle entière, il faut préciser la surface concernée par la coupe.
-**/
+/*
+*
+
+	Lien entre une parcelle et un chantier (table chantier_parcelle)
+	Utilisé par plaq, chautre, chaufer
+	Pour chaque parcelle, on doit préciser s'il s'agit d'une parcelle entière ou pas.
+	S'il ne s'agit pas d'une parcelle entière, il faut préciser la surface concernée par la coupe.
+
+*
+*/
 type ChantierParcelle struct {
-    TypeChantier string `db:"type_chantier"`
-	IdChantier  int `db:"id_chantier"`
-	IdParcelle int `db:"id_parcelle"`
-	Entiere    bool
-	Surface    float64
+	TypeChantier string `db:"type_chantier"`
+	IdChantier   int    `db:"id_chantier"`
+	IdParcelle   int    `db:"id_parcelle"`
+	Entiere      bool
+	Surface      float64
 	// Pas stocké en base
 	Parcelle *Parcelle
 }
@@ -32,7 +40,7 @@ type ChantierParcelle struct {
 // ************************** Liens chantier parcelle *******************************
 
 func computeLiensParcellesOfChantier(db *sqlx.DB, typeChantier string, idChantier int) (result []*ChantierParcelle, err error) {
-	query := `select * from chantier_parcelle where type_chantier='`+typeChantier+`' and id_chantier=$1`
+	query := `select * from chantier_parcelle where type_chantier='` + typeChantier + `' and id_chantier=$1`
 	err = db.Select(&result, query, idChantier)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -64,7 +72,7 @@ func insertLiensChantierParcelle(db *sqlx.DB, typeChantier string, idChantier in
 }
 
 func deleteLiensChantierParcelle(db *sqlx.DB, typeChantier string, idChantier int) (err error) {
-	query := "delete from chantier_parcelle where type_chantier='"+typeChantier+"' and id_chantier=$1"
+	query := "delete from chantier_parcelle where type_chantier='" + typeChantier + "' and id_chantier=$1"
 	_, err = db.Exec(query, idChantier)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -74,22 +82,22 @@ func deleteLiensChantierParcelle(db *sqlx.DB, typeChantier string, idChantier in
 
 func updateLiensChantierParcelle(db *sqlx.DB, typeChantier string, idChantier int, liensParcelles []*ChantierParcelle) (err error) {
 	err = deleteLiensChantierParcelle(db, typeChantier, idChantier)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel deleteLiensChantierParcelle() à partir de updateLiensChantierParcelle()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierParcelle() à partir de updateLiensChantierParcelle()")
+	}
 	//
 	err = insertLiensChantierParcelle(db, typeChantier, idChantier, liensParcelles)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle() à partir de updateLiensChantierParcelle()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel insertLiensChantierParcelle() à partir de updateLiensChantierParcelle()")
+	}
 	return nil
 }
 
 // ************************** Liens chantier UG *******************************
 
 func computeUGsOfChantier(db *sqlx.DB, typeChantier string, idChantier int) (result []*UG, err error) {
-    query := `select * from ug where id in(
-	    select id_ug from chantier_ug where type_chantier='`+typeChantier+`' and id_chantier=$1
+	query := `select * from ug where id in(
+	    select id_ug from chantier_ug where type_chantier='` + typeChantier + `' and id_chantier=$1
     )`
 	err = db.Select(&result, query, &idChantier)
 	if err != nil {
@@ -99,8 +107,8 @@ func computeUGsOfChantier(db *sqlx.DB, typeChantier string, idChantier int) (res
 }
 
 func computeIdsChantiersFromUG(db *sqlx.DB, typeChantier string, idUG int) (idsUG []int, err error) {
-	query := `select id from `+typeChantier+` where id in(
-	    select id_chantier from chantier_ug where type_chantier='`+typeChantier+`' and id_ug =$1
+	query := `select id from ` + typeChantier + ` where id in(
+	    select id_chantier from chantier_ug where type_chantier='` + typeChantier + `' and id_ug =$1
     )`
 	err = db.Select(&idsUG, query, idUG)
 	if err != nil {
@@ -128,7 +136,7 @@ func insertLiensChantierUG(db *sqlx.DB, typeChantier string, idChantier int, ids
 }
 
 func deleteLiensChantierUG(db *sqlx.DB, typeChantier string, idChantier int) (err error) {
-	query := "delete from chantier_ug where type_chantier='"+typeChantier+"' and id_chantier=$1"
+	query := "delete from chantier_ug where type_chantier='" + typeChantier + "' and id_chantier=$1"
 	_, err = db.Exec(query, idChantier)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -138,14 +146,14 @@ func deleteLiensChantierUG(db *sqlx.DB, typeChantier string, idChantier int) (er
 
 func updateLiensChantierUG(db *sqlx.DB, typeChantier string, idChantier int, idsUG []int) (err error) {
 	err = deleteLiensChantierUG(db, typeChantier, idChantier)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel deleteLiensChantierUG() à partir de updateLiensChantierUG()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierUG() à partir de updateLiensChantierUG()")
+	}
 	//
 	err = insertLiensChantierUG(db, typeChantier, idChantier, idsUG)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel insertLiensChantierUG() à partir de updateLiensChantierUG()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel insertLiensChantierUG() à partir de updateLiensChantierUG()")
+	}
 	return nil
 }
 
@@ -153,7 +161,7 @@ func updateLiensChantierUG(db *sqlx.DB, typeChantier string, idChantier int, ids
 
 func computeLieuditsOfChantier(db *sqlx.DB, typeChantier string, idChantier int) (result []*Lieudit, err error) {
 	query := `select * from lieudit where id in(
-	    select id_lieudit from chantier_lieudit where type_chantier='`+typeChantier+`' and id_chantier=$1
+	    select id_lieudit from chantier_lieudit where type_chantier='` + typeChantier + `' and id_chantier=$1
     )`
 	err = db.Select(&result, query, &idChantier)
 	if err != nil {
@@ -181,7 +189,7 @@ func insertLiensChantierLieudit(db *sqlx.DB, typeChantier string, idChantier int
 }
 
 func deleteLiensChantierLieudit(db *sqlx.DB, typeChantier string, idChantier int) (err error) {
-	query := "delete from chantier_lieudit where type_chantier='"+typeChantier+"' and id_chantier=$1"
+	query := "delete from chantier_lieudit where type_chantier='" + typeChantier + "' and id_chantier=$1"
 	_, err = db.Exec(query, idChantier)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -191,14 +199,14 @@ func deleteLiensChantierLieudit(db *sqlx.DB, typeChantier string, idChantier int
 
 func updateLiensChantierLieudit(db *sqlx.DB, typeChantier string, idChantier int, idsLieudit []int) (err error) {
 	err = deleteLiensChantierLieudit(db, typeChantier, idChantier)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel deleteLiensChantierLieudit() à partir de updateLiensChantierLieudit()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierLieudit() à partir de updateLiensChantierLieudit()")
+	}
 	//
 	err = insertLiensChantierLieudit(db, typeChantier, idChantier, idsLieudit)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit() à partir de updateLiensChantierLieudit()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit() à partir de updateLiensChantierLieudit()")
+	}
 	return nil
 }
 
@@ -206,7 +214,7 @@ func updateLiensChantierLieudit(db *sqlx.DB, typeChantier string, idChantier int
 
 func computeFermiersOfChantier(db *sqlx.DB, typeChantier string, idChantier int) (result []*Fermier, err error) {
 	query := `select * from fermier where id in(
-	    select id_fermier from chantier_fermier where type_chantier='`+typeChantier+`' and id_chantier=$1
+	    select id_fermier from chantier_fermier where type_chantier='` + typeChantier + `' and id_chantier=$1
     )`
 	err = db.Select(&result, query, &idChantier)
 	if err != nil {
@@ -234,7 +242,7 @@ func insertLiensChantierFermier(db *sqlx.DB, typeChantier string, idChantier int
 }
 
 func deleteLiensChantierFermier(db *sqlx.DB, typeChantier string, idChantier int) (err error) {
-	query := "delete from chantier_fermier where type_chantier='"+typeChantier+"' and id_chantier=$1"
+	query := "delete from chantier_fermier where type_chantier='" + typeChantier + "' and id_chantier=$1"
 	_, err = db.Exec(query, idChantier)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
@@ -244,13 +252,13 @@ func deleteLiensChantierFermier(db *sqlx.DB, typeChantier string, idChantier int
 
 func updateLiensChantierFermier(db *sqlx.DB, typeChantier string, idChantier int, idsFermier []int) (err error) {
 	err = deleteLiensChantierFermier(db, typeChantier, idChantier)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel deleteLiensChantierLieudit() à partir de updateLiensChantierFermier()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel deleteLiensChantierLieudit() à partir de updateLiensChantierFermier()")
+	}
 	//
 	err = insertLiensChantierFermier(db, typeChantier, idChantier, idsFermier)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel insertLiensChantierFermier() à partir de updateLiensChantierFermier()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel insertLiensChantierFermier() à partir de updateLiensChantierFermier()")
+	}
 	return nil
 }

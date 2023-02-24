@@ -1,19 +1,22 @@
-/******************************************************************************
+/*
+*****************************************************************************
 
-    Mise à jour des données SCTL (uniquement les fermiers)
-    Exemple d'utilisation : voir README
+	Mise à jour des données SCTL (uniquement les fermiers)
+	Exemple d'utilisation : voir README
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2023-01-11 05:04:02+01:00, Thierry Graff : Creation
-********************************************************************************/
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2023-01-11 05:04:02+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package main
 
 import (
+	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/model"
-	"bdl.dbinstall/bdl/install"
 	"fmt"
 	"os"
 	"strconv"
@@ -32,20 +35,20 @@ func main() {
 		fmt.Printf("Directory %s/ does not exist - voir fichier README.\n", dirname)
 		return
 	}
-	
+
 	model.MustLoadEnv()
 	ctxt.MustInitDB()
 	ctx := ctxt.NewContext()
-	
+
 	report := ""
 	report += updateFermiers(ctx, dirname)
-	
+
 	install.FillLiensParcelleFermier(ctx, versionSCTL)
-	
+
 	fmt.Println(report)
 }
 
-func updateFermiers(ctx *ctxt.Context, dirname string) (report string){
+func updateFermiers(ctx *ctxt.Context, dirname string) (report string) {
 	filename := dirname + string(os.PathSeparator) + "Exploita.csv"
 	records, err := tiglib.CsvMap(filename, ';')
 	if err != nil {
@@ -60,11 +63,11 @@ func updateFermiers(ctx *ctxt.Context, dirname string) (report string){
 		}
 		if err != nil {
 			return "Erreur appel strconv.Atoi(%s) pour IdExploitant " + record["IdExploitant"]
-			
+
 		}
-        if record["Agricole"] == "0" {
-            continue // Ne garder que les agricoles
-        }
+		if record["Agricole"] == "0" {
+			continue // Ne garder que les agricoles
+		}
 		cp := record["CPExp"]
 		if len(cp) > 5 {
 			cp = cp[:5] // fix une typo dans la base SCTL

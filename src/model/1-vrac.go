@@ -1,10 +1,14 @@
-/******************************************************************************
-    Diverses fonctions utilitaires
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2021-03-01 15:33:27+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Diverses fonctions utilitaires
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2021-03-01 15:33:27+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 // Convertit un volume de map vert en un volume de map sec

@@ -1,11 +1,15 @@
-/******************************************************************************
-    Initialisation commune et lieudit.
-    Code servant à initialiser la base, pas utilisé en fonctionnement normal.
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du
-    @license    GPL
-    @history    2019-11-05 06:06:04+01:00, Thierry Graff : Creation from a split
-********************************************************************************/
+	Initialisation commune et lieudit.
+	Code servant à initialiser la base, pas utilisé en fonctionnement normal.
+
+	@copyright  BDL, Bois du
+	@license    GPL
+	@history    2019-11-05 06:06:04+01:00, Thierry Graff : Creation from a split
+
+*******************************************************************************
+*/
 package install
 
 import (
@@ -23,8 +27,8 @@ import (
 // commune.csv est versionné (car modifié, ajout de colonne nom_court)
 //
 // Note : La base initiale ne contient pas code insee
-//        Voir manage/db-migrate/2023-01-16-fix-parcelle.go
 //
+//	Voir manage/db-migrate/2023-01-16-fix-parcelle.go
 func FillCommune(ctx *ctxt.Context) {
 	fmt.Println("Remplit table commune à partir de commune.csv")
 	dirCsv := GetDataDir()

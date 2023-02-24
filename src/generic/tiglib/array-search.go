@@ -1,6 +1,10 @@
-/**
-    Functions the index of an element in a slice
-**/
+/*
+*
+
+	Functions the index of an element in a slice
+
+*
+*/
 package tiglib
 
 // Returns the index of the first occurence of findMe in arr

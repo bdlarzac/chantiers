@@ -1,14 +1,17 @@
-/******************************************************************************
+/*
+*****************************************************************************
 
-    Change les codes parcelle : passe de code à 6 caractères (ex 0C0001) à code à 11 caractères (ex 120820C0001)
+	Change les codes parcelle : passe de code à 6 caractères (ex 0C0001) à code à 11 caractères (ex 120820C0001)
 
-    Voir https://github.com/bdlarzac/chantiers/issues/11
-    Intégration : commit
+	Voir https://github.com/bdlarzac/chantiers/issues/11
+	Intégration : commit
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2023-01-16 15:47:07+01:00, Thierry Graff : Creation
-********************************************************************************/
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2023-01-16 15:47:07+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package main
 
 import (

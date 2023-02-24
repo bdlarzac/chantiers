@@ -1,9 +1,13 @@
-/**
-    Vente plaquettes
+/*
+*
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-**/
+	Vente plaquettes
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+
+*
+*/
 package control
 
 import (
@@ -284,13 +288,13 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 	//
 	// Création d'un nouveau numéro de facture, uniquement pour form new
 	if r.PostFormValue("numfacture") == "" {
-        vente.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(vente.DateVente.Year()))
-        if err != nil {
-            return vente, err
-        }
-    } else {
-        vente.NumFacture = r.PostFormValue("numfacture")
-    }
+		vente.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(vente.DateVente.Year()))
+		if err != nil {
+			return vente, err
+		}
+	} else {
+		vente.NumFacture = r.PostFormValue("numfacture")
+	}
 	//
 	if r.PostFormValue("datefacture") != "" {
 		vente.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))

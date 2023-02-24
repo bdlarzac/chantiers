@@ -4,8 +4,8 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
 	"encoding/json"
-	"net/http"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func GetFermiersFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
@@ -21,7 +21,6 @@ func GetFermiersFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Req
 	w.Write(json)
 	return nil
 }
-
 
 // Renvoie une liste de fermiers associés à une UG
 ////////////////// remove apres #9
@@ -52,7 +51,7 @@ func GetFermiersFromCodeUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Req
 */
 
 // Renvoie une liste de fermiers associés à une UG
-/* 
+/*
 // TODO supprimer si toujours inutile
 func GetFermiersFromIdUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)

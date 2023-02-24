@@ -1,10 +1,14 @@
-/******************************************************************************
-    Code pour fabriquer des select html
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2020-02-11 00:54:33+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Code pour fabriquer des select html
+
+	@copyright  BDL, Bois du Larzac
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2020-02-11 00:54:33+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package control
 
 import (
@@ -104,9 +108,12 @@ func WeboChautreValo() []webo.OptionString {
 // Renvoie la liste des taux de TVA utilisés pour facturer un chantier "autres valorisations"
 // dans un format utilisable par webo
 // @param  chooseId     Chaîne utilisée pour désigner l'id et la value de l'option "---Choisir ---"
-//                      Permet d'avoir plusieurs formulaires de choix de taux de TVA dans un même form
+//
+//	Permet d'avoir plusieurs formulaires de choix de taux de TVA dans un même form
+//
 // @param  idPrefix     l'attribut "id" de chaque option sera = idPrefix suivi de la valeur de l'option
-//                      Permet que chaque option soit unique dans tous les formulaires de TVA
+//
+//	Permet que chaque option soit unique dans tous les formulaires de TVA
 func WeboChautreTVA(ctx *ctxt.Context, chooseId, idPrefix string) []webo.OptionString {
 	res := []webo.OptionString{}
 	res = append(res, webo.OptionString{OptionValue: chooseId, OptionId: idPrefix + chooseId, OptionLabel: "--- Choisir ---"})
@@ -141,9 +148,12 @@ func WeboStockFrais() []webo.OptionString {
 // Renvoie la liste des taux de TVA utilisés pour payer un intervenant extérieur
 // dans un format utilisable par webo
 // @param  chooseId     Chaîne utilisée pour désigner l'id et la value de l'option "---Choisir ---"
-//                      Permet d'avoir plusieurs formulaires de choix de taux de TVA dans un même form
+//
+//	Permet d'avoir plusieurs formulaires de choix de taux de TVA dans un même form
+//
 // @param  idPrefix     l'attribut "id" de chaque option sera = idPrefix suivi de la valeur de l'option
-//                      Permet que chaque option soit unique dans tous les formulaires de TVA
+//
+//	Permet que chaque option soit unique dans tous les formulaires de TVA
 func WeboTVAExt(ctx *ctxt.Context, chooseId, idPrefix string) []webo.OptionString {
 	res := []webo.OptionString{}
 	res = append(res, webo.OptionString{OptionValue: chooseId, OptionId: idPrefix + chooseId, OptionLabel: "--- Choisir ---"})

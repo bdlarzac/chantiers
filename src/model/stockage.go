@@ -1,10 +1,14 @@
-/******************************************************************************
-    Hangars pour stocker des plaquettes
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2019-12-03 16:27:28+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Hangars pour stocker des plaquettes
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2019-12-03 16:27:28+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (
@@ -78,8 +82,9 @@ func GetStockageFull(db *sqlx.DB, id int) (s *Stockage, err error) {
 // Renvoie la liste de tous les lieux de stockage
 // avec uniquement les champs stockés en base
 // @param actifs
-//          true => ne renvoie que les stockages actifs (pas archivés)
-//          false => ne renvoie que les stockages archivés
+//
+//	true => ne renvoie que les stockages actifs (pas archivés)
+//	false => ne renvoie que les stockages archivés
 func GetStockages(db *sqlx.DB, actifs bool) (stockages []*Stockage, err error) {
 	stockages = []*Stockage{}
 	query := "select * from stockage where archived="
@@ -98,8 +103,9 @@ func GetStockages(db *sqlx.DB, actifs bool) (stockages []*Stockage, err error) {
 // Renvoie la liste de tous les lieux de stockage contenant
 // les mêmes données que celles renvoyées par GetStockageFull()
 // @param actifs
-//          true => ne renvoie que les stockages actifs (pas archivés)
-//          false => ne renvoie que les stockages archivés
+//
+//	true => ne renvoie que les stockages actifs (pas archivés)
+//	false => ne renvoie que les stockages archivés
 func GetStockagesFull(db *sqlx.DB, actifs bool) (stockages []*Stockage, err error) {
 	res := []*Stockage{}
 	stockages, err = GetStockages(db, actifs)
@@ -194,7 +200,8 @@ func (s *Stockage) ComputeDeletableAndArchivable(db *sqlx.DB) (err error) {
 // Ex : pour un loyer de 6000 E / an, si j2 - j1 = 6 mois, va compter 3000
 // @param   jourD, jour2 jours de début / fin de la période au format YYYY-MM-DD
 // @return  Tableau contenant les coûts pour chaque jour de la période [jourD, jourF]
-//          res[0] = frais pour jourD, res[1] = frais pour jourD + 1, etc.
+//
+//	res[0] = frais pour jourD, res[1] = frais pour jourD + 1, etc.
 func (s *Stockage) ComputeCout(db *sqlx.DB, jourD, jourF string) (res []float64, err error) {
 	res = []float64{}
 	jD, err := time.Parse("2006-01-02", jourD)

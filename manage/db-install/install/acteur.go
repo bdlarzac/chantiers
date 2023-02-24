@@ -1,11 +1,15 @@
-/******************************************************************************
-    Initialisation acteurs et rôles
-    Code servant à initialiser la base, pas utilisé en fonctionnement normal.
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2019-11-08 08:45:03+01:00, Thierry Graff : Creation from a split
-********************************************************************************/
+	Initialisation acteurs et rôles
+	Code servant à initialiser la base, pas utilisé en fonctionnement normal.
+
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2019-11-08 08:45:03+01:00, Thierry Graff : Creation from a split
+
+*******************************************************************************
+*/
 package install
 
 import (

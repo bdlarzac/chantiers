@@ -1,10 +1,14 @@
-/******************************************************************************
-    Unités de gestion
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2019-11-14 23:36:13+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Unités de gestion
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2019-11-14 23:36:13+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (
@@ -140,7 +144,6 @@ func GetUGFromCode(db *sqlx.DB, code string) (*UG, error) {
 // Utilisé par ajax
 //
 // TODO bizarre, pourquoi ne pas écrire avec une jointure ?
-//
 func GetUGsFromLieudit(db *sqlx.DB, idLieudit int) (ugs []*UG, err error) {
 	ugs = []*UG{}
 	// parcelles

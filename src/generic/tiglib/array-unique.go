@@ -1,8 +1,12 @@
-/**
-    Functions equivalent to php function array_unique()
+/*
+*
 
-    Note: depend on in-array.go
-**/
+	Functions equivalent to php function array_unique()
+
+	Note: depend on in-array.go
+
+*
+*/
 package tiglib
 
 // Equivalent of php function array_unique for a slice of strings

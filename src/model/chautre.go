@@ -1,20 +1,24 @@
-/******************************************************************************
-    Chautre = Chantiers Autres valorisations
-    Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par BDL
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2020-02-04 19:32:43+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Chautre = Chantiers Autres valorisations
+	Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par BDL
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2020-02-04 19:32:43+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	"fmt"
 )
 
 type Chautre struct {
@@ -35,18 +39,18 @@ type Chautre struct {
 	NumFacture    string
 	Notes         string
 	// pas stocké en base
-	UGs           []*UG
+	UGs            []*UG
 	LiensParcelles []*ChantierParcelle
-	Lieudits      []*Lieudit
-	Fermiers      []*Fermier
-	Proprietaires []*Acteur
-	Acheteur      *Acteur
+	Lieudits       []*Lieudit
+	Fermiers       []*Fermier
+	Proprietaires  []*Acteur
+	Acheteur       *Acteur
 }
 
 // ************************** Nom *******************************
 
 func (ch *Chautre) String() string {
-    return ch.Titre
+	return ch.Titre
 }
 
 /*
@@ -79,12 +83,12 @@ func GetChautre(db *sqlx.DB, idChantier int) (*Chautre, error) {
 }
 
 // Renvoie un chantier autres valorisations contenant :
-//      - les données stockées dans la table
-//      - Acheteur
-//      - les UGs
-//      - les parcelles
-//      - les lieux-dits
-//      - les fermiers
+//   - les données stockées dans la table
+//   - Acheteur
+//   - les UGs
+//   - les parcelles
+//   - les lieux-dits
+//   - les fermiers
 func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	ch, err := GetChautre(db, idChantier)
 	if err != nil {
@@ -287,11 +291,11 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 	//
 	// insert associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-fmt.Printf("InsertChautre() - idsUG = %+v\n",idsUG)
+	fmt.Printf("InsertChautre() - idsUG = %+v\n", idsUG)
 	err = insertLiensChantierUG(db, "chautre", idChantier, idsUG)
-    if err != nil {
-        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
-    }
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
+	}
 	//
 	err = insertLiensChantierParcelle(db, "chautre", idChantier, ch.LiensParcelles)
 	if err != nil {
@@ -299,14 +303,14 @@ fmt.Printf("InsertChautre() - idsUG = %+v\n",idsUG)
 	}
 	//
 	err = insertLiensChantierLieudit(db, "chautre", idChantier, idsLieudit)
-    if err != nil {
-        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
-    }
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierLieudit()")
+	}
 	//
 	err = insertLiensChantierFermier(db, "chautre", idChantier, idsFermier)
-    if err != nil {
-        return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
-    }
+	if err != nil {
+		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierFermier()")
+	}
 	//
 	return idChantier, nil
 }
@@ -354,9 +358,9 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 	// update associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
 	err = updateLiensChantierUG(db, "chautre", ch.Id, idsUG)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel updateLiensChantierUG()")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel updateLiensChantierUG()")
+	}
 	//
 	err = updateLiensChantierParcelle(db, "chautre", ch.Id, ch.LiensParcelles)
 	if err != nil {
@@ -380,22 +384,22 @@ func DeleteChautre(db *sqlx.DB, id int) (err error) {
 	//
 	// delete associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-    err = deleteLiensChantierUG(db, "chautre", id)
+	err = deleteLiensChantierUG(db, "chautre", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierUG()")
 	}
 	//
-    err = deleteLiensChantierParcelle(db, "chautre", id)
+	err = deleteLiensChantierParcelle(db, "chautre", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierParcelle()")
 	}
 	//
-    err = deleteLiensChantierLieudit(db, "chautre", id)
+	err = deleteLiensChantierLieudit(db, "chautre", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierLieudit()")
 	}
 	//
-    err = deleteLiensChantierFermier(db, "chautre", id)
+	err = deleteLiensChantierFermier(db, "chautre", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierFermier()")
 	}

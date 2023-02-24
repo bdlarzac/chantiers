@@ -1,11 +1,15 @@
-/******************************************************************************
-    Initialise un hangar de test
-    Code pas utilisé en fonctionnement normal.
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2019-12-05 16:54:53+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Initialise un hangar de test
+	Code pas utilisé en fonctionnement normal.
+
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2019-12-05 16:54:53+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package fixture
 
 import (

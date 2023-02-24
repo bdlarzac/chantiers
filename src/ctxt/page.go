@@ -1,16 +1,24 @@
-/******************************************************************************
-    Structures utilisées pour afficher une page.
+/*
+*****************************************************************************
 
-    @copyright  Thierry Graff
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	Structures utilisées pour afficher une page.
 
-    @history    2019-12-11 15:20:42+01:00, Thierry Graff : Creation
-********************************************************************************/
+	@copyright  Thierry Graff
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+
+	@history    2019-12-11 15:20:42+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package ctxt
 
-/**
-    Main struct, represented by . in all templates
-**/
+/*
+*
+
+	Main struct, represented by . in all templates
+
+*
+*/
 type Page struct {
 	Title   string
 	Header  Header
@@ -21,9 +29,13 @@ type Page struct {
 	RunMode string
 }
 
-/**
-    Contains fields used in the <head> part of the html page
-**/
+/*
+*
+
+	Contains fields used in the <head> part of the html page
+
+*
+*/
 type Header struct {
 	// Value of <title> tag
 	Title string
@@ -35,10 +47,14 @@ type Header struct {
 	JSFiles []string
 }
 
-/**
-   Contains information added just before </body> closing tag
-   JSFiles are included first, then JSString
-**/
+/*
+*
+
+	Contains information added just before </body> closing tag
+	JSFiles are included first, then JSString
+
+*
+*/
 type Footer struct {
 	// urls of additional scripts to load
 	JSFiles []string

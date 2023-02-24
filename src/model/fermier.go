@@ -1,10 +1,14 @@
-/******************************************************************************
-    Fermiers = exploitants agricoles, issus de la base SCTL
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2021-02-08 09:09:36+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Fermiers = exploitants agricoles, issus de la base SCTL
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2021-02-08 09:09:36+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (
@@ -41,9 +45,13 @@ func CountFermiers(db *sqlx.DB) (count int) {
 
 // ************************** Compute *******************************
 
-/** 
-    Calcule le champ Parcelles d'un fermier
-**/
+/*
+*
+
+	Calcule le champ Parcelles d'un fermier
+
+*
+*/
 func (f *Fermier) ComputeParcelles(db *sqlx.DB) (err error) {
 	if len(f.Parcelles) != 0 {
 		return nil // déjà calculé
@@ -60,11 +68,15 @@ func (f *Fermier) ComputeParcelles(db *sqlx.DB) (err error) {
 
 // ************************** Get one *******************************
 
-/** 
-    Renvoie un Fermier à partir de son id.
-    Ne contient que les champs de la table fermier.
-    Les autres champs ne sont pas remplis.
-**/
+/*
+*
+
+	Renvoie un Fermier à partir de son id.
+	Ne contient que les champs de la table fermier.
+	Les autres champs ne sont pas remplis.
+
+*
+*/
 func GetFermier(db *sqlx.DB, id int) (f *Fermier, err error) {
 	f = &Fermier{}
 	query := "select * from fermier where id=$1"
@@ -78,10 +90,14 @@ func GetFermier(db *sqlx.DB, id int) (f *Fermier, err error) {
 
 // ************************** Get many *******************************
 
-/** 
-    Renvoie une liste de Fermiers triés en utilisant un champ de la table
-    @param field    Champ de la table fermier utilisé pour le tri
-**/
+/*
+*
+
+	Renvoie une liste de Fermiers triés en utilisant un champ de la table
+	@param field    Champ de la table fermier utilisé pour le tri
+
+*
+*/
 func GetSortedFermiers(db *sqlx.DB, field string) (fermiers []*Fermier, err error) {
 	fermiers = []*Fermier{}
 	query := "select * from fermier where id<>0 order by " + field
@@ -114,7 +130,7 @@ func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Fermier, error) {
 	return fermiers, nil
 }
 */
-/** 
+/**
     Renvoie des fermiers à partir d'un id UG.
     Contient les champs de la table fermier.
     Les autres champs ne sont pas remplis.
@@ -125,7 +141,7 @@ func GetFermiersFromIdsUGs(db *sqlx.DB, strIdsUGs string) (fermiers []*Fermier, 
 	query := `
 	    select * from fermier where id in(
             select id_fermier from parcelle_fermier where id_parcelle in(
-                select id_parcelle from parcelle_ug where id_ug in(`+strIdsUGs+`)
+                select id_parcelle from parcelle_ug where id_ug in(` + strIdsUGs + `)
             )
         )`
 	err = db.Select(&fermiers, query)
@@ -135,13 +151,17 @@ func GetFermiersFromIdsUGs(db *sqlx.DB, strIdsUGs string) (fermiers []*Fermier, 
 	return fermiers, nil
 }
 
-/** 
-    Renvoie des Fermiers à partir d'une UG.
-    Utilise les parcelles pour faire le lien
-    Ne contient que les champs de la table fermier.
-    Les autres champs ne sont pas remplis.
-    Utilisé par ajax
-**/
+/*
+*
+
+	Renvoie des Fermiers à partir d'une UG.
+	Utilise les parcelles pour faire le lien
+	Ne contient que les champs de la table fermier.
+	Les autres champs ne sont pas remplis.
+	Utilisé par ajax
+
+*
+*/
 func GetFermiersFromIdUG(db *sqlx.DB, idUG int) ([]*Fermier, error) {
 	fermiers := []*Fermier{}
 	query := `
@@ -159,9 +179,13 @@ func GetFermiersFromIdUG(db *sqlx.DB, idUG int) ([]*Fermier, error) {
 
 // ************************** CRUD *******************************
 
-/** 
-    Pas un insert habituel car id est fourni
-**/
+/*
+*
+
+	Pas un insert habituel car id est fourni
+
+*
+*/
 func InsertFermier(db *sqlx.DB, f *Fermier) (err error) {
 	query := `insert into fermier(
 	    id,

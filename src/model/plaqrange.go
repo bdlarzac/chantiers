@@ -1,12 +1,16 @@
-/******************************************************************************
-    Rangement de plaquettes dans un hangar à plaquettes
-    = Déchargement, accompagne les transports de plaquettes
-    Se fait avec un télescopique
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2020-01-22 02:19:38+01:00+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Rangement de plaquettes dans un hangar à plaquettes
+	= Déchargement, accompagne les transports de plaquettes
+	Se fait avec un télescopique
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2020-01-22 02:19:38+01:00+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (

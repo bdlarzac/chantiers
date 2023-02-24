@@ -15,9 +15,13 @@ import (
 	"os"
 )
 
-/**
-    @param  sep Column separator
-**/
+/*
+*
+
+	@param  sep Column separator
+
+*
+*/
 func CsvMap(filename string, sep rune) ([]map[string]string, error) {
 	fd, err := os.Open(filename)
 	if err != nil {

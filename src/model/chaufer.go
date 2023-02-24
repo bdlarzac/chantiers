@@ -1,10 +1,14 @@
-/******************************************************************************
-    Chaufer = Chantier Bois de chauffage fermiers
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2020-02-04 18:55:10+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Chaufer = Chantier Bois de chauffage fermiers
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2020-02-04 18:55:10+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (
@@ -34,10 +38,10 @@ type Chaufer struct {
 // ************************** Nom *******************************
 
 func (ch *Chaufer) String() string {
-    return ch.Titre
+	return ch.Titre
 }
 
-/* 
+/*
 // #13 - transféré dans 2023-02-20-titre-chantier - supprimer si inutile
 func (ch *Chaufer) String() string {
 	if ch.Fermier == nil {
@@ -67,10 +71,10 @@ func GetChaufer(db *sqlx.DB, idChantier int) (*Chaufer, error) {
 }
 
 // Renvoie un chantier chauffage fermier contenant :
-//      - les données stockées dans la table
-//      - Fermier
-//      - UG
-//      - LiensParcelles
+//   - les données stockées dans la table
+//   - Fermier
+//   - UG
+//   - LiensParcelles
 func GetChauferFull(db *sqlx.DB, idChantier int) (*Chaufer, error) {
 	ch, err := GetChaufer(db, idChantier)
 	if err != nil {
@@ -259,12 +263,12 @@ func DeleteChaufer(db *sqlx.DB, id int) (err error) {
 	//
 	// delete associations avec UGs, Parcelles
 	//
-    err = deleteLiensChantierUG(db, "chaufer", id)
+	err = deleteLiensChantierUG(db, "chaufer", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierUG()")
 	}
 	//
-    err = deleteLiensChantierParcelle(db, "chaufer", id)
+	err = deleteLiensChantierParcelle(db, "chaufer", id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel deleteLiensChantierParcelle()")
 	}

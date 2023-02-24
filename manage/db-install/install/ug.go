@@ -1,11 +1,15 @@
-/******************************************************************************
-    Initialisation UG.
-    Code à exécuter à chaque maj du PSG
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2019-11-14 10:08:26+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Initialisation UG.
+	Code à exécuter à chaque maj du PSG
+
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2019-11-14 10:08:26+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package install
 
 import (

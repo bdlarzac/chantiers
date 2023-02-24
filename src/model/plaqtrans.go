@@ -1,11 +1,15 @@
-/******************************************************************************
-    Transport de plaquettes, depuis un chantier vers un lieu de stockage
-    Soit par camion, soit par tracteur + benne
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2020-01-15 02:37:25+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Transport de plaquettes, depuis un chantier vers un lieu de stockage
+	Soit par camion, soit par tracteur + benne
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2020-01-15 02:37:25+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (

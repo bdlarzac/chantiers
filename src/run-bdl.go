@@ -1,10 +1,14 @@
-/******************************************************************************
-   Entry point of the web application
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2018-04, Thierry Graff : Creation
-********************************************************************************/
+	Entry point of the web application
+
+	 @copyright  BDL, Bois du Larzac.
+	 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	 @history    2018-04, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package main
 
 import (
@@ -297,9 +301,13 @@ func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *ht
 	}
 }
 
-/**
-    Adds a "Content-Type" header to the response
-**/
+/*
+*
+
+	Adds a "Content-Type" header to the response
+
+*
+*/
 func contentTypeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ext := filepath.Ext(r.URL.String())

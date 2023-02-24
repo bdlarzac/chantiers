@@ -1,23 +1,26 @@
-/******************************************************************************
+/*
+*****************************************************************************
 
-    Installation et initialisation de la base BDL
+	Installation et initialisation de la base BDL
 
-    Lancer l'exécution en utilisant des variables d'environnement :
-    ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run 1-main.go
+	Lancer l'exécution en utilisant des variables d'environnement :
+	ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run 1-main.go
 
-    Utilisation :
-    -i : install
-    -f : fixture
-    -s : version de la base SCTL à utiliser
-        Si l'option -s contient 2020-12-23
-        Alors les exports de la base Access situés dans manage/sctl-data/csv-2020-12-23 seront utilisés.
-        Ces exports sont des fichiers csv obtenus avec mdb-export
+	Utilisation :
+	-i : install
+	-f : fixture
+	-s : version de la base SCTL à utiliser
+	    Si l'option -s contient 2020-12-23
+	    Alors les exports de la base Access situés dans manage/sctl-data/csv-2020-12-23 seront utilisés.
+	    Ces exports sont des fichiers csv obtenus avec mdb-export
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2019-09-26 17:41:35+02:00, Thierry Graff : Creation
-    @history    2023-01-12 10:32:08+01:00, Thierry Graff : Grosse refactorisation
-********************************************************************************/
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2019-09-26 17:41:35+02:00, Thierry Graff : Creation
+	@history    2023-01-12 10:32:08+01:00, Thierry Graff : Grosse refactorisation
+
+*******************************************************************************
+*/
 package main
 
 import (

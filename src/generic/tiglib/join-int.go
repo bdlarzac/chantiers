@@ -5,9 +5,13 @@ import (
 	"strings"
 )
 
-/**
-    Same as strings.Join, for a slice of int
-**/
+/*
+*
+
+	Same as strings.Join, for a slice of int
+
+*
+*/
 func JoinInt(arr []int, sep string) string {
 	arr2 := []string{}
 	for _, elt := range arr {

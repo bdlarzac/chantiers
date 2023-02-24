@@ -1,10 +1,14 @@
-/******************************************************************************
-    Frais des hangars pour stocker des plaquettes
+/*
+*****************************************************************************
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2019-12-03 16:27:28+01:00, Thierry Graff : Creation
-********************************************************************************/
+	Frais des hangars pour stocker des plaquettes
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+	@history    2019-12-03 16:27:28+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package model
 
 import (

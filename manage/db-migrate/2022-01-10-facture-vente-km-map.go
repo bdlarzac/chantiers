@@ -1,14 +1,17 @@
-/******************************************************************************
+/*
+*****************************************************************************
 
-    Ajout de venteplaq.facturelivraisonunite
-    Peut prendre les valeurs 'km', 'map', ''
+	Ajout de venteplaq.facturelivraisonunite
+	Peut prendre les valeurs 'km', 'map', ''
 
-    Intégration : commit cbab3d5 - 2022-01-10 18:49:11
+	Intégration : commit cbab3d5 - 2022-01-10 18:49:11
 
-    @copyright  BDL, Bois du Larzac
-    @license    GPL
-    @history    2022-01-10 14:02:05+01:00, Thierry Graff : Creation
-********************************************************************************/
+	@copyright  BDL, Bois du Larzac
+	@license    GPL
+	@history    2022-01-10 14:02:05+01:00, Thierry Graff : Creation
+
+*******************************************************************************
+*/
 package main
 
 import (
