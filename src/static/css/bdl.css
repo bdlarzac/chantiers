@@ -1,0 +1,205 @@
+/** 
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+**/
+
+@import url("style.css");
+
+:root {
+    --main-bg-color:lightyellow;
+}
+
+/* en test - pour anchor qui se décale de la hauteur du menu */
+:target{
+   position: relative;
+   border-top: 52px solid transparent;
+   margin: -30px 0 0;
+   background-clip: padding-box;
+}
+:target:before {
+   content: "";
+   position: absolute;
+   top: 30px;
+   left: 0;
+   right: 0;
+}
+
+/* ================ General styles ================ */                                               
+body{
+    font-family:Verdana, Geneva, sans-serif;
+    background:var(--main-bg-color);
+}
+
+a{text-decoration:none;}
+
+/* Space for menu */
+.content{
+    margin-top:4em;
+}
+
+
+/* ================ Colors ================ */
+.bg-white{background:white;}
+.bg-ccc{background-color:#ccc;}
+.background-none{background:none;}
+.lightgrey{
+    background-color: lightgrey;
+    padding:6px;
+    display:inline-block;
+    border:1px solid grey;
+}
+.red{color:red;}
+.black{color:black;}
+.ok{
+    background:lightgreen;
+}
+.nok{
+    background:lightsalmon;
+}
+
+/* ================ Particular styles ================ */
+
+h1{padding-left:1rem;}
+
+.page-content{
+    padding:1rem;
+    margin-left:1rem;
+    background:white;
+    border:1px solid grey;
+}
+
+.help-button{
+    cursor:pointer;
+    font-weight:bold;
+    font-size:2rem;
+    border: 1px solid grey;
+    padding: 0 .5rem;
+    border-radius:10px;
+    background:#d4c375;
+}
+.help-content{
+    border:1px solid grey;
+    border-radius:10px;
+    display:inline-block;
+    padding:1rem;
+    background:#f2f2f2;
+    margin-bottom:1rem;
+}
+.help-content .section{
+    margin-bottom:1rem;
+}
+.help-title{
+    text-align:center;
+    font-weight:bold;
+    font-size:2rem;
+    margin-bottom:1rem;
+}
+
+/* bold big2 border2 padding-left02 padding-right02 */
+.icon-empty{
+    display:inline-block;
+    padding:0 2px;
+    border:2px solid grey;
+}
+.icon-euro{
+    font-size:1.5rem;
+    padding: 0 .5rem;
+    border:1px solid black;
+    color:white;
+    background:grey;
+    font-weight:lighter;
+}
+.icon-euro-small{
+    padding: 0 .5rem;
+    border:1px solid black;
+    color:white;
+    background:grey;
+    font-weight:lighter;
+}
+.verybigicon{
+    display:block;
+    border:2px solid grey;
+    padding:7px;
+}
+.bigicon{
+    display:block;
+    border:2px solid grey;
+    padding:3px;
+}
+.bigicon.inline{display:inline;}
+.smallicon{
+    border:2px solid grey;
+    padding:3px;
+}
+
+.error{
+    display:inline-block;
+    border:1px solid grey;
+    border-radius:3px;
+    padding:1em;
+    margin:1em;
+    background:lightsalmon;
+}
+
+.response{
+    display:none;
+    border:1px solid grey;
+    padding:1em;
+    margin:1em;
+    background:lightgreen;
+    border-radius:10px;
+}
+
+.note{
+    background-color: #1fc8db;
+    background-image: linear-gradient(140deg, #BFD641 0%, #EADEDB 75%);
+}
+
+.parcelle-form{
+    padding:.3rem;
+    border:1px solid darkgrey;
+    border-radius:3px;
+    background:#dfecf8;
+    margin-bottom:1rem;
+}
+
+/* ================ A nettoyer / classer ================ */
+
+/* 2 columns, to present results */
+.grid2-pres{
+    display:grid;
+    grid-template-columns: max-content 1fr;
+}
+.grid2-pres>*:nth-child(odd){
+    text-align:right;
+    padding-right:1em;
+}
+.grid2-pres>*:nth-child(even){
+    font-weight:bold;
+}
+
+table.entities{
+    margin:1em;
+    border:1px solid grey;
+}
+table.entities td{
+    padding:.2rem .3rem;
+}
+table.entities tbody tr:nth-child(even){
+    background-color:#f2e6d9;
+}
+table.entities tr.total{           
+    font-weight:bold;
+    font-size:1.1em;
+}
+
+table.bordered{
+    border-collapse:collapse;
+    border:1px solid grey;
+}
+table.bordered th, table.bordered td{
+    border:1px solid grey;                                  
+    padding:4px;
+}
+
+table.th-left th{text-align:left; padding-right:1em;}

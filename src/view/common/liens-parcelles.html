@@ -114,13 +114,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
     }
     parcellesElt.innerHTML = "";
     //
-let test = 13;
-let diviseur = 4;
-let res = test/diviseur;
-console.log("res =", res);
-console.log("response.length = ", response.length);
     const limit = Math.ceil(response.length / nCol); // nb max par colonne
-console.log("limit = ", limit);
     // chaque parcelle est dans une div, ajoutée au td
     const table = document.createElement("table");
     parcellesElt.appendChild(table);
