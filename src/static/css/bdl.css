@@ -155,12 +155,16 @@ h1{padding-left:1rem;}
     background-image: linear-gradient(140deg, #BFD641 0%, #EADEDB 75%);
 }
 
+
 .parcelle-form{
     padding:.3rem;
     border:1px solid darkgrey;
     border-radius:3px;
     background:#dfecf8;
     margin-bottom:1rem;
+}
+.parcelle-form-selected{
+    background:lightgreen;
 }
 
 /* ================ A nettoyer / classer ================ */

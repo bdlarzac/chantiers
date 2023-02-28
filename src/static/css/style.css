@@ -143,24 +143,28 @@ table.border td{border:1px solid #a2a9b1;}
 
 .padding-top{padding-top:1rem;}
 .padding-top0{padding-top:0;}
+.padding-top02{padding-top:.2rem;}
 .padding-top05{padding-top:.5rem;}
 .padding-top2{padding-top:2rem;}
 .padding-top3{padding-top:3rem;}
 
 .padding-left{padding-left:1rem;}
 .padding-left0{padding-left:0;}                                      
+.padding-left02{padding-left:.2rem;}
 .padding-left05{padding-left:.5rem;}
 .padding-left2{padding-left:2rem;}
 .padding-left3{padding-left:3rem;}
 
 .padding-bottom{padding-bottom:1rem;}
 .padding-bottom0{padding-bottom:0;}
+.padding-bottom02{padding-bottom:.2rem;}
 .padding-bottom05{padding-bottom:.5rem;}
 .padding-bottom2{padding-bottom:2rem;}
 .padding-bottom3{padding-bottom:3rem;}
 
 .padding-right{padding-right:1rem;}
 .padding-right0{padding-right:0;}
+.padding-right02{padding-right:.2rem;}
 .padding-right05{padding-right:.5rem;}
 .padding-right2{padding-right:2rem;}
 .padding-right3{padding-right:3rem;}

@@ -124,26 +124,32 @@ async function afficheParcelles(idsUGs, liensParcelles){
     td.setAttribute("class", "vertical-align-top padding-right");
     tr.appendChild(td);
     //
-    let curdiv, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput, strOnclick;
+    let curdiv, curdivId, surfaceInputNameId, subdiv, radio, radioName, radioValueId, label, surfaceInput;
+    let strSelectParcelle, strUnselectParcelle, strUnselectSurface;
     let curCommune, curSurfaceTotale, tmp;
     for (let i = 0; i < response.length; i++) {
         const item = response[i];
         curdiv = document.createElement("div");
+        curdivId = "parcelle-" + item.id;
+        curdiv.setAttribute("id", curdivId);
         curdiv.classList.add("parcelle"); // class "parcelle" et id de curdiv servent dans validateForm()
         curdiv.classList.add("parcelle-form"); // pour le css
-        curdiv.setAttribute("id", "parcelle-" + item.id);
         //
-        curdiv.innerHTML = '<a class="bold" href="/parcelle/' + item.id + '">' + item.name + '</b>';
-        curdiv.innerHTML += " " + item.commune.NomCourt;
+        curdiv.innerHTML = '<a class="bold" href="/parcelle/' + item.id + '">' + item.name + '</a>';
+        curdiv.innerHTML += " <b>" + item.commune.NomCourt + "</b>";
         //
         surfaceInputNameId = "parcelle-surface-" + item.id;
         radioName = "radio-parcelle-" + item.id;
-        strOnclick = "document.getElementById('"+surfaceInputNameId+"').readOnly = true;"
-            + "document.getElementById('"+surfaceInputNameId+"').value = '';"
+        strUnselectParcelle = `document.getElementById("${curdivId}").classList.remove("parcelle-form-selected");`;
+        strSelectParcelle = `document.getElementById("${curdivId}").classList.add("parcelle-form-selected");`;
+        strUnselectSurface = `
+            document.getElementById("${surfaceInputNameId}").readOnly = true;
+            document.getElementById("${surfaceInputNameId}").value = '';`;
         //
         // non sélectionnée - radio
         //
         subdiv = document.createElement("div");
+        subdiv.classList.add('padding-top02');
         //
         radio = document.createElement("input");
         radioValueId = "radio-parcelle-non-selectionne-" + item.id;
@@ -151,15 +157,15 @@ async function afficheParcelles(idsUGs, liensParcelles){
         radio.setAttribute("name", radioName);
         radio.setAttribute("value", radioValueId);
         radio.setAttribute("id", radioValueId);
-        radio.setAttribute("checked", true);        // ICI, parcelle non sélectionnée
-        radio.setAttribute("onclick", strOnclick);
+        radio.setAttribute("checked", true);        // ICI, parcelle mise à "non sélectionnée"
+        radio.setAttribute("onclick", strUnselectSurface + strUnselectParcelle);
         subdiv.appendChild(radio);
         //
         // non sélectionnée - label
         //
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
-        label.innerHTML = "Non sélectionnée";
+        label.innerHTML = '<span class="normal">Non sélectionnée</span>';
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
@@ -167,6 +173,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
         // entière - radio
         //
         subdiv = document.createElement("div");
+        subdiv.classList.add('padding-top02');
         //
         radio = document.createElement("input");
         radioValueId = "radio-parcelle-entiere-" + item.id;
@@ -174,14 +181,14 @@ async function afficheParcelles(idsUGs, liensParcelles){
         radio.setAttribute("name", radioName);
         radio.setAttribute("value", radioValueId);
         radio.setAttribute("id", radioValueId);
-        radio.setAttribute("onclick", strOnclick);
+        radio.setAttribute("onclick", strUnselectSurface + strSelectParcelle);
         subdiv.appendChild(radio);
         //
         // entière - label
         //
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
-        label.innerHTML = "Entière (" + round(item.surface, 2) + " ha)";
+        label.innerHTML = '<span class="normal">Entière (' + round(item.surface, 2) + " ha)</span>";
         subdiv.appendChild(label);
         //
         curdiv.appendChild(subdiv);
@@ -189,6 +196,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
         // surface - radio
         //
         subdiv = document.createElement("div");
+        subdiv.classList.add('padding-top02');
         //
         radio = document.createElement("input");
         radioValueId = "radio-parcelle-surface-" + item.id;
@@ -196,7 +204,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
         radio.setAttribute("name", radioName);
         radio.setAttribute("value", radioValueId);
         radio.setAttribute("id", radioValueId);
-        radio.setAttribute("onclick", "document.getElementById('"+surfaceInputNameId+"').readOnly = false;");
+        radio.setAttribute("onclick", "document.getElementById('"+surfaceInputNameId+"').readOnly = false;" + strSelectParcelle);
         subdiv.appendChild(radio);
         //
         // surface - label
@@ -204,7 +212,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
         label = document.createElement("label");
         label.setAttribute("for", radioValueId);
         label.setAttribute("class", "padding-right");
-        label.innerHTML = "Surface";
+        label.innerHTML = '<span class="normal">Surface</span>';
         subdiv.appendChild(label);
         //
         // surface - input type=number
@@ -239,6 +247,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
             const test = document.getElementById("radio-parcelle-entiere-" + idParcelle);
             if(test != undefined){
                 document.getElementById("radio-parcelle-entiere-" + idParcelle).checked = true;
+                document.getElementById("parcelle-" + idParcelle).classList.add("parcelle-form-selected");
             }
             else {
                 continue;
@@ -248,6 +257,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
             const test = document.getElementById("radio-parcelle-surface-" + idParcelle);
             if(test != undefined){
                 document.getElementById("radio-parcelle-surface-" + idParcelle).checked = true;
+                document.getElementById("parcelle-" + idParcelle).classList.add("parcelle-form-selected");
                 document.getElementById("parcelle-surface-" + idParcelle). removeAttribute('readonly'); // mettre à false ne marche pas
                 document.getElementById("parcelle-surface-" + idParcelle).value = lien.surface;
             }
