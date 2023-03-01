@@ -4,18 +4,22 @@ config.env
 dbdump
 tmp
 
+
 # private data
 manage/data-private
 manage/sctl-analyse/results/evolution-Exploita.csv
 manage/sctl-data
 
+
 # convention, files marked for deletion
 z.*
 
-# temporary stuff
+#
+# editor and temporary stuff
+#
 *.exe
 .~*
-
-# editor stuff
+*.bkp
+*.dtmp
 *.vim
 *.code-workspace

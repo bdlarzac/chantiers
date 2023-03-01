@@ -12,7 +12,7 @@
 
 require_once 'csvAssociative.php';
 
-$csv = csvAssociative::compute('/home/thierry/dev/jobs/bdl/2.build/gis/mapinfo-ug-test.csv', ',');
+$csv = csvAssociative::compute('../data/ug.csv', ',');
 
 //ug_parcelles($csv);
 //parcelles_ug($csv);
