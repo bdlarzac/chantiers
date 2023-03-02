@@ -104,7 +104,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    chantier.FullString(),
-			CSSFiles: []string{"/static/css/tabstrip.css"},
+			CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 			JSFiles: []string{
 				"/static/js/round.js",
 				"/static/js/formatNb.js",
@@ -114,7 +114,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Menu: "chantiers",
 		Footer: ctxt.Footer{
 			JSFiles: []string{
-				"/static/js/tabstrip.js"},
+				"/static/lib/tabstrip/tabstrip.js"},
 		},
 		Details: detailsPlaqShow{
 			Chantier:         chantier,

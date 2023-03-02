@@ -59,7 +59,7 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Unité de gestion " + ug.Code,
-			CSSFiles: []string{"/static/css/tabstrip.css"},
+			CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 			JSFiles:  []string{"/static/js/formatNb.js"},
 		},
 		Menu: "accueil",
@@ -69,7 +69,7 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Tab:       tab,
 		},
 		Footer: ctxt.Footer{
-			JSFiles: []string{"/static/js/tabstrip.js"},
+			JSFiles: []string{"/static/lib/tabstrip/tabstrip.js"},
 		},
 	}
 	return nil
