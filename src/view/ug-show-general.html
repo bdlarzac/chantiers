@@ -5,10 +5,8 @@
 
 <div class="flex-wrap">
 {{with .Details.UG}}
+
     <div class="padding-right padding-left border-right">
-    
-        <div class="bold big2">Code : {{.Code}}</div>
-        
         <!-- ********************************************** -->
         <h2>Données forestières</h2>
         <div class="grid2-pres">
@@ -24,7 +22,9 @@
             <div>Prévisionnel coupe</div>
             <div>{{.PrevisionnelCoupe}}</div>
         </div> <!-- end class="grid2-pres" -->
+    </div>
         
+    <div class="padding-left">
         <!-- ********************************************** -->
         <h2>Données foncières</h2>
         
@@ -48,18 +48,19 @@
             <li class="padding-bottom05">
                 <a href="/parcelle/{{.Id}}">{{.Code}}</a> ({{.Proprietaire}})
                     {{range .Lieudits}}
-                        <div class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></div>
+                        <span class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></span>
                     {{end}}
                     {{range .Communes}}
-                        <div class="padding-left">{{.Nom}}</div>
+                        <span class="padding-left">{{.Nom}}</span>
                     {{end}}
             </li>
         {{end}}
         </ul>
-        
     </div>
+        
 {{end}}
-    
+</div><!-- end flex-wrap -->
+
 {{with .Details}}
     <div class="padding-left">
         <h2>Exploitation</h2>
@@ -79,5 +80,4 @@
     </div>
 {{end}}
     
-</div><!-- end flex-wrap -->
 
