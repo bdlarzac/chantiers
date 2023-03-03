@@ -29,9 +29,9 @@ import (
 )
 
 func Migrate_2023_02_24_details_ug__15(ctx *ctxt.Context) {
-	//    create_table_essence_2023_02_24(ctx)
-	//    create_table_ug_essence_2023_02_24(ctx)
-	//    fill_table_essence_2023_02_24(ctx)
+	create_table_essence_2023_02_24(ctx)
+	create_table_ug_essence_2023_02_24(ctx)
+	fill_table_essence_2023_02_24(ctx)
 	fill_table_ug_essence_2023_02_24(ctx)
 	fmt.Println("Migration effectuée : 2023-02-24-details-ug--15")
 }
