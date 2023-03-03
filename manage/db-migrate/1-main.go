@@ -70,8 +70,8 @@ func main() {
 		Migrate_2023_02_20_titre_chantier(ctx)
 	case "Migrate_2023_02_21_num_facture":
 		Migrate_2023_02_21_num_facture(ctx)
-    // A partir d'ici, nouvelle convention
-    // le nom de la fonction est suivi du numéro d'issue sur github
+		// A partir d'ici, nouvelle convention
+		// le nom de la fonction est suivi du numéro d'issue sur github
 	case "Migrate_2023_02_24_details_ug__15":
 		Migrate_2023_02_24_details_ug__15(ctx)
 	}

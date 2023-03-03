@@ -1,13 +1,13 @@
 code;nom;nomlong
-AL;demander à Jean;
-CN;Chêne;
-CT;Châtaigner;
-CD;Cèdre;
+AL;Alisier;Alisier blanc
+CN;Chêne;Chêne pubescent
+CT;Châtaigner;Châtaigner
+CD;Cèdre;Cèdre
 DG;Douglas;Pin douglas
 EM;Erable de Mtp;Erable de Montpellier
-ER;Erable;
-FL;Feuillu;
-GV;Genévrier;
-HT;Hêtre;
-PN;Pin noir;
-PS;Pin sylvestre;
+ER;Erable;Erable
+FL;Feuillus;Mélange feuillus
+GV;Genévrier;Genévrier
+HT;Hêtre;Hêtre
+PN;Pin noir;Pin noir
+PS;Pin sylvestre;Pin sylvestre

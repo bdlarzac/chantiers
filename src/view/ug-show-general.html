@@ -13,14 +13,18 @@
             <div>Surface SIG</div>
             <div>{{.SurfaceSIG}} ha</div>
             
-            <div>Type de peuplement</div>
-            <div>{{.TypePeuplement}}</div>
+            <div class="padding-top05">Essences</div>
+            <div class="padding-top05">
+                {{range .Essences}}
+                    <div>{{.NomLong}}</div>
+                {{end}}
+            </div>
         
-            <div>Type de coupe</div>
-            <div>{{.TypeCoupe}}</div>
+            <div class="padding-top05">Type de coupe</div>
+            <div class="padding-top05">{{.TypeCoupe}}</div>
         
-            <div>Prévisionnel coupe</div>
-            <div>{{.PrevisionnelCoupe}}</div>
+            <div class="padding-top05">Prévisionnel coupe</div>
+            <div class="padding-top05">{{.PrevisionnelCoupe}}</div>
         </div> <!-- end class="grid2-pres" -->
     </div>
         

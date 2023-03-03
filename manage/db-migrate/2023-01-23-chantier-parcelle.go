@@ -20,21 +20,18 @@ import (
 )
 
 /*
-*
+1 - Ajout des liens chantier - parcelle pour plaq et chautre => modification de chaufer_parcelle
+  - Copie la table chaufer_parcelle dans la table chantier_parcelle
+    From https://stackoverflow.com/questions/2974057/move-data-from-one-table-to-another-postgresql-edition
+  - Supprime la table chaufer_parcelle
+  - Ajoute une colonne type_chantier à chantier_parcelle
+  - Renomme colonne id_chaufer en id_chantier dans chantier_parcelle
+  - Remplit type_chantier avec "chaufer" dans toutes les lignes de chantier_parcelle
+  - Ajoute des index à la table chantier_parcelle
 
-	1 - Ajout des liens chantier - parcelle pour plaq et chautre => modification de chaufer_parcelle
-	    - Copie la table chaufer_parcelle dans la table chantier_parcelle
-	      From https://stackoverflow.com/questions/2974057/move-data-from-one-table-to-another-postgresql-edition
-	    - Supprime la table chaufer_parcelle
-	    - Ajoute une colonne type_chantier à chantier_parcelle
-	    - Renomme colonne id_chaufer en id_chantier dans chantier_parcelle
-	    - Remplit type_chantier avec "chaufer" dans toutes les lignes de chantier_parcelle
-	    - Ajoute des index à la table chantier_parcelle
-	2 - Transformation de la liaison chaufer - ug, de 1-n à n-n
-	    - Transfère les id_ug de la table chaufer dans chantier_ug
-	    - Supprime la colonne chaufer.id_ug
-
-*
+2 - Transformation de la liaison chaufer - ug, de 1-n à n-n
+  - Transfère les id_ug de la table chaufer dans chantier_ug
+  - Supprime la colonne chaufer.id_ug
 */
 func Migrate_2023_01_23_chantier_parcelle(ctx *ctxt.Context) {
 	db := ctx.DB

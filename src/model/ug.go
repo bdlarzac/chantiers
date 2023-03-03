@@ -28,14 +28,14 @@ type UG struct {
 	Code              string
 	TypeCoupe         string `db:"type_coupe"`
 	PrevisionnelCoupe string `db:"previsionnel_coupe"`
-	TypePeuplement    string `db:"type_peuplement"`
 	SurfaceSIG        string `db:"surface_sig"`
 	// pas stocké en base
 	Parcelles        []*Parcelle
 	Fermiers         []*Fermier
+	Proprietaires    []*Acteur
+	Essences         []*Essence
 	Recaps           map[string]RecapUG
 	SortedRecapYears []string // années contenant de l'activité prise en compte dans Recaps
-	Proprietaires    []*Acteur
 }
 
 // Sert à afficher la liste des activités sur une UG.
@@ -68,7 +68,7 @@ type LigneRecapUG struct {
 // ************************ Nom *********************************
 
 func (ug *UG) String() string {
-	return ug.Code + " -- " + ug.TypePeuplement
+	return ug.Code
 }
 
 // ************************ Get one *********************************
@@ -117,6 +117,10 @@ func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
 	err = ug.ComputeProprietaires(db)
 	if err != nil {
 		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeProprietaires()")
+	}
+	err = ug.ComputeEssences(db)
+	if err != nil {
+		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeEssences()")
 	}
 	return ug, nil
 }
@@ -226,6 +230,9 @@ func GetUGsSortedByCode(db *sqlx.DB) (ugs []*UG, err error) {
 	ugs = []*UG{}
 	query := `select * from ug`
 	err = db.Select(&ugs, query)
+	if err != nil {
+		return ugs, werr.Wrapf(err, "Erreur query : "+query)
+	}
 	sort.Slice(ugs, func(i, j int) bool {
 		ug1 := ugs[i]
 		ug2 := ugs[j]
@@ -247,9 +254,6 @@ func GetUGsSortedByCode(db *sqlx.DB) (ugs []*UG, err error) {
 		n2, _ := strconv.Atoi(tmp2[1])
 		return n1 < n2
 	})
-	if err != nil {
-		return ugs, werr.Wrapf(err, "Erreur query : "+query)
-	}
 	return ugs, nil
 }
 
@@ -285,7 +289,6 @@ func GetUGsSortedByCodeAndSeparated(db *sqlx.DB) ([][]*UG, error) {
 
 // ************************** Compute *******************************
 
-// Remplit le champ Parcelles d'une UG
 func (ug *UG) ComputeParcelles(db *sqlx.DB) error {
 	if len(ug.Parcelles) != 0 {
 		return nil // déjà calculé
@@ -330,6 +333,22 @@ func (ug *UG) ComputeProprietaires(db *sqlx.DB) error {
 	}
 	return nil
 }
+
+func (ug *UG) ComputeEssences(db *sqlx.DB) error {
+	if len(ug.Essences) != 0 {
+		return nil // déjà calculé
+	}
+	query := `
+        select * from essence where code in(
+            select code_essence from ug_essence where id_ug =$1
+        ) order by nom`
+	err := db.Select(&ug.Essences, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
 
 // ************************** Recap *******************************
 

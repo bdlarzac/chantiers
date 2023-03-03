@@ -30,3 +30,19 @@ PN pars
 PS
 PS pars
 Plantation feuillus
+
+=== Jean Culie ===
+AL : alisier blanc
+Pars : "essence" épars
+Ss tage : en sous étage (je ne pense pas que cette info soit essentielle, peut être supprimée);
+CH : Chêne pubescent;
+CHa : Chataignier ;
+Cd et Cdre : Cèdre
+D : Douglas
+Er : Erable;
+Er Ch : erable champêtre
+Er de Mpt ou Mtp : Erable de Montpellier;
+F : mélange feuillus;
+H : Hêtre,
+PN : Pin noir;
+PS : pin sylvestre.
