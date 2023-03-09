@@ -20,16 +20,33 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+//"fmt"
 )
 
 type UG struct {
 	Id                int
 	Code              string
-	TypeCoupe         string `db:"type_coupe"`
-	PrevisionnelCoupe string `db:"previsionnel_coupe"`
 	SurfaceSIG        string `db:"surface_sig"`
+	//
+	// #15 remove after execution of migration
+	//
+	TypeCoupe          string `db:"type_coupe"`         
+	PrevisionnelCoupe string `db:"previsionnel_coupe"`
 	TypePeuplement    string `db:"type_peuplement"`
+	//
+	// end #15 remove after execution of migration
+	//
+	// new #15
+	//
+    CodeTypo          string `db:"code_typo"`
+    Coupe             string `db:"coupe"`
+    AnneeIntervention string `db:"annee_intervention"`
+    PSGSuivant        string `db:"psg_suivant"`
+	// pas stocké en base
+	NomTypo           string
+	//
+	// end new #15
+	//
 	// pas stocké en base
 	Parcelles        []*Parcelle
 	Fermiers         []*Fermier
@@ -122,6 +139,10 @@ func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
 	err = ug.ComputeEssences(db)
 	if err != nil {
 		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeEssences()")
+	}
+	err = ug.ComputeTypo(db)
+	if err != nil {
+		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeTypo()")
 	}
 	return ug, nil
 }
@@ -344,6 +365,18 @@ func (ug *UG) ComputeEssences(db *sqlx.DB) error {
             select code_essence from ug_essence where id_ug =$1
         ) order by nom`
 	err := db.Select(&ug.Essences, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func (ug *UG) ComputeTypo(db *sqlx.DB) error {
+	if ug.NomTypo != "" {
+		return nil // déjà calculé
+	}
+	query := `select nom from typo where code=$1`
+	err := db.Get(&ug.NomTypo, query, ug.CodeTypo)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
