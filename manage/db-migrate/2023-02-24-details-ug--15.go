@@ -5,8 +5,8 @@
 
 		Modifier la table ug et ré-écrire l'import depuis ug.csv pour avoir des données plus détaillées.
 		Principale contrainte : les ugs existantes doivent conserver leurs ids actuels.
-
-		Intégration : commit
+		
+		Intégration : commit 95e55d4
 
 		@copyright  BDL, Bois du Larzac
 		@license    GPL
@@ -39,13 +39,13 @@ func Migrate_2023_02_24_details_ug__15(ctx *ctxt.Context) {
 }
 
 
-/** 
-    Remplit la table ug avec les nouvelles informations
-        Utilise ug.csv du PSG 1, le même fichier qu'utilisé par install.FillUG()
-        Ne gère pas les lignes mal formées non traitées par install.FillUG()
+/*
+    Remplit la table ug avec les nouvelles informations.
+        Utilise ug.csv du PSG 1, le même fichier qu'utilisé par install.FillUG().
+        Ne gère pas les lignes mal formées non traitées par install.FillUG().
     Vérifie l'association code ug <-> id ug sur les données de prod existantes (select dans table ug)
-    pour être sûr que ces associations ne changent pas
-**/
+    pour être sûr que ces associations ne changent pas.
+*/
 
 func refill_table_ug_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
@@ -165,6 +165,12 @@ func create_table_typo_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
+	
+    query = `drop table if exists typo`
+	_, err = db.Exec(query)
+	if err != nil {
+		panic(err)
+	}
 	query = `
         create table typo (
             code        char(2) not null,
@@ -290,6 +296,11 @@ func create_table_ug_essence_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
+    query = `drop table if exists ug_essence`
+	_, err = db.Exec(query)
+	if err != nil {
+		panic(err)
+	}
 	query = `
         create table ug_essence (
             id_ug           int not null,
@@ -317,6 +328,11 @@ func create_table_essence_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
+    query = `drop table if exists essence`
+	_, err = db.Exec(query)
+	if err != nil {
+		panic(err)
+	}
 	query = `
         create table essence (
             code        char(2) not null,
