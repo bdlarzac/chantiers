@@ -12,13 +12,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"mime"
-	"net/http"
-	"path/filepath"
-	"time"
-
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
 	"bdl.local/bdl/ctxt"
@@ -26,6 +19,12 @@ import (
 	"bdl.local/bdl/model"
 	"bdl.local/bdl/static"
 	"bdl.local/bdl/view"
+	"fmt"
+	"log"
+	"mime"
+	"time"
+	"net/http"
+	"path/filepath"
 	"github.com/gorilla/mux"
 )
 

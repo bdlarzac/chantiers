@@ -6,11 +6,29 @@
     <h1>Logiciel de gestion forestière</h1>
 </div>
 
+<div class="flex-wrap">
+
 {{if .Details.Recents}}
+<div>
     <h2>Activité récente</h2>
     <ul class="naked">
     {{range .Details.Recents}}
         <li class="padding-bottom02"><a href="{{.URL}}">{{.Label}}</a></li>
     {{end}}
     </ul>
+</div>
 {{end}}
+
+{{if true}}
+<div>
+{{template "choix-date.html" $.Details}}
+</div>
+{{end}}
+
+<script>
+choixDate = new ChoixDate('choix-date');
+choixDate.display();
+</script>
+
+</div><!-- end class="flex-wrap" -->
+

@@ -14,11 +14,11 @@ body{
     font-size:1em;
 }                                                                                
 
-/* 
 .flex-wrap{
     display:flex;
     flex-wrap:wrap;
 }
+/* 
 .flex-center{
     justify-content:center;
 }

@@ -127,6 +127,7 @@ h1{padding-left:1rem;}
     padding:3px;
 }
 .bigicon.inline{display:inline;}
+.bigicon.inline-block{display:inline-block;}
 .smallicon{
     border:2px solid grey;
     padding:3px;
@@ -170,6 +171,16 @@ h1{padding-left:1rem;}
 /* ================ A nettoyer / classer ================ */
 
 /* 2 columns, to present results */
+.grid2{
+    display:grid;
+    grid-template-columns: max-content 1fr;
+}
+.grid2>*:nth-child(odd){
+    text-align:right;
+    padding-right:1em;
+}
+
+/* 2 columns, to present results */
 .grid2-pres{
     display:grid;
     grid-template-columns: max-content 1fr;
@@ -206,4 +217,7 @@ table.bordered th, table.bordered td{
     padding:4px;
 }
 
-table.th-left th{text-align:left; padding-right:1em;}
+table.th-left th{
+    text-align:left;
+    padding-right:1em;
+}

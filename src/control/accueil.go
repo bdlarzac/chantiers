@@ -19,10 +19,12 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
+//"fmt"
 )
 
 type detailsAccueil struct {
 	Recents []*model.Recent
+	Periods                  [][2]time.Time
 }
 
 func Accueil(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -31,13 +33,26 @@ func Accueil(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	
+    //periods, hasChantier, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
+    periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
+    if err != nil {
+        return err
+    }
+//fmt.Printf("periods = %+v\n",periods)
+    
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "Accueil",
-		},
+            JSFiles: []string{
+                "/static/js/dateStringFr2iso.js",
+                "/static/js/dateStringIso2fr.js",
+            },
+	},
 		Menu: "accueil",
 		Details: detailsAccueil{
 			Recents: recents,
+			Periods: periods,
 		},
 	}
 	return nil
