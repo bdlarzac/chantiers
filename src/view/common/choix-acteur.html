@@ -1,0 +1,201 @@
+{{/* 
+    Formulaire de choix d'un acteur ou d'un type d'acteur
+    Utilisation :
+        <script>
+            choixDate = new ChoixPeriode('choix-acteur');
+            choixDate.display();
+        </script>
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+
+*/}}
+
+<style>
+    .choix-acteur fieldset{
+        margin-top:1rem;
+    }
+    .choix-acteur .lbl-acteur{
+        padding-right:1rem;
+    }
+    .choix-acteur .chk-container{
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 10px;
+        column-gap: 2rem;
+    }
+    .choix-acteur #tous, .choix-acteur #aucun{
+        color:blue;
+        cursor:pointer;
+    }
+</style>
+
+<script>
+
+class ChoixActeur{
+    
+    #html;
+    
+    #baseId;
+    
+    /** 
+        @param  baseId String - Unique id of this component within the page.
+    **/
+    constructor(baseId){
+        //
+        this.#baseId = baseId;
+        //
+        this.#html = `
+<fieldset class="choix-acteur">
+    <legend>Acteurs</legend>
+    <details open>
+        <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+        <fieldset>
+            <legend>Clients</legend>
+            <div>
+                <label>
+                    <input class="chk-acteur" type="checkbox" id="CP" name="CP" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                    Plaquettes
+                </label>
+                <label>
+                    <input class="chk-acteur" type="checkbox" id="CC" name="CC" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                    Bois de chauffage
+                </label>
+                <label>
+                    <input class="chk-acteur" type="checkbox" id="CA" name="CA" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                    Autres valorisations
+                </label>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Chantier plaquettes</legend>
+            <table>
+                <tr>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="AB" name="AB" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Abatteur
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="DB" name="DB" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Débardeur
+                        </label>
+                        </td>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="DC" name="DC" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Déchiqueteur
+                        </label>
+                        </td>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="BR" name="BR" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Broyeur
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="TR" name="TR" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Transporteur
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="RG" name="RG" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Rangeur
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="CH" name="CH" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Chargeur
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="LI" name="LI" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Livreur
+                        </label>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>Divers</legend>
+            <div>
+                <label>
+                    <input class="chk-acteur" type="checkbox" id="PR" name="PR">
+                    Propriétaire
+                </label>
+                <label>
+                    <input class="chk-acteur" type="checkbox" id="MH" name="MH">
+                    Mesureur (humidité)
+                </label>
+            </div>
+        </fieldset>
+        <div class="margin-top05">
+            <a class="padding-left2 padding-right2" id="tous" onclick="choixActeur_toutSelectionner(); choixActeur_choixChanged('${this.#baseId}');">Tous</a>
+            <a id="aucun" onclick="choixActeur_rienSelectionner(); choixActeur_choixChanged('${this.#baseId}');">Aucun</a>
+        </div>
+    </details>
+</fieldset>
+        `;
+    } // end constructor
+    
+    display(){
+        document.write(this.#html);
+    }
+    
+    initialize(){
+        choixActeur_toutSelectionner();
+    }
+} // end class
+
+
+function choixActeur_choixChanged(baseId) {
+    // update summary string
+    let tous = true;
+    const checkedElements = [];
+    const elements = document.getElementsByClassName('chk-acteur');
+    for(const elt of elements){
+        if(elt.checked == false){
+            tous = false;
+        }
+        else {
+            checkedElements.push(elt.parentElement.textContent.trim());
+        }
+    }
+    let str = '';
+    if(tous){
+        str = 'Tous les acteurs';
+    }
+    else{
+        const l = checkedElements.length;
+        const tmp = checkedElements.slice(0, 3);
+        str = tmp.join(' + ');
+        if(l > 3){
+            str += ' + ...';
+        }
+    }
+    document.getElementById(baseId + '-summary').innerHTML = str;
+}
+
+function choixActeur_toutSelectionner(){
+    const elements = document.getElementsByClassName('chk-acteur');
+    for(const elt of elements){
+        elt.checked = true;
+    }
+}
+
+function choixActeur_rienSelectionner(){
+    const elements = document.getElementsByClassName('chk-acteur');
+    for(const elt of elements){
+        elt.checked = false;
+    }
+}
+
+</script>

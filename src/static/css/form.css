@@ -27,3 +27,9 @@
 .grid2-form label.normal{
     font-weight:normal;
 }
+
+.big-button{
+    margin-top:1rem;
+    font-size:2rem;
+    display:inline-block;
+}

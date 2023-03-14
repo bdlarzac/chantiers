@@ -22,7 +22,7 @@ import (
 
 // valeur du champ id
 // déterminés à la création de la base
-// voir install/initialize/acteur.go
+// voir manage/db-install/acteur.go
 const ID_SCTL = 1
 const ID_BDL = 2
 const ID_GFA = 3

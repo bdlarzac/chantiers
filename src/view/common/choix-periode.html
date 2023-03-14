@@ -1,0 +1,164 @@
+{{/* 
+    Formulaire de choix d'une période
+    Utilisation :
+        <script>
+            choixPeriode = new ChoixPeriode('choix-periode');
+            choixPeriode.display();
+        </script>
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+<script src="/static/js/dateStringFr2iso.js"></script>
+<script src="/static/js/dateStringIso2fr.js"></script>
+<script src="/static/js/date2stringFr.js"></script>
+
+<script>
+
+class ChoixPeriode{
+    
+    #html;
+    
+    #baseId;
+    
+    /** 
+    Array of {arrays containing 2 strings}.
+    Strings format = YYYY-MM-DD
+    ex: Array[
+        0: Array [ "2022-10-01", "2023-09-30" ]
+        1: Array [ "2021-10-01", "2022-09-30" ]
+        2: Array [ "2020-10-01", "2021-09-30" ]
+    ]
+    **/
+    #periods;
+    
+    /** 
+        @param  baseId String - Unique id of this component within the page.
+    **/
+    constructor(baseId){
+        //
+        this.#baseId = baseId;
+        //
+        this.#periods = [];
+        {{range $index, $period := .Periods}}
+            this.#periods[{{$index}}] = [];
+            this.#periods[{{$index}}][0] = "{{(index $period 0) | dateIso}}";
+            this.#periods[{{$index}}][1] = "{{(index $period 1) | dateIso}}";
+        {{end}}
+//console.log(this.#periods);
+        //
+        this.#html = `
+<fieldset class="choix-periode">
+    <legend>Période</legend>
+    <details open>
+        <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+        
+        <div class="grid2 padding-top2">
+    
+            <div class="bold center padding-bottom">Période</div>
+            <div>
+                <select id="${this.#baseId}-periods" name="${this.#baseId}-periods" onChange="choixPeriode_periodChanged('${this.#baseId}');">
+                    <option value="no-limit">Pas de limite</option>
+                    <option value="free">--- Dates libres ---</option>
+                    <option value="psg1">PSG 1 (01/01/2014 - 31/12/2023)</option>
+                    <option value="psg2">PSG 2 (01/01/2024 - 31/12/2033)</option>
+`;
+        for(let i=0; i < this.#periods.length; i++){
+            const dateDebFR = dateStringIso2fr(this.#periods[i][0]);
+            const dateFinFR = dateStringIso2fr(this.#periods[i][1]);
+            this.#html += `<option value="period-${i}">${dateDebFR} - ${dateFinFR}</option>`;
+        }
+        this.#html += `
+                </select>
+            </div>
+        
+            <div class="bold center padding-bottom">Dates libres</div>
+            <div>
+                <div class="inline-block">
+                    <div class="center"><label for="${this.#baseId}-debut">Début</label></div>
+                    <input type="date" name="${this.#baseId}-debut" id="${this.#baseId}-debut" value="" onChange="choixPeriode_dateChanged('${this.#baseId}');">
+                </div>
+                <div class="inline-block">
+                    <div class="center"><label for="${this.#baseId}-fin">Fin</label></div>
+                    <input type="date" name="${this.#baseId}-fin" id="${this.#baseId}-fin" value="" onChange="choixPeriode_dateChanged('${this.#baseId}');">
+                </div>
+            </div>
+        
+        </div><!-- end class="grid2" -->
+    </details>
+</fieldset>
+        `;
+    } // end constructor
+    
+    display(){
+        document.write(this.#html);
+    }
+    
+    initialize(){
+        choixPeriode_periodChanged(this.#baseId);
+    }
+
+} // end class
+
+/** 
+    Reacts to a change of the select containing the list of periods
+**/
+function choixPeriode_periodChanged(baseId){
+    const selectElt = document.getElementById(baseId + "-periods");
+    const valeur = selectElt.options[selectElt.selectedIndex].getAttribute('value');
+    const idx = valeur.replace('period-', '');
+    if(idx == 'no-limit'){
+        document.getElementById(baseId + '-debut').valueAsDate = null;
+        document.getElementById(baseId + '-fin').valueAsDate = null;
+        document.getElementById(baseId + '-summary').innerHTML = 'Pas de limite';
+    }
+    if(idx == 'free'){
+        const dateDeb = document.getElementById(baseId + '-debut').valueAsDate;
+        const dateFin = document.getElementById(baseId + '-fin').valueAsDate;
+        const label = (dateBegin == null ? '?' : date2stringFr(dateBegin))
+            + ' - '
+            + (dateEnd == null ? '?' : date2stringFr(dateEnd));
+        document.getElementById(baseId + '-summary').innerHTML = 'Pas de limite';
+    }
+    else if(idx == 'psg1'){
+        const dateDeb = new Date('2014-01-01');
+        const dateFin = new Date('2023-12-31');
+        document.getElementById(baseId + '-debut').valueAsDate = dateDeb;
+        document.getElementById(baseId + '-fin').valueAsDate = dateFin;
+        const label = 'PSG 1 (' + date2stringFr(dateDeb) + ' - ' + date2stringFr(dateFin) + ')'; 
+        document.getElementById(baseId + '-summary').innerHTML = label;
+    }
+    else if(idx == 'psg2'){
+        const dateDeb = new Date('2024-01-01');
+        const dateFin = new Date('2033-12-31');
+        document.getElementById(baseId + '-debut').valueAsDate = dateDeb;
+        document.getElementById(baseId + '-fin').valueAsDate = dateFin;
+        const label = 'PSG 2 (' + date2stringFr(dateDeb) + ' - ' + date2stringFr(dateFin) + ')'; 
+        document.getElementById(baseId + '-summary').innerHTML = label;
+    }
+    else {
+        const inner = selectElt.options[selectElt.selectedIndex].innerHTML;
+        const tmp = inner.split(' - ');
+        const dateDeb = new Date(dateStringFr2iso(tmp[0]));
+        const dateFin = new Date(dateStringFr2iso(tmp[1]));
+        document.getElementById(baseId + '-debut').valueAsDate = dateDeb;
+        document.getElementById(baseId + '-fin').valueAsDate = dateFin;
+        document.getElementById(baseId + '-summary').innerHTML = inner;
+    }
+}
+
+/** 
+    Reacts to a change of one input type="date"
+**/
+function choixPeriode_dateChanged(baseId){
+    const dateBegin = document.getElementById(baseId + '-debut').valueAsDate;
+    const dateEnd = document.getElementById(baseId + '-fin').valueAsDate;
+    document.getElementById(baseId + "-periods").value = 'free';
+    const str = (dateBegin == null ? '?' : date2stringFr(dateBegin))
+        + ' - '
+        + (dateEnd == null ? '?' : date2stringFr(dateEnd));
+    document.getElementById(baseId + '-summary').innerHTML = str;
+}
+
+</script>

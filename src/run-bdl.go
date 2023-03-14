@@ -54,6 +54,7 @@ func main() {
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))
 	r.HandleFunc("/backup", H(control.BackupDB))
+	r.HandleFunc("/search", H(control.Search))
 
 	r.HandleFunc("/facture/vente-plaquette/{id:[0-9]+}", HPDF(control.ShowFactureVentePlaq))
 	r.HandleFunc("/facture/autre/{id:[0-9]+}", HPDF(control.ShowFactureChautre))

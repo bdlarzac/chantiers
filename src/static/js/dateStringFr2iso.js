@@ -9,6 +9,9 @@
     @history    2023-03-13 11:26:00+01:00, Thierry Graff : Creation
 ********************************************************************************/
 function dateStringFr2iso(dd_mm_yyyy){
+    if(dd_mm_yyyy == null){
+        return '';
+    }
     const d = dd_mm_yyyy.substring(0, 2);
     const m = dd_mm_yyyy.substring(3, 5);
     const y = dd_mm_yyyy.substring(6);
