@@ -7,7 +7,7 @@
     {{.Header.Title}}
     
     <a class="padding-left" href="/affacture/form/{{.Details.Acteur.Id}}">
-        <span class="icon-euro" title="Payer cet acteur">&euro;</span>
+        <span class="icon-euro" style="position:relative;top:-9px;" title="Payer cet acteur">&euro;</span>
     </a>
     
     {{with .Details.Acteur}}
@@ -76,7 +76,7 @@
         <div>{{if .Actif}}Oui{{else}}Non{{end}}</div>
         
         <div>Notes</div>
-        <div class="note">{{.Notes | nl2br}}</div>
+        {{if .Notes}}<div class="note">{{.Notes | nl2br}}</div>{{end}}
     
 </div> <!-- end class="grid2-pres" -->
 

@@ -2,8 +2,9 @@
     Formulaire de choix d'un acteur ou d'un type d'acteur
     Utilisation :
         <script>
-            choixDate = new ChoixPeriode('choix-acteur');
-            choixDate.display();
+            choixActeur = new ChoixPeriode('choix-acteur');
+            choixActeur.display();
+            choixActeur.initialize();
         </script>
 
 	@copyright  BDL, Bois du Larzac.
@@ -122,6 +123,14 @@ class ChoixActeur{
                         </label>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <label>
+                            <input class="chk-acteur" type="checkbox" id="PO" name="PO" onchange="choixActeur_choixChanged('${this.#baseId}');">
+                            Propriétaire outil
+                        </label>
+                    </td>
+                </tr>
             </table>
         </fieldset>
         <fieldset>
@@ -152,6 +161,7 @@ class ChoixActeur{
     
     initialize(){
         choixActeur_toutSelectionner();
+        choixActeur_choixChanged(this.#baseId);
     }
 } // end class
 

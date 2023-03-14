@@ -14,11 +14,11 @@
 package model
 
 import (
-//"fmt"
+// "fmt"
 )
 
 type Essence struct {
-	Code     string
-	Nom      string
-	NomLong  string
+	Code    string
+	Nom     string
+	NomLong string
 }

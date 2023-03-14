@@ -1,11 +1,12 @@
-/**
+/*
+*
 *****************************************************************************
 
 	    https://github.com/bdlarzac/chantiers/issues/15
 
 		Modifier la table ug et ré-écrire l'import depuis ug.csv pour avoir des données plus détaillées.
 		Principale contrainte : les ugs existantes doivent conserver leurs ids actuels.
-		
+
 		Intégration : commit 95e55d4
 
 		@copyright  BDL, Bois du Larzac
@@ -13,7 +14,8 @@
 		@history    2023-02-24 14:43:07+01:00, Thierry Graff : Creation
 
 *******************************************************************************
-**/
+*
+*/
 package main
 
 import (
@@ -38,13 +40,12 @@ func Migrate_2023_02_24_details_ug__15(ctx *ctxt.Context) {
 	fmt.Println("Migration effectuée : 2023-02-24-details-ug--15")
 }
 
-
 /*
-    Remplit la table ug avec les nouvelles informations.
-        Utilise ug.csv du PSG 1, le même fichier qu'utilisé par install.FillUG().
-        Ne gère pas les lignes mal formées non traitées par install.FillUG().
-    Vérifie l'association code ug <-> id ug sur les données de prod existantes (select dans table ug)
-    pour être sûr que ces associations ne changent pas.
+   Remplit la table ug avec les nouvelles informations.
+       Utilise ug.csv du PSG 1, le même fichier qu'utilisé par install.FillUG().
+       Ne gère pas les lignes mal formées non traitées par install.FillUG().
+   Vérifie l'association code ug <-> id ug sur les données de prod existantes (select dans table ug)
+   pour être sûr que ces associations ne changent pas.
 */
 
 func refill_table_ug_2023_02_24(ctx *ctxt.Context) {
@@ -73,7 +74,7 @@ func refill_table_ug_2023_02_24(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
-    //
+	//
 	// 3 - boucle à partir de ug.csv
 	//
 	filename := path.Join(install.GetDataDir(), "ug.csv")
@@ -91,39 +92,39 @@ func refill_table_ug_2023_02_24(ctx *ctxt.Context) {
 		if err != nil {
 			panic(err)
 		}
-        // fmt.Printf("codeUG_csv = %s, idUG_db = %d\n",codeUG_csv, idUG_db)
-        // fmt.Printf("ug_csv = %+v\n",ug_csv)
+		// fmt.Printf("codeUG_csv = %s, idUG_db = %d\n",codeUG_csv, idUG_db)
+		// fmt.Printf("ug_csv = %+v\n",ug_csv)
 		//
 		var coupe, annee_intervention, psg_suivant string
-        coupe = ug_csv["Coupe"]
+		coupe = ug_csv["Coupe"]
 		if coupe == "0" {
-		    coupe = ""
+			coupe = ""
 		}
-        annee_intervention = ug_csv["Annee_intervention"]
+		annee_intervention = ug_csv["Annee_intervention"]
 		if annee_intervention == "0" {
-		    annee_intervention = ""
+			annee_intervention = ""
 		}
-        psg_suivant = ug_csv["PSG_suivant"]
+		psg_suivant = ug_csv["PSG_suivant"]
 		if psg_suivant == "0" {
-		    psg_suivant = ""
+			psg_suivant = ""
 		}
-        // Pour les 2 prochains tests : les "mauvaises" lignes de ug.csv ne sont pas gérées
-        // (mais n'ont pas été gérées non plus dans l'import initial
-        // => pas de pb par rapport aux données de prod)
+		// Pour les 2 prochains tests : les "mauvaises" lignes de ug.csv ne sont pas gérées
+		// (mais n'ont pas été gérées non plus dans l'import initial
+		// => pas de pb par rapport aux données de prod)
 		if len(annee_intervention) > 4 {
-		    annee_intervention = ""
+			annee_intervention = ""
 		}
 		if len(psg_suivant) > 4 {
-		    psg_suivant = ""
+			psg_suivant = ""
 		}
-        //
-        _, err = stmt_update.Exec(
-            ug_csv["code_typo"],
-            coupe,
-            annee_intervention,
-            psg_suivant,
-            idUG_db,
-        )
+		//
+		_, err = stmt_update.Exec(
+			ug_csv["code_typo"],
+			coupe,
+			annee_intervention,
+			psg_suivant,
+			idUG_db,
+		)
 		if err != nil {
 			panic(err)
 		}
@@ -131,33 +132,33 @@ func refill_table_ug_2023_02_24(ctx *ctxt.Context) {
 }
 
 func alter_table_ug_2023_02_24(ctx *ctxt.Context) {
-    // Nouvelle structure de la table ug :
-    // id                 | integer               |
-    // code               | character varying(10) |
-    // surface_sig        | numeric               |
-    // code_typo          | character(1)          |
-    // coupe              | character varying(20) |
-    // annee_intervention | character varying(4)  |
-    // psg_suivant        | character varying(4)  |
+	// Nouvelle structure de la table ug :
+	// id                 | integer               |
+	// code               | character varying(10) |
+	// surface_sig        | numeric               |
+	// code_typo          | character(1)          |
+	// coupe              | character varying(20) |
+	// annee_intervention | character varying(4)  |
+	// psg_suivant        | character varying(4)  |
 	db := ctx.DB
 	var err error
 	queries := []string{
-	    `alter table ug drop column type_coupe`,
-	    `alter table ug drop column previsionnel_coupe`,
-	    `alter table ug drop column type_peuplement`,
-	    //
-	    `alter table ug add column code_typo char(1)`,
-	    `alter table ug add column coupe varchar(20)`,
-	    `alter table ug add column annee_intervention varchar(4)`,
-	    `alter table ug add column psg_suivant varchar(4)`,
-	    //
-	    `create index ug_code_typo_idx on ug(code_typo)`,
+		`alter table ug drop column type_coupe`,
+		`alter table ug drop column previsionnel_coupe`,
+		`alter table ug drop column type_peuplement`,
+		//
+		`alter table ug add column code_typo char(1)`,
+		`alter table ug add column coupe varchar(20)`,
+		`alter table ug add column annee_intervention varchar(4)`,
+		`alter table ug add column psg_suivant varchar(4)`,
+		//
+		`create index ug_code_typo_idx on ug(code_typo)`,
 	}
-	for _, query := range(queries){
-        _, err = db.Exec(query)
-        if err != nil {
-            panic(err)
-        }
+	for _, query := range queries {
+		_, err = db.Exec(query)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -165,8 +166,8 @@ func create_table_typo_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
-	
-    query = `drop table if exists typo`
+
+	query = `drop table if exists typo`
 	_, err = db.Exec(query)
 	if err != nil {
 		panic(err)
@@ -205,12 +206,14 @@ func fill_table_typo_2023_02_24(ctx *ctxt.Context) {
 	}
 }
 
-/**
+/*
+*
 
 	Remplit la table ug_essence en utilisant les ugs déjà en base (pour conserver les ids actuels)
 	Les essences sont stockées actuellement dans la colonne type_peuplement
 
-**/
+*
+*/
 func fill_table_ug_essence_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
 	var err error
@@ -296,7 +299,7 @@ func create_table_ug_essence_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
-    query = `drop table if exists ug_essence`
+	query = `drop table if exists ug_essence`
 	_, err = db.Exec(query)
 	if err != nil {
 		panic(err)
@@ -328,7 +331,7 @@ func create_table_essence_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
-    query = `drop table if exists essence`
+	query = `drop table if exists essence`
 	_, err = db.Exec(query)
 	if err != nil {
 		panic(err)

@@ -12,10 +12,10 @@
 package model
 
 import (
-//"fmt"
+// "fmt"
 )
 
 type Typo struct {
-	Code     string
-	Nom      string
+	Code string
+	Nom  string
 }

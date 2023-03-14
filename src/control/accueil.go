@@ -1,9 +1,8 @@
-/*  
-    Contrôle l'affichage de la page d'accueil.
+/*
+	    Contrôle l'affichage de la page d'accueil.
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
+		@copyright  BDL, Bois du Larzac.
+		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -22,7 +21,7 @@ import (
 
 type detailsAccueil struct {
 	Recents []*model.Recent
-	Periods                  [][2]time.Time
+	Periods [][2]time.Time
 }
 
 func Accueil(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
@@ -31,11 +30,11 @@ func Accueil(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	
+
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title: "Accueil",
-	},
+		},
 		Menu: "accueil",
 		Details: detailsAccueil{
 			Recents: recents,

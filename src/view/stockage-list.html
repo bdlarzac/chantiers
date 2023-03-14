@@ -38,15 +38,20 @@
         {{range .TasActifs}}
             <li id="tas-{{.Id}}" class="padding-bottom">
                 <a href="/humidite/new/tas/{{.Id}}">
-                    <img class="bigicon inline vertical-align-bottom"
+                    <img class="icon-humid inline"
                          src="/static/img/humid.png"
                          title="Faire une mesure d'humidité sur ce tas" />
                 </a>
                 <a class="padding-right" href="#" onclick="signalerTasVide({{.Id}}, {{.Nom}});" title="Signaler que ce tas est vide">
                     <div class="icon-empty">&empty;</div>
                 </a>
-
-                <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> - stock = <script>document.write(formatNb(round({{.Stock}}, 2)));</script> maps
+                
+                <a href="/chantier/plaquette/{{.Chantier.Id}}">{{.Nom}}</a> -
+                {{if le .Stock 10.0}}<span class="stock-presque-vide">{{end}}
+                <span class="bold">
+                    stock = <script>document.write(formatNb(round({{.Stock}}, 2)));</script> maps
+                </span>
+                {{if le .Stock 10.0}}</span>{{end}}
                 <!-- **************** Mesures humidité ********************* -->
                 {{if .MesuresHumidite}}
                     <div class="margin-left2">
@@ -66,7 +71,7 @@
                 {{if .EvolutionStock}}
                     <script>stock = 0;</script>
                     <div class="margin-left4">
-                    <div class="bold">Evolution du stock</div>
+                    <div class="bold margin-top">Evolution du stock</div>
                     <table class="bordered">
                         <tr><th>Date</th><th>Opération</th><th>Delta (maps)</th><th>Stock (maps)</th></tr>
                 {{end}}

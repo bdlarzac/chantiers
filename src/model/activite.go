@@ -1,21 +1,21 @@
 /*
 *****************************************************************************
 
-	Activité générique - Représente toute activité = entité avec une date et souvent un prix.
-	Stocké dans les tables = types d'activité concernée
-        chaufer          
-        chautre          
-        plaq             
-        plaqop           
-        plaqrange        
-        plaqtrans        
-        ventecharge      
-        ventelivre       
-        venteplaq        
+		Activité générique - Représente toute activité = entité avec une date et souvent un prix.
+		Stocké dans les tables = types d'activité concernée
+	        chaufer
+	        chautre
+	        plaq
+	        plaqop
+	        plaqrange
+	        plaqtrans
+	        ventecharge
+	        ventelivre
+	        venteplaq
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2023-03-09 14:54:36+01:00, Thierry Graff : Creation
+		@copyright  BDL, Bois du Larzac.
+		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+		@history    2023-03-09 14:54:36+01:00, Thierry Graff : Creation
 
 *******************************************************************************
 */
@@ -23,25 +23,25 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
+	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	"github.com/jmoiron/sqlx"
 )
 
 type Activite struct {
-	Id            int
-	TypeActivite  string
-	Titre         string
-	URL           string    // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
-	DateActivite  time.Time
-	PrixHT        float64
-	PUHT          float64
-	TVA           float64
-	NumFacture    string
-	DateFacture   time.Time
-	Notes         string
-    //
-    Details        interface{}
+	Id           int
+	TypeActivite string
+	Titre        string
+	URL          string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
+	DateActivite time.Time
+	PrixHT       float64
+	PUHT         float64
+	TVA          float64
+	NumFacture   string
+	DateFacture  time.Time
+	Notes        string
+	//
+	Details interface{}
 }
 
 // ************************** Nom *******************************
@@ -52,40 +52,39 @@ func (ch *Activite) String() string {
 
 // ************************** Get one *******************************
 
-/* 
-    
-*/
+/*
+ */
 func GetActivite(db *sqlx.DB, typeActivite string, idActivite int) (activ *Activite, err error) {
-    activ = &Activite{}
-    activ.TypeActivite = typeActivite
+	activ = &Activite{}
+	activ.TypeActivite = typeActivite
 	switch typeActivite {
 	case "chaufer":
-	    err = activ.computeFromChaufer(db, idActivite)
-	    break
+		err = activ.computeFromChaufer(db, idActivite)
+		break
 	case "chautre":
-	    err = activ.computeFromChautre(db, idActivite)
-	    break
-	case "plaq":   
-	    err = activ.computeFromPlaq(db, idActivite)
-	    break
+		err = activ.computeFromChautre(db, idActivite)
+		break
+	case "plaq":
+		err = activ.computeFromPlaq(db, idActivite)
+		break
 	case "plaqop":
-	    err = activ.computeFromPlaqop(db, idActivite)
-	    break
+		err = activ.computeFromPlaqop(db, idActivite)
+		break
 	case "plaqrange":
-	    err = activ.computeFromPlaqrange(db, idActivite)
-	    break
+		err = activ.computeFromPlaqrange(db, idActivite)
+		break
 	case "plaqtrans":
-	    err = activ.computeFromPlaqtrans(db, idActivite)
-	    break
+		err = activ.computeFromPlaqtrans(db, idActivite)
+		break
 	case "ventecharge":
-	    err = activ.computeFromVentecharge(db, idActivite)
-	    break
+		err = activ.computeFromVentecharge(db, idActivite)
+		break
 	case "ventelivre":
-	    err = activ.computeFromVentelivre(db, idActivite)
-	    break
+		err = activ.computeFromVentelivre(db, idActivite)
+		break
 	case "venteplaq":
-	    err = activ.computeFromVenteplaq(db, idActivite)
-	    break
+		err = activ.computeFromVenteplaq(db, idActivite)
+		break
 	}
 	if err != nil {
 		return activ, werr.Wrapf(err, "Erreur appel activ.computeFrom "+typeActivite)
@@ -94,7 +93,7 @@ func GetActivite(db *sqlx.DB, typeActivite string, idActivite int) (activ *Activ
 }
 
 func (activ *Activite) computeFromChaufer(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetChaufer(db, idActivite)
+	a, err := GetChaufer(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetChaufer()")
 	}
@@ -107,7 +106,7 @@ func (activ *Activite) computeFromChaufer(db *sqlx.DB, idActivite int) (err erro
 }
 
 func (activ *Activite) computeFromChautre(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetChautre(db, idActivite)
+	a, err := GetChautre(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetChautre()")
 	}
@@ -124,7 +123,7 @@ func (activ *Activite) computeFromChautre(db *sqlx.DB, idActivite int) (err erro
 }
 
 func (activ *Activite) computeFromPlaq(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetPlaq(db, idActivite)
+	a, err := GetPlaq(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaq()")
 	}
@@ -137,7 +136,7 @@ func (activ *Activite) computeFromPlaq(db *sqlx.DB, idActivite int) (err error) 
 }
 
 func (activ *Activite) computeFromPlaqop(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetPlaqOp(db, idActivite)
+	a, err := GetPlaqOp(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaqOp()")
 	}
@@ -152,7 +151,7 @@ func (activ *Activite) computeFromPlaqop(db *sqlx.DB, idActivite int) (err error
 }
 
 func (activ *Activite) computeFromPlaqrange(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetPlaqRange(db, idActivite)
+	a, err := GetPlaqRange(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaqRange()")
 	}
@@ -165,7 +164,7 @@ func (activ *Activite) computeFromPlaqrange(db *sqlx.DB, idActivite int) (err er
 }
 
 func (activ *Activite) computeFromPlaqtrans(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetPlaqTrans(db, idActivite)
+	a, err := GetPlaqTrans(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaqTrans()")
 	}
@@ -178,12 +177,12 @@ func (activ *Activite) computeFromPlaqtrans(db *sqlx.DB, idActivite int) (err er
 }
 
 func (activ *Activite) computeFromVentecharge(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetVenteCharge(db, idActivite)
+	a, err := GetVenteCharge(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetVenteCharge()")
 	}
 	activ.Id = a.Id
-//	activ.URL = "/vente/" + TODO 
+	//	activ.URL = "/vente/" + TODO
 	activ.Titre = "Chargement plaquette"
 	activ.URL = "/vente/" + strconv.Itoa(idActivite)
 	activ.DateActivite = a.DateCharge
@@ -192,7 +191,7 @@ func (activ *Activite) computeFromVentecharge(db *sqlx.DB, idActivite int) (err 
 }
 
 func (activ *Activite) computeFromVentelivre(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetVenteLivre(db, idActivite)
+	a, err := GetVenteLivre(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetVenteLivre()")
 	}
@@ -205,7 +204,7 @@ func (activ *Activite) computeFromVentelivre(db *sqlx.DB, idActivite int) (err e
 }
 
 func (activ *Activite) computeFromVenteplaq(db *sqlx.DB, idActivite int) (err error) {
-    a, err := GetVentePlaq(db, idActivite)
+	a, err := GetVentePlaq(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetVentePlaq()")
 	}
@@ -215,7 +214,7 @@ func (activ *Activite) computeFromVenteplaq(db *sqlx.DB, idActivite int) (err er
 	activ.DateActivite = a.DateVente
 	activ.PUHT = a.PUHT
 	activ.TVA = a.TVA
-	activ.NumFacture = a.NumFacture   
+	activ.NumFacture = a.NumFacture
 	activ.DateFacture = a.DateFacture
 	activ.Notes = a.Notes
 	return nil

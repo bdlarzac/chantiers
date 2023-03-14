@@ -20,17 +20,17 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-//"fmt"
+	// "fmt"
 )
 
 type UG struct {
-	Id                int
-	Code              string
-	SurfaceSIG        string `db:"surface_sig"`
+	Id         int
+	Code       string
+	SurfaceSIG string `db:"surface_sig"`
 	//
 	// #15 remove after execution of migration
 	//
-	TypeCoupe          string `db:"type_coupe"`         
+	TypeCoupe         string `db:"type_coupe"`
 	PrevisionnelCoupe string `db:"previsionnel_coupe"`
 	TypePeuplement    string `db:"type_peuplement"`
 	//
@@ -38,12 +38,12 @@ type UG struct {
 	//
 	// new #15
 	//
-    CodeTypo          string `db:"code_typo"`
-    Coupe             string `db:"coupe"`
-    AnneeIntervention string `db:"annee_intervention"`
-    PSGSuivant        string `db:"psg_suivant"`
+	CodeTypo          string `db:"code_typo"`
+	Coupe             string `db:"coupe"`
+	AnneeIntervention string `db:"annee_intervention"`
+	PSGSuivant        string `db:"psg_suivant"`
 	// pas stocké en base
-	NomTypo           string
+	NomTypo string
 	//
 	// end new #15
 	//
@@ -382,7 +382,6 @@ func (ug *UG) ComputeTypo(db *sqlx.DB) error {
 	}
 	return nil
 }
-
 
 // ************************** Recap *******************************
 

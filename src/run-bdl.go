@@ -20,12 +20,12 @@ import (
 	"bdl.local/bdl/static"
 	"bdl.local/bdl/view"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"mime"
-	"time"
 	"net/http"
 	"path/filepath"
-	"github.com/gorilla/mux"
+	"time"
 )
 
 // *********************************************************

@@ -100,11 +100,18 @@ h1{padding-left:1rem;}
     display:inline-block;
     padding:0 2px;
     border:2px solid grey;
+    position:relative; top:-6px;
 }
+.icon-humid{
+    border:2px solid grey;
+    padding:2px;
+    background:white;
+}
+.stock-presque-vide{background:#de861c; padding:2px;}
 .icon-euro{
     font-size:1.5rem;
-    padding: 0 .5rem;
-    border:1px solid black;
+    padding: 1px .5rem;
+    border:2px solid black;
     color:white;
     background:grey;
     font-weight:lighter;
@@ -128,6 +135,7 @@ h1{padding-left:1rem;}
 }
 .bigicon.inline{display:inline;}
 .bigicon.inline-block{display:inline-block;}
+.verybigicon.inline-block{display:inline-block;}
 .smallicon{
     border:2px solid grey;
     padding:3px;

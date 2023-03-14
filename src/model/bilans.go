@@ -20,29 +20,30 @@ import (
 )
 
 /*
-    Structure de données adaptée au bilan par valorisation et par essence
-    Normalement, aurait dû être :
-    type Valorisation map[string]map[string][2]float64
-        "BO":
-            "CH": {<volume>, <chiffe affaire>}
-    
-    mais pas été foutu de faire fonctionner ça, donc fait une map du style :
-    "BO-CH-vol": <volume>,
-    "BO-CH-ca": <chiffe affaire>
+Structure de données adaptée au bilan par valorisation et par essence
+Normalement, aurait dû être :
+type Valorisation map[string]map[string][2]float64
+
+	"BO":
+	    "CH": {<volume>, <chiffe affaire>}
+
+mais pas été foutu de faire fonctionner ça, donc fait une map du style :
+"BO-CH-vol": <volume>,
+"BO-CH-ca": <chiffe affaire>
 */
 type Valorisations map[string]float64
 
 /*
-    Renvoie un tableau contenant les dates de début / fin des "saisons"
-    Les saisons encadrent tous les chantiers stockés en base.
-    Une saison dure un an.
-    
-    @param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
-    
-    @return
-      - un tableau de 2 time.Time avec les dates limites des saisons
-      - un bool indiquant s'il existe des chantiers en base
-      - une erreur éventuelle
+Renvoie un tableau contenant les dates de début / fin des "saisons"
+Les saisons encadrent tous les chantiers stockés en base.
+Une saison dure un an.
+
+@param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
+
+@return
+  - un tableau de 2 time.Time avec les dates limites des saisons
+  - un bool indiquant s'il existe des chantiers en base
+  - une erreur éventuelle
 */
 func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bool, error) {
 	// retour
