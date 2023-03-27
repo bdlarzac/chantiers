@@ -2,20 +2,42 @@
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
-<h1>
-    Stockage plaquettes
-    <a class="padding-left" href="/stockage/new">
-        <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau lieu de stockage"/>
-    </a>
-</h1>
+<div class="float-left">
+    <h1>
+        Stockage plaquettes
+        <a class="padding-left" href="/stockage/new">
+            <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau lieu de stockage"/>
+        </a>
+    </h1>
+</div>
 
+<div class="float-left margin-left2 margin-top">
+    <script>
+        let stock_total = 0;
+    </script>
+    <table>
+        {{range .Details.Actifs}}
+            <tr>
+                <td>{{.Nom}}</td>
+                <td class="padding-left"><script>document.write(formatNb(round({{.Stock}}, 2)));</script> maps</div></td>
+            </tr>
+            <script>stock_total += {{.Stock}};</script>
+        {{end}}
+            <tr>
+                <td class="bold">Total</td>
+                <td class="bold padding-left"><script>document.write(formatNb(round(stock_total, 2)));</script> maps</div></td>
+            </tr>
+    </table>
+</div>
+
+<br class="clear-left">
 <script>
     let stock = 0;
 </script>
 
 <!-- ********************************** Stockages actifs ************************************* -->
 {{range .Details.Actifs}}
-    <hr>
+    <hr><hr>
     {{$idStockage := .Id}}
     <h2 id="stockage-{{$idStockage}}">
         {{.Nom}}
