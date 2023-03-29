@@ -3,8 +3,8 @@
 
 create or replace view view_qgis_chautre as
     select
-        ch.titre                    as titre,
         c.codeinsee||p.code         as code_parcelle11,
+        ch.titre                    as titre,
         ch.essence                  as essence,
         ch.datecontrat              as date,
         ch.volumerealise            as quantite,
