@@ -1,5 +1,5 @@
 /*
-	    Contrôle l'affichage de la page d'accueil.
+	    Contrôle l'affichage de la page d'accueil et des pages générales (menu accueil).
 
 		@copyright  BDL, Bois du Larzac.
 		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -121,4 +121,23 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Details: zipfilename,
 	}
 	return nil
+}
+
+/* 
+    Demande de recalculer la table qgis_export
+*/
+func MajQGis(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+    err := model.QGisUpdate(ctx.DB)
+	if err != nil {
+		return err
+	}
+	//
+	ctx.TemplateName = "qgis-update.html"
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title: "Mise à jour pour QGis",
+		},
+		Menu:    "accueil",
+	}
+    return nil
 }
