@@ -74,6 +74,8 @@ func main() {
 		// le nom de la fonction est suivi du numéro d'issue sur github
 	case "Migrate_2023_02_24_details_ug__15":
 		Migrate_2023_02_24_details_ug__15(ctx)
+	case "Migrate_2023_04_03_role_acteur__16":
+		Migrate_2023_04_03_role_acteur__16(ctx)
 	}
 
 }

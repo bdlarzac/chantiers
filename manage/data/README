@@ -1,9 +1,12 @@
 
-Données servant à fabriquer la première base de prod
-Données "stables", ne dépendant pas de la version de la base SCTL
+Données servant à fabriquer la première base de prod, puis par certaines migrations.
+Données "stables", ne dépendant pas de la version de la base SCTL.
 
-- ug.csv
-    Issu du PSG. Doit être remplacé à chaque modification du PSG
 - commune.csv
     Diffère de l'export mdb (ajout de la colonne nom_court)
-
+- essence.csv
+    Normalement stable - à modifier si modification lors d'un changement de PSG
+- typo.csv
+    Normalement stable - à modifier si modification lors d'un changement de PSG
+- ug.csv
+    Issu du PSG. Doit être remplacé à chaque modification du PSG

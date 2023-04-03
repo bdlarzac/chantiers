@@ -14,3 +14,5 @@ Lancer l'exécution en utilisant des variables d'environnement et en utilisant *
 
 ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run *.go
 
+Ex avec le nom de la migration :
+ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run *.go Migrate_2023_04_03_role_acteur__16
