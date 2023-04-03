@@ -27,6 +27,12 @@
 .grid2-form label.normal{
     font-weight:normal;
 }
+.grid2-form label.left{
+    text-align:left;
+}
+.grid2-form.normal{
+    font-weight:normal;
+}
 
 .big-button{
     margin-top:1rem;

@@ -17,15 +17,13 @@
 package main
 
 import (
-//	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
-//	"bdl.local/bdl/model"
 	"fmt"
 )
 
 func Migrate_2023_04_03_role_acteur__16(ctx *ctxt.Context) {
-//	create_table_role_2023_04_03(ctx)
-//	create_table_role_acteur_2023_04_03(ctx)
+	create_table_role_2023_04_03(ctx)
+	create_table_acteur_role_2023_04_03(ctx)
 	fill_table_role_2023_04_03(ctx)
 	fmt.Println("Migration effectuée : 2023-04-03-role-acteur--16")
 }
@@ -67,6 +65,7 @@ func fill_table_role_2023_04_03(ctx *ctxt.Context) {
         "DIV-MH": "Mesureur d'humidité",
         "DIV-PF": "Propriétaire foncier",
         "DIV-FO": "Fournisseur de plaquettes",
+        "FER-BC": "Fermier bois de chauffage",
 	}
 	//
 	stmt, err := db.Prepare("insert into role(code, nom) values($1,$2)")
@@ -83,18 +82,18 @@ func fill_table_role_2023_04_03(ctx *ctxt.Context) {
 	}
 }
 
-func create_table_role_acteur_2023_04_03(ctx *ctxt.Context) {
+func create_table_acteur_role_2023_04_03(ctx *ctxt.Context) {
 	db := ctx.DB
 	var query string
 	var err error
 	//
-	query = `drop table if exists role_acteur`
+	query = `drop table if exists acteur_role`
 	_, err = db.Exec(query)
 	if err != nil {
 		panic(err)
 	}
 	query = `
-        create table role_acteur (
+        create table acteur_role (
             id_acteur             int not null references acteur(id),
             code_role             char(6) not null references role(code),
             primary key(id_acteur, code_role)
@@ -105,13 +104,13 @@ func create_table_role_acteur_2023_04_03(ctx *ctxt.Context) {
 		panic(err)
 	}
 	//
-	query = `CREATE INDEX role_acteur_acteur_idx ON role_acteur(id_acteur);`
+	query = `CREATE INDEX acteur_role_acteur_idx ON acteur_role(id_acteur);`
 	_, err = db.Exec(query)
 	if err != nil {
 		panic(err)
 	}
 	//
-	query = `CREATE INDEX role_acteur_role_idx ON role_acteur(code_role);`
+	query = `CREATE INDEX acteur_role_role_idx ON acteur_role(code_role);`
 	_, err = db.Exec(query)
 	if err != nil {
 		panic(err)

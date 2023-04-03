@@ -1,19 +1,17 @@
 /*
-*
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
 */
 package control
 
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
-	"net/http"
 	"strconv"
+	"strings"
+	"net/http"
+	"github.com/gorilla/mux"
 )
 
 type detailsActeurList struct {
@@ -174,7 +172,7 @@ func UpdateActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		acteur, err := model.GetActeur(ctx.DB, id)
+		acteur, err := model.GetActeurFull(ctx.DB, id)
 		if err != nil {
 			return err
 		}
@@ -222,8 +220,13 @@ func acteurForm2var(r *http.Request) (*model.Acteur, error) {
 	if err = r.ParseForm(); err != nil {
 		return acteur, err
 	}
-	//fmt.Printf("%+v\n",r.PostForm)
 	acteur.Nom = r.PostFormValue("nom")
+	//
+	tmp := strings.Split(r.PostFormValue("codes-roles"), ";")
+	for _, str := range tmp {
+		acteur.CodesRoles = append(acteur.CodesRoles, str)
+	}
+	//
 	acteur.Prenom = r.PostFormValue("prenom")
 	acteur.Adresse1 = r.PostFormValue("adresse1")
 	acteur.Adresse2 = r.PostFormValue("adresse2")

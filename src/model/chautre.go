@@ -82,13 +82,15 @@ func GetChautre(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	return ch, nil
 }
 
-// Renvoie un chantier autres valorisations contenant :
-//   - les données stockées dans la table
-//   - Acheteur
-//   - les UGs
-//   - les parcelles
-//   - les lieux-dits
-//   - les fermiers
+/* 
+    Renvoie un chantier autres valorisations contenant :
+      - les données stockées dans la table
+      - Acheteur
+      - les UGs
+      - les parcelles
+      - les lieux-dits
+      - les fermiers
+*/
 func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	ch, err := GetChautre(db, idChantier)
 	if err != nil {
@@ -121,8 +123,10 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 	return ch, nil
 }
 
-// Renvoie la liste des années ayant des chantiers autres valorisations,
-// @param exclude   Année à exclure du résultat
+/* 
+    Renvoie la liste des années ayant des chantiers autres valorisations,
+    @param exclude   Année à exclure du résultat
+*/
 func GetChautreDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	res := []string{}
 	list := []time.Time{}
@@ -140,9 +144,11 @@ func GetChautreDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	return res, nil
 }
 
-// Renvoie la liste des chantiers autres valorisations pour une année donnée,
-// triés par ordre chronologique inverse.
-// Chaque chantier contient les mêmes champs que ceux renvoyés par GetChautreFull()
+/* 
+    Renvoie la liste des chantiers autres valorisations pour une année donnée,
+    triés par ordre chronologique inverse.
+    Chaque chantier contient les mêmes champs que ceux renvoyés par GetChautreFull()
+*/
 func GetChautresOfYear(db *sqlx.DB, annee string) ([]*Chautre, error) {
 	res := []*Chautre{}
 	type ligne struct {
@@ -169,7 +175,7 @@ func GetChautresOfYear(db *sqlx.DB, annee string) ([]*Chautre, error) {
 
 func (ch *Chautre) ComputeAcheteur(db *sqlx.DB) error {
 	if ch.Acheteur != nil {
-		return nil
+		return nil // déjà calculé
 	}
 	var err error
 	ch.Acheteur, err = GetActeur(db, ch.IdAcheteur)
@@ -192,7 +198,7 @@ func (ch *Chautre) ComputeUGs(db *sqlx.DB) (err error) {
 
 func (ch *Chautre) ComputeLiensParcelles(db *sqlx.DB) (err error) {
 	if len(ch.LiensParcelles) != 0 {
-		return nil
+		return nil // déjà calculé
 	}
 	ch.LiensParcelles, err = computeLiensParcellesOfChantier(db, "chautre", ch.Id)
 	if err != nil {

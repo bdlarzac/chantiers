@@ -21,15 +21,11 @@ import (
 )
 
 /*
-*
-
 	Calcule les ids ug à partir des champs d'un formulaire chantier
 	Utilisé par
 	    NewPlaq()    UpdatePlaq()
 	    NewChautre() UpdateChautre()
 	    NewChaufer() UpdateChaufer()
-
-*
 */
 func form2IdsUG(r *http.Request) (ids []int) {
 	var tmp []string
@@ -45,15 +41,11 @@ func form2IdsUG(r *http.Request) (ids []int) {
 }
 
 /*
-*
-
 	Calcule les ids lieudit à partir des champs d'un formulaire chantier
 	Utilisé par
 	    NewPlaq()    UpdatePlaq()
 	    NewChautre() UpdateChautre()
 	    NewChaufer() UpdateChaufer()
-
-*
 */
 func form2IdsLieudit(r *http.Request) (ids []int) {
 	var tmp []string
@@ -69,14 +61,10 @@ func form2IdsLieudit(r *http.Request) (ids []int) {
 }
 
 /*
-*
-
 	Calcule les ids fermier à partir des champs d'un formulaire chantier
 	Utilisé par
 	    NewPlaq()    UpdatePlaq()
 	    NewChautre() UpdateChautre()
-
-*
 */
 func form2IdsFermier(r *http.Request) (ids []int) {
 	var tmp []string
@@ -92,12 +80,8 @@ func form2IdsFermier(r *http.Request) (ids []int) {
 }
 
 /*
-*
-
 	Utilise la variable liens-parcelles pour calculer les model.ChantierParcelle
 	ex de liens-parcelles : [1025:entiere;1239:surface-0.10]
-
-*
 */
 func form2LienParcelles(r *http.Request) (result []*model.ChantierParcelle) {
 	result = []*model.ChantierParcelle{}
@@ -124,60 +108,4 @@ func form2LienParcelles(r *http.Request) (result []*model.ChantierParcelle) {
 		result = append(result, &newChantierParcelle)
 	}
 	return result
-}
-
-/*
-*
-
-	================= A SUPPRIMER lorsque les controlers utilisent form2*() =================
-	Utilisé par
-	    NewPlaq()    UpdatePlaq()
-	    NewChautre() UpdateChautre()
-
-*
-*/
-func calculeIdsLiensChantier(r *http.Request) (idsUGs, idsParcelles, idsLieudits, idsFermiers []int, err error) {
-	rien := []int{}
-	var tmp []string
-	var str string
-	var id int
-	//
-	tmp = strings.Split(r.PostFormValue("ids-ugs"), ",")
-	for _, str = range tmp {
-		id, err = strconv.Atoi(str)
-		if err != nil {
-			return rien, rien, rien, rien, err
-		}
-		idsUGs = append(idsUGs, id)
-	}
-	//
-	tmp = strings.Split(r.PostFormValue("liens-parcelles"), ",")
-	/*
-		for _, str = range tmp {
-			id, err = strconv.Atoi(str)
-			if err != nil {
-				return rien, rien, rien, rien, err
-			}
-			idsParcelles = append(idsParcelles, id)
-		}
-	*/
-	//
-	tmp = strings.Split(r.PostFormValue("ids-lieudits"), ",")
-	for _, str = range tmp {
-		id, err = strconv.Atoi(str)
-		if err != nil {
-			return rien, rien, rien, rien, err
-		}
-		idsLieudits = append(idsLieudits, id)
-	}
-	//
-	tmp = strings.Split(r.PostFormValue("ids-fermiers"), ",")
-	for _, str = range tmp {
-		id, err = strconv.Atoi(str)
-		if err != nil {
-			return rien, rien, rien, rien, err
-		}
-		idsFermiers = append(idsFermiers, id)
-	}
-	return idsUGs, idsParcelles, idsLieudits, idsFermiers, nil
 }

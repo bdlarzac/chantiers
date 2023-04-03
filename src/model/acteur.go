@@ -13,11 +13,11 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
-	"github.com/jmoiron/sqlx"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+	"github.com/jmoiron/sqlx"
 )
 
 // valeur du champ id
@@ -30,6 +30,7 @@ const ID_GFA = 3
 type Acteur struct {
 	Id           int
 	Nom          string
+	CodesRoles   []string
 	Prenom       string
 	Adresse1     string
 	Adresse2     string
@@ -102,10 +103,24 @@ func GetActeur(db *sqlx.DB, id int) (a *Acteur, err error) {
 	return a, err
 }
 
+/* 
+    Renvoie un acteur avec les codes de ses rôles
+*/
+func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
+    a, err = GetActeur(db, id)
+	if err != nil {
+		return nil, werr.Wrapf(err, "Erreur Appel GetActeur()")
+	}
+	a.ComputeCodesRoles(db)
+	return a, nil
+}
+
 // ************************** Get many *******************************
 
-// Renvoie une liste d'Acteurs triés en utilisant un champ de la table
-// @param field    Champ de la table acteur utilisé pour le tri
+/* 
+    Renvoie une liste d'Acteurs triés en utilisant un champ de la table
+    @param field    Champ de la table acteur utilisé pour le tri
+*/
 func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := "select * from acteur where id<>0 order by " + field
@@ -116,10 +131,12 @@ func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) 
 	return acteurs, nil
 }
 
-// Renvoie les Acteurs dont le champ Fournisseur = true
-// ( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
+/* 
+    Renvoie les Acteurs dont le champ Fournisseur = true
+    ( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
+    Ne contient que les champs de la table acteur.
+    Les autres champs ne sont pas remplis.
+*/
 func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := "select * from acteur where fournisseur"
@@ -130,9 +147,11 @@ func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	return acteurs, nil
 }
 
-// Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
-// Ne contient que les champs de la table acteur.
-// Les autres champs ne sont pas remplis.
+/* 
+    Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
+    Ne contient que les champs de la table acteur.
+    Les autres champs ne sont pas remplis.
+*/
 func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := `select * from acteur where id in(
@@ -145,7 +164,9 @@ func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	return acteurs, nil
 }
 
-// Utilisé pour construire html datalist
+/*
+    Utilisé pour construire html datalist
+*/
 func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}
 	acteurs := []*Acteur{}
@@ -160,7 +181,9 @@ func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 	return res, nil
 }
 
-// Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
+/* 
+    Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
+*/
 func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}
 	acteurs := []*Acteur{}
@@ -175,11 +198,29 @@ func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 	return res, nil
 }
 
+
+// ************************** Compute *******************************
+
+func (a *Acteur) ComputeCodesRoles(db *sqlx.DB) (err error) {
+    if len(a.CodesRoles) != 0 {
+        return nil // déjà calculé
+    }
+	query := `select code_role from acteur_role where id_acteur=$1`
+	err = db.Select(&a.CodesRoles, query, a.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	return nil
+
+}
+
 // ************************** Get activité *******************************
 
-// Renvoie les activités auxquelles un acteur a participé.
-// Ordre chronologique inverse
-// Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
+/* 
+    Renvoie les activités auxquelles un acteur a participé.
+    Ordre chronologique inverse
+    Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
+*/
 func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err error) {
 	res = []*ActeurActivite{}
 	var query string
@@ -646,6 +687,10 @@ func InsertActeur(db *sqlx.DB, acteur *Acteur) (id int, err error) {
 	if err != nil {
 		return 0, werr.Wrapf(err, "Erreur query : "+query)
 	}
+	err = insertLiensActeurRole(db, id, acteur.CodesRoles)
+	if err != nil {
+		return id, werr.Wrapf(err, "Erreur appel insertLiensActeurRole()")
+	}
 	return id, nil
 }
 
@@ -690,6 +735,10 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) (err error) {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+	err = updateLiensActeurRole(db, acteur.Id, acteur.CodesRoles)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel updateLiensActeurRole()")
+	}
 	return nil
 }
 
@@ -701,5 +750,49 @@ func DeleteActeur(db *sqlx.DB, id int) (err error) {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
+	err = deleteLiensActeurRole(db, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel deleteLiensActeurRole()")
+	}
 	return nil
 }
+
+// Fonctions auxiliares de InsertActeur(), UpdateActeur() et DeleteActeur()
+
+func insertLiensActeurRole(db *sqlx.DB, idActeur int, codesRoles []string) (err error) {
+	query := "insert into acteur_role values($1,$2)"
+	for _, code := range codesRoles {
+		_, err = db.Exec(
+			query,
+			idActeur,
+			code)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur query : "+query)
+		}
+	}
+	return nil
+}
+
+func deleteLiensActeurRole(db *sqlx.DB, idActeur int) (err error) {
+	query := "delete from acteur_role where id_acteur=$1"
+	_, err = db.Exec(query, idActeur)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+func updateLiensActeurRole(db *sqlx.DB, idActeur int, codesRoles []string) (err error) {
+	err = deleteLiensActeurRole(db, idActeur)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel deleteLiensActeurRole() à partir de updateLiensActeurRole()")
+	}
+	//
+	err = insertLiensActeurRole(db, idActeur, codesRoles)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel insertLiensActeurRole() à partir de updateLiensActeurRole()")
+	}
+	return nil
+}
+
+

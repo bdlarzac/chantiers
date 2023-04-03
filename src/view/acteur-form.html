@@ -13,6 +13,139 @@
         <label for="nom">Nom / Dénomination</label>
         <input type="text" name="nom" id="nom" value="{{.Nom}}">
         
+        <label for="roles">Roles</label>
+        <table>
+            <tr>
+                <td class="vertical-align-top">
+                    <fieldset class="block bold">
+                        <legend>Clients</legend>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="VPL-CL" name="VPL-CL">
+                            Client plaquettes
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="AVC-PP" name="AVC-PP">
+                            Client pâte à papier
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="AVC-CH" name="AVC-CH">
+                            Client bois de chauffage
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="AVC-PL" name="AVC-PL">
+                            Client palettes
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="AVC-PI" name="AVC-PI">
+                            Client piquets
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="AVC-BO" name="AVC-BO">
+                            Client bois d'oeuvre
+                        </label>
+                    </fieldset>
+                    <fieldset class="block bold margin-top">
+                        <legend>Divers</legend>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="DIV-MH" name="DIV-MH">
+                            Mesureur d'humidité
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="DIV-PF" name="DIV-PF">
+                            Propriétaire foncier
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="DIV-FO" name="DIV-FO">
+                            Fournisseur de plaquettes
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="FER-BC" name="FER-BC">
+                            Fermier bois de chauffage
+                            <div class="padding-left2">(non facturé)</div>
+                        </label>
+                    </fieldset>
+                </td>
+                <td class="vertical-align-top">
+                    <fieldset class="block bold">
+                        <legend>Chantier plaquettes</legend>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLA-AB" name="PLA-AB">
+                            Abatteur (bûcheron)
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLA-DB" name="PLA-DB">
+                            Débardeur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLA-DC" name="PLA-DC">
+                            Déchiqueteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLA-BR" name="PLA-BR">
+                            Broyeur
+                        </label>
+                        <div class="bold padding-top05">Transport</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLT-TR" name="PLT-TR">
+                            Transporteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLT-CO" name="PLT-CO">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLT-PO" name="PLT-PO">
+                            Propriétaire outil
+                        </label>
+                        <div class="bold padding-top05">Rangement</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLR-RG" name="PLR-RG">
+                            Rangeur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLR-CO" name="PLR-CO">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="PLR-PO" name="PLR-PO">
+                            Propriétaire outil
+                        </label>
+                    </fieldset>
+                </td>
+                <td class="vertical-align-top">
+                    <fieldset class="block bold">
+                        <legend>Vente plaquettes</legend>
+                        <div class="bold">Chargement</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="VPC-CH" name="VPC-CH">
+                            Chargeur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="VPC-CO" name="VPC-CO">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="VPC-PO" name="VPC-PO">
+                            Propriétaire outil
+                        </label>
+                        <div class="bold padding-top05">Livraison</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="VPL-LI" name="VPL-LI">
+                            Livreur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="VPL-CO" name="VPL-CO">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" id="VPL-PO" name="VPL-PO">
+                            Propriétaire outil
+                        </label>
+                    </fieldset>
+                </td>
+            </tr>
+        </table>
+        
         <label class="optional" for="prenom">Prénom / Statut juridique</label>
         <input type="text" name="prenom" id="prenom" value="{{.Prenom}}">
         
@@ -77,6 +210,7 @@
     </div>
     
     <input type="hidden" name="id" id="id" value="{{.Id}}">
+    <input type="hidden" name="codes-roles" id="codes-roles" value="">
     
 </form>
 
@@ -104,18 +238,49 @@
 
 
 <script>
+window.addEventListener("load", function(){
+    initialize();
+});
+
+function initialize(){
+    {{range .CodesRoles}}
+        document.getElementById("{{.}}").checked = true;
+    {{end}}
+}
 
 function validateForm(){
     let msg = "";
     if(document.getElementById("nom").value.trim() == ""){
         msg += "- Vous devez renseigner le nom.\n";
     }
+    // on laisse la possibilité de créer un client sans rôle
+    fillCodesRoles();
     if(msg != ""){
         alert("Impossible de valider ce formulaire : \n" + msg);
         return false;
     }
     return true;
 }
+
+/** 
+    Remplit l'attribut value de l'élément "codes-roles" (input type="hidden") :
+    Cette value est de la forme : "VPL-LI;PLR-PO;DIV-MH"
+**/
+function fillCodesRoles(){
+    let msg = "";
+    const hiddenValues = []; // tableau pour fabriquer value du hidden field
+    //
+    document.getElementById("codes-roles").value = ""; // réinitialise le hidden field
+    //
+    for(element of document.getElementsByClassName("chk-role")){
+        if(element.checked){
+            hiddenValues.push(element.getAttribute("id"));
+        }
+    }
+    document.getElementById("codes-roles").value = hiddenValues.join(";");
+}
+
+
 </script>
 
 {{end}}
