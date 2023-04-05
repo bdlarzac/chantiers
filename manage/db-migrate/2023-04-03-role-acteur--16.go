@@ -38,23 +38,23 @@ func fill_table_role_2023_04_03(ctx *ctxt.Context) {
         "PLA-DC": "Déchiqueteur",
         "PLA-BR": "Broyeur",
         // Chantier plaquettes, transport :
-        "PLT-TR": "Transporteur",
-        "PLT-CO": "Conducteur",
-        "PLT-PO": "Propriétaire outil",
+        "PLT-TR": "Transporteur PF",
+        "PLT-CO": "Conducteur transport PF",
+        "PLT-PO": "Propriétaire outil transport PF",
         // Chantier plaquettes, rangement :
-        "PLR-RG": "Rangeur",
-        "PLR-CO": "Conducteur",
-        "PLR-PO": "Propriétaire outil",
+        "PLR-RG": "Rangeur PF",
+        "PLR-CO": "Conducteur rangement PF",
+        "PLR-PO": "Propriétaire outil rangement PF",
         // Vente plaquettes :
-        "VPL-CL": "Client plaquette",
+        "VPL-CL": "Client PF",
         // Vente plaquettes, chargement :
-        "VPC-CH": "Chargeur",
-        "VPC-CO": "Conducteur",
-        "VPC-PO": "Propriétaire outil",
+        "VPC-CH": "Chargeur PF",
+        "VPC-CO": "Conducteur chargement PF",
+        "VPC-PO": "Propriétaire outil chargement PF",
         // Vente plaquettes, livraison
-        "VPL-LI": "Livreur",
-        "VPL-CO": "Conducteur",
-        "VPL-PO": "Propriétaire outil",
+        "VPL-LI": "Livreur PF",
+        "VPL-CO": "Conducteur livraison PF",
+        "VPL-PO": "Propriétaire outil livraison PF",
         // Chantier autres valorisations
         "AVC-PP": "Client pâte à papier",
         "AVC-CH": "Client bois de chauffage",

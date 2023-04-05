@@ -20,7 +20,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// valeur du champ id
+// valeurs du champ id
 // déterminés à la création de la base
 // voir manage/db-install/acteur.go
 const ID_SCTL = 1
@@ -119,12 +119,16 @@ func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
 
 /* 
     Renvoie une liste d'Acteurs triés en utilisant un champ de la table
+    (sert pour url /acteur/liste)
     @param field    Champ de la table acteur utilisé pour le tri
 */
 func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := "select * from acteur where id<>0 order by " + field
 	err = db.Select(&acteurs, query)
+	for _, acteur := range(acteurs) {
+	    acteur.ComputeCodesRoles(db)
+	}
 	if err != nil {
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -757,7 +761,9 @@ func DeleteActeur(db *sqlx.DB, id int) (err error) {
 	return nil
 }
 
+//
 // Fonctions auxiliares de InsertActeur(), UpdateActeur() et DeleteActeur()
+//
 
 func insertLiensActeurRole(db *sqlx.DB, idActeur int, codesRoles []string) (err error) {
 	query := "insert into acteur_role values($1,$2)"
@@ -788,11 +794,10 @@ func updateLiensActeurRole(db *sqlx.DB, idActeur int, codesRoles []string) (err 
 		return werr.Wrapf(err, "Erreur appel deleteLiensActeurRole() à partir de updateLiensActeurRole()")
 	}
 	//
-	err = insertLiensActeurRole(db, idActeur, codesRoles)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel insertLiensActeurRole() à partir de updateLiensActeurRole()")
-	}
+    err = insertLiensActeurRole(db, idActeur, codesRoles)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel insertLiensActeurRole() à partir de updateLiensActeurRole()")
+    }
+    //
 	return nil
 }
-
-

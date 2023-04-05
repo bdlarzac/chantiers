@@ -21,6 +21,15 @@
     
 </h1>
 
+{{if $.Details.Acteur.CodesRoles}}
+    <div class="margin-left margin-bottom">
+        <b>Rôles :</b>
+        {{range $.Details.Acteur.CodesRoles}}
+            <span class="margin-right">{{index $.Details.RolesMap .}}</span>
+        {{end}}
+    </div>
+{{end}}
+
 <div class="page-content">
 
 <div class="flex-wrap">

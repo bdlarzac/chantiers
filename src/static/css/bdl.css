@@ -176,6 +176,10 @@ h1{padding-left:1rem;}
     background:lightgreen;
 }
 
+.order{
+    color:blue;
+}
+
 /* ================ A nettoyer / classer ================ */
 
 /* 2 columns, to present results */

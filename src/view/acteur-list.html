@@ -13,51 +13,59 @@
 <div class="big3 padding-left">{{.Details.Count}} acteurs</div>
 
 <table class="entities">
-<tr>
-    <th></th>
-    <th>Nom</th>         
-    <th>Adresse</th>    
-    <th>Tel / email</th>          
-    <th>Actif</th>       
-    <th>Notes</th>
-</tr>
+<thead>
+    <tr>
+        <th></th>
+        <th class="order">Nom</th>
+        <th>Rôle(s)</th>
+        <th>Détails</th>
+        <th>Notes</th>
+        <th class="order">Actif</th>
+    </tr>
+</thead>
 
-{{range .Details.List}}
-<tr>
-    <td class="whitespace-nowrap">
-        {{/* Exclure acteurs BDL, SCL, GFA */}}
-        {{if(not (le .Id 3))}}
-            <a href="/affacture/form/{{.Id}}">
-                <span class="icon-euro-small" title="Payer cet acteur">&euro;</span>
-            </a>
-            <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
-                <img src="../static/img/delete.png" alt="Supprimer cet acteur">
-            </a>
-            <a href="/acteur/update/{{.Id}}">
-                <img src="../static/img/update.png" alt="Modifier cet acteur">
-            </a>
+<tbody>
+    {{range .Details.List}}
+    <tr>
+        <td class="whitespace-nowrap">
+            {{/* Exclure acteurs BDL, SCL, GFA */}}
+            {{if(not (le .Id 3))}}
+                <a href="/affacture/form/{{.Id}}">
+                    <span class="icon-euro-small" title="Payer cet acteur">&euro;</span>
+                </a>
+                <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
+                    <img src="../static/img/delete.png" alt="Supprimer cet acteur">
+                </a>
+                <a href="/acteur/update/{{.Id}}">
+                    <img src="../static/img/update.png" alt="Modifier cet acteur">
+                </a>
+            {{end}}
+        </td>
+        <td><a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>
+        <td class="whitespace-nowrap">
+            {{range .CodesRoles}}
+                <div>{{index $.Details.RolesMap .}}</div>
+            {{end}}
+        </td>
+        <td>
+            {{/* <details open> */}}
+                {{/* <summary></summary> */}}
+                {{if .Adresse1}}<div class="whitespace-nowrap">{{.Adresse1}}</div>{{end}}
+                {{if .Adresse2}}<div class="whitespace-nowrap">{{.Adresse2}}</div>{{end}}
+                {{if or .Cp .Ville}}<div class="whitespace-nowrap">{{.Cp}} {{.Ville}}</div>{{end}}
+                {{if .Tel}}<div class="whitespace-nowrap">{{.Tel}}</div>{{end}}
+                {{if .Email}}<div class="whitespace-nowrap">{{.Email}}</div>{{end}}
+            {{/* </details> */}}
+        </td>
+        <td>{{.Notes}}</td>
+        {{if .Actif}}
+            <td class="ok center">oui</td>
+        {{else}}
+            <td class="nok center">non</td>
         {{end}}
-    </td>
-    <td><a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>
-    <td>
-        {{.Adresse1}}
-        {{if .Adresse2}}<br>{{.Adresse2}}{{end}}
-        {{if or .Cp .Ville}}<br>{{.Cp}} {{.Ville}}{{end}}
-    </td>
-    <td>
-        {{.Tel}}
-        {{if and .Tel .Email}}<br>{{end}}
-        {{if .Email}}{{.Email}}{{end}}
-    </td>
-    {{if .Actif}}
-        <td class="ok">oui</td>
-    {{else}}
-        <td class="nok">non</td>
+    </tr>
     {{end}}
-    <td>{{.Notes}}</td>
-</tr>
-{{end}}
-
+</tbody>
 </table>
 
 <script>
