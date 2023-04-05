@@ -1,0 +1,119 @@
+{{/* 
+    Formulaire de choix d'une ou plusieurs essences.
+    Cette template doit être appelée avec une variable go contenant un champ EssencesMap.
+    Utilisation :
+        <script>
+            choixEssence = new ChoixEssence('choix-essence');
+            choixEssence.display();
+            choixEssence.initialize();
+        </script>
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+
+<style>
+    .link{
+        cursor:pointer;
+        color:blue;
+    }
+</style>
+
+<script>
+
+class ChoixEssence{
+    
+    #html;
+    
+    #baseId;
+    
+    /** 
+        @param  baseId String - Unique id of this component within the page.
+    **/
+    constructor(baseId){
+        //
+        this.#baseId = baseId;
+        //
+        this.#html = `
+        <fieldset class="choix-essence">
+            <legend>Essences</legend>
+            <details open>
+                <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                ${this.#buildCheckboxes()}
+                <div class="margin-top05">
+                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixEssence_toutSelectionner(); choixEssence_choixChanged('${this.#baseId}');">Toutes</a>
+                    <a class="link" id="aucun" onclick="choixEssence_rienSelectionner(); choixEssence_choixChanged('${this.#baseId}');">Aucune</a>
+                </div>
+            </details>
+        </fieldset>
+        `;
+    } // end constructor
+    
+    #buildCheckboxes(){
+        let res = '';
+        {{ range $code, $label := .EssencesMap }}
+            res += '<label class="block">'
+                + `<input class="chk-essence" type="checkbox" id="essence-{{$code}}" name="essence-{{$code}}" onchange="choixEssence_choixChanged('${this.#baseId}');">`
+                + '{{$label}}'
+                + '</label>';
+        {{end}}
+        return res;
+    }
+    
+    
+    display(){
+        document.write(this.#html);
+    }
+    
+    initialize(){
+        choixEssence_toutSelectionner();
+        choixEssence_choixChanged(this.#baseId);
+    }
+
+} // end class
+
+function choixEssence_choixChanged(baseId){
+    // update summary string
+    let tous = true;
+    const checkedElements = [];
+    const elements = document.getElementsByClassName('chk-essence');
+    for(const elt of elements){
+        if(elt.checked == false){
+            tous = false;
+        }
+        else {
+            checkedElements.push(elt.parentElement.textContent.trim());
+        }
+    }
+    let str = '';
+    if(tous){
+        str = 'Toutes les essences';
+    }
+    else{
+        const l = checkedElements.length;
+        const tmp = checkedElements.slice(0, 3);
+        str = tmp.join(' + ');
+        if(l > 3){
+            str += ' + ...';
+        }
+    }
+    document.getElementById(baseId + '-summary').innerHTML = str;
+}
+
+function choixEssence_toutSelectionner(){
+    const elements = document.getElementsByClassName('chk-essence');
+    for(const elt of elements){
+        elt.checked = true;
+    }
+}
+
+function choixEssence_rienSelectionner(){
+    const elements = document.getElementsByClassName('chk-essence');
+    for(const elt of elements){
+        elt.checked = false;
+    }
+}
+
+
+</script>

@@ -3,59 +3,54 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 <div style="padding:.5rem 0 0 5rem;">
-    <h1>Prototype outil de recherche</h1>
+    <h1>Recherche d'activités</h1>
 </div>
 
 
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
 
-    <fieldset>
-        <legend>Que souhaitez-vous afficher ?</legend>
-        <div class="">
-            <input type="radio" name="quoi" id="quoi-acteurs" value="quoi-acteurs">
-            <label for="quoi-acteurs">Acteurs</label>
-        </div>
-        <div class="">
-            <input type="radio" name="quoi" id="quoi-activites" value="quoi-activites">
-            <label for="quoi-activites">Activités</label>
-        </div>
-        <div class="">
-            <input type="radio" name="quoi" id="quoi-parcelles" value="quoi-parcelles">
-            <label for="quoi-parcelles">Parcelles</label>
-        </div>
-        <div class="">
-            <input type="radio" name="quoi" id="quoi-ugs" value="quoi-ugs">
-            <label for="quoi-ugs">UGs</label>
-        </div>
-        <div class="">
-            <input type="radio" name="quoi" id="quoi-fermiers" value="quoi-fermiers">
-            <label for="quoi-fermiers">Fermiers</label>
-        </div>
-    </fieldset>
-    
-
     <h2>Filtres</h2>
     <div class="flex-wrap">
         <div class="inline-block">
-            {{template "choix-periode.html" $.Details}}
+            <div>
+                {{template "choix-periode.html" $.Details}}
+                <script>
+                const choixPeriode = new ChoixPeriode('choix-periode');
+                choixPeriode.display();
+                choixPeriode.initialize();
+                </script>
+            </div>
+            <div class="margin-top">
+                {{template "choix-proprio.html" $.Details}}
+                <script>
+                const choixProprio = new ChoixProprio('choix-proprio');
+                choixProprio.display();
+                choixProprio.initialize();
+                </script>
+            </div>
+        </div>
+        <div class="inline-block">
+            {{template "choix-essence.html" $.Details}}
             <script>
-            choixPeriode = new ChoixPeriode('choix-periode');
-            choixPeriode.display();
-            choixPeriode.initialize();
+            const choixEssence = new ChoixEssence('choix-essence');
+            choixEssence.display();
+            choixEssence.initialize();
             </script>
         </div>
+        
+        {{/*
         <div class="inline-block">
             {{template "choix-acteur.html" $.Details}}
             <script>
-            choixActeur = new ChoixActeur('choix-acteur');
+            const choixActeur = new ChoixActeur('choix-acteur');
             choixActeur.display();
             choixActeur.initialize();
             </script>
         </div>
+        */}}
     </div>
     
     <input type="submit" class="float-right big-button" value="Valider">
-    
     
 </form>
 

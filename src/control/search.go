@@ -12,12 +12,14 @@ import (
 )
 
 type detailsSearch struct {
-	Periods   [][2]time.Time // pour choix-date
-	UrlAction string
+	Periods     [][2]time.Time    // pour choix-date
+	EssencesMap map[string]string // pour choix-essence
+	PropriosMap map[int]string    // pour choix-proprio
+	UrlAction   string
 }
 
 /*
-Affiche / process le formulaire de recherche
+    Affiche / process le formulaire de recherche
 */
 func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	ctx.TemplateName = "search.html"
@@ -27,17 +29,28 @@ func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err erro
 	if err != nil {
 		return err
 	}
-	//fmt.Printf("periods = %+v\n",periods)
-
+	//
+	essencesMap, err := model.GetEssencesMap(ctx.DB)
+    if err != nil {
+        return err
+    }
+	//
+	propriosMap, err := model.GetProprietaires(ctx.DB)
+    if err != nil {
+        return err
+    }
+    //
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title: "Accueil",
+			Title: "Recherche d'activité",
 			CSSFiles: []string{
 				"/static/css/form.css"},
 		},
 		Menu: "accueil",
 		Details: detailsSearch{
 			Periods:   periods,
+			EssencesMap: essencesMap,
+			PropriosMap: propriosMap,
 			UrlAction: "/search",
 		},
 	}

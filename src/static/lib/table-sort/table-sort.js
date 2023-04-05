@@ -9,6 +9,9 @@
 function table_sort() {
   const styleSheet = document.createElement('style')
   styleSheet.innerHTML = `
+        .order{
+            color:blue;
+        }
         .order-inactive span {
             visibility:hidden;
         }

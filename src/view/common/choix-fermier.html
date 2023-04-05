@@ -1,0 +1,116 @@
+{{/* 
+    Formulaire de choix d'un fermier.
+    Utilisation :
+        <script>
+            choixFermier = new ChoixFermier('choix-proprio');
+            choixFermier.display();
+            choixFermier.initialize();
+        </script>
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+<style>
+    .link{
+        cursor:pointer;
+        color:blue;
+    }
+</style>
+
+<script>
+
+class ChoixFermier{
+    
+    #html;
+    
+    #baseId;
+    
+    /** 
+        @param  baseId String - Unique id of this component within the page.
+    **/
+    constructor(baseId){
+        //
+        this.#baseId = baseId;
+        //
+        this.#html = `
+        <fieldset class="choix-proprio">
+            <legend>Propriétaires</legend>
+            <details open>
+                <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                ${this.#buildCheckboxes()}
+                <div class="margin-top05">
+                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixFermier_toutSelectionner(); choixFermier_choixChanged('${this.#baseId}');">Tous</a>
+                    <a class="link" id="aucun" onclick="choixFermier_rienSelectionner(); choixFermier_choixChanged('${this.#baseId}');">Aucun</a>
+                </div>
+            </details>
+        </fieldset>
+        `;
+    } // end constructor
+    
+    #buildCheckboxes(){
+        let res = '';
+        {{ range $id, $nom := .PropriosMap }}
+            res += '<label class="block">'
+                + `<input class="chk-proprio" type="checkbox" id="proprio-{{$id}}" name="proprio-{{$id}}" onchange="choixFermier_choixChanged('${this.#baseId}');">`
+                + '{{$nom}}'
+                + '</label>';
+        {{end}}
+        return res;
+    }
+    
+    display(){
+        document.write(this.#html);
+    }
+    
+    initialize(){
+        choixFermier_toutSelectionner();
+        choixFermier_choixChanged(this.#baseId);
+    }
+
+} // end class
+
+function choixFermier_choixChanged(baseId){
+    // update summary string
+    let tous = true;
+    const checkedElements = [];
+    const elements = document.getElementsByClassName('chk-proprio');
+    for(const elt of elements){
+        if(elt.checked == false){
+            tous = false;
+        }
+        else {
+            checkedElements.push(elt.parentElement.textContent.trim());
+        }
+    }
+    let str = '';
+    if(tous){
+        str = 'Tous les propriétaires';
+    }
+    else{
+        const l = checkedElements.length;
+        const tmp = checkedElements.slice(0, 3);
+        str = tmp.join(' + ');
+        if(l > 3){
+            str += ' + ...';
+        }
+    }
+    document.getElementById(baseId + '-summary').innerHTML = str;
+}
+
+function choixFermier_toutSelectionner(){
+    const elements = document.getElementsByClassName('chk-proprio');
+    for(const elt of elements){
+        elt.checked = true;
+    }
+}
+
+function choixFermier_rienSelectionner(){
+    const elements = document.getElementsByClassName('chk-proprio');
+    for(const elt of elements){
+        elt.checked = false;
+    }
+}
+
+
+</script>
