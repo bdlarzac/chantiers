@@ -50,8 +50,17 @@
         */}}
     </div>
     
-    <input type="submit" class="float-right big-button" value="Valider">
+    <div class="float-right">
+        <input class="big-button" type="button" name="cancel" value="Annuler" onClick="window.history.back();">
+        <input class="big-button" type="submit" value="Valider">
+    </div>
     
 </form>
 
+<script>
+
+function validateForm(){
+console.log("validateForm");
+}
+</script>
 
