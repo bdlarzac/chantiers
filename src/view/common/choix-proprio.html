@@ -52,8 +52,8 @@ class ChoixProprio{
         let res = '';
         {{ range $id, $nom := .PropriosMap }}
             res += '<label class="block">'
-                + `<input class="chk-proprio" type="checkbox" id="proprio-{{$id}}" name="proprio-{{$id}}" onchange="choixProprio_choixChanged('${this.#baseId}');">`
-                + '{{$nom}}'
+                + `<input class="chk-proprio" type="checkbox" id="choix-proprio-` + {{$id}} + `" name="choix-proprio-` + {{$id}} + `" onchange="choixProprio_choixChanged('${this.#baseId}');">`
+                + {{$nom}}
                 + '</label>';
         {{end}}
         return res;
@@ -112,5 +112,17 @@ function choixProprio_rienSelectionner(){
     }
 }
 
+/** 
+    Renvoie un booléen ; utilisé par validateForm() du formulaire appelant
+**/
+function choixProprio_isAllSelected(){
+    const elements = document.getElementsByClassName('chk-proprio');
+    for(const elt of elements){
+        if(elt.checked == false){
+            return false;
+        }
+    }
+    return true;
+}
 
 </script>

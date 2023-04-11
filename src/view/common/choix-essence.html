@@ -54,7 +54,7 @@ class ChoixEssence{
         let res = '';
         {{ range $code, $label := .EssencesMap }}
             res += '<label class="block">'
-                + `<input class="chk-essence" type="checkbox" id="essence-{{$code}}" name="essence-{{$code}}" onchange="choixEssence_choixChanged('${this.#baseId}');">`
+                + `<input class="chk-essence" type="checkbox" id="choix-essence-` + {{$code}} + `" name="choix-essence-` + {{$code}} + `" onchange="choixEssence_choixChanged('${this.#baseId}');">`
                 + '{{$label}}'
                 + '</label>';
         {{end}}
@@ -115,5 +115,17 @@ function choixEssence_rienSelectionner(){
     }
 }
 
+/** 
+    Renvoie un booléen ; utilisé par validateForm() du formulaire appelant
+**/
+function choixEssence_isAllSelected(){
+    const elements = document.getElementsByClassName('chk-essence');
+    for(const elt of elements){
+        if(elt.checked == false){
+            return false;
+        }
+    }
+    return true;
+}
 
 </script>

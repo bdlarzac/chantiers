@@ -53,14 +53,19 @@
     <div class="float-right">
         <input class="big-button" type="button" name="cancel" value="Annuler" onClick="window.history.back();">
         <input class="big-button" type="submit" value="Valider">
+        <input type="hidden" name="choix-ALL-essence" id="choix-ALL-essence" value="">
+        <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
     </div>
-    
+                                                                                                                                      
 </form>
 
 <script>
 
 function validateForm(){
 console.log("validateForm");
+    document.getElementById('choix-ALL-essence').value = choixEssence_isAllSelected();
+    document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
+    
 }
 </script>
 

@@ -7,6 +7,7 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
+	"strings"
 	"time"
 	"net/http"
 "fmt"	
@@ -26,7 +27,6 @@ type detailsSearchResults struct{
     Affiche / process le formulaire de recherche
 */
 func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
-    
 	switch r.Method {
 	case "POST":
 		//
@@ -37,6 +37,12 @@ func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err erro
         }
 fmt.Println("ici")
 fmt.Printf("%+v\n",r.PostForm)
+        //
+//        filtre_essence := computeFiltreEssence(r)
+//fmt.Printf("filtre_essence = %+v\n",filtre_essence)
+        filtre_proprio := computeFiltreProprio(r)
+fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
+        //
         ctx.TemplateName = "search-result.html"
         ctx.Page = &ctxt.Page{
             Header: ctxt.Header{
@@ -84,4 +90,53 @@ fmt.Printf("%+v\n",r.PostForm)
         }
         return nil
     }
+}
+
+// ************************** Auxiliaires *******************************
+
+/* 
+    Filtre essence :
+        - Soit contient un seul élément "ALL" => pas de filtre.
+        - Soit contient une liste de codes essence.
+*/
+func computeFiltreEssence(r *http.Request) (result []string) {
+    if r.PostFormValue("choix-ALL-essence") == "true"{
+        return []string{"ALL"}
+    }
+    result = []string{}
+    for key, _ := range r.PostForm {
+        if strings.Index(key, "choix-essence-") != 0 {
+            continue
+        }
+        if r.PostFormValue(key) != "on" {
+            continue
+        }
+        code := key[14:]
+        result = append(result, code)
+    }
+    return result
+}
+
+/* 
+    Filtre propriétaire :
+        - Soit contient un seul élément "ALL" => pas de filtre.
+        - Soit contient une liste d'id propriétaires (dans la table acteur)
+          (attention, cette liste contient des strings, pas des ints).
+*/
+func computeFiltreProprio(r *http.Request) (result []string) {
+    if r.PostFormValue("choix-ALL-proprio") == "true"{
+        return []string{"ALL"}
+    }
+    result = []string{}
+    for key, _ := range r.PostForm {
+        if strings.Index(key, "choix-proprio-") != 0 {
+            continue
+        }
+        if r.PostFormValue(key) != "on" {
+            continue
+        }
+        id := key[14:]
+        result = append(result, id)
+    }
+    return result
 }

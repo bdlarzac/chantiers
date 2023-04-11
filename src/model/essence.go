@@ -44,3 +44,19 @@ func GetEssencesMap(db *sqlx.DB) (essencesMap map[string]string, err error) {
     }
     return essencesMap, nil
 }
+
+/* 
+    Renvoie un tableau de codes essence
+*/
+/* 
+// pas utilisée, peut être supprimée
+func GetEssenceCodes(db *sqlx.DB) (result []string, err error) {
+    result = []string{}
+	query := "select code from essence"
+	err = db.Select(&result, query)
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur query : "+query)
+	}
+    return result, nil
+}
+*/
