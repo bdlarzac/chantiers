@@ -207,7 +207,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 			Menu: "chantiers",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/js/round.js",
+					"/static/js/round.js", //////////////// a supprimer - dans plaq aussi
 					"/static/js/toogle.js"},
 			},
 			Details: detailsChautreForm{

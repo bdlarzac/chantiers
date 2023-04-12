@@ -1,11 +1,12 @@
 {{/* 
     Formulaire de choix d'une période
+    Template devant être appelée avec une structure contenant un champ Periods
     Utilisation :
         <script>
             choixPeriode = new ChoixPeriode('choix-periode');
             choixPeriode.display();
         </script>
-
+        
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
@@ -46,7 +47,6 @@ class ChoixPeriode{
             this.#periods[{{$index}}][0] = "{{(index $period 0) | dateIso}}";
             this.#periods[{{$index}}][1] = "{{(index $period 1) | dateIso}}";
         {{end}}
-//console.log(this.#periods);
         //
         this.#html = `
 <fieldset class="choix-periode">
@@ -58,11 +58,11 @@ class ChoixPeriode{
     
             <div class="bold center padding-bottom">Période</div>
             <div>
-                <select id="${this.#baseId}-periods" name="${this.#baseId}-periods" onChange="choixPeriode_periodChanged('${this.#baseId}');">
-                    <option value="no-limit">Pas de limite</option>
-                    <option value="free">--- Dates libres ---</option>
-                    <option value="psg1">PSG 1 (01/01/2014 - 31/12/2023)</option>
-                    <option value="psg2">PSG 2 (01/01/2024 - 31/12/2033)</option>
+                <select id="${this.#baseId}-periodes" name="${this.#baseId}-periodes" onChange="choixPeriode_periodChanged('${this.#baseId}');">
+                    <option value="choix-periode-no-limit">Pas de limite</option>
+                    <option value="choix-periode-free">--- Dates libres ---</option>
+                    <option value="choix-periode-psg1">PSG 1 (01/01/2014 - 31/12/2023)</option>
+                    <option value="choix-periode-psg2">PSG 2 (01/01/2024 - 31/12/2033)</option>
 `;
         for(let i=0; i < this.#periods.length; i++){
             const dateDebFR = dateStringIso2fr(this.#periods[i][0]);
@@ -101,13 +101,14 @@ class ChoixPeriode{
 
 } // end class
 
+
 /** 
-    Reacts to a change of the select containing the list of periods
+    Change le choix de la période dans le select => modifie l'affichage de summary.
 **/
 function choixPeriode_periodChanged(baseId){
-    const selectElt = document.getElementById(baseId + "-periods");
+    const selectElt = document.getElementById(baseId + "-periodes");
     const valeur = selectElt.options[selectElt.selectedIndex].getAttribute('value');
-    const idx = valeur.replace('period-', '');
+    const idx = valeur.replace('choix-period-', '');
     if(idx == 'no-limit'){
         document.getElementById(baseId + '-debut').valueAsDate = null;
         document.getElementById(baseId + '-fin').valueAsDate = null;
@@ -149,16 +150,40 @@ function choixPeriode_periodChanged(baseId){
 }
 
 /** 
-    Reacts to a change of one input type="date"
+    R&agit au changement d'un input de type="date" => modifie l'affichage de summary.
 **/
 function choixPeriode_dateChanged(baseId){
     const dateBegin = document.getElementById(baseId + '-debut').valueAsDate;
     const dateEnd = document.getElementById(baseId + '-fin').valueAsDate;
-    document.getElementById(baseId + "-periods").value = 'free';
+    document.getElementById(baseId + "-periodes").value = 'choix-periode-free';
     const str = (dateBegin == null ? '?' : date2stringFr(dateBegin))
         + ' - '
         + (dateEnd == null ? '?' : date2stringFr(dateEnd));
     document.getElementById(baseId + '-summary').innerHTML = str;
 }
+
+/** 
+    Renvoie un message d'erreur (ou chaîne vide si pas d'erreur) ; utilisé par validateForm() du formulaire appelant.
+**/
+function choixPeriode_validateForm(baseId){
+    let msg = '';
+    /* if(
+        (document.getElementById("choix-periode-debut").value == "" && document.getElementById("choix-periode-fin").value != "")
+     || (document.getElementById("choix-periode-debut").value != "" && document.getElementById("choix-periode-fin").value == "")
+    ){
+        msg += "- Choix période : vous devez renseigner la date de début et de fin.\n";
+    } */
+    if(document.getElementById(baseId + "-periodes").selectedIndex != 0){ // si choix != de "pas de limite"
+        if(document.getElementById("choix-periode-debut").value == '' || document.getElementById("choix-periode-fin").value == ''){
+            msg += "- Choix période : vous devez spécifier la date de début et la date de fin.\n";
+        }
+        else if(document.getElementById("choix-periode-debut").value >= document.getElementById("choix-periode-fin").value){
+            msg += "- Choix période : la date de début doit être antérieure à la date de fin.\n";
+        }
+    }
+    return msg;
+}
+
+        
 
 </script>

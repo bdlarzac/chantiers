@@ -46,11 +46,7 @@ func CountFermiers(db *sqlx.DB) (count int) {
 // ************************** Compute *******************************
 
 /*
-*
-
 	Calcule le champ Parcelles d'un fermier
-
-*
 */
 func (f *Fermier) ComputeParcelles(db *sqlx.DB) (err error) {
 	if len(f.Parcelles) != 0 {
@@ -69,13 +65,9 @@ func (f *Fermier) ComputeParcelles(db *sqlx.DB) (err error) {
 // ************************** Get one *******************************
 
 /*
-*
-
 	Renvoie un Fermier à partir de son id.
 	Ne contient que les champs de la table fermier.
 	Les autres champs ne sont pas remplis.
-
-*
 */
 func GetFermier(db *sqlx.DB, id int) (f *Fermier, err error) {
 	f = &Fermier{}
@@ -91,12 +83,8 @@ func GetFermier(db *sqlx.DB, id int) (f *Fermier, err error) {
 // ************************** Get many *******************************
 
 /*
-*
-
 	Renvoie une liste de Fermiers triés en utilisant un champ de la table
 	@param field    Champ de la table fermier utilisé pour le tri
-
-*
 */
 func GetSortedFermiers(db *sqlx.DB, field string) (fermiers []*Fermier, err error) {
 	fermiers = []*Fermier{}
@@ -130,12 +118,12 @@ func GetFermiersFromLieudit(db *sqlx.DB, idLieudit int) ([]*Fermier, error) {
 	return fermiers, nil
 }
 */
-/**
+/*
     Renvoie des fermiers à partir d'un id UG.
     Contient les champs de la table fermier.
     Les autres champs ne sont pas remplis.
     @param      strIdsUGs   Chaîne contenant les ids séparés par des virgules. ex : "1, 34, 87"
-**/
+*/
 func GetFermiersFromIdsUGs(db *sqlx.DB, strIdsUGs string) (fermiers []*Fermier, err error) {
 	fermiers = []*Fermier{}
 	query := `
@@ -152,15 +140,11 @@ func GetFermiersFromIdsUGs(db *sqlx.DB, strIdsUGs string) (fermiers []*Fermier, 
 }
 
 /*
-*
-
 	Renvoie des Fermiers à partir d'une UG.
 	Utilise les parcelles pour faire le lien
 	Ne contient que les champs de la table fermier.
 	Les autres champs ne sont pas remplis.
 	Utilisé par ajax
-
-*
 */
 func GetFermiersFromIdUG(db *sqlx.DB, idUG int) ([]*Fermier, error) {
 	fermiers := []*Fermier{}
@@ -180,11 +164,8 @@ func GetFermiersFromIdUG(db *sqlx.DB, idUG int) ([]*Fermier, error) {
 // ************************** CRUD *******************************
 
 /*
-*
-
-	Pas un insert habituel car id est fourni
-
-*
+	Pas un insert habituel car id est fourni.
+	Utilisé par manage/sctl-update/, pas par src/
 */
 func InsertFermier(db *sqlx.DB, f *Fermier) (err error) {
 	query := `insert into fermier(

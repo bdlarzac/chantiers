@@ -1,8 +1,9 @@
 {{/* 
     Formulaire de choix d'un fermier.
+    Template devant être appelée avec une structure contenant un champ Fermiers
     Utilisation :
         <script>
-            choixFermier = new ChoixFermier('choix-proprio');
+            choixFermier = new ChoixFermier('choix-fermier');
             choixFermier.display();
             choixFermier.initialize();
         </script>
@@ -10,13 +11,6 @@
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
-
-<style>
-    .link{
-        cursor:pointer;
-        color:blue;
-    }
-</style>
 
 <script>
 
@@ -34,83 +28,37 @@ class ChoixFermier{
         this.#baseId = baseId;
         //
         this.#html = `
-        <fieldset class="choix-proprio">
-            <legend>Propriétaires</legend>
+        <fieldset class="choix-fermier">
+            <legend>Fermier</legend>
             <details open>
                 <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
-                ${this.#buildCheckboxes()}
-                <div class="margin-top05">
-                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixFermier_toutSelectionner(); choixFermier_choixChanged('${this.#baseId}');">Tous</a>
-                    <a class="link" id="aucun" onclick="choixFermier_rienSelectionner(); choixFermier_choixChanged('${this.#baseId}');">Aucun</a>
-                </div>
+                    <select class="margin-top" name="select-choix-fermier" id="select-choix-fermier" onChange="choixFermier_choixChanged('${this.#baseId}');">
+                        <option id="choix-fermier-no-limit" value="choix-fermier-no-limit" selected>Pas de sélection</option>
+        `;
+                        {{range .Fermiers}}
+                            this.#html += '<option id="choix-fermier-' + {{.Id}} + '" value="choix-fermier-' + {{.Id}} + '">' + {{.Nom}} + '</option>\n';
+                        {{end}}
+        this.#html += `
+                    </select>
             </details>
         </fieldset>
         `;
     } // end constructor
-    
-    #buildCheckboxes(){
-        let res = '';
-        {{ range $id, $nom := .PropriosMap }}
-            res += '<label class="block">'
-                + `<input class="chk-proprio" type="checkbox" id="proprio-{{$id}}" name="proprio-{{$id}}" onchange="choixFermier_choixChanged('${this.#baseId}');">`
-                + '{{$nom}}'
-                + '</label>';
-        {{end}}
-        return res;
-    }
     
     display(){
         document.write(this.#html);
     }
     
     initialize(){
-        choixFermier_toutSelectionner();
         choixFermier_choixChanged(this.#baseId);
     }
-
+    
 } // end class
 
 function choixFermier_choixChanged(baseId){
     // update summary string
-    let tous = true;
-    const checkedElements = [];
-    const elements = document.getElementsByClassName('chk-proprio');
-    for(const elt of elements){
-        if(elt.checked == false){
-            tous = false;
-        }
-        else {
-            checkedElements.push(elt.parentElement.textContent.trim());
-        }
-    }
-    let str = '';
-    if(tous){
-        str = 'Tous les propriétaires';
-    }
-    else{
-        const l = checkedElements.length;
-        const tmp = checkedElements.slice(0, 3);
-        str = tmp.join(' + ');
-        if(l > 3){
-            str += ' + ...';
-        }
-    }
-    document.getElementById(baseId + '-summary').innerHTML = str;
+    const fermierElt = document.getElementById("select-choix-fermier");
+    document.getElementById(baseId + '-summary').innerHTML = fermierElt.options[fermierElt.selectedIndex].text;
 }
-
-function choixFermier_toutSelectionner(){
-    const elements = document.getElementsByClassName('chk-proprio');
-    for(const elt of elements){
-        elt.checked = true;
-    }
-}
-
-function choixFermier_rienSelectionner(){
-    const elements = document.getElementsByClassName('chk-proprio');
-    for(const elt of elements){
-        elt.checked = false;
-    }
-}
-
 
 </script>

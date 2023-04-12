@@ -11,6 +11,7 @@
 
     <h2>Filtres</h2>
     <div class="flex-wrap">
+    
         <div class="inline-block">
             <div>
                 {{template "choix-periode.html" $.Details}}
@@ -28,13 +29,31 @@
                 choixProprio.initialize();
                 </script>
             </div>
+            <div class="margin-top">
+                {{template "choix-fermier.html" $.Details}}
+                <script>
+                const choixFermier = new ChoixFermier('choix-fermier');
+                choixFermier.display();
+                choixFermier.initialize();
+                </script>
+            </div>
         </div>
-        <div class="inline-block">
+        
+        <div class="inline-block margin-left05">
             {{template "choix-essence.html" $.Details}}
             <script>
             const choixEssence = new ChoixEssence('choix-essence');
             choixEssence.display();
             choixEssence.initialize();
+            </script>
+        </div>
+        
+        <div class="inline-block margin-left05">
+            {{template "choix-ug.html" $.Details}}
+            <script>
+            const choixUG = new ChoixUG('choix-ug');
+            choixUG.display();
+            choixUG.initialize();
             </script>
         </div>
         
@@ -62,10 +81,16 @@
 <script>
 
 function validateForm(){
-console.log("validateForm");
+    let msg = '';
     document.getElementById('choix-ALL-essence').value = choixEssence_isAllSelected();
     document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
-    
+    msg += choixPeriode_validateForm('choix-periode');
+    //
+    if(msg != ''){
+        alert("Impossible de valider ce formulaire : \n" + msg);
+        return false;
+    }
+    return true;
 }
 </script>
 

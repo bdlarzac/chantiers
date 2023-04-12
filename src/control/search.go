@@ -17,6 +17,9 @@ type detailsSearchForm struct {
 	Periods     [][2]time.Time    // pour choix-date
 	EssencesMap map[string]string // pour choix-essence
 	PropriosMap map[int]string    // pour choix-proprio
+	Fermiers    []*model.Fermier  // pour choix-fermier
+	AllUGs      []*model.UG       // pour choix-ug - liens-ugs-modal
+	UGs         []*model.UG       // pour choix-ug - liens-ugs
 	UrlAction   string
 }
 
@@ -40,8 +43,10 @@ fmt.Printf("%+v\n",r.PostForm)
         //
 //        filtre_essence := computeFiltreEssence(r)
 //fmt.Printf("filtre_essence = %+v\n",filtre_essence)
-        filtre_proprio := computeFiltreProprio(r)
-fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
+//        filtre_proprio := computeFiltreProprio(r)
+//fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
+        filtre_periode := computeFiltrePeriode(r)
+fmt.Printf("filtre_periode = %+v\n",filtre_periode)
         //
         ctx.TemplateName = "search-result.html"
         ctx.Page = &ctxt.Page{
@@ -73,6 +78,16 @@ fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
             return err
         }
         //
+        fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
+        if err != nil {
+            return err
+        }
+        //
+		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
+		if err != nil {
+			return err
+		}
+		//
         ctx.TemplateName = "search-form.html"
         ctx.Page = &ctxt.Page{
             Header: ctxt.Header{
@@ -85,6 +100,9 @@ fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
                 Periods:   periods,
                 EssencesMap: essencesMap,
                 PropriosMap: propriosMap,
+                Fermiers: fermiers,
+                AllUGs: allUGs,
+                UGs: []*model.UG{},
                 UrlAction: "/search",
             },
         }
@@ -95,13 +113,13 @@ fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
 // ************************** Auxiliaires *******************************
 
 /* 
-    Filtre essence :
-        - Soit contient un seul élément "ALL" => pas de filtre.
-        - Soit contient une liste de codes essence.
+    Filtre essence : renvoie un tableau de strings.
+        - Si pas de filtre, contient un tableau vide.
+        - Sinon contient une liste de codes essence.
 */
 func computeFiltreEssence(r *http.Request) (result []string) {
     if r.PostFormValue("choix-ALL-essence") == "true"{
-        return []string{"ALL"}
+        return []string{}
     }
     result = []string{}
     for key, _ := range r.PostForm {
@@ -118,14 +136,14 @@ func computeFiltreEssence(r *http.Request) (result []string) {
 }
 
 /* 
-    Filtre propriétaire :
-        - Soit contient un seul élément "ALL" => pas de filtre.
-        - Soit contient une liste d'id propriétaires (dans la table acteur)
+    Filtre propriétaire : renvoie un tableau de strings.
+        - Si pas de filtre, contient un tableau vide.
+        - Sinon contient une liste d'id propriétaires (dans la table acteur)
           (attention, cette liste contient des strings, pas des ints).
 */
 func computeFiltreProprio(r *http.Request) (result []string) {
     if r.PostFormValue("choix-ALL-proprio") == "true"{
-        return []string{"ALL"}
+        return []string{}
     }
     result = []string{}
     for key, _ := range r.PostForm {
@@ -140,3 +158,18 @@ func computeFiltreProprio(r *http.Request) (result []string) {
     }
     return result
 }
+
+/* 
+    Filtre période : renvoie un tableau de strings.
+        - Si pas de filtre, contient un tableau vide.
+        - Sinon contient 2 strings, dates de début et de fin au format AAAA-MM-JJ.
+*/
+func computeFiltrePeriode(r *http.Request) (result []string) {
+    if r.PostFormValue("choix-periode-periodes") == "choix-periode-no-limit"{
+        return []string{}
+    }
+    result = append(result, r.PostFormValue("choix-periode-debut"))
+    result = append(result, r.PostFormValue("choix-periode-fin"))
+    return result
+}
+

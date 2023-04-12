@@ -7,6 +7,7 @@
 <script>{{template "checkActeur.js.html" .Details}}</script>
 
 {{template "liens-ugs.html" $.Details.Chantier}}
+{{template "liens-ugs-modal.html" $.Details}}
 {{template "liens-parcelles.html" $.Details.Chantier}}
 {{template "liens-lieudits.html" $.Details.Chantier}}
 {{template "liens-fermiers.html" $.Details.Chantier}}
@@ -34,7 +35,6 @@
         <div>
             <div id="zone-ugs"></div>
         </div>
-        {{template "liens-ugs-modal.html" $.Details}}
 
         <label>Parcelles</label>
         <div id="zone-parcelles"></div>
