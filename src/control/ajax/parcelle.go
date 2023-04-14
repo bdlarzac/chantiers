@@ -3,30 +3,33 @@ package ajax
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"encoding/json"
-	"github.com/gorilla/mux"
-	"net/http"
 	"strconv"
+	"encoding/json"
+	"net/http"
+	"github.com/gorilla/mux"
 )
 
-/*
-func GetParcellesFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func GetParcellesFromIdCommune(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
-	idLieudit, err := strconv.Atoi(vars["id"])
+	idCommune, err := strconv.Atoi(vars["id-commune"])
 	if err != nil {
 		return err
 	}
 	type respElement struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
+		Id             int     `json:"id"`
+		//IdProprietaire string  `json:"id_proprietaire"`
+		Code           string  `json:"code"`
+		//Surface        float32 `json:"surface"`
+		//IdCommune      int     `json:"id_commune"`
 	}
 	var resp []respElement
-	parcelles, err := model.GetParcellesFromLieudit(ctx.DB, idLieudit)
+	parcelles, err := model.GetParcellesFromIdCommune(ctx.DB, idCommune)
 	if err != nil {
 		return err
 	}
-	for _, parcelle := range parcelles {
-		resp = append(resp, respElement{parcelle.Id, parcelle.Code})
+	for _, p := range parcelles {
+		//resp = append(resp, respElement{p.Id, p.Code, p.IdCommune})
+		resp = append(resp, respElement{p.Id, p.Code})
 	}
 	json, err := json.Marshal(resp)
 	if err != nil {
@@ -35,18 +38,14 @@ func GetParcellesFromLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.R
 	w.Write(json)
 	return nil
 }
-*/
 
 /*
-*
-
 	Renvoie les parcelles d'une UG.
 	@param  vars["id"]  id numérique d'une UG
 	TODO A priori, supprimer après #9
-
-*
 */
-func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+/*
+func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	idUG, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -81,17 +80,14 @@ func GetParcellesFromUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	w.Write(json)
 	return nil
 }
+*/
 
 /*
-*
-
-	Renvoie les parcelles correspondant à plusieurs UGs.
-	@param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
+    Renvoie les parcelles correspondant à plusieurs UGs.
+    @param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
 	        ex : 12,35,87
-
-*
 */
-func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	// pas terrible, vars["ids"] est directement utilisé pour fabriquer le sql
 	// risque d'injection, mais le routing impose [1-9,]

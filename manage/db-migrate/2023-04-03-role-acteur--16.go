@@ -5,7 +5,7 @@
 	    https://github.com/bdlarzac/chantiers/issues/16
 	    Ajouter la notion de rôle aux acteurs
 
-		Intégration : commit 
+		Intégration : commit
 
 		@copyright  BDL, Bois du Larzac
 		@license    GPL
@@ -32,40 +32,40 @@ func fill_table_role_2023_04_03(ctx *ctxt.Context) {
 	db := ctx.DB
 	var err error
 	codeMap := map[string]string{
-        // Chantier plaquettes, opérations simples :
-        "PLA-AB": "Abatteur", // = bûcheron
-        "PLA-DB": "Débardeur",
-        "PLA-DC": "Déchiqueteur",
-        "PLA-BR": "Broyeur",
-        // Chantier plaquettes, transport :
-        "PLT-TR": "Transporteur PF",
-        "PLT-CO": "Conducteur transport PF",
-        "PLT-PO": "Propriétaire outil transport PF",
-        // Chantier plaquettes, rangement :
-        "PLR-RG": "Rangeur PF",
-        "PLR-CO": "Conducteur rangement PF",
-        "PLR-PO": "Propriétaire outil rangement PF",
-        // Vente plaquettes :
-        "VPL-CL": "Client PF",
-        // Vente plaquettes, chargement :
-        "VPC-CH": "Chargeur PF",
-        "VPC-CO": "Conducteur chargement PF",
-        "VPC-PO": "Propriétaire outil chargement PF",
-        // Vente plaquettes, livraison
-        "VPL-LI": "Livreur PF",
-        "VPL-CO": "Conducteur livraison PF",
-        "VPL-PO": "Propriétaire outil livraison PF",
-        // Chantier autres valorisations
-        "AVC-PP": "Client pâte à papier",
-        "AVC-CH": "Client bois de chauffage",
-        "AVC-PL": "Client palettes",
-        "AVC-PI": "Client piquets",
-        "AVC-BO": "Client bois d'oeuvre",
-        // Divers: 
-        "DIV-MH": "Mesureur d'humidité",
-        "DIV-PF": "Propriétaire foncier",
-        "DIV-FO": "Fournisseur de plaquettes",
-        "FER-BC": "Fermier bois de chauffage",
+		// Chantier plaquettes, opérations simples :
+		"PLA-AB": "Abatteur", // = bûcheron
+		"PLA-DB": "Débardeur",
+		"PLA-DC": "Déchiqueteur",
+		"PLA-BR": "Broyeur",
+		// Chantier plaquettes, transport :
+		"PLT-TR": "Transporteur PF",
+		"PLT-CO": "Conducteur transport PF",
+		"PLT-PO": "Propriétaire outil transport PF",
+		// Chantier plaquettes, rangement :
+		"PLR-RG": "Rangeur PF",
+		"PLR-CO": "Conducteur rangement PF",
+		"PLR-PO": "Propriétaire outil rangement PF",
+		// Vente plaquettes :
+		"VPL-CL": "Client PF",
+		// Vente plaquettes, chargement :
+		"VPC-CH": "Chargeur PF",
+		"VPC-CO": "Conducteur chargement PF",
+		"VPC-PO": "Propriétaire outil chargement PF",
+		// Vente plaquettes, livraison
+		"VPL-LI": "Livreur PF",
+		"VPL-CO": "Conducteur livraison PF",
+		"VPL-PO": "Propriétaire outil livraison PF",
+		// Chantier autres valorisations
+		"AVC-PP": "Client pâte à papier",
+		"AVC-CH": "Client bois de chauffage",
+		"AVC-PL": "Client palettes",
+		"AVC-PI": "Client piquets",
+		"AVC-BO": "Client bois d'oeuvre",
+		// Divers:
+		"DIV-MH": "Mesureur d'humidité",
+		"DIV-PF": "Propriétaire foncier",
+		"DIV-FO": "Fournisseur de plaquettes",
+		"FER-BC": "Fermier bois de chauffage",
 	}
 	//
 	stmt, err := db.Prepare("insert into role(code, nom) values($1,$2)")
@@ -74,7 +74,7 @@ func fill_table_role_2023_04_03(ctx *ctxt.Context) {
 		panic(err)
 	}
 	//
-	for code, nom := range(codeMap) {
+	for code, nom := range codeMap {
 		_, err = stmt.Exec(code, nom)
 		if err != nil {
 			panic(err)
@@ -143,4 +143,3 @@ func create_table_role_2023_04_03(ctx *ctxt.Context) {
 		panic(err)
 	}
 }
-

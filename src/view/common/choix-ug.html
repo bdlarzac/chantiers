@@ -39,7 +39,7 @@ class ChoixUG{
             <details open>
                 <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
                 <img 
-                    class="vertical-align-middle bigicon margin-right"
+                    class="vertical-align-middle bigicon margin-right margin-top05"
                     src="/static/img/new.png"
                     title="Choisir une ou plusieurs UGs"
                     onclick="showModalUG();"
@@ -63,9 +63,6 @@ class ChoixUG{
 
 // *********************** Callbacks liés à modale UGs ***********************
 
-/** 
-    Code appelé lorsque la modale UG est validée.
-**/
 function callback_validate_modal_ugs(){
     choixUG_choixChanged('choix-ug');
 }

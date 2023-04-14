@@ -207,8 +207,8 @@ func fill_table_typo_2023_02_24(ctx *ctxt.Context) {
 }
 
 /*
-	Remplit la table ug_essence en utilisant les ugs déjà en base (pour conserver les ids actuels)
-	Les essences sont stockées actuellement dans la colonne type_peuplement
+Remplit la table ug_essence en utilisant les ugs déjà en base (pour conserver les ids actuels)
+Les essences sont stockées actuellement dans la colonne type_peuplement
 */
 func fill_table_ug_essence_2023_02_24(ctx *ctxt.Context) {
 	db := ctx.DB

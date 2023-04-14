@@ -48,6 +48,7 @@ func main() {
 	r.HandleFunc("/ajax/get/lieudits-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetLieuditsFromIdsUGs))
 	r.HandleFunc("/ajax/get/fermiers-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetFermiersFromIdsUGs))
 	r.HandleFunc("/ajax/get/parcelles-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromIdsUGs))
+	r.HandleFunc("/ajax/get/parcelles-from-id-commune/{id-commune:[0-9,]+}", Hajax(ajax.GetParcellesFromIdCommune))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
 

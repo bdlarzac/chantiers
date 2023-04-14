@@ -259,6 +259,7 @@ func (t *Tas) ComputeEvolutionStock(db *sqlx.DB) (err error) {
 
 // Auxiliaires de ComputeEvolutionStock() pour trier par date
 type mouvementStockSlice []*MouvementStock
+
 func (m mouvementStockSlice) Len() int           { return len(m) }
 func (m mouvementStockSlice) Less(i, j int) bool { return m[i].Date.Before(m[j].Date) }
 func (m mouvementStockSlice) Swap(i, j int)      { m[i], m[j] = m[j], m[i] }

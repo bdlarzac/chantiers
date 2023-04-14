@@ -18,12 +18,12 @@ import (
 )
 
 func QGisUpdate(db *sqlx.DB) (err error) {
-    
-    table := "qgis_chautre"
-    
+
+	table := "qgis_chautre"
+
 	query := "drop table if exists " + table //  + " cascade"
 	if _, err = db.Exec(query); err != nil {
-	    return werr.Wrapf(err, "Erreur query: " + query)
+		return werr.Wrapf(err, "Erreur query: "+query)
 	}
 	//
 	query = `
@@ -35,7 +35,7 @@ func QGisUpdate(db *sqlx.DB) (err error) {
         )
     `
 	if _, err = db.Exec(query); err != nil {
-	    return werr.Wrapf(err, "Erreur query: " + query)
+		return werr.Wrapf(err, "Erreur query: "+query)
 	}
 	//
 	query = `
@@ -55,15 +55,13 @@ func QGisUpdate(db *sqlx.DB) (err error) {
                 and cp.id_parcelle=p.id
     `
 	if _, err = db.Exec(query); err != nil {
-	    return werr.Wrapf(err, "Erreur query: " + query)
+		return werr.Wrapf(err, "Erreur query: "+query)
 	}
 	//
-    return nil
+	return nil
 }
 
-                                             
-
-/* 
+/*
 -- juste un test, sans doute à supprimer
 create or replace view view_qgis_chautre as
     select

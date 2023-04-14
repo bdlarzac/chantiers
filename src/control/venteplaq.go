@@ -1,8 +1,8 @@
 /*
-	Vente plaquettes
+Vente plaquettes
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -11,13 +11,13 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
+	"github.com/jung-kurt/gofpdf"
+	"html/template"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"html/template"
-	"net/http"
-	"github.com/jung-kurt/gofpdf"
-	"github.com/gorilla/mux"
 )
 
 type detailsVentePlaqForm struct {
@@ -578,16 +578,16 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x = x0
 	y += 2 * he
 	pdf.SetXY(x, y)
-    pdf.Write(he, tr("Livraison effectuée par :"))
+	pdf.Write(he, tr("Livraison effectuée par :"))
 	y += he
-	for _, livraison := range(vente.Livraisons){
-        pdf.SetXY(x, y)
-        if livraison.TypeCout == "G" { // coût global
-            pdf.Write(he, "- " + tr(livraison.Livreur.String()))
-        } else { // coût détaillé
-            pdf.Write(he, "- " + tr(livraison.Conducteur.String()))
-        }
-        y += he
+	for _, livraison := range vente.Livraisons {
+		pdf.SetXY(x, y)
+		if livraison.TypeCout == "G" { // coût global
+			pdf.Write(he, "- "+tr(livraison.Livreur.String()))
+		} else { // coût détaillé
+			pdf.Write(he, "- "+tr(livraison.Conducteur.String()))
+		}
+		y += he
 	}
 	//
 	return pdf.Output(w)

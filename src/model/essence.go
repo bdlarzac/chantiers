@@ -24,31 +24,31 @@ type Essence struct {
 	NomLong string
 }
 
-/* 
-    Renvoie une map code essence => nom long
+/*
+	Renvoie une map code essence => nom long
 */
 func GetEssencesMap(db *sqlx.DB) (essencesMap map[string]string, err error) {
-    type essence struct{
-        Code string
-        NomLong string
-    }
-    essences := []essence{}
+	type essence struct {
+		Code    string
+		NomLong string
+	}
+	essences := []essence{}
 	query := "select code,nomlong from essence"
 	err = db.Select(&essences, query)
 	if err != nil {
 		return essencesMap, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	essencesMap = make(map[string]string, len(essences))
-    for _, essence := range(essences){
-        essencesMap[essence.Code] = essence.NomLong
-    }
-    return essencesMap, nil
+	for _, essence := range essences {
+		essencesMap[essence.Code] = essence.NomLong
+	}
+	return essencesMap, nil
 }
 
-/* 
-    Renvoie un tableau de codes essence
+/*
+   Renvoie un tableau de codes essence
 */
-/* 
+/*
 // pas utilisée, peut être supprimée
 func GetEssenceCodes(db *sqlx.DB) (result []string, err error) {
     result = []string{}

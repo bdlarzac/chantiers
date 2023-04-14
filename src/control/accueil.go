@@ -123,11 +123,11 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-/* 
-    Demande de recalculer la table qgis_export
+/*
+	Demande de recalculer la table qgis_export
 */
 func MajQGis(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
-    err := model.QGisUpdate(ctx.DB)
+	err := model.QGisUpdate(ctx.DB)
 	if err != nil {
 		return err
 	}
@@ -137,7 +137,7 @@ func MajQGis(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Header: ctxt.Header{
 			Title: "Mise à jour pour QGis",
 		},
-		Menu:    "accueil",
+		Menu: "accueil",
 	}
-    return nil
+	return nil
 }

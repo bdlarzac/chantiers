@@ -26,11 +26,11 @@ type Commune struct {
 
 const N_COMMUNES = 13
 
-// *********************************************************
-/**
-    Renvoie une Commune contenant Id et Nom.
-    Les autres champs ne sont pas remplis.
-**/
+// ************************** Get one *******************************
+/*
+   Renvoie une Commune contenant Id et Nom.
+   Les autres champs ne sont pas remplis.
+*/
 func GetCommune(db *sqlx.DB, id int) (commune *Commune, err error) {
 	commune = &Commune{}
 	query := "select * from commune where id=$1"
@@ -42,10 +42,25 @@ func GetCommune(db *sqlx.DB, id int) (commune *Commune, err error) {
 	return commune, nil
 }
 
-// *********************************************************
-/**
-    Renvoie la liste de toutes les communes avec leurs lieux-dits
-**/
+// ************************** Get many *******************************
+
+/*
+	Renvoie une liste de communes triés en utilisant un champ de la table
+	@param field    Champ de la table commune utilisé pour le tri
+*/
+func GetSortedCommunes(db *sqlx.DB, field string) (communes []*Commune, err error) {
+	communes = []*Commune{}
+	query := "select * from commune order by " + field
+	err = db.Select(&communes, query)
+	if err != nil {
+		return communes, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return communes, nil
+}
+
+/*
+Renvoie la liste de toutes les communes avec leurs lieux-dits
+*/
 func ListCommunesEtLieudits(db *sqlx.DB) (communes []*Commune, err error) {
 	communes = make([]*Commune, N_COMMUNES)
 	query := "select * from commune"

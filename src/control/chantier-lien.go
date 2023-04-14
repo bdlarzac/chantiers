@@ -21,11 +21,12 @@ import (
 )
 
 /*
-	Calcule les ids ug à partir des champs d'un formulaire chantier
-	Utilisé par
-	    NewPlaq()    UpdatePlaq()
-	    NewChautre() UpdateChautre()
-	    NewChaufer() UpdateChaufer()
+Calcule les ids ug à partir des champs d'un formulaire chantier
+Utilisé par
+
+	NewPlaq()    UpdatePlaq()
+	NewChautre() UpdateChautre()
+	NewChaufer() UpdateChaufer()
 */
 func form2IdsUG(r *http.Request) (ids []int) {
 	var tmp []string
@@ -41,11 +42,12 @@ func form2IdsUG(r *http.Request) (ids []int) {
 }
 
 /*
-	Calcule les ids lieudit à partir des champs d'un formulaire chantier
-	Utilisé par
-	    NewPlaq()    UpdatePlaq()
-	    NewChautre() UpdateChautre()
-	    NewChaufer() UpdateChaufer()
+Calcule les ids lieudit à partir des champs d'un formulaire chantier
+Utilisé par
+
+	NewPlaq()    UpdatePlaq()
+	NewChautre() UpdateChautre()
+	NewChaufer() UpdateChaufer()
 */
 func form2IdsLieudit(r *http.Request) (ids []int) {
 	var tmp []string
@@ -61,10 +63,11 @@ func form2IdsLieudit(r *http.Request) (ids []int) {
 }
 
 /*
-	Calcule les ids fermier à partir des champs d'un formulaire chantier
-	Utilisé par
-	    NewPlaq()    UpdatePlaq()
-	    NewChautre() UpdateChautre()
+Calcule les ids fermier à partir des champs d'un formulaire chantier
+Utilisé par
+
+	NewPlaq()    UpdatePlaq()
+	NewChautre() UpdateChautre()
 */
 func form2IdsFermier(r *http.Request) (ids []int) {
 	var tmp []string
@@ -80,8 +83,8 @@ func form2IdsFermier(r *http.Request) (ids []int) {
 }
 
 /*
-	Utilise la variable liens-parcelles pour calculer les model.ChantierParcelle
-	ex de liens-parcelles : [1025:entiere;1239:surface-0.10]
+Utilise la variable liens-parcelles pour calculer les model.ChantierParcelle
+ex de liens-parcelles : [1025:entiere;1239:surface-0.10]
 */
 func form2LienParcelles(r *http.Request) (result []*model.ChantierParcelle) {
 	result = []*model.ChantierParcelle{}

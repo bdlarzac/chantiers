@@ -1,0 +1,99 @@
+{{/* 
+    
+    Code de la modale de choix des parcelles d'une commune
+
+    Auxiliaire de choix-parcelle.html
+    
+    Cette template doit être appelée avec une struct contenant les champs :
+    - AllCommunes, tel que renvoyé par model.GetSortedComunes("nom")
+    
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+
+<!-- ********************************** Modale choix parcelle ************************************* -->
+<div id="modal-parcelle" class="modal">
+    <div class="modal-content">
+        <span id="modal-parcelle-close">&times;</span>
+        <div class="margin-bottom margin-top">Sélectionnez les parcelles sur la commune de <span class="bold" id="modal-parcelle-nom-commune"></span>.</div>
+        <table id="modal-parcelle-table">
+        <tr>
+        </tr>
+        </table>
+        <div class="margin-top">
+            <input type="button" id="modal-parcelle-cancel" value="Annuler">
+            <input class="margin-left2" type="button" id="modal-parcelle-validate" value="Valider">
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+window.addEventListener("load", function(){
+    const modal = document.getElementById("modal-parcelle");
+    let close = document.getElementById("modal-parcelle-close");
+    modal.style.display = "none";
+    close.onclick = function() {
+        modal.style.display = "none";
+    }
+    document.getElementById("modal-parcelle-cancel").onclick = function() {
+        modal.style.display = "none";
+    }
+    document.getElementById("modal-parcelle-validate").onclick = function() {
+        modal.style.display = "none";
+//        callback_validate_modal_ugs(); // doit être implémenté par chaque page utilisatrice.
+    }
+});
+
+function showModalParcelle(){
+    if(document.getElementById('CHOOSE_COMMUNE').selected){
+        return;
+    }
+    //
+    // Nom commune
+    //
+    const selectElt = document.getElementById('choix-parcelle-select-commune');
+    const optionElt = selectElt.options[selectElt.selectedIndex];
+//    const idCommune = optionElt.getAttribute('id').replace('choix-parcelle-commune-', '');
+    const nomCommune = optionElt.innerHTML;
+    document.getElementById("modal-parcelle-nom-commune").innerHTML = nomCommune;
+    //
+    // 
+    //
+    const table = document.getElementById("modal-parcelle-table");
+    let tr = document.createElement("tr");
+    table.appendChild(tr);
+    //
+    let i = 0;
+    for(const parcelle of ChoixParcelle.currentParcelles) {
+        const td = document.createElement("td");
+        i++;
+    }
+        {{/* 
+        {{range $i, $ug := .AllUGs}}
+            <td>
+                <input 
+                    type="checkbox"
+                    class="chk-ug"
+                    id="chk-ug-{{$ug.Id}}"
+                    data-ug-id="{{$ug.Id}}"
+                    data-ug-code="{{$ug.Code}}"
+                    data-ug-surface="{{$ug.SurfaceSIG}}"
+                    >
+                <label for="chk-ug-{{$ug.Id}}">{{$ug.Code}}<label>
+            </td>
+            {{if eq (modulo $i 9) 8}}
+            </tr>
+            <tr>
+            {{end}}
+        {{end}}
+        */}}
+        
+    //
+    let modal = document.getElementById("modal-parcelle");
+    modal.style.display = "block";
+}
+
+</script>

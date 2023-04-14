@@ -1,23 +1,22 @@
 /*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
+	"net/http"
 	"strconv"
 	"strings"
-	"net/http"
-	"github.com/gorilla/mux"
 )
 
 type detailsActeurList struct {
-	List  []*model.Acteur
-	Count int
-	RolesMap   map[string]string
+	List     []*model.Acteur
+	Count    int
+	RolesMap map[string]string
 }
 
 type detailsActeurForm struct {
@@ -28,7 +27,7 @@ type detailsActeurForm struct {
 type detailsActeurShow struct {
 	Acteur    *model.Acteur
 	Activites []*model.ActeurActivite
-	RolesMap   map[string]string
+	RolesMap  map[string]string
 }
 
 // *********************************************************
@@ -46,10 +45,10 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	}
 	//
 	rolesMap, err := model.GetRolesMap(ctx.DB)
-    if err != nil {
-        return err
-    }
-    //
+	if err != nil {
+		return err
+	}
+	//
 	ctx.TemplateName = "acteur-list.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
@@ -58,11 +57,11 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		Menu: "acteurs",
 		Footer: ctxt.Footer{
 			JSFiles: []string{
-			"/static/lib/table-sort/table-sort.js"},
+				"/static/lib/table-sort/table-sort.js"},
 		},
 		Details: detailsActeurList{
-			List:  list,
-			Count: model.CountActeurs(ctx.DB),
+			List:     list,
+			Count:    model.CountActeurs(ctx.DB),
 			RolesMap: rolesMap,
 		},
 	}
@@ -91,10 +90,10 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	}
 	//
 	rolesMap, err := model.GetRolesMap(ctx.DB)
-    if err != nil {
-        return err
-    }
-    //
+	if err != nil {
+		return err
+	}
+	//
 	ctx.TemplateName = "acteur-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
@@ -106,7 +105,7 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		Details: detailsActeurShow{
 			Acteur:    acteur,
 			Activites: activites,
-			RolesMap: rolesMap,
+			RolesMap:  rolesMap,
 		},
 	}
 	return nil
@@ -240,12 +239,12 @@ func acteurForm2var(r *http.Request) (*model.Acteur, error) {
 	acteur.Nom = r.PostFormValue("nom")
 	//
 	if len(r.PostFormValue("codes-roles")) != 0 {
-	    //test nécessaire car si str est vide, Split renvoie un tableu contenant une chaîne vide
-        tmp := strings.Split(r.PostFormValue("codes-roles"), ";")
-        for _, str := range tmp {
-            acteur.CodesRoles = append(acteur.CodesRoles, str)
-        }
-    }
+		//test nécessaire car si str est vide, Split renvoie un tableu contenant une chaîne vide
+		tmp := strings.Split(r.PostFormValue("codes-roles"), ";")
+		for _, str := range tmp {
+			acteur.CodesRoles = append(acteur.CodesRoles, str)
+		}
+	}
 	//
 	acteur.Prenom = r.PostFormValue("prenom")
 	acteur.Adresse1 = r.PostFormValue("adresse1")
