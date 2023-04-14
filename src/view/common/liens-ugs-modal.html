@@ -64,11 +64,7 @@ window.addEventListener("load", function(){
     }
     document.getElementById("validate-modal-ug").onclick = function() {
         modal.style.display = "none";
-        const idsUGs = computeIdsUGsFromForm();
-        afficheUGs(idsUGs);
-        afficheParcelles(idsUGs, computeLiensParcellesFromForm());
-        afficheLieudits(idsUGs, computeIdsLieuditsFromForm());
-        afficheFermiers(idsUGs, computeIdsFermiersFromForm());
+        callback_validate_modal_ugs(); // doit être implémenté par chaque page utilisatrice.
     }
 });
 

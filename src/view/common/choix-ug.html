@@ -1,30 +1,24 @@
 {{/* 
     Formulaire de choix d'une ou plusieurs UGs.
     Template devant être appelée avec une structure contenant un champ AllUGs
+    ATTENTION : aucune UG sélectionnée signifie "toutes les ugs".
     Utilisation :
         <script>
-            choixFermier = new ChoixFermier('choix-fermier');
-            choixFermier.display();
-            choixFermier.initialize();
+            choixUG = new ChoixUG('choix-ug');
+            choixUG.display();
+            choixUG.initialize();
         </script>
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
+<link href="/static/css/modal.css" rel="stylesheet" type="text/css">
+
 {{template "liens-ugs.html" $}}
 {{template "liens-ugs-modal.html" $}}
 
 <script>
-
-// bidouilles pour faire marcher ug-modal --- à refactoriser
-function computeLiensParcellesFromForm(){}
-function computeIdsLieuditsFromForm(){}
-function computeIdsFermiersFromForm(){}
-function afficheParcelles(idsUGs, liensParcelle){}
-function afficheLieudits(idsUGs, idsLieudit){}
-function afficheFermiers(idsUGs, idsFermier){}
-
 
 class ChoixUG{
     
@@ -66,10 +60,50 @@ class ChoixUG{
     
 } // end class
 
+
+// *********************** Callbacks liés à modale UGs ***********************
+
+/** 
+    Code appelé lorsque la modale UG est validée.
+**/
+function callback_validate_modal_ugs(){
+    choixUG_choixChanged('choix-ug');
+}
+
+function callback_remove_ug(){
+    choixUG_choixChanged('choix-ug');
+}
+
+// *********************** Code lié à cette page ***********************
+
+/** 
+    - MAJ le contenu de summary
+    - Affiche les UGs sélectionnées
+**/
 function choixUG_choixChanged(baseId){
-    // update summary string
-//    const ugElt = document.getElementById("select-choix-ug");
-//    document.getElementById(baseId + '-summary').innerHTML = ugElt.options[ugElt.selectedIndex].text;
+    // MAJ le contenu de summary
+    const tmpElts = document.getElementsByClassName('chk-ug');
+    const selectedCodes = [];
+    for(const item of tmpElts) {
+        if(item.checked){
+            selectedCodes.push(item.getAttribute('data-ug-code'));
+        }
+    }
+    let str = '';
+    const l = selectedCodes.length;
+    if(l == 0){
+        str = 'Toutes les UGs';
+    }
+    else{
+        const tmp = selectedCodes.slice(0, 3);
+        str = tmp.join(' + ');
+        if(l > 3){
+            str += ' + ...';
+        }
+    }
+    document.getElementById(baseId + '-summary').innerHTML = str;
+    // Affiche les UGs sélectionnées
+    afficheUGs(computeIdsUGsFromForm());
 }
 
 </script>

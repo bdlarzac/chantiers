@@ -45,8 +45,10 @@ fmt.Printf("%+v\n",r.PostForm)
 //fmt.Printf("filtre_essence = %+v\n",filtre_essence)
 //        filtre_proprio := computeFiltreProprio(r)
 //fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
-        filtre_periode := computeFiltrePeriode(r)
-fmt.Printf("filtre_periode = %+v\n",filtre_periode)
+//        filtre_periode := computeFiltrePeriode(r)
+//fmt.Printf("filtre_periode = %+v\n",filtre_periode)
+        filtre_ug := computeFiltreUG(r)
+fmt.Printf("filtre_ug = %+v\n",filtre_ug)
         //
         ctx.TemplateName = "search-result.html"
         ctx.Page = &ctxt.Page{
@@ -170,6 +172,19 @@ func computeFiltrePeriode(r *http.Request) (result []string) {
     }
     result = append(result, r.PostFormValue("choix-periode-debut"))
     result = append(result, r.PostFormValue("choix-periode-fin"))
+    return result
+}
+
+/* 
+    Filtre UG : renvoie un tableau de strings.
+        - Si pas de filtre, contient un tableau vide.
+        - Sinon contient 2 strings, dates de début et de fin au format AAAA-MM-JJ.
+*/
+func computeFiltreUG(r *http.Request) (result []string) {
+    if r.PostFormValue("ids-ugs") == ""{
+        return []string{}
+    }
+    result = strings.Split(r.PostFormValue("ids-ugs"), ";")
     return result
 }
 

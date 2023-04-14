@@ -3,6 +3,10 @@
     La variable go {{.}} de cette template correspond à un chantier (= {{.Details.Chantier}} des templates appelantes).
     Utilisé uniquement par computeIdsUGsFromChantier()
     
+    Pour utiliser cette modale, le code utilisateur doit implémenter 2 fonctions :
+    - callback_validate_modal_ugs()
+    - callback_remove_ug()
+    
 */}}
 
 <script type="text/javascript" src="/static/js/round.js"></script>
@@ -92,11 +96,7 @@ function removeUG(idUG){
     var ok = confirm("Voulez-vous vraiment enlever l'association avec l'UG " + codeUG + " ?");
     if(ok){
         chkElt.checked = false;
-        const idsUGs = computeIdsUGsFromForm();
-        afficheUGs(idsUGs);
-        afficheParcelles(idsUGs, computeLiensParcellesFromForm());
-        afficheLieudits(idsUGs, computeIdsLieuditsFromForm());
-        afficheFermiers(idsUGs, computeIdsFermiersFromForm());
+        callback_remove_ug(); // A implémenter par le code appelant
     }
 }
 

@@ -145,12 +145,37 @@
 
 <script>
 
-// ***************************************
+// *********************** Callbacks liés à modale UGs ***********************
+//    Code identique dans chautre-form.html et plaq-form.html.
+//    Répétition de code car la modale est aussi utilisée par choix-ug.html en faisant des choses différentes.
+
+/** 
+    Code appelé lorsque la modale UG est validée.
+    Code identique dans chautre-form.html et plaq-form.html.
+    Répétition de code car la modale est aussi utilisée par choix-ug.html en faisant des choses différentes.
+**/
+function callback_validate_modal_ugs(){
+    const idsUGs = computeIdsUGsFromForm();
+    afficheUGs(idsUGs);
+    afficheParcelles(idsUGs, computeLiensParcellesFromForm());
+    afficheLieudits(idsUGs, computeIdsLieuditsFromForm());
+    afficheFermiers(idsUGs, computeIdsFermiersFromForm());
+}
+
+function callback_remove_ug(){
+    const idsUGs = computeIdsUGsFromForm();
+    afficheUGs(idsUGs);
+    afficheParcelles(idsUGs, computeLiensParcellesFromForm());
+    afficheLieudits(idsUGs, computeIdsLieuditsFromForm());
+    afficheFermiers(idsUGs, computeIdsFermiersFromForm());
+}
+
+// *********************** Code lié à cette page ***********************
+
 window.addEventListener("load", function(){
     initialize();
 });
 
-// ***************************************
 async function initialize() {
     // form new
     if({{.Id}} == 0){
@@ -182,7 +207,6 @@ async function initialize() {
     }
 }
 
-// ***************************************
 function validateForm(){
     let msg = "";
     //
@@ -236,5 +260,6 @@ function validateForm(){
     //
     return true;
 }
+
 </script>   
 {{end}}

@@ -57,6 +57,15 @@
             </script>
         </div>
         
+        <div class="inline-block margin-left05">
+            {{template "choix-parcelle.html" $.Details}}
+            <script>
+            const choixParcelle = new ChoixParcelle('choix-parcelle');
+            choixParcelle.display();
+            choixParcelle.initialize();
+            </script>
+        </div>
+        
         {{/*
         <div class="inline-block">
             {{template "choix-acteur.html" $.Details}}
@@ -74,6 +83,7 @@
         <input class="big-button" type="submit" value="Valider">
         <input type="hidden" name="choix-ALL-essence" id="choix-ALL-essence" value="">
         <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
+        <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
     </div>
                                                                                                                                       
 </form>
@@ -85,6 +95,7 @@ function validateForm(){
     document.getElementById('choix-ALL-essence').value = choixEssence_isAllSelected();
     document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
     msg += choixPeriode_validateForm('choix-periode');
+    const dummy = checkUGsAndFillHiddenField();
     //
     if(msg != ''){
         alert("Impossible de valider ce formulaire : \n" + msg);
