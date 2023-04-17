@@ -97,7 +97,8 @@ function validateForm(){
     document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
     msg += choixPeriode_validateForm('choix-periode');
     const dummy = checkUGsAndFillHiddenField();
-    msg += choixParcelle_validateForm('choix-parcelle');
+    idsParcelles = choixParcelle_getIdsParcelles();
+    document.getElementById('ids-parcelles').value = idsParcelles.join(';');
     //
     if(msg != ''){
         alert("Impossible de valider ce formulaire : \n" + msg);

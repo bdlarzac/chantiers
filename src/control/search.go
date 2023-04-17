@@ -42,14 +42,16 @@ func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err erro
 		fmt.Println("ici")
 		fmt.Printf("%+v\n", r.PostForm)
 		//
-		//        filtre_essence := computeFiltreEssence(r)
+		//filtre_essence := computeFiltreEssence(r)
 		//fmt.Printf("filtre_essence = %+v\n",filtre_essence)
-		//        filtre_proprio := computeFiltreProprio(r)
+		//filtre_proprio := computeFiltreProprio(r)
 		//fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
-		//        filtre_periode := computeFiltrePeriode(r)
+		//filtre_periode := computeFiltrePeriode(r)
 		//fmt.Printf("filtre_periode = %+v\n",filtre_periode)
-		filtre_ug := computeFiltreUG(r)
-		fmt.Printf("filtre_ug = %+v\n", filtre_ug)
+		//filtre_ug := computeFiltreUG(r)
+		//fmt.Printf("filtre_ug = %+v\n", filtre_ug)
+		filtre_parcelle := computeFiltreParcelle(r)
+		fmt.Printf("filtre_parcelle = %+v\n", filtre_parcelle)
 		//
 		ctx.TemplateName = "search-result.html"
 		ctx.Page = &ctxt.Page{
@@ -184,12 +186,25 @@ func computeFiltrePeriode(r *http.Request) (result []string) {
 /*
 	Filtre UG : renvoie un tableau de strings.
 	    - Si pas de filtre, contient un tableau vide.
-	    - Sinon contient 2 strings, dates de début et de fin au format AAAA-MM-JJ.
+	    - Sinon contient les ids UG
 */
 func computeFiltreUG(r *http.Request) (result []string) {
 	if r.PostFormValue("ids-ugs") == "" {
 		return []string{}
 	}
 	result = strings.Split(r.PostFormValue("ids-ugs"), ";")
+	return result
+}
+
+/*
+	Filtre Parcelles : renvoie un tableau de strings.
+	    - Si pas de filtre, contient un tableau vide.
+	    - Sinon contient les ids parcelle.
+*/
+func computeFiltreParcelle(r *http.Request) (result []string) {
+	if r.PostFormValue("ids-parcelles") == "" {
+		return []string{}
+	}
+	result = strings.Split(r.PostFormValue("ids-parcelles"), ";")
 	return result
 }

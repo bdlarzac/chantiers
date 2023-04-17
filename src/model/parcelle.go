@@ -16,6 +16,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
+	"database/sql"
 )
 
 type Parcelle struct {
@@ -44,8 +45,8 @@ type ParcelleActivite struct {
 
 // ************************** Get one *******************************
 
-/* 
-    Renvoie une Parcelle.
+/*
+    Renvoie une Parcelle à partir de son id.
 */
 func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	p = &Parcelle{}
@@ -58,9 +59,32 @@ func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	return p, nil
 }
 
+/*
+    Renvoie une Parcelle à partir de son code et de l'id de la commune.
+    (id de la commune nécessaire car le code est unique au sein de la commune,
+    donc plusieurs parcelles avec le même code existent en base).
+*/
+func GetParcelleFromCodeAndCommuneId(db *sqlx.DB, codeParcelle string, idCommune int) (p *Parcelle, err error) {
+	p = &Parcelle{}
+	query := "select * from parcelle where code=$1 and id_commune=$2"
+	row := db.QueryRowx(query, codeParcelle, strconv.Itoa(idCommune))
+	err = row.StructScan(p)
+    switch {
+    case err == sql.ErrNoRows:
+		return p, nil
+    case err != nil:
+		return p, werr.Wrapf(err, "Erreur query : "+query)
+    }
+	if err != nil {
+		return p, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return p, nil
+}
+
 /* 
     Vérifie si un code parcelle existe dans une commune
 */
+/* 
 func CheckParcelleInCommune(db *sqlx.DB, codeParcelle string, idCommune int) (ok bool, err error) {
 	var count int
 	query := "select count(*) from parcelle where code=$1 and id_commune=$2"
@@ -71,8 +95,7 @@ func CheckParcelleInCommune(db *sqlx.DB, codeParcelle string, idCommune int) (ok
 	ok = count == 1
 	return ok, nil
 }
-
-
+*/
 
 // ************************** Get many *******************************
 

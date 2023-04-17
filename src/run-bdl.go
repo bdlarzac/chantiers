@@ -48,8 +48,7 @@ func main() {
 	r.HandleFunc("/ajax/get/lieudits-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetLieuditsFromIdsUGs))
 	r.HandleFunc("/ajax/get/fermiers-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetFermiersFromIdsUGs))
 	r.HandleFunc("/ajax/get/parcelles-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromIdsUGs))
-	r.HandleFunc("/ajax/check/parcelle-in-commune/{code-parcelle:[A-Z0-9]{6}}/{id-commune:[0-9]+}", Hajax(ajax.CheckParcelleInCommune))
-
+	r.HandleFunc("/ajax/get/parcelle-from-code-et-commune/{code-parcelle:[A-Z0-9]{6}}/{id-commune:[0-9]+}", Hajax(ajax.GetParcelleFromCodeAndCommuneId))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
 
@@ -258,6 +257,8 @@ func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(
 // A mettre ailleurs, mais où ?
 
 func notFound(w http.ResponseWriter, r *http.Request) {
+fmt.Println("not found")
+fmt.Printf("r = %+v\n",r)
 	ctx := ctxt.NewContext()
 	err := fmt.Errorf("Page inexistante :<br><code><b>%s</b></code>", r.URL)
 	showErrorPage(err, ctx, w, r)

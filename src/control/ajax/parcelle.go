@@ -16,8 +16,6 @@ import (
 */
 func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
-	// pas terrible, vars["ids"] est directement utilisé pour fabriquer le sql
-	// risque d'injection, mais le routing impose [1-9,]
 	parcelles, err := model.GetParcellesFromIdsUGs(ctx.DB, vars["ids"])
 	if err != nil {
 		return err
@@ -44,6 +42,28 @@ func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
 	return nil
 }
 
+func GetParcelleFromCodeAndCommuneId(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
+	vars := mux.Vars(r)
+	idCommune, err := strconv.Atoi(vars["id-commune"])
+	if err != nil {
+		return err
+	}
+	parcelle, err := model.GetParcelleFromCodeAndCommuneId(ctx.DB, vars["code-parcelle"], idCommune)
+	if err != nil {
+		return err
+	}
+	json, err := json.Marshal(parcelle)
+	if err != nil {
+		return err
+	}
+	w.Write(json)
+	return nil
+}
+
+/* 
+    Inutile, écrit pour lors du dev de choix-pacelles.html
+*/
+/* 
 func CheckParcelleInCommune(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	idCommune, err := strconv.Atoi(vars["id-commune"])
@@ -61,6 +81,7 @@ func CheckParcelleInCommune(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
 	w.Write(json)
 	return nil
 }
+*/
 
 /* 
     Renvoie les parcelles d'une commune

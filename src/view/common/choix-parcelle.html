@@ -46,7 +46,7 @@ class ChoixParcelle {
                     <img 
                         class="inline vertical-align-middle bigicon"
                         src="/static/img/new.png"
-                        title="Choisir une ou plusieurs parcelles sur cette commune"
+                        title="Ajouter cette parcelle"
                         onclick="choixParcelle_addParcelle();"
                     />
                 </div>
@@ -83,51 +83,54 @@ async function choixParcelle_addParcelle(){
     // 1 - check
     //
     if(document.getElementById('choix-parcelle-choose-commune').selected){
-        alert('Vous devez choisir une commune');
+        alert('Vous devez choisir une commune.');
         return;
     }
     if(newCodeParcelle.length != 6){
-        alert('Le code parcelle doit contenir 6 caractères');
+        alert('Le code parcelle doit contenir 6 caractères.');
         return;
     }
     if(newCodeParcelle.length != 6){
-        alert('Le code parcelle doit contenir 6 caractères');
-        return;
-    }
-    const ok = await choixParcelle_checkParcelle(newCodeParcelle, newIdCommune);
-    if(!ok) {
-        alert("Le code parcelle ${newCodeParcelle} n'existe pas sur la commune {newNomCommune}");
+        alert('Le code parcelle doit contenir 6 caractères.');
         return;
     }
     newCodeParcelle = newCodeParcelle.toUpperCase();
+    const p = await choixParcelle_getParcelleFromCodeAndCommuneId(newCodeParcelle, newIdCommune);
+    if(p.Id == 0) {
+        alert(`Le code parcelle ${newCodeParcelle} n'existe pas sur la commune de ${newNomCommune}`);
+        return;
+    }
+    const newIdParcelle = p.Id;
     //
     // 2 - fabrique la liste des codes et des communes déjà ajoutés
     //
-    // listeParcelles = tableau - chaque elt contient un tableau avec 3 éléments :
-    // code parcelle, id commune, nom commune
+    // listeParcelles = tableau - chaque elt contient un tableau avec 4 éléments :
+    // code parcelle, id parcelle, id commune, nom commune
     const listeParcelles = new Array();
     const zoneParcellesElt = document.getElementById('choix-parcelle-zone-parcelles');
     oldParcelleDivs = document.getElementsByClassName('choix-parcelle-parcelle-ajoutee');
     for(const current of oldParcelleDivs) {
         const currentCodeParcelle = current.getAttribute('data-code-parcelle');
+        const currentIdParcelle = current.getAttribute('data-id-parcelle');
         const currentIdCommune = current.getAttribute('data-id-commune');
         const currentNomCommune = current.getAttribute('data-nom-commune');
         if(newIdCommune == currentIdCommune && newCodeParcelle == currentCodeParcelle){
             alert('Vous ne pouvez pas ajouter deux fois la même parcelle');
             return;
         }
-        listeParcelles.push([currentCodeParcelle, currentIdCommune, currentNomCommune]);
+        listeParcelles.push([currentCodeParcelle, currentIdParcelle, currentIdCommune, currentNomCommune]);
     }
     // Ajoute la nouvelle parcelle à la liste
-    listeParcelles.push([newCodeParcelle, newIdCommune, newNomCommune]);
+    listeParcelles.push([newCodeParcelle, newIdParcelle, newIdCommune, newNomCommune]);
     //
     // 3 - Recrée la nouvelle liste
     //
     zoneParcellesElt.innerHTML = '';
     for(const current of listeParcelles) {
         const codeParcelle = current[0];
-        const idCommune = current[1];
-        const nomCommune = current[2];
+        const idParcelle = current[1];
+        const idCommune = current[2];
+        const nomCommune = current[3];
         //
         // img remove
         //
@@ -156,6 +159,7 @@ async function choixParcelle_addParcelle(){
         divElt.id = 'choix-parcelle-parcelle-ajoutee-' + codeParcelle + '-' + idCommune; // utilisé dans choixParcelle_removeParcelle()
         divElt.setAttribute('class', 'padding-top05 choix-parcelle-parcelle-ajoutee');
         divElt.setAttribute('data-code-parcelle', codeParcelle);
+        divElt.setAttribute('data-id-parcelle', idParcelle);
         divElt.setAttribute('data-id-commune', idCommune);
         divElt.setAttribute('data-nom-commune', nomCommune);
         divElt.appendChild(aElt);
@@ -173,12 +177,8 @@ function choixParcelle_removeParcelle(codeParcelle, idCommune, nomCommune){
     document.getElementById('choix-parcelle-parcelle-ajoutee-' + codeParcelle + '-' + idCommune).remove();
 }
 
-
-/** 
-    Renvoie un booléen indiquant si un code parcelle existe dans une commune.
-**/
-async function choixParcelle_checkParcelle(codeParcelle, idCommune){
-    const url = '/ajax/check/parcelle-in-commune/' + codeParcelle + '/' + idCommune;
+async function choixParcelle_getParcelleFromCodeAndCommuneId(codeParcelle, idCommune){
+    const url = '/ajax/get/parcelle-from-code-et-commune/' + codeParcelle + '/' + idCommune;
     let response = await fetch(url);
     if(response == null){
         alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
@@ -191,9 +191,16 @@ async function choixParcelle_checkParcelle(codeParcelle, idCommune){
             + 'Mauvais format de retour de ' + url);
         return;
     }
-    const ok = Boolean(response);
-    return ok;
+    return response;
 }
 
+function choixParcelle_getIdsParcelles(){
+    const result = new Array();
+    parcelleDivs = document.getElementsByClassName('choix-parcelle-parcelle-ajoutee');
+    for(const current of parcelleDivs) {
+        result.push(current.getAttribute('data-id-parcelle'));
+    }
+    return result;
+}
 
 </script>
