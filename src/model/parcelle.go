@@ -44,8 +44,9 @@ type ParcelleActivite struct {
 
 // ************************** Get one *******************************
 
-// Renvoie une Parcelle contenant Id, Nom et surface.
-// Les autres champs ne sont pas remplis.
+/* 
+    Renvoie une Parcelle.
+*/
 func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	p = &Parcelle{}
 	query := "select * from parcelle where id=$1"
@@ -57,11 +58,27 @@ func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	return p, nil
 }
 
+/* 
+    Vérifie si un code parcelle existe dans une commune
+*/
+func CheckParcelleInCommune(db *sqlx.DB, codeParcelle string, idCommune int) (ok bool, err error) {
+	var count int
+	query := "select count(*) from parcelle where code=$1 and id_commune=$2"
+	_ = db.QueryRow(query, codeParcelle, strconv.Itoa(idCommune)).Scan(&count)
+	if err != nil {
+		return false, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	ok = count == 1
+	return ok, nil
+}
+
+
+
 // ************************** Get many *******************************
 
 /*
-Utilisé par ajax
-@param  idsUG  string, par ex : "12,432,35"
+    Utilisé par ajax
+    @param  idsUG  string, par ex : "12,432,35"
 */
 func GetParcellesFromIdsUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err error) {
 	query := `select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(` + idsUG + `)) order by code`
@@ -70,14 +87,17 @@ func GetParcellesFromIdsUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err 
 }
 
 /*
-Utilisé par ajax
-Renvoie les parcelles triées par code (à 6 caractères).
+    Utilisé par ajax
+    Renvoie les parcelles triées par code (à 6 caractères).
+    Inutile, écrit pour première version de choix-pacelles.html
 */
+/* 
 func GetParcellesFromIdCommune(db *sqlx.DB, idCommune int) (result []*Parcelle, err error) {
 	query := `select * from parcelle where id_commune=` + strconv.Itoa(idCommune) + ` order by code`
 	err = db.Select(&result, query)
 	return result, nil
 }
+*/
 
 // ************************** Compute *******************************
 

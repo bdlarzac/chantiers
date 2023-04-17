@@ -59,7 +59,6 @@
         
         <div class="inline-block margin-left05">
             {{template "choix-parcelle.html" $.Details}}
-            {{/* template "choix-parcelle-modal.html" */}}
             <script>
             const choixParcelle = new ChoixParcelle('choix-parcelle');
             choixParcelle.display();
@@ -85,6 +84,7 @@
         <input type="hidden" name="choix-ALL-essence" id="choix-ALL-essence" value="">
         <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
         <input type="hidden" name="ids-ugs" id="ids-ugs" value="">
+        <input type="hidden" name="ids-parcelles" id="ids-parcelles" value="">
     </div>
                                                                                                                                       
 </form>
@@ -97,6 +97,7 @@ function validateForm(){
     document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
     msg += choixPeriode_validateForm('choix-periode');
     const dummy = checkUGsAndFillHiddenField();
+    msg += choixParcelle_validateForm('choix-parcelle');
     //
     if(msg != ''){
         alert("Impossible de valider ce formulaire : \n" + msg);
