@@ -7,10 +7,10 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
+"fmt"
 )
 
 type detailsSearchForm struct {
@@ -39,19 +39,16 @@ func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err erro
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-		fmt.Println("ici")
-		fmt.Printf("%+v\n", r.PostForm)
+fmt.Printf("%+v\n", r.PostForm)
 		//
-		//filtre_essence := computeFiltreEssence(r)
-		//fmt.Printf("filtre_essence = %+v\n",filtre_essence)
-		//filtre_proprio := computeFiltreProprio(r)
-		//fmt.Printf("filtre_proprio = %+v\n",filtre_proprio)
-		//filtre_periode := computeFiltrePeriode(r)
-		//fmt.Printf("filtre_periode = %+v\n",filtre_periode)
-		//filtre_ug := computeFiltreUG(r)
-		//fmt.Printf("filtre_ug = %+v\n", filtre_ug)
-		filtre_parcelle := computeFiltreParcelle(r)
-		fmt.Printf("filtre_parcelle = %+v\n", filtre_parcelle)
+		filtres := map[string][]string{}
+		filtres["fermier"] = computeFiltreFermier(r)
+		filtres["essence"] = computeFiltreEssence(r)
+		filtres["proprio"] = computeFiltreProprio(r)
+		filtres["periode"] = computeFiltrePeriode(r)
+		filtres["ug"] = computeFiltreUG(r)
+		filtres["parcelle"] = computeFiltreParcelle(r)
+fmt.Printf("filtres = %+v\n",filtres)
 		//
 		ctx.TemplateName = "search-result.html"
 		ctx.Page = &ctxt.Page{
@@ -66,7 +63,6 @@ func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err erro
 		//
 		// Affiche form
 		//
-		//periods, hasChantier, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		if err != nil {
 			return err
@@ -123,9 +119,22 @@ func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err erro
 // ************************** Auxiliaires *******************************
 
 /*
-	Filtre essence : renvoie un tableau de strings.
-	    - Si pas de filtre, contient un tableau vide.
-	    - Sinon contient une liste de codes essence.
+Filtre fermier : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient une liste avec un seul élément, l'id du fermier sélectionné.
+*/
+func computeFiltreFermier(r *http.Request) (result []string) {
+    choix := r.PostFormValue("select-choix-fermier")
+	if choix == "choix-fermier-no-limit" {
+		return []string{}
+	}
+	return []string{choix[14:]}
+}
+
+/*
+Filtre essence : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient une liste de codes essence.
 */
 func computeFiltreEssence(r *http.Request) (result []string) {
 	if r.PostFormValue("choix-ALL-essence") == "true" {
@@ -146,10 +155,10 @@ func computeFiltreEssence(r *http.Request) (result []string) {
 }
 
 /*
-	Filtre propriétaire : renvoie un tableau de strings.
-	    - Si pas de filtre, contient un tableau vide.
-	    - Sinon contient une liste d'id propriétaires (dans la table acteur)
-	      (attention, cette liste contient des strings, pas des ints).
+Filtre propriétaire : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient une liste d'id propriétaires (dans la table acteur)
+    (attention, cette liste contient des strings, pas des ints).
 */
 func computeFiltreProprio(r *http.Request) (result []string) {
 	if r.PostFormValue("choix-ALL-proprio") == "true" {
@@ -170,9 +179,9 @@ func computeFiltreProprio(r *http.Request) (result []string) {
 }
 
 /*
-	Filtre période : renvoie un tableau de strings.
-	    - Si pas de filtre, contient un tableau vide.
-	    - Sinon contient 2 strings, dates de début et de fin au format AAAA-MM-JJ.
+Filtre période : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient 2 strings, dates de début et de fin au format AAAA-MM-JJ.
 */
 func computeFiltrePeriode(r *http.Request) (result []string) {
 	if r.PostFormValue("choix-periode-periodes") == "choix-periode-no-limit" {
@@ -184,9 +193,9 @@ func computeFiltrePeriode(r *http.Request) (result []string) {
 }
 
 /*
-	Filtre UG : renvoie un tableau de strings.
-	    - Si pas de filtre, contient un tableau vide.
-	    - Sinon contient les ids UG
+Filtre UG : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient les ids UG
 */
 func computeFiltreUG(r *http.Request) (result []string) {
 	if r.PostFormValue("ids-ugs") == "" {
@@ -197,9 +206,9 @@ func computeFiltreUG(r *http.Request) (result []string) {
 }
 
 /*
-	Filtre Parcelles : renvoie un tableau de strings.
-	    - Si pas de filtre, contient un tableau vide.
-	    - Sinon contient les ids parcelle.
+Filtre Parcelles : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient les ids parcelle.
 */
 func computeFiltreParcelle(r *http.Request) (result []string) {
 	if r.PostFormValue("ids-parcelles") == "" {

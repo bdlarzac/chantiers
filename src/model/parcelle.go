@@ -13,10 +13,10 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	"database/sql"
 )
 
 type Parcelle struct {
@@ -29,7 +29,6 @@ type Parcelle struct {
 	Proprietaire *Acteur
 	Commune      *Commune
 	Lieudits     []*Lieudit
-	Communes     []*Commune // A supprimer et adapter dans tout le code
 	Fermiers     []*Fermier
 	UGs          []*UG
 }
@@ -46,7 +45,7 @@ type ParcelleActivite struct {
 // ************************** Get one *******************************
 
 /*
-    Renvoie une Parcelle à partir de son id.
+Renvoie une Parcelle à partir de son id.
 */
 func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	p = &Parcelle{}
@@ -60,67 +59,38 @@ func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 }
 
 /*
-    Renvoie une Parcelle à partir de son code et de l'id de la commune.
-    (id de la commune nécessaire car le code est unique au sein de la commune,
-    donc plusieurs parcelles avec le même code existent en base).
+Renvoie une Parcelle à partir de son code et de l'id de la commune.
+(id de la commune nécessaire car le code est unique au sein de la commune,
+donc plusieurs parcelles avec le même code existent en base).
 */
 func GetParcelleFromCodeAndCommuneId(db *sqlx.DB, codeParcelle string, idCommune int) (p *Parcelle, err error) {
 	p = &Parcelle{}
 	query := "select * from parcelle where code=$1 and id_commune=$2"
 	row := db.QueryRowx(query, codeParcelle, strconv.Itoa(idCommune))
 	err = row.StructScan(p)
-    switch {
-    case err == sql.ErrNoRows:
+	switch {
+	case err == sql.ErrNoRows:
 		return p, nil
-    case err != nil:
+	case err != nil:
 		return p, werr.Wrapf(err, "Erreur query : "+query)
-    }
+	}
 	if err != nil {
 		return p, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return p, nil
 }
 
-/* 
-    Vérifie si un code parcelle existe dans une commune
-*/
-/* 
-func CheckParcelleInCommune(db *sqlx.DB, codeParcelle string, idCommune int) (ok bool, err error) {
-	var count int
-	query := "select count(*) from parcelle where code=$1 and id_commune=$2"
-	_ = db.QueryRow(query, codeParcelle, strconv.Itoa(idCommune)).Scan(&count)
-	if err != nil {
-		return false, werr.Wrapf(err, "Erreur query : "+query)
-	}
-	ok = count == 1
-	return ok, nil
-}
-*/
-
 // ************************** Get many *******************************
 
 /*
-    Utilisé par ajax
-    @param  idsUG  string, par ex : "12,432,35"
+Utilisé par ajax
+@param  idsUG  string, par ex : "12,432,35"
 */
 func GetParcellesFromIdsUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err error) {
 	query := `select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(` + idsUG + `)) order by code`
 	err = db.Select(&result, query)
 	return result, nil
 }
-
-/*
-    Utilisé par ajax
-    Renvoie les parcelles triées par code (à 6 caractères).
-    Inutile, écrit pour première version de choix-pacelles.html
-*/
-/* 
-func GetParcellesFromIdCommune(db *sqlx.DB, idCommune int) (result []*Parcelle, err error) {
-	query := `select * from parcelle where id_commune=` + strconv.Itoa(idCommune) + ` order by code`
-	err = db.Select(&result, query)
-	return result, nil
-}
-*/
 
 // ************************** Compute *******************************
 
@@ -154,20 +124,6 @@ func (p *Parcelle) ComputeCommune(db *sqlx.DB) (err error) {
 	p.Commune, err = GetCommune(db, p.IdCommune)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetCommune()")
-	}
-	return nil
-}
-
-// A SUPPRIMER
-func (p *Parcelle) ComputeCommunes(db *sqlx.DB) (err error) {
-	if len(p.Communes) != 0 {
-		return nil // déjà calculé
-	}
-	query := `
-	    select * from commune where id=$1`
-	err = db.Select(&p.Communes, query, p.IdCommune)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return nil
 }

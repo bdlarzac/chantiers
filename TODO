@@ -2,7 +2,6 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
-
 #9 lien chantier parcelle
 --------------------------------------------------------------------------------------------------
 
@@ -13,10 +12,8 @@ pq: la colonne « id_ug » n'existe pas
 
 Utiliser insert / update LiensChantier UG / Parcelle dans model/chantier-lien.go dans insert / update de model / plaq et chautre 
 
-Noter dans la doc : convention : type_chantier = nom de la table duchantier
+Noter dans la doc : convention : type_chantier = nom de la table du chantier
 Utilisé dans model.computeIdsChantiersFromUG()
-
-https://naturagis.fr/qgis/qgis-connexion-base-de-donnees-postgresql-postgis/
 
 --------------------------------------------------------------------------------------------------
 

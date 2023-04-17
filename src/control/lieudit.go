@@ -23,17 +23,17 @@ func ShowLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	if err != nil {
 		return werr.Wrapf(err, "Erreur conversion id lieu-dit")
 	}
-
+	//
 	lieudit, err := model.GetLieudit(ctx.DB, id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetLieudit()")
 	}
-
+	//
 	err = lieudit.ComputeParcelles(ctx.DB)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ComputeParcelles()")
 	}
-
+	//
 	for i, _ := range lieudit.Parcelles {
 		err = lieudit.Parcelles[i].ComputeUGs(ctx.DB)
 		if err != nil {
@@ -47,17 +47,17 @@ func ShowLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel ComputeFermiers()")
 		}
-		err = lieudit.Parcelles[i].ComputeCommunes(ctx.DB)
+		err = lieudit.Parcelles[i].ComputeCommune(ctx.DB)
 		if err != nil {
-			return werr.Wrapf(err, "Erreur appel Parcelle.ComputeCommunes()")
+			return werr.Wrapf(err, "Erreur appel Parcelle.ComputeCommune()")
 		}
 	}
-
+	//
 	err = lieudit.ComputeCommune(ctx.DB)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel Lieudit.ComputeCommunes()")
 	}
-
+	//
 	ctx.TemplateName = "lieudit-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{

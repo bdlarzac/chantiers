@@ -21,8 +21,6 @@ class ChoixPeriode{
     
     #html;
     
-    #baseId;
-    
     /** 
     Array of {arrays containing 2 strings}.
     Strings format = YYYY-MM-DD
@@ -34,13 +32,7 @@ class ChoixPeriode{
     **/
     #periods;
     
-    /** 
-        @param  baseId String - Unique id of this component within the page.
-    **/
-    constructor(baseId){
-        //
-        this.#baseId = baseId;
-        //
+    constructor(){
         this.#periods = [];
         {{range $index, $period := .Periods}}
             this.#periods[{{$index}}] = [];
@@ -52,13 +44,13 @@ class ChoixPeriode{
 <fieldset class="choix-periode">
     <legend>Période</legend>
     <details open>
-        <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+        <summary><span id="choix-periode-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
         
         <div class="grid2 padding-top2">
     
             <div class="bold center padding-bottom">Période</div>
             <div>
-                <select id="${this.#baseId}-periodes" name="${this.#baseId}-periodes" onChange="choixPeriode_periodChanged('${this.#baseId}');">
+                <select id="choix-periode-periodes" name="choix-periode-periodes" onChange="choixPeriode_periodChanged();">
                     <option value="choix-periode-no-limit">Pas de limite</option>
                     <option value="choix-periode-free">--- Dates libres ---</option>
                     <option value="choix-periode-psg1">PSG 1 (01/01/2014 - 31/12/2023)</option>
@@ -76,12 +68,12 @@ class ChoixPeriode{
             <div class="bold center padding-bottom">Dates libres</div>
             <div>
                 <div class="inline-block">
-                    <div class="center"><label for="${this.#baseId}-debut">Début</label></div>
-                    <input type="date" name="${this.#baseId}-debut" id="${this.#baseId}-debut" value="" onChange="choixPeriode_dateChanged('${this.#baseId}');">
+                    <div class="center"><label for="choix-periode-debut">Début</label></div>
+                    <input type="date" name="choix-periode-debut" id="choix-periode-debut" value="" onChange="choixPeriode_dateChanged();">
                 </div>
                 <div class="inline-block">
-                    <div class="center"><label for="${this.#baseId}-fin">Fin</label></div>
-                    <input type="date" name="${this.#baseId}-fin" id="${this.#baseId}-fin" value="" onChange="choixPeriode_dateChanged('${this.#baseId}');">
+                    <div class="center"><label for="choix-periode-fin">Fin</label></div>
+                    <input type="date" name="choix-periode-fin" id="choix-periode-fin" value="" onChange="choixPeriode_dateChanged();">
                 </div>
             </div>
         
@@ -89,6 +81,8 @@ class ChoixPeriode{
     </details>
 </fieldset>
         `;
+        this.display();
+        this.initialize();
     } // end constructor
     
     display(){
@@ -96,7 +90,7 @@ class ChoixPeriode{
     }
     
     initialize(){
-        choixPeriode_periodChanged(this.#baseId);
+        choixPeriode_periodChanged();
     }
 
 } // end class
@@ -105,85 +99,77 @@ class ChoixPeriode{
 /** 
     Change le choix de la période dans le select => modifie l'affichage de summary.
 **/
-function choixPeriode_periodChanged(baseId){
-    const selectElt = document.getElementById(baseId + "-periodes");
+function choixPeriode_periodChanged(){
+    const selectElt = document.getElementById('choix-periode-periodes');
     const valeur = selectElt.options[selectElt.selectedIndex].getAttribute('value');
     const idx = valeur.replace('choix-period-', '');
     if(idx == 'no-limit'){
-        document.getElementById(baseId + '-debut').valueAsDate = null;
-        document.getElementById(baseId + '-fin').valueAsDate = null;
-        document.getElementById(baseId + '-summary').innerHTML = 'Pas de limite';
+        document.getElementById('choix-periode-debut').valueAsDate = null;
+        document.getElementById('choix-periode-fin').valueAsDate = null;
+        document.getElementById('choix-periode-summary').innerHTML = 'Pas de limite';
     }
     if(idx == 'free'){
-        const dateDeb = document.getElementById(baseId + '-debut').valueAsDate;
-        const dateFin = document.getElementById(baseId + '-fin').valueAsDate;
+        const dateDeb = document.getElementById('choix-periode-debut').valueAsDate;
+        const dateFin = document.getElementById('choix-periode-fin').valueAsDate;
         const label = (dateBegin == null ? '?' : date2stringFr(dateBegin))
             + ' - '
             + (dateEnd == null ? '?' : date2stringFr(dateEnd));
-        document.getElementById(baseId + '-summary').innerHTML = 'Pas de limite';
+        document.getElementById('choix-periode-summary').innerHTML = 'Pas de limite';
     }
     else if(idx == 'psg1'){
         const dateDeb = new Date('2014-01-01');
         const dateFin = new Date('2023-12-31');
-        document.getElementById(baseId + '-debut').valueAsDate = dateDeb;
-        document.getElementById(baseId + '-fin').valueAsDate = dateFin;
+        document.getElementById('choix-periode-debut').valueAsDate = dateDeb;
+        document.getElementById('choix-periode-fin').valueAsDate = dateFin;
         const label = 'PSG 1 (' + date2stringFr(dateDeb) + ' - ' + date2stringFr(dateFin) + ')'; 
-        document.getElementById(baseId + '-summary').innerHTML = label;
+        document.getElementById('choix-periode-summary').innerHTML = label;
     }
     else if(idx == 'psg2'){
         const dateDeb = new Date('2024-01-01');
         const dateFin = new Date('2033-12-31');
-        document.getElementById(baseId + '-debut').valueAsDate = dateDeb;
-        document.getElementById(baseId + '-fin').valueAsDate = dateFin;
+        document.getElementById('choix-periode-debut').valueAsDate = dateDeb;
+        document.getElementById('choix-periode-fin').valueAsDate = dateFin;
         const label = 'PSG 2 (' + date2stringFr(dateDeb) + ' - ' + date2stringFr(dateFin) + ')'; 
-        document.getElementById(baseId + '-summary').innerHTML = label;
+        document.getElementById('choix-periode-summary').innerHTML = label;
     }
     else {
         const inner = selectElt.options[selectElt.selectedIndex].innerHTML;
         const tmp = inner.split(' - ');
         const dateDeb = new Date(dateStringFr2iso(tmp[0]));
         const dateFin = new Date(dateStringFr2iso(tmp[1]));
-        document.getElementById(baseId + '-debut').valueAsDate = dateDeb;
-        document.getElementById(baseId + '-fin').valueAsDate = dateFin;
-        document.getElementById(baseId + '-summary').innerHTML = inner;
+        document.getElementById('choix-periode-debut').valueAsDate = dateDeb;
+        document.getElementById('choix-periode-fin').valueAsDate = dateFin;
+        document.getElementById('choix-periode-summary').innerHTML = inner;
     }
 }
 
 /** 
     R&agit au changement d'un input de type="date" => modifie l'affichage de summary.
 **/
-function choixPeriode_dateChanged(baseId){
-    const dateBegin = document.getElementById(baseId + '-debut').valueAsDate;
-    const dateEnd = document.getElementById(baseId + '-fin').valueAsDate;
-    document.getElementById(baseId + "-periodes").value = 'choix-periode-free';
+function choixPeriode_dateChanged(){
+    const dateBegin = document.getElementById('choix-periode-debut').valueAsDate;
+    const dateEnd = document.getElementById('choix-periode-fin').valueAsDate;
+    document.getElementById('choix-periode-periodes').value = 'choix-periode-free';
     const str = (dateBegin == null ? '?' : date2stringFr(dateBegin))
         + ' - '
         + (dateEnd == null ? '?' : date2stringFr(dateEnd));
-    document.getElementById(baseId + '-summary').innerHTML = str;
+    document.getElementById('choix-periode-summary').innerHTML = str;
 }
 
 /** 
     Renvoie un message d'erreur (ou chaîne vide si pas d'erreur) ; utilisé par validateForm() du formulaire appelant.
 **/
-function choixPeriode_validateForm(baseId){
+function choixPeriode_validateForm(){
     let msg = '';
-    /* if(
-        (document.getElementById("choix-periode-debut").value == "" && document.getElementById("choix-periode-fin").value != "")
-     || (document.getElementById("choix-periode-debut").value != "" && document.getElementById("choix-periode-fin").value == "")
-    ){
-        msg += "- Choix période : vous devez renseigner la date de début et de fin.\n";
-    } */
-    if(document.getElementById(baseId + "-periodes").selectedIndex != 0){ // si choix != de "pas de limite"
-        if(document.getElementById("choix-periode-debut").value == '' || document.getElementById("choix-periode-fin").value == ''){
-            msg += "- Choix période : vous devez spécifier la date de début et la date de fin.\n";
+    if(document.getElementById('choix-periode-periodes').selectedIndex != 0){ // si choix != de "pas de limite"
+        if(document.getElementById('choix-periode-debut').value == '' || document.getElementById("choix-periode-fin").value == ''){
+            msg += '- Choix période : vous devez spécifier la date de début et la date de fin.\n';
         }
-        else if(document.getElementById("choix-periode-debut").value >= document.getElementById("choix-periode-fin").value){
-            msg += "- Choix période : la date de début doit être antérieure à la date de fin.\n";
+        else if(document.getElementById("choix-periode-debut").value >= document.getElementById('choix-periode-fin').value){
+            msg += '- Choix période : la date de début doit être antérieure à la date de fin.\n';
         }
     }
     return msg;
 }
-
-        
 
 </script>

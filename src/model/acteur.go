@@ -104,7 +104,7 @@ func GetActeur(db *sqlx.DB, id int) (a *Acteur, err error) {
 }
 
 /*
-	Renvoie un acteur avec les codes de ses rôles
+Renvoie un acteur avec les codes de ses rôles
 */
 func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
 	a, err = GetActeur(db, id)
@@ -118,9 +118,9 @@ func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
 // ************************** Get many *******************************
 
 /*
-	Renvoie une liste d'Acteurs triés en utilisant un champ de la table
-	(sert pour url /acteur/liste)
-	@param field    Champ de la table acteur utilisé pour le tri
+Renvoie une liste d'Acteurs triés en utilisant un champ de la table
+(sert pour url /acteur/liste)
+@param field    Champ de la table acteur utilisé pour le tri
 */
 func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
@@ -136,10 +136,10 @@ func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) 
 }
 
 /*
-	Renvoie les Acteurs dont le champ Fournisseur = true
-	( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
-	Ne contient que les champs de la table acteur.
-	Les autres champs ne sont pas remplis.
+Renvoie les Acteurs dont le champ Fournisseur = true
+( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
+Ne contient que les champs de la table acteur.
+Les autres champs ne sont pas remplis.
 */
 func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
@@ -152,9 +152,9 @@ func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 }
 
 /*
-	Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
-	Ne contient que les champs de la table acteur.
-	Les autres champs ne sont pas remplis.
+Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
+Ne contient que les champs de la table acteur.
+Les autres champs ne sont pas remplis.
 */
 func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
@@ -186,7 +186,7 @@ func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 }
 
 /*
-	Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
+Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
 */
 func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}
@@ -220,9 +220,9 @@ func (a *Acteur) ComputeCodesRoles(db *sqlx.DB) (err error) {
 // ************************** Get activité *******************************
 
 /*
-	Renvoie les activités auxquelles un acteur a participé.
-	Ordre chronologique inverse
-	Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
+Renvoie les activités auxquelles un acteur a participé.
+Ordre chronologique inverse
+Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
 */
 func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err error) {
 	res = []*ActeurActivite{}

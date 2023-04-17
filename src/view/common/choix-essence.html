@@ -1,11 +1,13 @@
 {{/* 
     Formulaire de choix d'une ou plusieurs essences.
+    Un seul appel par page possible.
+    
     Cette template doit être appelée avec une variable go contenant un champ EssencesMap.
+    EssencesMap est uniquement utilisée dans le constructeur.
+    
     Utilisation :
         <script>
-            choixEssence = new ChoixEssence('choix-essence');
-            choixEssence.display();
-            choixEssence.initialize();
+            const choixEssence = new ChoixEssence();
         </script>
 
 	@copyright  BDL, Bois du Larzac.
@@ -26,35 +28,29 @@ class ChoixEssence{
     
     #html;
     
-    #baseId;
-    
-    /** 
-        @param  baseId String - Unique id of this component within the page.
-    **/
-    constructor(baseId){
-        //
-        this.#baseId = baseId;
-        //
+    constructor(){
         this.#html = `
         <fieldset class="choix-essence">
             <legend>Essences</legend>
             <details open>
-                <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                <summary><span id="choix-essence-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
                 ${this.#buildCheckboxes()}
                 <div class="margin-top05">
-                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixEssence_toutSelectionner(); choixEssence_choixChanged('${this.#baseId}');">Toutes</a>
-                    <a class="link" id="aucun" onclick="choixEssence_rienSelectionner(); choixEssence_choixChanged('${this.#baseId}');">Aucune</a>
+                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixEssence_toutSelectionner(); choixEssence_choixChanged();">Toutes</a>
+                    <a class="link" id="aucun" onclick="choixEssence_rienSelectionner(); choixEssence_choixChanged();">Aucune</a>
                 </div>
             </details>
         </fieldset>
         `;
+        this.display();
+        this.initialize();
     } // end constructor
     
     #buildCheckboxes(){
         let res = '';
         {{ range $code, $label := .EssencesMap }}
             res += '<label class="block">'
-                + `<input class="chk-essence" type="checkbox" id="choix-essence-` + {{$code}} + `" name="choix-essence-` + {{$code}} + `" onchange="choixEssence_choixChanged('${this.#baseId}');">`
+                + `<input class="chk-essence" type="checkbox" id="choix-essence-` + {{$code}} + `" name="choix-essence-` + {{$code}} + `" onchange="choixEssence_choixChanged();">`
                 + '{{$label}}'
                 + '</label>';
         {{end}}
@@ -68,12 +64,12 @@ class ChoixEssence{
     
     initialize(){
         choixEssence_toutSelectionner();
-        choixEssence_choixChanged(this.#baseId);
+        choixEssence_choixChanged();
     }
 
 } // end class
 
-function choixEssence_choixChanged(baseId){
+function choixEssence_choixChanged(){
     // update summary string
     let tous = true;
     const checkedElements = [];
@@ -98,7 +94,7 @@ function choixEssence_choixChanged(baseId){
             str += ' + ...';
         }
     }
-    document.getElementById(baseId + '-summary').innerHTML = str;
+    document.getElementById('choix-essence-summary').innerHTML = str;
 }
 
 function choixEssence_toutSelectionner(){

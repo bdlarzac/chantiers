@@ -123,9 +123,9 @@ func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
 		if err != nil {
 			return ug, werr.Wrapf(err, "Erreur appel Parcelle.ComputeProprietaire()")
 		}
-		err = ug.Parcelles[i].ComputeCommunes(db)
+		err = ug.Parcelles[i].ComputeCommune(db)
 		if err != nil {
-			return ug, werr.Wrapf(err, "Erreur appel Parcelle.ComputeCommunes()")
+			return ug, werr.Wrapf(err, "Erreur appel Parcelle.ComputeCommune()")
 		}
 	}
 	err = ug.ComputeFermiers(db)

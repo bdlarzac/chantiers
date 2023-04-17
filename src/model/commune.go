@@ -45,8 +45,8 @@ func GetCommune(db *sqlx.DB, id int) (commune *Commune, err error) {
 // ************************** Get many *******************************
 
 /*
-	Renvoie une liste de communes triés en utilisant un champ de la table
-	@param field    Champ de la table commune utilisé pour le tri
+Renvoie une liste de communes triés en utilisant un champ de la table
+@param field    Champ de la table commune utilisé pour le tri
 */
 func GetSortedCommunes(db *sqlx.DB, field string) (communes []*Commune, err error) {
 	communes = []*Commune{}

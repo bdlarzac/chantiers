@@ -1,10 +1,13 @@
 {{/* 
     Formulaire de choix d'un ou plusieurs propriétaires.
+    Un seul appel par page possible.
+    
+    Cette template doit être appelée avec une structure contenant un champ PropriosMap.
+    PropriosMap est uniquement utilisée dans le constructeur.
+    
     Utilisation :
         <script>
-            choixProprio = new ChoixProprio('choix-proprio');
-            choixProprio.display();
-            choixProprio.initialize();
+            const choixProprio = new ChoixProprio('');
         </script>
 
 	@copyright  BDL, Bois du Larzac.
@@ -24,35 +27,29 @@ class ChoixProprio{
     
     #html;
     
-    #baseId;
-    
-    /** 
-        @param  baseId String - Unique id of this component within the page.
-    **/
-    constructor(baseId){
-        //
-        this.#baseId = baseId;
-        //
+    constructor(){
         this.#html = `
         <fieldset class="choix-proprio">
             <legend>Propriétaires</legend>
             <details open>
-                <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                <summary><span id="choix-proprio-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
                 ${this.#buildCheckboxes()}
                 <div class="margin-top05">
-                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixProprio_toutSelectionner(); choixProprio_choixChanged('${this.#baseId}');">Tous</a>
-                    <a class="link" id="aucun" onclick="choixProprio_rienSelectionner(); choixProprio_choixChanged('${this.#baseId}');">Aucun</a>
+                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixProprio_toutSelectionner(); choixProprio_updateSummary();">Tous</a>
+                    <a class="link" id="aucun" onclick="choixProprio_rienSelectionner(); choixProprio_updateSummary();">Aucun</a>
                 </div>
             </details>
         </fieldset>
         `;
+        this.display();
+        this.initialize();
     } // end constructor
     
     #buildCheckboxes(){
         let res = '';
         {{ range $id, $nom := .PropriosMap }}
             res += '<label class="block">'
-                + `<input class="chk-proprio" type="checkbox" id="choix-proprio-` + {{$id}} + `" name="choix-proprio-` + {{$id}} + `" onchange="choixProprio_choixChanged('${this.#baseId}');">`
+                + `<input class="chk-proprio" type="checkbox" id="choix-proprio-` + {{$id}} + `" name="choix-proprio-` + {{$id}} + `" onchange="choixProprio_updateSummary();">`
                 + {{$nom}}
                 + '</label>';
         {{end}}
@@ -65,13 +62,12 @@ class ChoixProprio{
     
     initialize(){
         choixProprio_toutSelectionner();
-        choixProprio_choixChanged(this.#baseId);
+        choixProprio_updateSummary();
     }
 
 } // end class
 
-function choixProprio_choixChanged(baseId){
-    // update summary string
+function choixProprio_updateSummary(){
     let tous = true;
     const checkedElements = [];
     const elements = document.getElementsByClassName('chk-proprio');
@@ -95,7 +91,7 @@ function choixProprio_choixChanged(baseId){
             str += ' + ...';
         }
     }
-    document.getElementById(baseId + '-summary').innerHTML = str;
+    document.getElementById('choix-proprio-summary').innerHTML = str;
 }
 
 function choixProprio_toutSelectionner(){
@@ -123,6 +119,23 @@ function choixProprio_isAllSelected(){
         }
     }
     return true;
+}
+
+/** 
+    Renvoie un message d'erreur (ou chaîne vide si pas d'erreur) ; utilisé par validateForm() du formulaire appelant.
+**/
+function choixProprio_validateForm(){
+    const elements = document.getElementsByClassName('chk-proprio');
+    let selectionVide = true;
+    for(const elt of elements){
+        if(elt.checked == true){
+            selectionVide = false;
+        }
+    }
+    if(selectionVide){
+        return '- Vous devez au moins sélectionner un propriétaire.';
+    }
+    return '';
 }
 
 </script>

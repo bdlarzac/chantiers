@@ -16,25 +16,19 @@
             <div>
                 {{template "choix-periode.html" $.Details}}
                 <script>
-                const choixPeriode = new ChoixPeriode('choix-periode');
-                choixPeriode.display();
-                choixPeriode.initialize();
+                const choixPeriode = new ChoixPeriode();
                 </script>
             </div>
             <div class="margin-top">
                 {{template "choix-proprio.html" $.Details}}
                 <script>
-                const choixProprio = new ChoixProprio('choix-proprio');
-                choixProprio.display();
-                choixProprio.initialize();
+                const choixProprio = new ChoixProprio();
                 </script>
             </div>
             <div class="margin-top">
                 {{template "choix-fermier.html" $.Details}}
                 <script>
                 const choixFermier = new ChoixFermier('choix-fermier');
-                choixFermier.display();
-                choixFermier.initialize();
                 </script>
             </div>
         </div>
@@ -42,9 +36,7 @@
         <div class="inline-block margin-left05">
             {{template "choix-essence.html" $.Details}}
             <script>
-            const choixEssence = new ChoixEssence('choix-essence');
-            choixEssence.display();
-            choixEssence.initialize();
+            const choixEssence = new ChoixEssence();
             </script>
         </div>
         
@@ -60,9 +52,7 @@
         <div class="inline-block margin-left05">
             {{template "choix-parcelle.html" $.Details}}
             <script>
-            const choixParcelle = new ChoixParcelle('choix-parcelle');
-            choixParcelle.display();
-            choixParcelle.initialize();
+            const choixParcelle = new ChoixParcelle();
             </script>
         </div>
         
@@ -95,7 +85,8 @@ function validateForm(){
     let msg = '';
     document.getElementById('choix-ALL-essence').value = choixEssence_isAllSelected();
     document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
-    msg += choixPeriode_validateForm('choix-periode');
+    msg += choixPeriode_validateForm();
+    msg += choixProprio_validateForm();
     const dummy = checkUGsAndFillHiddenField();
     idsParcelles = choixParcelle_getIdsParcelles();
     document.getElementById('ids-parcelles').value = idsParcelles.join(';');

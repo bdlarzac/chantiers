@@ -1,6 +1,9 @@
 {{/* 
     Formulaire de choix d'un fermier.
-    Template devant être appelée avec une structure contenant un champ Fermiers
+    Un seul appel par page possible.
+    
+    Cette template doit être appelée avec une structure contenant un champ Fermiers.
+    Fermiers est uniquement utilisée dans le constructeur.
     Utilisation :
         <script>
             choixFermier = new ChoixFermier('choix-fermier');
@@ -18,21 +21,13 @@ class ChoixFermier{
     
     #html;
     
-    #baseId;
-    
-    /** 
-        @param  baseId String - Unique id of this component within the page.
-    **/
-    constructor(baseId){
-        //
-        this.#baseId = baseId;
-        //
+    constructor(){
         this.#html = `
         <fieldset class="choix-fermier">
             <legend>Fermier</legend>
             <details open>
-                <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
-                    <select class="margin-top" name="select-choix-fermier" id="select-choix-fermier" onChange="choixFermier_choixChanged('${this.#baseId}');">
+                <summary><span id="choix-fermier-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                    <select class="margin-top" name="select-choix-fermier" id="select-choix-fermier" onChange="choixFermier_updateSummary();">
                         <option id="choix-fermier-no-limit" value="choix-fermier-no-limit" selected>Tous les fermiers</option>
         `;
                         {{range .Fermiers}}
@@ -43,6 +38,8 @@ class ChoixFermier{
             </details>
         </fieldset>
         `;
+        this.display();
+        this.initialize();
     } // end constructor
     
     display(){
@@ -50,15 +47,14 @@ class ChoixFermier{
     }
     
     initialize(){
-        choixFermier_choixChanged(this.#baseId);
+        choixFermier_updateSummary();
     }
     
 } // end class
 
-function choixFermier_choixChanged(baseId){
-    // update summary string
+function choixFermier_updateSummary(){
     const fermierElt = document.getElementById("select-choix-fermier");
-    document.getElementById(baseId + '-summary').innerHTML = fermierElt.options[fermierElt.selectedIndex].text;
+    document.getElementById('choix-fermier-summary').innerHTML = fermierElt.options[fermierElt.selectedIndex].text;
 }
 
 </script>

@@ -1,13 +1,13 @@
 {{/* 
     Formulaire de choix d'une ou plusieurs parcelles.
+    Un seul appel par page possible.
     
-    Doit être appelé avec une variable contenant un champ AllCommunes.
+    Cette template doit être appelée avec une variable go contenant un champ AllCommunes.
+    AllCommunes est uniquement utilisée dans le constructeur.
     
     Utilisation :
         <script>
-            choixParcelle = new ChoixParcelle('choix-parcelle');
-            choixParcelle.display();
-            choixParcelle.initialize();
+            const choixParcelle = new ChoixParcelle();
         </script>
 
 	@copyright  BDL, Bois du Larzac.
@@ -20,20 +20,12 @@ class ChoixParcelle {
     
     #html;
     
-    #baseId;
-    
-    /** 
-        @param  baseId String - Unique id of this component within the page.
-    **/
-    constructor(baseId){
-        //
-        this.#baseId = baseId;
-        //
+    constructor(){
         this.#html = `
         <fieldset class="choix-parcelle">
             <legend>Parcelles</legend>
             <details open>
-                <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                <summary><span id="choix-parcelle-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
                 <div class="margin-right margin-top05">
                     <select class=" margin-right" name="choix-parcelle-select-commune" id="choix-parcelle-select-commune">
                         <option id="choix-parcelle-choose-commune" value="choix-parcelle-choose-commune">--- Choisir une commune ---</option>`;
@@ -42,7 +34,7 @@ class ChoixParcelle {
                         {{end}}
         this.#html += `
                     </select>
-                    <input type="text" id="choix-parcelle-code6" name="choix-parcelle-code6" placeholder="Code à 6 caractères" size="6">
+                    <input type="text" class="margin-right" id="choix-parcelle-code6" name="choix-parcelle-code6" placeholder="Code (6 car.)" size="6">
                     <img 
                         class="inline vertical-align-middle bigicon"
                         src="/static/img/new.png"
@@ -54,6 +46,8 @@ class ChoixParcelle {
             </details>
         </fieldset>
         `;
+        this.display();
+        this.initialize();
     } // end constructor
     
     display(){
@@ -61,16 +55,32 @@ class ChoixParcelle {
     }
     
     initialize(){
-        choixParcelle_choixChanged(this.#baseId);
+        choixParcelle_updateSummary();
     }
     
 } // end class
 
 
-function choixParcelle_choixChanged(baseId){
-    // update summary string
-    document.getElementById(baseId + '-summary').innerHTML = 'Toutes les parcelles';
-    // a finir
+function choixParcelle_updateSummary(){
+    const summaryElt = document.getElementById('choix-parcelle-summary');
+    const elements = document.getElementsByClassName('choix-parcelle-parcelle-ajoutee');
+//console.log('elements =', elements);
+    if(elements.length == 0){
+        summaryElt.innerHTML = 'Toutes les parcelles';
+        return;
+    }
+    const tmp = [];
+    for(let i = 0; i < elements.length; i++){
+        if(i == 3){
+            break;
+        }
+        tmp.push(elements[i].getAttribute('data-code-parcelle'));
+    }
+    let str = tmp.join(' + ');
+    if(elements.length > 3){
+        str += ' + ...';
+    }
+    summaryElt.innerHTML = str;
 }
 
 async function choixParcelle_addParcelle(){
@@ -151,7 +161,7 @@ async function choixParcelle_addParcelle(){
         // labels avec code parcelle et nom commune
         //
         const spanElt = document.createElement('span');
-        spanElt.innerHTML = '<span class="bold padding-right05">' + codeParcelle + '</span>' + nomCommune;
+        spanElt.innerHTML = '<span class="bold padding-right05"><a href="/parcelle/' + idParcelle + '">' + codeParcelle + '</a></span>' + nomCommune;
         //
         // div contenant img et labels
         //
@@ -167,6 +177,7 @@ async function choixParcelle_addParcelle(){
         //
         zoneParcellesElt.appendChild(divElt);
    }
+   choixParcelle_updateSummary();
 }
 
 function choixParcelle_removeParcelle(codeParcelle, idCommune, nomCommune){
@@ -175,6 +186,7 @@ function choixParcelle_removeParcelle(codeParcelle, idCommune, nomCommune){
         return;
     }
     document.getElementById('choix-parcelle-parcelle-ajoutee-' + codeParcelle + '-' + idCommune).remove();
+    choixParcelle_updateSummary();
 }
 
 async function choixParcelle_getParcelleFromCodeAndCommuneId(codeParcelle, idCommune){

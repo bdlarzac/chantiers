@@ -25,7 +25,7 @@ type Essence struct {
 }
 
 /*
-	Renvoie une map code essence => nom long
+Renvoie une map code essence => nom long
 */
 func GetEssencesMap(db *sqlx.DB) (essencesMap map[string]string, err error) {
 	type essence struct {
