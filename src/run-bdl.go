@@ -56,7 +56,9 @@ func main() {
 	r.HandleFunc("/doc", H(control.ShowDoc))
 	r.HandleFunc("/backup", H(control.BackupDB))
 	r.HandleFunc("/maj-qgis", H(control.MajQGis))
-	r.HandleFunc("/search", H(control.Search))
+	
+	r.HandleFunc("/activite", H(control.SearchActivite))
+	r.HandleFunc("/activite/{tab}", H(control.SearchActivite))
 
 	r.HandleFunc("/facture/vente-plaquette/{id:[0-9]+}", HPDF(control.ShowFactureVentePlaq))
 	r.HandleFunc("/facture/autre/{id:[0-9]+}", HPDF(control.ShowFactureChautre))
@@ -257,8 +259,8 @@ func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(
 // A mettre ailleurs, mais où ?
 
 func notFound(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("not found")
-	fmt.Printf("r = %+v\n", r)
+	fmt.Println("NOT FOUND")
+	fmt.Printf("Request r = %+v\n", r)
 	ctx := ctxt.NewContext()
 	err := fmt.Errorf("Page inexistante :<br><code><b>%s</b></code>", r.URL)
 	showErrorPage(err, ctx, w, r)

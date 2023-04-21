@@ -57,7 +57,7 @@ a{text-decoration:none;}
     background:lightsalmon;
 }
 
-/* ================ Particular styles ================ */
+/* ================ Particular styles applied to several pages ================ */
 
 h1{padding-left:1rem;}
 
@@ -175,6 +175,13 @@ h1{padding-left:1rem;}
 .parcelle-form-selected{
     background:lightgreen;
 }
+
+/* ================ Particular pages ================ */
+.recap-filtres{
+    margin-left:2rem;
+    margin-bottom:1rem;
+}
+
 
 /* ================ A nettoyer / classer ================ */
 

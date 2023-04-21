@@ -191,7 +191,7 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 	            )
 	`
 	query, args, err := sqlx.In(query, dateDeb, dateFin, idsProprio)
-	query = db.Rebind(query)
+	query = db.Rebind(query) // transforme ? en $1 etc.
 	err = db.Select(&chautres, query, args...)
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -214,7 +214,7 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 	            )
 	`
 	query, args, err = sqlx.In(query, dateDeb, dateFin, idsProprio)
-	query = db.Rebind(query)
+	query = db.Rebind(query) // transforme ? en $1 etc.
 	err = db.Select(&chaufers, query, args...)
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -236,7 +236,7 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 	            )
 	`
 	query, args, err = sqlx.In(query, dateDeb, dateFin, idsProprio)
-	query = db.Rebind(query)
+    query = db.Rebind(query) // transforme ? en $1 etc.
 	err = db.Select(&plaqs, query, args...)
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)

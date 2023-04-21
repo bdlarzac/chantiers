@@ -101,6 +101,21 @@ function removeUG(idUG){
 }
 
 
+function checkUGs(){
+    let msg = '';
+    let atLeastOneSelected = false;
+    for(element of document.getElementsByClassName("chk-ug")){
+        if(element.checked){
+            atLeastOneSelected = true;
+            break;
+        }
+    }
+    if(!atLeastOneSelected){
+        msg += "- Vous devez au moins choisir une UG.\n";
+    }
+    return msg;
+}
+
 /** 
     Fait 2 choses :
     - Fabrique le message d'erreur pour le choix des ugs.
@@ -109,6 +124,7 @@ function removeUG(idUG){
       Cette value est de la forme : "12;352;41"
     @return message d'erreur ; vide si la sélection de ugs est ok.
 **/
+////////////////////////// A SUPPRIMER \\\\\\\\\\\\\\\\\\\\\\\\\\
 function checkUGsAndFillHiddenField(){
     let msg = "";
     const hiddenValues = []; // tableau pour fabriquer value du hidden field

@@ -67,6 +67,10 @@ table.border td{border:1px solid #a2a9b1;}
 .inline{display:inline;}
 .inline-block{display:inline-block;}
 .block{display:block;}
+/* 
+.none{display:none;}
+.hidden{visibility:hidden;}
+*/
 
 .arial{font-family:Arial,Helvetica,sans-serif;}
 .courier{font-family:"Courier New",Courier,monospace;}

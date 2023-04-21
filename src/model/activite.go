@@ -34,86 +34,153 @@ type Activite struct {
 	Titre        string
 	URL          string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
 	DateActivite time.Time
+	Valorisation string
+	Volume       float64
+	Unite        string // pour le volume
+	CodeEssence  string
 	PrixHT       float64
 	PUHT         float64
 	TVA          float64
 	NumFacture   string
 	DateFacture  time.Time
 	Notes        string
+	// relations n-n
+	LiensParcelles []*ChantierParcelle
+	UGs            []*UG
+	Fermiers       []*Fermier
 	//
 	Details interface{}
 }
 
+
+/*
+    Renvoie une map code activité => nom
+*/
+func GetActivitesMap() map[string]string {
+    return map[string]string{
+        "chaufer":      "Chauffage fermier",
+        "chautre":      "Autre valorisation",
+        "plaq":         "Ch. plaquettes",
+        // "plaqop":       "",
+        // "plaqrange":    "",
+        // "plaqtrans":    "",
+        // "ventecharge":  "",
+        // "ventelivre":   "",
+        // "venteplaq":    "",
+    }
+}
+
 // ************************** Nom *******************************
 
-func (ch *Activite) String() string {
-	return ch.Titre
+func (a *Activite) String() string {
+	return a.Titre
+}
+
+// ************************** Instance methods *******************************
+
+func (a *Activite) ComputeLiensParcelles(db *sqlx.DB) (err error){
+    a.LiensParcelles, err = computeLiensParcellesOfChantier(db, a.TypeActivite, a.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+	}
+    return nil
+}
+
+func (a *Activite) ComputeFermiers(db *sqlx.DB) (err error){
+    a.Fermiers, err = computeFermiersOfChantier(db, a.TypeActivite, a.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel computeFermiersOfChantier()")
+	}
+    return nil
+}
+
+func (a *Activite) ComputeUGs(db *sqlx.DB) (err error){
+    a.UGs, err = computeUGsOfChantier(db, a.TypeActivite, a.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel computeUGsOfChantier()")
+	}
+    return nil
 }
 
 // ************************** Get one *******************************
 
-/*
- */
 func GetActivite(db *sqlx.DB, typeActivite string, idActivite int) (activ *Activite, err error) {
 	activ = &Activite{}
 	activ.TypeActivite = typeActivite
 	switch typeActivite {
 	case "chaufer":
-		err = activ.computeFromChaufer(db, idActivite)
+		err = activ.computeOneFromChaufer(db, idActivite)
 		break
 	case "chautre":
-		err = activ.computeFromChautre(db, idActivite)
+		err = activ.computeOneFromChautre(db, idActivite)
 		break
 	case "plaq":
-		err = activ.computeFromPlaq(db, idActivite)
+		err = activ.computeOneFromPlaq(db, idActivite)
 		break
+	/* 
 	case "plaqop":
-		err = activ.computeFromPlaqop(db, idActivite)
+		err = activ.computeOneFromPlaqop(db, idActivite)
 		break
 	case "plaqrange":
-		err = activ.computeFromPlaqrange(db, idActivite)
+		err = activ.computeOneFromPlaqrange(db, idActivite)
 		break
 	case "plaqtrans":
-		err = activ.computeFromPlaqtrans(db, idActivite)
+		err = activ.computeOneFromPlaqtrans(db, idActivite)
 		break
 	case "ventecharge":
-		err = activ.computeFromVentecharge(db, idActivite)
+		err = activ.computeOneFromVentecharge(db, idActivite)
 		break
 	case "ventelivre":
-		err = activ.computeFromVentelivre(db, idActivite)
+		err = activ.computeOneFromVentelivre(db, idActivite)
 		break
 	case "venteplaq":
-		err = activ.computeFromVenteplaq(db, idActivite)
+		err = activ.computeOneFromVenteplaq(db, idActivite)
 		break
+	*/
 	}
 	if err != nil {
-		return activ, werr.Wrapf(err, "Erreur appel activ.computeFrom "+typeActivite)
+		return activ, werr.Wrapf(err, "Erreur appel activ.computeOneFrom "+typeActivite)
 	}
 	return activ, nil
 }
 
-func (activ *Activite) computeFromChaufer(db *sqlx.DB, idActivite int) (err error) {
-	a, err := GetChaufer(db, idActivite)
+// ************************** Compute one *******************************
+
+
+func (activ *Activite) computeOneFromPlaq(db *sqlx.DB, idActivite int) (err error) {
+	a, err := GetPlaq(db, idActivite)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetChaufer()")
+		return werr.Wrapf(err, "Erreur appel GetPlaq()")
 	}
 	activ.Id = a.Id
 	activ.Titre = a.Titre
-	activ.URL = "/chaufer/" + strconv.Itoa(idActivite)
-	activ.DateActivite = a.DateChantier
+	activ.URL = "/chantier/plaquette/" + strconv.Itoa(idActivite)
+	activ.DateActivite = a.DateDebut
+	activ.Valorisation = "PQ"
+	err = a.ComputeVolume(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel ComputeVolume()")
+	}
+	activ.Volume = a.Volume
+	activ.Unite = "MA"
+	activ.CodeEssence = a.Essence
 	activ.Notes = a.Notes
 	return nil
 }
 
-func (activ *Activite) computeFromChautre(db *sqlx.DB, idActivite int) (err error) {
+func (activ *Activite) computeOneFromChautre(db *sqlx.DB, idActivite int) (err error) {
 	a, err := GetChautre(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetChautre()")
 	}
 	activ.Id = a.Id
 	activ.Titre = a.Titre
-	activ.URL = "/chautre/" + strconv.Itoa(idActivite)
+//	activ.URL = "/chautre/" + strconv.Itoa(idActivite)
 	activ.DateActivite = a.DateContrat
+	activ.Volume = a.VolumeRealise
+	activ.Valorisation = a.TypeValo
+	activ.Unite = a.Unite
+	activ.CodeEssence = a.Essence
 	activ.PUHT = a.PUHT
 	activ.TVA = a.TVA
 	activ.NumFacture = a.NumFacture
@@ -122,20 +189,25 @@ func (activ *Activite) computeFromChautre(db *sqlx.DB, idActivite int) (err erro
 	return nil
 }
 
-func (activ *Activite) computeFromPlaq(db *sqlx.DB, idActivite int) (err error) {
-	a, err := GetPlaq(db, idActivite)
+func (activ *Activite) computeOneFromChaufer(db *sqlx.DB, idActivite int) (err error) {
+	a, err := GetChaufer(db, idActivite)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetPlaq()")
+		return werr.Wrapf(err, "Erreur appel GetChaufer()")
 	}
 	activ.Id = a.Id
 	activ.Titre = a.Titre
-	activ.URL = "/plaq/" + strconv.Itoa(idActivite)
-	activ.DateActivite = a.DateDebut
+//	activ.URL = "/chaufer/" + strconv.Itoa(idActivite)
+	activ.DateActivite = a.DateChantier
+	activ.Valorisation = "CF"
+	activ.Volume = a.Volume
+	activ.Unite = a.Unite
+	activ.CodeEssence = a.Essence
 	activ.Notes = a.Notes
 	return nil
 }
 
-func (activ *Activite) computeFromPlaqop(db *sqlx.DB, idActivite int) (err error) {
+/* 
+func (activ *Activite) computeOneFromPlaqop(db *sqlx.DB, idActivite int) (err error) {
 	a, err := GetPlaqOp(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaqOp()")
@@ -150,7 +222,9 @@ func (activ *Activite) computeFromPlaqop(db *sqlx.DB, idActivite int) (err error
 	return nil
 }
 
-func (activ *Activite) computeFromPlaqrange(db *sqlx.DB, idActivite int) (err error) {
+// supprimer les fonctions suivantes ?
+
+func (activ *Activite) computeOneFromPlaqrange(db *sqlx.DB, idActivite int) (err error) {
 	a, err := GetPlaqRange(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaqRange()")
@@ -163,7 +237,7 @@ func (activ *Activite) computeFromPlaqrange(db *sqlx.DB, idActivite int) (err er
 	return nil
 }
 
-func (activ *Activite) computeFromPlaqtrans(db *sqlx.DB, idActivite int) (err error) {
+func (activ *Activite) computeOneFromPlaqtrans(db *sqlx.DB, idActivite int) (err error) {
 	a, err := GetPlaqTrans(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaqTrans()")
@@ -176,7 +250,7 @@ func (activ *Activite) computeFromPlaqtrans(db *sqlx.DB, idActivite int) (err er
 	return nil
 }
 
-func (activ *Activite) computeFromVentecharge(db *sqlx.DB, idActivite int) (err error) {
+func (activ *Activite) computeOneFromVentecharge(db *sqlx.DB, idActivite int) (err error) {
 	a, err := GetVenteCharge(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetVenteCharge()")
@@ -190,7 +264,7 @@ func (activ *Activite) computeFromVentecharge(db *sqlx.DB, idActivite int) (err 
 	return nil
 }
 
-func (activ *Activite) computeFromVentelivre(db *sqlx.DB, idActivite int) (err error) {
+func (activ *Activite) computeOneFromVentelivre(db *sqlx.DB, idActivite int) (err error) {
 	a, err := GetVenteLivre(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetVenteLivre()")
@@ -203,7 +277,7 @@ func (activ *Activite) computeFromVentelivre(db *sqlx.DB, idActivite int) (err e
 	return nil
 }
 
-func (activ *Activite) computeFromVenteplaq(db *sqlx.DB, idActivite int) (err error) {
+func (activ *Activite) computeOneFromVenteplaq(db *sqlx.DB, idActivite int) (err error) {
 	a, err := GetVentePlaq(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetVentePlaq()")
@@ -219,3 +293,4 @@ func (activ *Activite) computeFromVenteplaq(db *sqlx.DB, idActivite int) (err er
 	activ.Notes = a.Notes
 	return nil
 }
+*/

@@ -9,67 +9,41 @@
 
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
 
-    <h2>Filtres</h2>
     <div class="flex-wrap">
     
         <div class="inline-block">
             <div>
                 {{template "choix-periode.html" $.Details}}
-                <script>
-                const choixPeriode = new ChoixPeriode();
-                </script>
+                <script>const choixPeriode = new ChoixPeriode();</script>
             </div>
             <div class="margin-top">
                 {{template "choix-proprio.html" $.Details}}
-                <script>
-                const choixProprio = new ChoixProprio();
-                </script>
+                <script>const choixProprio = new ChoixProprio();</script>
             </div>
             <div class="margin-top">
                 {{template "choix-fermier.html" $.Details}}
-                <script>
-                const choixFermier = new ChoixFermier('choix-fermier');
-                </script>
+                <script>const choixFermier = new ChoixFermier('choix-fermier');</script>
             </div>
         </div>
         
         <div class="inline-block margin-left05">
             {{template "choix-essence.html" $.Details}}
-            <script>
-            const choixEssence = new ChoixEssence();
-            </script>
+            <script>const choixEssence = new ChoixEssence();</script>
         </div>
         
         <div class="inline-block margin-left05">
             {{template "choix-ug.html" $.Details}}
-            <script>
-            const choixUG = new ChoixUG('choix-ug');
-            choixUG.display();
-            choixUG.initialize();
-            </script>
+            <script>const choixUG = new ChoixUG();</script>
         </div>
         
         <div class="inline-block margin-left05">
             {{template "choix-parcelle.html" $.Details}}
-            <script>
-            const choixParcelle = new ChoixParcelle();
-            </script>
+            <script>const choixParcelle = new ChoixParcelle();</script>
         </div>
         
-        {{/*
-        <div class="inline-block">
-            {{template "choix-acteur.html" $.Details}}
-            <script>
-            const choixActeur = new ChoixActeur('choix-acteur');
-            choixActeur.display();
-            choixActeur.initialize();
-            </script>
-        </div>
-        */}}
     </div>
     
     <div class="float-right">
-        <input class="big-button" type="button" name="cancel" value="Annuler" onClick="window.history.back();">
         <input class="big-button" type="submit" value="Valider">
         <input type="hidden" name="choix-ALL-essence" id="choix-ALL-essence" value="">
         <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
@@ -87,7 +61,10 @@ function validateForm(){
     document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
     msg += choixPeriode_validateForm();
     msg += choixProprio_validateForm();
-    const dummy = checkUGsAndFillHiddenField();
+    //
+    idsUGs = computeIdsUGsFromForm()
+    document.getElementById('ids-ugs').value = idsUGs.join(';');
+    //
     idsParcelles = choixParcelle_getIdsParcelles();
     document.getElementById('ids-parcelles').value = idsParcelles.join(';');
     //

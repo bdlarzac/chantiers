@@ -1,12 +1,12 @@
 {{/* 
     Formulaire de choix d'une ou plusieurs UGs.
     Template devant être appelée avec une structure contenant un champ AllUGs
+    
     ATTENTION : aucune UG sélectionnée signifie "toutes les ugs".
+    
     Utilisation :
         <script>
-            choixUG = new ChoixUG('choix-ug');
-            choixUG.display();
-            choixUG.initialize();
+            choixUG = new ChoixUG();
         </script>
 
 	@copyright  BDL, Bois du Larzac.
@@ -24,20 +24,13 @@ class ChoixUG{
     
     #html;
     
-    #baseId;
-    
-    /** 
-        @param  baseId String - Unique id of this component within the page.
-    **/
-    constructor(baseId){
-        //
-        this.#baseId = baseId;
+    constructor(){
         //
         this.#html = `
         <fieldset class="choix-ug">
             <legend>UGs</legend>
             <details open>
-                <summary><span id="${this.#baseId}-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                <summary><span id="choix-ug-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
                 <img 
                     class="vertical-align-middle bigicon margin-right margin-top05"
                     src="/static/img/new.png"
@@ -48,6 +41,8 @@ class ChoixUG{
             </details>
         </fieldset>
         `;
+        this.display();
+        this.initialize();
     } // end constructor
     
     display(){
@@ -55,7 +50,7 @@ class ChoixUG{
     }
     
     initialize(){
-        choixUG_choixChanged(this.#baseId);
+        choixUG_choixChanged();
     }
     
 } // end class
@@ -64,11 +59,11 @@ class ChoixUG{
 // *********************** Callbacks liés à modale UGs ***********************
 
 function callback_validate_modal_ugs(){
-    choixUG_choixChanged('choix-ug');
+    choixUG_choixChanged();
 }
 
 function callback_remove_ug(){
-    choixUG_choixChanged('choix-ug');
+    choixUG_choixChanged();
 }
 
 // *********************** Code lié à cette page ***********************
@@ -77,7 +72,7 @@ function callback_remove_ug(){
     - MAJ le contenu de summary
     - Affiche les UGs sélectionnées
 **/
-function choixUG_choixChanged(baseId){
+function choixUG_choixChanged(){
     // MAJ le contenu de summary
     const tmpElts = document.getElementsByClassName('chk-ug');
     const selectedCodes = [];
@@ -98,7 +93,7 @@ function choixUG_choixChanged(baseId){
             str += ' + ...';
         }
     }
-    document.getElementById(baseId + '-summary').innerHTML = str;
+    document.getElementById('choix-ug-summary').innerHTML = str;
     // Affiche les UGs sélectionnées
     afficheUGs(computeIdsUGsFromForm());
 }

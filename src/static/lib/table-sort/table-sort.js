@@ -52,8 +52,12 @@ function table_sort() {
       }
       const arr = Array.from(th_elem.closest("table").querySelectorAll('tbody tr'));
       arr.sort((a, b) => {
-        const a_val = a.children[index].innerText;
-        const b_val = b.children[index].innerText;
+        // const a_val = a.children[index].innerText;
+        // const b_val = b.children[index].innerText;
+        // note Thierry : changé innerText en innerHTML de manière à pouvoir trier par date
+        //avec un hack du style : <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
+        const a_val = a.children[index].innerHTML;
+        const b_val = b.children[index].innerHTML;
         return (asc) ? a_val.localeCompare(b_val) : b_val.localeCompare(a_val);
       });
       arr.forEach(elem => {

@@ -1,4 +1,6 @@
 /*
+Recheche d'activité
+
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
@@ -7,10 +9,12 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 	"time"
-"fmt"
+	
+	//"fmt"
 )
 
 type detailsSearchForm struct {
@@ -25,12 +29,15 @@ type detailsSearchForm struct {
 }
 
 type detailsSearchResults struct {
+	Activites   []*model.Activite
+	ActiviteMap map[string]string
+	Tab         string
 }
 
 /*
 Affiche / process le formulaire de recherche
 */
-func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
+func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	switch r.Method {
 	case "POST":
 		//
@@ -39,7 +46,12 @@ func Search(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err erro
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-fmt.Printf("%+v\n", r.PostForm)
+        vars := mux.Vars(r)
+        tab := vars["tab"]
+        if tab == "" {
+            tab = "liste"
+        }
+//fmt.Printf("%+v\n", r.PostForm)
 		//
 		filtres := map[string][]string{}
 		filtres["fermier"] = computeFiltreFermier(r)
@@ -48,15 +60,29 @@ fmt.Printf("%+v\n", r.PostForm)
 		filtres["periode"] = computeFiltrePeriode(r)
 		filtres["ug"] = computeFiltreUG(r)
 		filtres["parcelle"] = computeFiltreParcelle(r)
-fmt.Printf("filtres = %+v\n",filtres)
+		activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
+		if err != nil {
+			return err
+		}
+//fmt.Printf("filtres = %+v\n",filtres)
 		//
-		ctx.TemplateName = "search-result.html"
+		ctx.TemplateName = "activite-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Activités",
+				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 			},
-			Menu:    "accueil",
-			Details: detailsSearchResults{},
+			Footer: ctxt.Footer{
+				JSFiles: []string{
+				    "/static/lib/tabstrip/tabstrip.js",
+					"/static/lib/table-sort/table-sort.js"},
+			},
+			Menu: "accueil",
+			Details: detailsSearchResults{
+				Activites:   activites,
+				ActiviteMap: model.GetActivitesMap(),
+				Tab:         tab,
+			},
 		}
 		return nil
 	default:
@@ -67,33 +93,28 @@ fmt.Printf("filtres = %+v\n",filtres)
 		if err != nil {
 			return err
 		}
-		//
 		essencesMap, err := model.GetEssencesMap(ctx.DB)
 		if err != nil {
 			return err
 		}
-		//
 		propriosMap, err := model.GetProprietaires(ctx.DB)
 		if err != nil {
 			return err
 		}
-		//
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 		if err != nil {
 			return err
 		}
-		//
 		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
 		if err != nil {
 			return err
 		}
-		//
 		allCommunes, err := model.GetSortedCommunes(ctx.DB, "nom")
 		if err != nil {
 			return err
 		}
 		//
-		ctx.TemplateName = "search-form.html"
+		ctx.TemplateName = "activite-search.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Recherche d'activité",
@@ -109,7 +130,7 @@ fmt.Printf("filtres = %+v\n",filtres)
 				AllUGs:      allUGs,
 				UGs:         []*model.UG{},
 				AllCommunes: allCommunes,
-				UrlAction:   "/search",
+				UrlAction:   "/activite",
 			},
 		}
 		return nil
@@ -124,7 +145,7 @@ Filtre fermier : renvoie un tableau de strings.
   - Sinon contient une liste avec un seul élément, l'id du fermier sélectionné.
 */
 func computeFiltreFermier(r *http.Request) (result []string) {
-    choix := r.PostFormValue("select-choix-fermier")
+	choix := r.PostFormValue("select-choix-fermier")
 	if choix == "choix-fermier-no-limit" {
 		return []string{}
 	}

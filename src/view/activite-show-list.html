@@ -1,0 +1,54 @@
+{{/*
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+{{with .Details.Activites}}
+
+<table class="entities">
+<thead>
+    <tr>
+        <th class="order">Valorisation</th>
+        <th class="order">Date</th>
+        <th>Titre</th>
+        <th>Volume</th>
+        <th>Prix</th>
+        <th>Facture</th>
+    </tr>
+</thead>
+
+<tbody>
+    {{range .}}
+    <tr>
+        <td>
+            {{.Valorisation | labelValorisationAvecChauferEtPlaq}}
+        </td>
+        <td>
+            {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
+            <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
+        </td>
+        <td>
+            {{if .URL}}<a href="{{.URL}}">{{.Titre}}</a>{{else}}{{.Titre}}{{end}}
+        </td>
+        <td>
+            {{.Volume}} {{.Unite | labelUnite}}
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+    </tr>
+    {{end}}
+</tbody>
+</table>
+
+
+
+
+{{else}} {{/* with .Details.Activites */}}
+
+<div class="">Aucune activité ne correspond aux critères demandés</div>
+
+{{end}} {{/* with .Details.Activites */}}

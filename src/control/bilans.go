@@ -146,7 +146,7 @@ func showBilanClientPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		return err
 	}
 	//
-	ctx.TemplateName = "bilan-client-plaquettes-show.html"
+	ctx.TemplateName = "bilan-client-plaq-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Bilan client plaquettes",
@@ -195,7 +195,7 @@ func showBilanVentesPlaquettes(ctx *ctxt.Context, formValues url.Values) error {
 		return err
 	}
 	//
-	ctx.TemplateName = "bilan-ventes-plaquettes-show.html"
+	ctx.TemplateName = "bilan-vente-plaq-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Bilan ventes plaquettes",
@@ -245,7 +245,7 @@ func showBilanValoEssences(ctx *ctxt.Context, formValues url.Values, what string
 	var titre, templateName string
 	if what == "valorisations" {
 		titre = "Bilan valorisations"
-		templateName = "bilan-valorisations-show.html"
+		templateName = "bilan-valo-show.html"
 	} else {
 		titre = "Bilan essences"
 		templateName = "bilan-essences-show.html"
