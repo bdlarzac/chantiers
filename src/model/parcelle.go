@@ -42,6 +42,10 @@ type ParcelleActivite struct {
 	NomActivite string
 }
 
+func (p *Parcelle) String() string {
+    return p.Code
+}
+
 // ************************** Get one *******************************
 
 /*

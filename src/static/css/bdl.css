@@ -181,6 +181,9 @@ h1{padding-left:1rem;}
     margin-left:2rem;
     margin-bottom:1rem;
 }
+.recap-filtres td:nth-child(2){
+    font-weight:bold;
+}
 
 
 /* ================ A nettoyer / classer ================ */
