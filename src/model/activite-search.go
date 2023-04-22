@@ -17,7 +17,7 @@ import (
 // ************************** Fonction principale *******************************
 
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Activite, err error){
-fmt.Printf("filtres = %+v\n",filtres)
+fmt.Printf("ComputeActivitesFromFiltres() - filtres = %+v\n",filtres)
     result = []*Activite{}
     //
     // Première sélection, par filtre période
@@ -44,13 +44,6 @@ fmt.Printf("filtres = %+v\n",filtres)
     //
     // Filtres suivants
     //
-    // préparation
-    if len(filtres["proprio"]) != 0 || len(filtres["parcelle"]) != 0 {
-        for _, activite := range(result){
-            activite.ComputeLiensParcelles(db)
-        }
-    }
-    //
     if len(filtres["essence"]) != 0 {
         result = filtreEssence(db, result, filtres["essence"])
     }
@@ -68,17 +61,25 @@ fmt.Printf("filtres = %+v\n",filtres)
         result = filtreFermier(db, result, filtres["ug"])
     }
     //
+    // préparation (faire le plus tard possible pour optimiser)
+    //
+    if len(filtres["proprio"]) != 0 || len(filtres["parcelle"]) != 0 {
+        for _, activite := range(result){
+            activite.ComputeLiensParcelles(db)
+        }
+    }
     //
     if len(filtres["parcelle"]) != 0 {
         result = filtreParcelle(db, result, filtres["parcelle"])
     }
+    //
     if len(filtres["proprio"]) != 0 {
         result, err = filtreProprio(db, result, filtres["proprio"])
         if err != nil {
             return result, werr.Wrapf(err, "Erreur appel filtreProprio()")
         }
     }
-fmt.Printf("result = %+v\n",result)
+//fmt.Printf("result = %+v\n",result)
     // TODO éventuellement, trier par date
     return result, nil
 }

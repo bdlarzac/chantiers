@@ -29,9 +29,10 @@ type detailsSearchForm struct {
 }
 
 type detailsSearchResults struct {
-	Activites   []*model.Activite
-	ActiviteMap map[string]string
-	Tab         string
+	Activites    []*model.Activite
+	RecapFiltres string
+	ActiviteMap  map[string]string
+	Tab          string
 }
 
 /*
@@ -66,6 +67,10 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		}
 //fmt.Printf("filtres = %+v\n",filtres)
 		//
+		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres)
+		if err != nil {
+			return err
+		}
 		ctx.TemplateName = "activite-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -79,9 +84,10 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			},
 			Menu: "accueil",
 			Details: detailsSearchResults{
-				Activites:   activites,
-				ActiviteMap: model.GetActivitesMap(),
-				Tab:         tab,
+				Activites:       activites,
+				RecapFiltres:    recapFiltres,
+				ActiviteMap:     model.GetActivitesMap(),
+				Tab:             tab,
 			},
 		}
 		return nil
