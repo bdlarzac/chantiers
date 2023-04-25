@@ -69,7 +69,7 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		Header: ctxt.Header{
 			Title: titrePage,
 			JSFiles: []string{
-			    "/static/lib/table-sort/table-sort.js",
+				"/static/lib/table-sort/table-sort.js",
 				"/static/js/round.js",
 				"/view/common/prix.js"},
 		},
@@ -82,7 +82,7 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 		Footer: ctxt.Footer{
 			JSFiles: []string{
-			    "/static/lib/table-sort/table-sort.js"},
+				"/static/lib/table-sort/table-sort.js"},
 		},
 	}
 	// Add recent - modifie URL pour éviter des doublons :

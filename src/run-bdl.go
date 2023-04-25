@@ -56,7 +56,7 @@ func main() {
 	r.HandleFunc("/doc", H(control.ShowDoc))
 	r.HandleFunc("/backup", H(control.BackupDB))
 	r.HandleFunc("/maj-qgis", H(control.MajQGis))
-	
+
 	r.HandleFunc("/activite", H(control.SearchActivite))
 	r.HandleFunc("/activite/{tab}", H(control.SearchActivite))
 

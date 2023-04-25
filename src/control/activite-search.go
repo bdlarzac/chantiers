@@ -13,8 +13,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	
-	//"fmt"
+"fmt"
 )
 
 type detailsSearchForm struct {
@@ -29,10 +28,11 @@ type detailsSearchForm struct {
 }
 
 type detailsSearchResults struct {
-	Activites    []*model.Activite
-	RecapFiltres string
-	ActiviteMap  map[string]string
-	Tab          string
+	Activites               []*model.Activite
+	RecapFiltres            string
+	ActiviteMap             map[string]string
+	BilanActivitesParSaison []*model.BilanActivitesParSaison
+	Tab                     string
 }
 
 /*
@@ -47,12 +47,12 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-        vars := mux.Vars(r)
-        tab := vars["tab"]
-        if tab == "" {
-            tab = "liste"
-        }
-//fmt.Printf("%+v\n", r.PostForm)
+		vars := mux.Vars(r)
+		tab := vars["tab"]
+		if tab == "" {
+			tab = "liste"
+		}
+		//fmt.Printf("%+v\n", r.PostForm)
 		//
 		filtres := map[string][]string{}
 		filtres["fermier"] = computeFiltreFermier(r)
@@ -65,35 +65,49 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		if err != nil {
 			return err
 		}
-//fmt.Printf("filtres = %+v\n",filtres)
+		//fmt.Printf("filtres = %+v\n",filtres)
 		//
 		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres)
 		if err != nil {
 			return err
 		}
+		//
+		bilanActivitesParSaison, err := model.ComputeBilanActivitesParSaison(ctx.DB, activites, ctx.Config.DebutSaison)
+		if err != nil {
+			return err
+		}
+		//
 		ctx.TemplateName = "activite-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Activités",
+				Title:    "Activités",
 				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 			},
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-				    "/static/lib/tabstrip/tabstrip.js",
+					"/static/lib/tabstrip/tabstrip.js",
 					"/static/lib/table-sort/table-sort.js"},
 			},
 			Menu: "accueil",
 			Details: detailsSearchResults{
-				Activites:       activites,
-				RecapFiltres:    recapFiltres,
-				ActiviteMap:     model.GetActivitesMap(),
-				Tab:             tab,
+				Activites:          activites,
+				RecapFiltres:       recapFiltres,
+				ActiviteMap:        model.GetActivitesMap(),
+				BilanActivitesParSaison: bilanActivitesParSaison,
+				Tab:                tab,
 			},
 		}
 		return nil
 	default:
 		//
 		// Affiche form
+		//
+		vars := mux.Vars(r)
+		tab := vars["tab"]
+		if tab == "" {
+			tab = "liste"
+		}
+fmt.Printf("tab = %+v\n",tab)
 		//
 		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		if err != nil {
@@ -136,7 +150,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				AllUGs:      allUGs,
 				UGs:         []*model.UG{},
 				AllCommunes: allCommunes,
-				UrlAction:   "/activite",
+				UrlAction:   "/activite/" + tab,
 			},
 		}
 		return nil

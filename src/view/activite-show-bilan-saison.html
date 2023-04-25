@@ -4,4 +4,20 @@
 */}}
 
 <!-- ********************************************************************************* -->
+
+{{with .Details}}
+
 <h2>Bilan activite par saison</h2>
+
+<table>
+    {{range .ActivitesParSaison}}
+    <tr>
+        <td>
+            {{.Datedeb | dateFr}} - {{.Datefin | dateFr}}
+        </td>
+    </tr>
+    {{end}}
+</table>
+
+
+{{end}}

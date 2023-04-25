@@ -43,7 +43,7 @@ type ParcelleActivite struct {
 }
 
 func (p *Parcelle) String() string {
-    return p.Code
+	return p.Code
 }
 
 // ************************** Get one *******************************

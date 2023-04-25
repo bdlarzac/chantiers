@@ -8,21 +8,17 @@
 <table class="entities">
 <thead>
     <tr>
-        <th class="order">Valorisation</th>
         <th class="order">Date</th>
         <th>Titre</th>
+        <th class="order">Valorisation</th>
+        <th class="order">Essence</th>
         <th>Volume</th>
-        <th>Prix</th>
-        <th>Facture</th>
     </tr>
 </thead>
 
 <tbody>
     {{range .}}
     <tr>
-        <td>
-            {{.Valorisation | labelValorisationAvecChauferEtPlaq}}
-        </td>
         <td>
             {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
             <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
@@ -31,13 +27,13 @@
             {{if .URL}}<a href="{{.URL}}">{{.Titre}}</a>{{else}}{{.Titre}}{{end}}
         </td>
         <td>
+            {{.TypeValo | labelValorisationAvecChauferEtPlaq}}
+        </td>
+        <td>
+            {{.CodeEssence}}
+        </td>
+        <td>
             {{.Volume}} {{.Unite | labelUnite}}
-        </td>
-        <td>
-        </td>
-        <td>
-        </td>
-        <td>
         </td>
     </tr>
     {{end}}

@@ -1,10 +1,13 @@
 {{/* 
     Formulaire de choix d'une période.
-    Template devant être appelée avec une structure contenant un champ Periods
+    Un seul appel par page possible.
+    
+    Cette template doit être appelée avec une structure contenant un champ Periods.
+    Periods est uniquement utilisée dans le constructeur.
+    
     Utilisation :
         <script>
-            choixPeriode = new ChoixPeriode('choix-periode');
-            choixPeriode.display();
+            const choixPeriode = new ChoixPeriode();
         </script>
         
 	@copyright  BDL, Bois du Larzac.
@@ -102,13 +105,13 @@ class ChoixPeriode{
 function choixPeriode_periodChanged(){
     const selectElt = document.getElementById('choix-periode-periodes');
     const valeur = selectElt.options[selectElt.selectedIndex].getAttribute('value');
-    const idx = valeur.replace('choix-period-', '');
+    const idx = valeur.replace('choix-periode-', '');
     if(idx == 'no-limit'){
         document.getElementById('choix-periode-debut').valueAsDate = null;
         document.getElementById('choix-periode-fin').valueAsDate = null;
         document.getElementById('choix-periode-summary').innerHTML = 'Pas de limite';
     }
-    if(idx == 'free'){
+    else if(idx == 'free'){
         const dateDeb = document.getElementById('choix-periode-debut').valueAsDate;
         const dateFin = document.getElementById('choix-periode-fin').valueAsDate;
         const label = (dateBegin == null ? '?' : date2stringFr(dateBegin))

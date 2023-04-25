@@ -167,8 +167,8 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 	valoCodes := AllValorisationCodesAvecChauferEtPlaq() // {"PP", "CH", "PL", "PI", "BO", "CF", "PQ"}
 	// AllValorisationCodes() contient les valos pour les chantiers "autres valorisations"
 	// Les bilans ont d'autres types de valorisation
-//	valoCodes = append(valoCodes, "CF") // pour séparer chauffage fermier / chauffage client
-//	valoCodes = append(valoCodes, "PQ") // pour ajouter plaquettes
+	//	valoCodes = append(valoCodes, "CF") // pour séparer chauffage fermier / chauffage client
+	//	valoCodes = append(valoCodes, "PQ") // pour ajouter plaquettes
 	valos = make(Valorisations)
 	for _, valoCode := range valoCodes {
 		for _, essenceCode := range essenceCodes {
