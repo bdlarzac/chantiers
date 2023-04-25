@@ -37,6 +37,10 @@ a{text-decoration:none;}
     margin-top:4em;
 }
 
+summary{
+    cursor:pointer;
+    color:blue;
+}
 
 /* ================ Colors ================ */
 .bg-white{background:white;}
@@ -213,13 +217,15 @@ h1{padding-left:1rem;}
 
 table.entities{
     margin:1em;
-    border:1px solid grey;
 }
-table.entities td{
+table.entities td, table.entities th{
     padding:.2rem .3rem;
 }
 table.entities tbody tr:nth-child(even){
-    background-color:#f2e6d9;
+    background-color:lightyellow;
+}
+table.entities tbody tr:nth-child(odd){
+    background-color:lightgrey;
 }
 table.entities tr.total{           
     font-weight:bold;

@@ -2,8 +2,8 @@
     https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript
     Solution of Cesar Morillas
     
-    Usage : include in html page <script src="table_sort.js"></script> after the tables (or use defer).
-    But the call to table_sort() must be done after.
+    Usage : include in html page <script src="table_sort.js"></script> AFTER the tables (or use defer).
+    The call to table_sort() (see end of current file) must be done after the tables are displayed.
     
 **/
 function table_sort() {

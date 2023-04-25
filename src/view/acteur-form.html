@@ -13,6 +13,9 @@
         <label for="nom">Nom / Dénomination</label>
         <input type="text" name="nom" id="nom" value="{{.Nom}}">
         
+        <label class="optional" for="prenom">Prénom / Statut juridique</label>
+        <input type="text" name="prenom" id="prenom" value="{{.Prenom}}">
+        
         <label for="roles">Rôles</label>
         <table>
             <tr>
@@ -145,9 +148,6 @@
                 </td>
             </tr>
         </table>
-        
-        <label class="optional" for="prenom">Prénom / Statut juridique</label>
-        <input type="text" name="prenom" id="prenom" value="{{.Prenom}}">
         
         <label class="optional" for="adresse1">Adresse 1 / Siège social</label>
         <input type="text" name="adresse1" id="adresse1" value="{{.Adresse1}}">

@@ -64,6 +64,7 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		Header: ctxt.Header{
 			Title: titrePage,
 			JSFiles: []string{
+			    "/static/lib/table-sort/table-sort.js",
 				"/static/js/round.js",
 				"/view/common/prix.js"},
 		},
@@ -72,6 +73,10 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			Chantiers: chantiers,
 			Annee:     annee,
 			Annees:    annees,
+		},
+		Footer: ctxt.Footer{
+			JSFiles: []string{
+			    "/static/lib/table-sort/table-sort.js"},
 		},
 	}
 	// Add recent - modifie URL pour éviter des doublons :

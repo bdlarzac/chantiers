@@ -38,12 +38,11 @@ Renvoie un tableau contenant les dates de début / fin des "saisons"
 Les saisons encadrent tous les chantiers stockés en base.
 Une saison dure un an.
 
-@param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
-
-@return
-  - un tableau de 2 time.Time avec les dates limites des saisons
-  - un bool indiquant s'il existe des chantiers en base
-  - une erreur éventuelle
+	@param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
+	@return
+	  - un tableau de 2 time.Time avec les dates limites des saisons
+	  - un bool indiquant s'il existe des chantiers en base
+	  - une erreur éventuelle
 */
 func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bool, error) {
 	// retour
@@ -165,11 +164,11 @@ func isBefore(t1, t2 time.Time) bool {
 
 func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsProprio []int) (valos Valorisations, err error) {
 	essenceCodes := AllEssenceCodes()
-	valoCodes := AllValorisationCodes() // {"PP", "CH", "PL", "PI", "BO"}
+	valoCodes := AllValorisationCodesAvecChauferEtPlaq() // {"PP", "CH", "PL", "PI", "BO", "CF", "PQ"}
 	// AllValorisationCodes() contient les valos pour les chantiers "autres valorisations"
 	// Les bilans ont d'autres types de valorisation
-	valoCodes = append(valoCodes, "CF") // pour séparer chauffage fermier / chauffage client
-	valoCodes = append(valoCodes, "PQ") // pour ajouter plaquettes
+//	valoCodes = append(valoCodes, "CF") // pour séparer chauffage fermier / chauffage client
+//	valoCodes = append(valoCodes, "PQ") // pour ajouter plaquettes
 	valos = make(Valorisations)
 	for _, valoCode := range valoCodes {
 		for _, essenceCode := range essenceCodes {
@@ -236,7 +235,7 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 	            )
 	`
 	query, args, err = sqlx.In(query, dateDeb, dateFin, idsProprio)
-    query = db.Rebind(query) // transforme ? en $1 etc.
+	query = db.Rebind(query) // transforme ? en $1 etc.
 	err = db.Select(&plaqs, query, args...)
 	if err != nil {
 		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
@@ -249,7 +248,6 @@ func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsPropri
 		valos["PQ-PS-vol"] += plaq.Volume // PQ = plaquettes ; PS = pin sylvestre
 		// valos["PQ-PS-ca"] dépend des ventes ; trop compliqué (?)
 	}
-
 	//
 	return valos, err
 }

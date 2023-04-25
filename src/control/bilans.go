@@ -95,9 +95,12 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		ctx.TemplateName = "bilans-form.html"
-
+		//
 		proprietaires, err := model.GetProprietaires(ctx.DB)
-
+		if err != nil {
+			return err
+		}
+		//
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Choix bilan",

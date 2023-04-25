@@ -21,107 +21,118 @@
 
 {{if .Details.Chantiers}}
 <table class="entities">
-    
-    <tr>
-        <th></th>
-        <th>Général</th>
-        <th>Chantier</th>
-        <th>Facture</th>
-        <th>Notes</th>
-    </tr>
-    {{range .Details.Chantiers}}
-    <tr>
-        <td class="whitespace-nowrap">
-            <a href="#" onclick='ShowFactureChautre({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
-                <img src="/static/img/facture.png" title="Voir la facture" />
-            </a>
-            <a href="/chantier/autre/update/{{.Id}}" class="padding-left05">
-                <img src="/static/img/update.png" title="Modifier ce chantier" />
-            </a>
-            <a href="#" onclick="deleteChantier({{.Id}}, {{.Acheteur.String}}, {{.DateContrat | dateFr}});" class="padding-left05">
-                <img src="/static/img/delete.png" title="Supprimer ce chantier">     
-            </a>
-        </td>
-        <td class="vertical-align-top">
-            <div class="grid2-pres">
-                <div>Acheteur</div>
-                <div><a href="/acteur/{{.IdAcheteur}}">{{.Acheteur.String}}</a></div>
-                
-                <div>Valorisation</div>
-                <div>{{.TypeValo | labelValorisation}}</div>
-                
-                <div>Type de vente</div>
-                <div>{{.TypeVente | labelTypeVente}}</div>
-                
-                <div>Date contrat</div>
-                <div>{{.DateContrat | dateFr}}</div>
-                
-                {{if .VolumeContrat}}
-                    <div>Volume contrat</div>
-                    <div>{{.VolumeContrat}} {{.Unite | labelUnite}}</div>
-                {{end}}
-                
-                <div>Essence</div>
-                <div>{{.Essence | labelEssence}}</div>
-                
-                <div>Exploitation</div>
-                <div>{{.Exploitation | labelExploitation}}</div>
-                
-                <div>UGs</div>
-                <div>{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
-                
-                <div>Parcelles</div>
-                <div class="grid2-pres">
-                {{range .LiensParcelles}}
-                    <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
-                    <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
-                {{end}}
-                </div>
-                
-                <div>Lieux-dits</div>
-                <div>{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
-                
-                <div>Fermiers</div>
-                <div>{{range .Fermiers}}<a href="/fermier/{{.Id}}">{{.String}}</a><br>{{end}}</div>
-                
-                <div>Propriétaires</div>
-                <div>{{range .Proprietaires}}<a href="/acteur/{{.Id}}">{{.String}}</a><br>{{end}}</div>
-            </div>
-        </td>
-        <td class="vertical-align-top">
-            <div class="grid2-pres">
-                <div>Volume réalisé</div>
-                <div>{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
-                
-                <div>PU HT</div>
-                <div><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>
-                
-                <div>Total HT</div>
-                <div><script>document.write(round(prixHT({{.PUHT}}, {{.VolumeRealise}}), 2));</script></span> &euro;</div>
-                
-                <div>TVA</div>
-                <div>{{.TVA}}</span> %</div>
-                
-                <div>Total TTC</div>
-                <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.VolumeRealise}}), {{.TVA}}), 2));</script></span> &euro;</div>
-            </div>
-        </td>
-        <td class="vertical-align-top">
-            <div class="grid2-pres">
-                {{if not .DateFacture.IsZero}}
-                <div>Date</div>
-                <div>{{.DateFacture | dateFr}}</div>
-                {{end}}
-                {{if .NumFacture}}
-                <div>Numéro</div>
-                <div>{{.NumFacture}}</div>
-                {{end}}
-            </div>
-        </td>
-        <td class="vertical-align-top">{{.Notes | nl2br}}</td>
-    </tr>
-    {{end}}
-
+    <thead>
+        <tr>
+            <th></th>
+            <th class="order">Date</th>
+            <th class="order">Acheteur</th>
+            <th class="order">Valorisation</th>
+            <th class="order">Essence</th>
+            <th>Volume</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Details.Chantiers}}
+        <tr>
+            <td class="whitespace-nowrap">
+                <a href="#" onclick='ShowFactureChautre({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
+                    <img src="/static/img/facture.png" title="Voir la facture" />
+                </a>
+                <a href="/chantier/autre/update/{{.Id}}" class="padding-left05">
+                    <img src="/static/img/update.png" title="Modifier ce chantier" />
+                </a>
+                <a href="#" onclick="deleteChantier({{.Id}}, {{.Acheteur.String}}, {{.DateContrat | dateFr}});" class="padding-left05">
+                    <img src="/static/img/delete.png" title="Supprimer ce chantier">     
+                </a>
+            </td>
+            <td>
+                {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
+                <span data-date="{{.DateContrat}}">{{.DateContrat | dateFr}}</span>
+            </td>
+            <td>
+                {{/* data-name : hack pour trier par nom (sinon c'est trié par id), cf table-sort.js */}}
+                <span data-name="{{.Acheteur.String}}"><a href="/acteur/{{.IdAcheteur}}">{{.Acheteur.String}}</a></span>
+            </td>
+            <td>
+                {{.TypeValo | labelValorisation}}
+            </td>
+            <td>
+                {{.Essence | labelEssence}}
+            </td>
+            <td>
+                {{.VolumeRealise}} {{.Unite | labelUnite}}
+            </td>
+            <td>
+                <details>
+                    <summary>Voir / cacher</summary>
+                    <div class="grid2-pres">
+                        
+                        <div>UGs</div>
+                        <div>{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
+                        
+                        <div>Parcelles</div>
+                        <div class="grid2-pres">
+                        {{range .LiensParcelles}}
+                            <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
+                            <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
+                        {{end}}
+                        </div>
+                        
+                        <div>Lieux-dits</div>
+                        <div>{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
+                        
+                        <div>Fermiers</div>
+                        <div>{{range .Fermiers}}<a href="/fermier/{{.Id}}">{{.String}}</a><br>{{end}}</div>
+                        
+                        <div>Propriétaires</div>
+                        <div>{{range .Proprietaires}}<a href="/acteur/{{.Id}}">{{.String}}</a><br>{{end}}</div>
+                        {{if .VolumeContrat}}
+                            <div>Volume contrat</div>
+                            <div>{{.VolumeContrat}} {{.Unite | labelUnite}}</div>
+                        {{end}}
+                        
+                        <div>Exploitation</div>
+                        <div>{{.Exploitation | labelExploitation}}</div>
+                        
+                        <div>Volume réalisé</div>
+                        <div>{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
+                        
+                        <div>PU HT</div>
+                        <div><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>
+                        
+                        <div>Total HT</div>
+                        <div><script>document.write(round(prixHT({{.PUHT}}, {{.VolumeRealise}}), 2));</script></span> &euro;</div>
+                        
+                        <div>TVA</div>
+                        <div>{{.TVA}}</span> %</div>
+                        
+                        <div>Total TTC</div>
+                        <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.VolumeRealise}}), {{.TVA}}), 2));</script></span> &euro;</div>
+                        
+                        <div class="padding-top05"><b>Facture</b></div>
+                        <div></div>
+                        
+                        {{if not .DateFacture.IsZero}}
+                            <div>Date</div>
+                            <div>{{.DateFacture | dateFr}}</div>
+                        {{end}}
+                        
+                        {{if .NumFacture}}
+                            <div>Numéro</div>
+                            <div>{{.NumFacture}}</div>
+                        {{end}}
+                        
+                        {{if .Notes}}
+                            <div>Notes</div>
+                            <div>{{.Notes | nl2br}}</div>
+                        {{end}}
+                    </div><!-- end class="grid2-pres" -->
+                </details>
+            </td>
+        </tr>
+        {{end}}
+    <tbody>
 </table>                                                                 
 
 {{end}} {{/* end if .Details.Chantiers */}}

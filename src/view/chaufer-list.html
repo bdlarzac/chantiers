@@ -22,55 +22,74 @@
 {{if .Details.Chantiers}}
 <table class="entities">
     
-    <tr>
-        <th></th>
-        <th>Fermier</th>
-        <th>Date</th>
-        <th>Volume</th>
-        <th>Détails</th>
-        <th>Parcelles</th>
-        <th>Notes</th>
-    </tr>
-    {{range .Details.Chantiers}}
-    <tr>
-        <td class="whitespace-nowrap">
-            <a href="/chantier/chauffage-fermier/update/{{.Id}}">
-                <img src="/static/img/update.png" title="Modifier ce chantier" />
-            </a>
-            <a href="#" onclick="deleteChantier({{.Id}}, {{.Fermier.String}}, {{.DateChantier | dateFr}});" class="padding-left05">
-                <img src="/static/img/delete.png" title="Supprimer ce chantier">     
-            </a>
-        </td>
-        <td><a href="/fermier/{{.IdFermier}}">{{.Fermier.String}}</a></td>
-        <td>{{.DateChantier | dateFr}}</td>
-        <td>{{.Volume}} {{.Unite | labelUnite}}</td>
-        <td>
-            <div class="grid2-pres">
-                <div>UGs</div>
-                <div>
-                    {{range .UGs}}
-                        <div><a href="/ug/{{.Id}}">{{.String}}</a></div>
-                    {{end}}
-                </div>
-                <div>Essence</div>
-                <div>{{.Essence | labelEssence}}</div>
-                
-                <div>Exploitation</div>
-                <div>{{.Exploitation | labelExploitation}}</div>
-            </div>
-        </td>
-        <td>
-            <div class="grid2-pres">
-            {{range .LiensParcelles}}
-                <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
-                <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
-            {{end}}
-            </div>
-        </td>
-        <td>{{.Notes | nl2br}}</td>
-    </tr>
-    {{end}}
-
+    <thead>
+        <tr>
+            <th></th>
+            <th class="order">Date</th>
+            <th class="order">Fermier</th>
+            <th class="order">Essence</th>
+            <th>Volume</th>
+            <th>Détails</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Details.Chantiers}}
+        <tr>
+            <td class="whitespace-nowrap">
+                <a href="/chantier/chauffage-fermier/update/{{.Id}}">
+                    <img src="/static/img/update.png" title="Modifier ce chantier" />
+                </a>
+                <a href="#" onclick="deleteChantier({{.Id}}, {{.Fermier.String}}, {{.DateChantier | dateFr}});" class="padding-left05">
+                    <img src="/static/img/delete.png" title="Supprimer ce chantier">     
+                </a>
+            </td>
+            <td>
+                {{.DateChantier | dateFr}}
+            </td>
+            <td>
+                <a href="/fermier/{{.IdFermier}}">{{.Fermier.String}}</a>
+            </td>
+            <td>
+                {{.Volume}} {{.Unite | labelUnite}}
+            </td>
+            <td>
+                {{.Essence | labelEssence}}
+                        
+            </td>
+            <td>
+                <details>
+                    <summary>Voir / cacher</summary>
+                    <div class="grid2-pres">
+                    
+                        <div>Exploitation</div>
+                        <div>{{.Exploitation | labelExploitation}}</div>
+                    
+                        <div>UGs</div>
+                        <div>
+                            {{range .UGs}}
+                                <div><a href="/ug/{{.Id}}">{{.String}}</a></div>
+                            {{end}}
+                        </div>
+                        
+                        <div>Parcelles</div>
+                        <div>
+                            {{range .LiensParcelles}}
+                                <div>
+                                    <a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a>
+                                    ({{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}})
+                                </div>
+                            {{end}}
+                        </div>
+                        
+                        {{if .Notes}}
+                            <div>Notes</div>
+                            {{.Notes | nl2br}}
+                        {{end}}
+                    </div><!-- end class="grid2-pres" -->
+                </td>
+        </tr>
+        {{end}}
+    <tbody>
 </table>                                                                 
 
 {{end}} {{/* end if .Details.Chantiers */}}
