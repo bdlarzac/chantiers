@@ -33,7 +33,7 @@ func GetEssencesMap(db *sqlx.DB) (essencesMap map[string]string, err error) {
 		NomLong string
 	}
 	essences := []essence{}
-	query := "select code,nomlong from essence"
+	query := "select code,nomlong from essence order by nom"
 	err = db.Select(&essences, query)
 	if err != nil {
 		return essencesMap, werr.Wrapf(err, "Erreur query : "+query)

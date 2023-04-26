@@ -67,7 +67,7 @@ func ListPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Header: ctxt.Header{
 			Title: "Chantiers plaquettes " + annee,
 		},
-		Menu: "chantiers",
+		Menu: "production",
 		Footer: ctxt.Footer{
 			JSFiles: []string{"/view/common/plaq.js"},
 		},
@@ -111,7 +111,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				"/view/common/prix.js",
 				"/view/common/plaq.js"},
 		},
-		Menu: "chantiers",
+		Menu: "production",
 		Footer: ctxt.Footer{
 			JSFiles: []string{
 				"/static/lib/tabstrip/tabstrip.js"},
@@ -192,7 +192,7 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 					"/static/css/form.css",
 					"/static/css/modal.css"},
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/round.js",
@@ -284,7 +284,7 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 					"/static/css/form.css",
 					"/static/css/modal.css"},
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/round.js",

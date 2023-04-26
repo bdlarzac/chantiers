@@ -13,6 +13,7 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/generic/tiglib"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"strings"
@@ -81,11 +82,11 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 	if !ok1 && !ok2 && !ok3 {
 		return res, false, nil
 	}
-	if isBefore(first1, first2) && isBefore(first1, first3) {
+	if tiglib.IsBefore(first1, first2) && tiglib.IsBefore(first1, first3) {
 		first = first1
-	} else if isBefore(first2, first1) && isBefore(first2, first3) {
+	} else if tiglib.IsBefore(first2, first1) && tiglib.IsBefore(first2, first3) {
 		first = first2
-	} else if isBefore(first3, first1) && isBefore(first3, first2) {
+	} else if tiglib.IsBefore(first3, first1) && tiglib.IsBefore(first3, first2) {
 		first = first3
 	}
 	if last1.After(last2) && last1.After(last3) {
@@ -148,18 +149,6 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 		res = append(res, [2]time.Time{d, endPeriod})
 	}
 	return res, true, nil
-}
-
-// Auxiliaire de ComputeLimitesSaisons()
-// Compare 2 dates en prenant en compte IsZero()
-func isBefore(t1, t2 time.Time) bool {
-	if t1.IsZero() {
-		return false
-	}
-	if t2.IsZero() {
-		return true
-	}
-	return t1.Before(t2)
 }
 
 func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsProprio []int) (valos Valorisations, err error) {

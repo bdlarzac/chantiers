@@ -58,7 +58,7 @@
         <div class="big2 bold margin-top margin-bottom">Tas courants</div>
         {{if .TasActifs}}<ul class="naked">{{end}}
         {{range .TasActifs}}
-            <li id="tas-{{.Id}}" class="padding-bottom">
+            <li id="tas-{{.Id}}" class="padding-bottom padding-top">
                 <a href="/humidite/new/tas/{{.Id}}">
                     <img class="icon-humid inline"
                          src="/static/img/humid.png"
@@ -77,7 +77,7 @@
                 {{if le .Stock 10.0}}</span>{{end}}
                 <!-- **************** Mesures humidité ********************* -->
                 {{if .MesuresHumidite}}
-                    <div class="margin-left2">
+                    <div class="margin-left2 margin-top">
                     <ul class="naked">
                 {{end}}
                 {{range .MesuresHumidite}}

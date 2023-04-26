@@ -17,6 +17,8 @@ Utilisé dans model.computeIdsChantiersFromUG()
 
 --------------------------------------------------------------------------------------------------
 
+- Gérer erreur de conception : table essence redondante avec type typessence
+
 - view/common/chantier-lien.html : baseURL est initialisé à 2 endroits => supprimer le 2e et tester
 
 - page d'erreur : prendre en compte version prod / dev (fond bleu)

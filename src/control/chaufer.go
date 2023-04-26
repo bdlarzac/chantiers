@@ -73,7 +73,7 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 				"/static/js/round.js",
 				"/view/common/prix.js"},
 		},
-		Menu: "chantiers",
+		Menu: "production",
 		Details: detailsChauferList{
 			Chantiers:       chantiers,
 			Annee:           annee,
@@ -144,7 +144,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				UniteOptions:        webo.FmtOptions(WeboChauferUnite(), "CHOOSE_UNITE"),
 				UrlAction:           "/chantier/chauffage-fermier/new",
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",
@@ -207,7 +207,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				UniteOptions:        webo.FmtOptions(WeboChauferUnite(), "unite-"+chantier.Unite),
 				UrlAction:           "/chantier/chauffage-fermier/update/" + vars["id"],
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js",

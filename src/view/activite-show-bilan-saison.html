@@ -7,14 +7,14 @@
 
 {{with .Details}}
 
-<h2>Bilan activite par saison</h2>
+<h2>Bilan activité par saison</h2>
 
 <style>
     .padding-left4{padding-left:4rem;}
 </style>
 <table>
     <thead>
-        <tr><th colspan="2" class="padding-left4 left">Valorisation</th><th>Volume</th><th>Prix HT</th></tr>
+        <tr><th colspan="2" class="padding-left4 left">Valorisation</th><th>Volume</th><th>Revenus HT</th></tr>
     </thead>
     <tbody>
         {{range .BilansActivitesParSaison}}
@@ -33,7 +33,7 @@
                         {{.Volume}} {{.Unite | labelUnite}}
                     </td>
                     <td class="padding-left2">
-                        {{.PrixHT}} &euro;
+                        <script>document.write(formatNb({{.PrixHT}}));</script> &euro;
                     </td>
                 </tr>
             {{end}}

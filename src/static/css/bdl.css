@@ -43,17 +43,6 @@ summary{
 }
 
 /* ================ Colors ================ */
-.bg-white{background:white;}
-.bg-ccc{background-color:#ccc;}
-.background-none{background:none;}
-.lightgrey{
-    background-color: lightgrey;
-    padding:6px;
-    display:inline-block;
-    border:1px solid grey;
-}
-.red{color:red;}
-.black{color:black;}
 .ok{
     background:lightgreen;
 }
@@ -100,18 +89,6 @@ h1{padding-left:1rem;}
 }
 
 /* bold big2 border2 padding-left02 padding-right02 */
-.icon-empty{
-    display:inline-block;
-    padding:0 2px;
-    border:2px solid grey;
-    position:relative; top:-6px;
-}
-.icon-humid{
-    border:2px solid grey;
-    padding:2px;
-    background:white;
-}
-.stock-presque-vide{background:#de861c; padding:2px;}
 .icon-euro{
     font-size:1.5rem;
     padding: 1px .5rem;
@@ -189,6 +166,22 @@ h1{padding-left:1rem;}
     font-weight:bold;
 }
 
+.icon-empty{
+    display:inline-block;
+    padding:0 2px;
+    border:2px solid grey;
+    position:relative; top:-6px;
+}
+.icon-humid{
+    border:2px solid grey;
+    padding:2px;
+    background:white;
+}
+.stock-presque-vide{
+    background:#de861c;
+    padding:4px;
+    border:2px solid gold;
+}
 
 /* ================ A nettoyer / classer ================ */
 

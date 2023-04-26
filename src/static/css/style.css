@@ -197,25 +197,6 @@ table.border td{border:1px solid #a2a9b1;}
 .width25{width:25rem;}
 .width30{width:30rem;}
 
-/* ================ Colors ================ */
-.background-none{background:none;}
-
-.black{color:black;}
-.white{color:white;}
-.blue{color:blue;}
-.red{color:red;}
-.yellow{color:yellow;}
-.green{color:green;}
-.grey{color:grey;}
-.lightgrey{color:lightgrey;}
-.orange{color:orange;}
-
-.bg-black{background-color:black;}
-.bg-white{background-color:white;}
-.bg-blue{background-color:blue;}
-.bg-red{background-color:red;}
-.bg-yellow{background-color:yellow;}
-.bg-green{background-color:green;}
-.bg-grey{background-color:grey;}
-.bg-lightgrey{background-color:lightgrey;}
-.bg-orange{background-color:orange;}
+/* ================ Cursor ================ */
+.cursor-default {cursor:default;}
+.cursor-pointer {cursor:pointer;}

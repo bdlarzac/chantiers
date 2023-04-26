@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-"fmt"
 )
 
 type detailsSearchForm struct {
@@ -52,7 +51,6 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		if tab == "" {
 			tab = "liste"
 		}
-		//fmt.Printf("%+v\n", r.PostForm)
 		//
 		filtres := map[string][]string{}
 		filtres["fermier"] = computeFiltreFermier(r)
@@ -65,7 +63,6 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		if err != nil {
 			return err
 		}
-		//fmt.Printf("filtres = %+v\n",filtres)
 		//
 		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres)
 		if err != nil {
@@ -82,6 +79,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Header: ctxt.Header{
 				Title:    "Activités",
 				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
+				JSFiles: []string{"/static/js/formatNb.js"},
 			},
 			Footer: ctxt.Footer{
 				JSFiles: []string{
@@ -107,7 +105,6 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		if tab == "" {
 			tab = "liste"
 		}
-fmt.Printf("tab = %+v\n",tab)
 		//
 		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		if err != nil {
@@ -134,7 +131,7 @@ fmt.Printf("tab = %+v\n",tab)
 			return err
 		}
 		//
-		ctx.TemplateName = "activite-search.html"
+		ctx.TemplateName = "activite-search-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Recherche d'activité",

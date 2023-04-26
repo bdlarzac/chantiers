@@ -92,7 +92,7 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 				CSSFiles: []string{
 					"/static/css/form.css"},
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js"},
@@ -183,7 +183,7 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 				CSSFiles: []string{
 					"/static/css/form.css"},
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/toogle.js"},

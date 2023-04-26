@@ -68,7 +68,7 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 				"/static/js/round.js",
 				"/view/common/prix.js"},
 		},
-		Menu: "chantiers",
+		Menu: "production",
 		Details: detailsChautreList{
 			Chantiers: chantiers,
 			Annee:     annee,
@@ -134,7 +134,7 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 					"/static/css/form.css",
 					"/static/css/modal.css"},
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/round.js",
@@ -209,7 +209,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 					"/static/css/form.css",
 					"/static/css/modal.css"},
 			},
-			Menu: "chantiers",
+			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/round.js", //////////////// a supprimer - dans plaq aussi

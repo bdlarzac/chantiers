@@ -5,69 +5,71 @@
 
 <ul class="menus">
   <li class="dropdown">
-    <a class="dropbtn{{if eq .Menu "accueil"}} active{{end}}" href="/">Accueil</a>
+    <a class="dropbtn{{if eq .Menu "accueil"}} active{{end}} cursor-default" href="/">Accueil</a>
     <div class="dropdown-content">
-      <a href="/commune/liste">Communes / Lieux-dits</a>
-      <a href="/ug/search">Recherche UG</a>
-      <hr style="width:80%;">
-      <div class="float-left"><a href="/stockage/liste">Stockage plaquettes</a></div>
-      <div class="float-right"><a href="/tas-vides">Tas vides</a></div>
-      <div>
-          <div class="float-left"><a href="/humidite/liste">Mesures d'humidité</a></div>
-          <div class="float-right"><a href="/humidite/new" class="bold">+</a></div>
-          <br style="clear:both;">
-      </div>
-      <hr style="width:80%;">
       <a href="/backup">Sauvegarde des données</a>
       <a href="/maj-qgis">Mise à jour de l'export pour QGis</a>
       <hr style="width:80%;">
       <a href="/doc">Documentation</a>
-      <hr style="width:80%;">
-      <a href="/activite">Recherche d'activité</a>
     </div>
   </li>
   
   <li class="dropdown">
-    <a class="dropbtn{{if eq .Menu "acteurs"}} active{{end}}" href="/acteur/liste">Acteurs</a>
+    <span class="dropbtn{{if eq .Menu "acteurs"}} active{{end}} cursor-default">Données</span>
     <div class="dropdown-content">
-      <a href="/acteur/liste">Liste des acteurs</a>
-      <a href="/acteur/new">Nouvel acteur</a>
-      <hr style="width:80%;">
+      <div>
+          <div><a href="/commune/liste">Communes / Lieux-dits</a></div>
+          <div><a href="/ug/search">Recherche UG</a></div>
+          <div class="float-left"><a href="/acteur/liste">Acteurs</a></div>
+          <div class="float-right"><a href="/acteur/new" class="bold">+</a></div>
+          <br style="clear:both;">
+      </div>
       <a href="/fermier/liste">Fermiers SCTL</a>
     </div>
   </li>
 
   <li class="dropdown">
-    <span class="dropbtn{{if eq .Menu "chantiers"}} active{{end}}" href="/chantier">Chantiers</span>
+    <span class="dropbtn{{if eq .Menu "production"}} active{{end}} cursor-default">Production</span>
     <div class="dropdown-content">
-      <div>
-          <div class="float-left"><a href="/chantier/plaquette/liste">Plaquettes</a></div>
-          <div class="float-right"><a href="/chantier/plaquette/new" class="bold">+</a></div>
-          <br style="clear:both;">
-      </div>
-      <div>
-          <div class="float-left"><a href="/chantier/autre/liste">Autres valorisations</a></div>
-          <div class="float-right"><a href="/chantier/autre/new" class="bold">+</a></div>
-          <br style="clear:both;">
-      </div>
-      <div>
-          <div class="float-left"><a href="/chantier/chauffage-fermier/liste">Chauffage fermiers</a></div>
-          <div class="float-right"><a href="/chantier/chauffage-fermier/new" class="bold">+</a></div>
-          <br style="clear:both;">
-      </div>
-    </div>
-  </li>
-  
+          <a href="/activite">Recherche / bilan activité</a>
+          <hr style="width:80%;">
+          <div><a href="#" class="cursor-default">Plaquettes</a></div>
+          <div class="padding-left">
+              <div class="float-left"><a href="/chantier/plaquette/liste">Chantiers</a></div>
+              <div class="float-right"><a href="/chantier/plaquette/new" class="bold">+</a></div>
+              <br style="clear:both;">
+          </div>
+          <div class="float-left padding-left"><a href="/stockage/liste">Hangars</a></div>
+          <div class="float-right padding-left"><a href="/tas-vides">Tas vides</a></div>
+          <div>
+              <div class="float-left padding-left"><a href="/humidite/liste">Mesures d'humidité</a></div>
+              <div class="float-right"><a href="/humidite/new" class="bold">+</a></div>
+              <br style="clear:both;">
+          </div>
+          <hr style="width:80%;">
+          <div>
+              <div class="float-left"><a href="/chantier/autre/liste">Autres valorisations</a></div>
+              <div class="float-right"><a href="/chantier/autre/new" class="bold">+</a></div>
+              <br style="clear:both;">
+          </div>
+          <div>
+              <div class="float-left"><a href="/chantier/chauffage-fermier/liste">Chauffage fermiers</a></div>
+              <div class="float-right"><a href="/chantier/chauffage-fermier/new" class="bold">+</a></div>
+              <br style="clear:both;">
+          </div>
+        </div>
+      </li>
+      
+      <li class="dropdown">
+        <a class="dropbtn{{if eq .Menu "ventes"}} active{{end}} cursor-default" href="/vente/liste">Ventes</a>
+        <div class="dropdown-content">
+          <a href="/vente/liste">Liste des ventes</a>
+          <a href="/vente/new">Nouvelle vente</a>
+        </div>
+      </li>
+                  
   <li class="dropdown">
-    <a class="dropbtn{{if eq .Menu "ventes"}} active{{end}}" href="/vente/liste">Ventes</a>
-    <div class="dropdown-content">
-      <a href="/vente/liste">Liste des ventes</a>
-      <a href="/vente/new">Nouvelle vente</a>
-    </div>
-  </li>
-  
-  <li class="dropdown">
-    <a class="dropbtn{{if eq .Menu "bilans"}} active{{end}}" href="/bilans">Bilans</a>
+    <a class="dropbtn{{if eq .Menu "bilans"}} active{{end}} cursor-default" href="/bilans">Bilans</a>
   </li>
   
   {{/* 
