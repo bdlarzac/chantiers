@@ -44,7 +44,7 @@ func LabelActivite(abbrev string) string {
 	case "CG":
 		return "Chargement"
 	}
-	return "??? BUG LabelActivite ???"
+	return "??? BUG LabelActivite ("+abbrev+") ???"
 }
 
 // ************************** Essences (= espèces d'arbres) *******************************
@@ -68,7 +68,7 @@ func LabelEssence(abbrev string) string {
 	case "GV":
 		return "Genévrier"
 	}
-	return "??? BUG LabelEssence ???"
+	return "??? BUG LabelEssence ("+abbrev+") ???"
 }
 
 // ************************** Unités *******************************
@@ -95,7 +95,7 @@ func Valorisation2unite(codeValo string) string {
 	case "PQ":
 		return "MA"
 	}
-	return "??? Code inconnu dans Valorisation2unite() ???"
+	return "??? Code inconnu dans Valorisation2unite ("+codeValo+")  ???"
 }
 
 // Labels des unités manipulées par l'appli - format adapté à select html (à cause de m3)
@@ -117,7 +117,7 @@ func LabelUnite(abbrev string) string {
 	case "TO":
 		return "tonnes"
 	}
-	return "??? BUG LabelUnite ???"
+	return "??? BUG LabelUnite ("+abbrev+") ???"
 }
 
 // Labels des unités manipulées par l'appli
@@ -159,7 +159,7 @@ func LabelValorisation(abbrev string) string {
 	case "BO":
 		return "Bois d'oeuvre"
 	}
-	return "??? BUG LabelValorisation ???"
+	return "??? BUG LabelValorisation ("+abbrev+") ???"
 }
 
 // Labels du type de valorisation
@@ -191,7 +191,7 @@ func LabelTypeVente(abbrev string) string {
 	case "LIV":
 		return "Livré"
 	}
-	return "??? BUG LabelTypeVente ???"
+	return "??? BUG LabelTypeVente ("+abbrev+") ???"
 }
 
 // ************************** Type d'exploitation *******************************
@@ -212,7 +212,7 @@ func LabelExploitation(abbrev string) string {
 	case "5":
 		return "5ème"
 	}
-	return "??? BUG LabelExploitation ???"
+	return "??? BUG LabelExploitation ("+abbrev+") ???"
 }
 
 // ************************** Granulométrie *******************************
@@ -238,5 +238,5 @@ func LabelStockFrais(abbrev string) string {
 	case "LO":
 		return "Loyer"
 	}
-	return "??? BUG LabelStockFrais ???"
+	return "??? BUG LabelStockFrais ("+abbrev+") ???"
 }

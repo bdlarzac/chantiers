@@ -28,11 +28,11 @@ type detailsSearchForm struct {
 }
 
 type detailsSearchResults struct {
-	Activites               []*model.Activite
-	RecapFiltres            string
-	ActiviteMap             map[string]string
-	BilanActivitesParSaison []*model.BilanActivitesParSaison
-	Tab                     string
+	Activites                []*model.Activite
+	RecapFiltres             string
+	ActiviteMap              map[string]string
+	BilansActivitesParSaison []*model.BilanActivitesParSaison
+	Tab                      string
 }
 
 /*
@@ -72,7 +72,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return err
 		}
 		//
-		bilanActivitesParSaison, err := model.ComputeBilanActivitesParSaison(ctx.DB, activites, ctx.Config.DebutSaison)
+		bilansActivitesParSaison, err := model.ComputeBilansActivitesParSaison(ctx.DB, ctx.Config.DebutSaison, activites)
 		if err != nil {
 			return err
 		}
@@ -90,11 +90,11 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			},
 			Menu: "accueil",
 			Details: detailsSearchResults{
-				Activites:          activites,
-				RecapFiltres:       recapFiltres,
-				ActiviteMap:        model.GetActivitesMap(),
-				BilanActivitesParSaison: bilanActivitesParSaison,
-				Tab:                tab,
+				Activites:                activites,
+				RecapFiltres:             recapFiltres,
+				ActiviteMap:              model.GetActivitesMap(),
+				BilansActivitesParSaison: bilansActivitesParSaison,
+				Tab:                      tab,
 			},
 		}
 		return nil

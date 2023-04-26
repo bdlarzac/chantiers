@@ -9,14 +9,36 @@
 
 <h2>Bilan activite par saison</h2>
 
+<style>
+    .padding-left4{padding-left:4rem;}
+</style>
 <table>
-    {{range .ActivitesParSaison}}
-    <tr>
-        <td>
-            {{.Datedeb | dateFr}} - {{.Datefin | dateFr}}
-        </td>
-    </tr>
-    {{end}}
+    <thead>
+        <tr><th colspan="2" class="padding-left4 left">Valorisation</th><th>Volume</th><th>Prix HT</th></tr>
+    </thead>
+    <tbody>
+        {{range .BilansActivitesParSaison}}
+            {{/*  {{printf "%+v" .}} */}}
+            <tr>
+                <td colspan="4" class="bold padding-top">
+                    {{.Datedeb | dateFr}} - {{.Datefin | dateFr}}
+                </td>
+            </tr>
+            {{range .TotalActivitesParValo}}
+                <tr>
+                    <td colspan="2" class="padding-left4">
+                        {{.TypeValo | labelValorisationAvecChauferEtPlaq}}
+                    </td>
+                    <td class="padding-left2">
+                        {{.Volume}} {{.Unite | labelUnite}}
+                    </td>
+                    <td class="padding-left2">
+                        {{.PrixHT}} &euro;
+                    </td>
+                </tr>
+            {{end}}
+        {{end}}
+    <tbody>
 </table>
 
 

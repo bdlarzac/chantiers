@@ -8,10 +8,10 @@ Calcul d'activités regroupées par saison
 package model
 
 import (
+	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"time"
-"fmt"
 )
 
 /* Liste d'activités ayant lieu dans une période donnée */
@@ -22,18 +22,19 @@ type ActiviteParSaison struct {
 }
 
 type BilanActivitesParSaison struct {
-	Datedeb                       time.Time
-	Datefin                       time.Time
+	Datedeb               time.Time
+	Datefin               time.Time
 	TotalActivitesParValo []*TotalActivitesParValo
 }
 
 type TotalActivitesParValo struct {
 	TypeValo string
 	Volume   float64
+	Unite    string
 	PrixHT   float64
 }
 
-func ComputeBilanActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
+func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
     activitesParSaison, err := ComputeActivitesParSaison(db, debutSaison, activites)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur appel ComputeActivitesParSaison()")
@@ -41,9 +42,13 @@ func ComputeBilanActivitesParSaison(db *sqlx.DB, debutSaison string, activites [
 	result = []*BilanActivitesParSaison{}
 	for _, activiteParSaison := range(activitesParSaison){
 	    if len(activiteParSaison.Activites) == 0 {
-	        continue
+	        continue // exclut les saisons sans activités des bilans
 	    }
-	    currentRes := BilanActivitesParSaison{Datedeb: activiteParSaison.Datedeb, Datefin: activiteParSaison.Datefin, TotalActivitesParValo:[]*TotalActivitesParValo{}}
+	    currentRes := BilanActivitesParSaison{
+	        Datedeb: activiteParSaison.Datedeb,
+	        Datefin: activiteParSaison.Datefin,
+	        TotalActivitesParValo:[]*TotalActivitesParValo{},
+        }
 	    // map intermédiaire
         mapValos := map[string]TotalActivitesParValo{}
         for _, activite := range(activiteParSaison.Activites){
@@ -51,37 +56,42 @@ func ComputeBilanActivitesParSaison(db *sqlx.DB, debutSaison string, activites [
             if _, ok := mapValos[valo]; !ok {
                 mapValos[valo] = TotalActivitesParValo{TypeValo: valo}
             }
-            mapValos[valo].Volume += activite.Volume       /////////////////// ici faire conversion d'unité ///////////////////
-            mapValos[valo].PrixHT += activite.PrixHT
+            entry := mapValos[valo]
+            entry.Volume += activite.Volume
+            entry.Unite = activite.Unite /////////////////// ici faire conversion d'unité pour certaines valos ? ///////////////////
+            entry.PrixHT += activite.PrixHT
+            mapValos[valo] = entry
         }
-        // utilise map pour remplir le tableau
+        // utilise map pour remplir currentRes
         for valo, total := range(mapValos){
-            newRes := TotalActivitesParValo{TypeValo: valo, Volume: total.Volume, PrixHT: total.PrixHT}
-            currentRes = append(currentRes, newRes)
+            newRes := TotalActivitesParValo{
+                TypeValo: valo,
+                Volume: total.Volume,
+                Unite: total.Unite,
+                PrixHT: total.PrixHT,
+            }
+            currentRes.TotalActivitesParValo = append(currentRes.TotalActivitesParValo, &newRes)
         }
-        result = append(result, currentRes)
+        result = append(result, &currentRes)
 	}
-fmt.Printf("ComputeBilansActivitesParSaison()\n")
-
-fmt.Printf("result = %+v\n",result)
 	return result, nil
 }
 
 func ComputeActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*ActiviteParSaison, err error) {
-fmt.Printf("ComputeBilansActivitesParSaison()\n")
     limites, _, err := ComputeLimitesSaisons(db, debutSaison)
+    tiglib.ArrayReverse(limites)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur appel ComputeLimitesSaisons()")
 	}
 	result = []*ActiviteParSaison{}
     for _, limite := range(limites){
-        newRes := ActiviteParSaison{Datedeb: limite[0], Datefin: limite[0], Activites: []*Activite{}}
+        newRes := ActiviteParSaison{Datedeb: limite[0], Datefin: limite[1], Activites: []*Activite{}}
         result = append(result, &newRes)
     }
     for _, activite := range(activites){
-        for _, res := range(result){
-            if (activite.DateActivite.After(res.Datedeb) || activite.DateActivite.Equal(res.Datedeb)) && activite.DateActivite.Before(res.Datefin){
-                res.Activites = append(res.Activites, activite)
+        for i, _ := range(result){
+            if (activite.DateActivite.After(result[i].Datedeb) || activite.DateActivite.Equal(result[i].Datedeb)) && activite.DateActivite.Before(result[i].Datefin){
+                result[i].Activites = append(result[i].Activites, activite)
                 break
             }
         }

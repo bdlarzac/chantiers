@@ -125,61 +125,62 @@ func GetActivite(db *sqlx.DB, typeActivite string, idActivite int) (activ *Activ
 
 // ************************** Compute one *******************************
 
-func (activ *Activite) computeOneFromPlaq(db *sqlx.DB, idActivite int) (err error) {
-	a, err := GetPlaq(db, idActivite)
+func (a *Activite) computeOneFromPlaq(db *sqlx.DB, idActivite int) (err error) {
+	ch, err := GetPlaq(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetPlaq()")
 	}
-	activ.Id = a.Id
-	activ.Titre = a.Titre
-	activ.URL = "/chantier/plaquette/" + strconv.Itoa(idActivite)
-	activ.DateActivite = a.DateDebut
-	activ.TypeValo = "PQ"
-	err = a.ComputeVolume(db)
+	a.Id = ch.Id
+	a.Titre = ch.Titre
+	a.URL = "/chantier/plaquette/" + strconv.Itoa(idActivite)
+	a.DateActivite = ch.DateDebut
+	a.TypeValo = "PQ"
+	err = ch.ComputeVolume(db)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ComputeVolume()")
 	}
-	activ.Volume = a.Volume
-	activ.Unite = "MA"
-	activ.CodeEssence = a.Essence
-	activ.Notes = a.Notes
+	a.Volume = ch.Volume
+	a.Unite = "MA"
+	a.CodeEssence = ch.Essence
+	a.Notes = ch.Notes
 	return nil
 }
 
-func (activ *Activite) computeOneFromChautre(db *sqlx.DB, idActivite int) (err error) {
-	a, err := GetChautre(db, idActivite)
+func (a *Activite) computeOneFromChautre(db *sqlx.DB, idActivite int) (err error) {
+	ch, err := GetChautre(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetChautre()")
 	}
-	activ.Id = a.Id
-	activ.Titre = a.Titre
-	//	activ.URL = "/chautre/" + strconv.Itoa(idActivite)
-	activ.DateActivite = a.DateContrat
-	activ.Volume = a.VolumeRealise
-	activ.TypeValo = a.TypeValo
-	activ.Unite = a.Unite
-	activ.CodeEssence = a.Essence
-	activ.PUHT = a.PUHT
-	activ.TVA = a.TVA
-	activ.NumFacture = a.NumFacture
-	activ.DateFacture = a.DateFacture
-	activ.Notes = a.Notes
+	a.Id = ch.Id
+	a.Titre = ch.Titre
+	//	a.URL = "/chautre/" + strconv.Itoa(idActivite)
+	a.DateActivite = ch.DateContrat
+	a.Volume = ch.VolumeRealise
+	a.TypeValo = ch.TypeValo
+	a.Unite = ch.Unite
+	a.CodeEssence = ch.Essence
+	a.PUHT = ch.PUHT
+	a.PrixHT = ch.PUHT * ch.VolumeRealise
+	a.TVA = ch.TVA
+	a.NumFacture = ch.NumFacture
+	a.DateFacture = ch.DateFacture
+	a.Notes = ch.Notes
 	return nil
 }
 
-func (activ *Activite) computeOneFromChaufer(db *sqlx.DB, idActivite int) (err error) {
-	a, err := GetChaufer(db, idActivite)
+func (a *Activite) computeOneFromChaufer(db *sqlx.DB, idActivite int) (err error) {
+	ch, err := GetChaufer(db, idActivite)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetChaufer()")
 	}
-	activ.Id = a.Id
-	activ.Titre = a.Titre
-	//	activ.URL = "/chaufer/" + strconv.Itoa(idActivite)
-	activ.DateActivite = a.DateChantier
-	activ.TypeValo = "CF"
-	activ.Volume = a.Volume
-	activ.Unite = a.Unite
-	activ.CodeEssence = a.Essence
-	activ.Notes = a.Notes
+	a.Id = ch.Id
+	a.Titre = ch.Titre
+	//	a.URL = "/chaufer/" + strconv.Itoa(idActivite)
+	a.DateActivite = ch.DateChantier
+	a.TypeValo = "CF"
+	a.Volume = ch.Volume
+	a.Unite = ch.Unite
+	a.CodeEssence = ch.Essence
+	a.Notes = ch.Notes
 	return nil
 }
