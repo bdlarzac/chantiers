@@ -57,8 +57,8 @@ func main() {
 	r.HandleFunc("/backup", H(control.BackupDB))
 	r.HandleFunc("/maj-qgis", H(control.MajQGis))
 
-	r.HandleFunc("/activite", H(control.SearchActivite))
-	r.HandleFunc("/activite/{tab}", H(control.SearchActivite))
+	r.HandleFunc("/activite/recherche", H(control.SearchActivite))
+	r.HandleFunc("/activite/recherche/{tab}", H(control.SearchActivite))
 
 	r.HandleFunc("/facture/vente-plaquette/{id:[0-9]+}", HPDF(control.ShowFactureVentePlaq))
 	r.HandleFunc("/facture/autre/{id:[0-9]+}", HPDF(control.ShowFactureChautre))
@@ -107,6 +107,7 @@ func main() {
 	r.HandleFunc("/chantier/plaquette/{id-chantier:[0-9]+}/range/update/{id-pr:[0-9]+}", H(control.UpdatePlaqRange))
 	r.HandleFunc("/chantier/plaquette/{id-chantier:[0-9]+}/range/delete/{id-pr:[0-9]+}", H(control.DeletePlaqRange))
 
+	r.HandleFunc("/vente/recherche", H(control.SearchVente))
 	r.HandleFunc("/vente/liste", H(control.ListVentePlaq))
 	r.HandleFunc("/vente/liste/{annee:[0-9]+}", H(control.ListVentePlaq))
 	r.HandleFunc("/vente/{id-vente:[0-9]+}", H(control.ShowVentePlaq))

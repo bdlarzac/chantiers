@@ -7,6 +7,7 @@
   <li class="dropdown">
     <a class="dropbtn{{if eq .Menu "accueil"}} active{{end}} cursor-default" href="/">Accueil</a>
     <div class="dropdown-content">
+      <a href="/">Accueil</a>
       <a href="/backup">Sauvegarde des données</a>
       <a href="/maj-qgis">Mise à jour de l'export pour QGis</a>
       <hr style="width:80%;">
@@ -18,8 +19,8 @@
     <span class="dropbtn{{if eq .Menu "acteurs"}} active{{end}} cursor-default">Données</span>
     <div class="dropdown-content">
       <div>
-          <div><a href="/commune/liste">Communes / Lieux-dits</a></div>
-          <div><a href="/ug/search">Recherche UG</a></div>
+          <a href="/commune/liste">Communes / Lieux-dits</a>
+          <a href="/ug/search">Recherche UG</a>
           <div class="float-left"><a href="/acteur/liste">Acteurs</a></div>
           <div class="float-right"><a href="/acteur/new" class="bold">+</a></div>
           <br style="clear:both;">
@@ -31,9 +32,9 @@
   <li class="dropdown">
     <span class="dropbtn{{if eq .Menu "production"}} active{{end}} cursor-default">Production</span>
     <div class="dropdown-content">
-          <a href="/activite">Recherche / bilan activité</a>
+          <a href="/activite/recherche">Recherche / bilans activités</a>
           <hr style="width:80%;">
-          <div><a href="#" class="cursor-default">Plaquettes</a></div>
+          <a class="cursor-default">Plaquettes</a>
           <div class="padding-left">
               <div class="float-left"><a href="/chantier/plaquette/liste">Chantiers</a></div>
               <div class="float-right"><a href="/chantier/plaquette/new" class="bold">+</a></div>
@@ -63,8 +64,12 @@
       <li class="dropdown">
         <a class="dropbtn{{if eq .Menu "ventes"}} active{{end}} cursor-default" href="/vente/liste">Ventes</a>
         <div class="dropdown-content">
-          <a href="/vente/liste">Liste des ventes</a>
-          <a href="/vente/new">Nouvelle vente</a>
+          <a href="/vente/recherche">Recherche / bilans ventes</a>
+          <div>
+              <div class="float-left"><a href="/vente/liste">Ventes</a></div>
+              <div class="float-right"><a href="/vente/new" class="bold">+</a></div>
+              <br style="clear:both;">
+          </div>
         </div>
       </li>
                   

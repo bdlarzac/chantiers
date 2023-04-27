@@ -1,5 +1,5 @@
 /*
-Recherche / bilans d'activité
+Recherche / bilans de ventes plaquettes
 
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type detailsSearchForm struct {
+type detailsVenteSearchForm struct {
 	Periods     [][2]time.Time    // pour choix-date
 	EssencesMap map[string]string // pour choix-essence
 	PropriosMap map[int]string    // pour choix-proprio
@@ -25,7 +25,7 @@ type detailsSearchForm struct {
 	UrlAction   string
 }
 
-type detailsSearchResults struct {
+type detailsVenteSearchResults struct {
 	Activites                []*model.Activite
 	RecapFiltres             string
 	ActiviteMap              map[string]string
@@ -36,7 +36,7 @@ type detailsSearchResults struct {
 /*
 Affiche / process le formulaire de recherche
 */
-func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
+func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	switch r.Method {
 	case "POST":
 		//
@@ -73,10 +73,10 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return err
 		}
 		//
-		ctx.TemplateName = "activite-search-show.html"
+		ctx.TemplateName = "venteplaq-search-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title:    "Activités",
+				Title:    "Ventes plaquettes",
 				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 				JSFiles: []string{"/static/js/formatNb.js"},
 			},
@@ -130,10 +130,10 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return err
 		}
 		//
-		ctx.TemplateName = "activite-search-form.html"
+		ctx.TemplateName = "venteplaq-search-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Recherche d'activité",
+				Title: "Recherche de ventes plaquettes",
 				CSSFiles: []string{
 					"/static/css/form.css"},
 			},
@@ -146,7 +146,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				AllUGs:      allUGs,
 				UGs:         []*model.UG{},
 				AllCommunes: allCommunes,
-				UrlAction:   "/activite/recherche/" + tab,
+				UrlAction:   "/vente/recherche/" + tab,
 			},
 		}
 		return nil

@@ -1,0 +1,69 @@
+{{/*
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+<div style="padding:.5rem 0 0 5rem;">
+    <h1>Recherche de ventes plaquettes</h1>
+</div>
+
+
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
+
+    <!-- ********************************************************************************* -->
+    <h2>Type de recherche</h2>
+        <div class="big2 padding-left">
+            <div>
+                <input type="radio" name="type-bilan" id="ventes-plaquettes" value="ventes-plaquettes" onclick="changeChoixBilan(this);">
+                <label for="ventes-plaquettes">Ventes plaquettes</label>
+            </div>
+            
+            <div class="padding-top">
+                <input type="radio" name="type-bilan" id="client-plaquettes" value="client-plaquettes" onclick="changeChoixBilan(this);">
+                <label for="client-plaquettes">Achats plaquettes par client</label>
+                {{/* 
+                <div class="padding-top05 padding-left2">
+                    <select name="liste-client-plaquettes" id="liste-client-plaquettes" class="width30">
+                        {{.ClientsPlaquettesOptions}}
+                    </select>
+                </div>
+                */}}
+            </div>
+        </div>
+    
+    <!-- ********************************************************************************* -->
+    <h2>Filtres</h2>
+    
+    <div class="flex-wrap">
+        <div>
+            {{template "choix-periode.html" $.Details}}
+            <script>const choixPeriode = new ChoixPeriode();</script>
+        </div>
+        <div class="margin-left">
+            {{template "choix-proprio.html" $.Details}}
+            <script>const choixProprio = new ChoixProprio();</script>
+        </div>
+    </div>
+    
+    <div class="float-right">
+        <input class="big-button" type="submit" value="Valider">
+        <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
+    </div>
+                                                                                                                                      
+</form>
+
+<script>
+
+function validateForm(){
+    let msg = '';
+    document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
+    msg += choixPeriode_validateForm();
+    msg += choixProprio_validateForm();
+    //
+    if(msg != ''){
+        alert("Impossible de valider ce formulaire : \n" + msg);
+        return false;
+    }
+    return true;
+}
+</script>
+

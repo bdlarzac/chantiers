@@ -11,6 +11,7 @@
     </a>
 </h2>
 
+<!-- *********************** Opérations simples ************************ -->
 {{if .Operations}}
 <table class="bordered">
     <tr>
@@ -49,7 +50,7 @@
         <td class="whitespace-pre">{{.TVA}} %</td>
         <td class="whitespace-pre"><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.Qte}}), {{.TVA}}), 2)));</script> &euro;</td>
         <td class="center">{{.DatePay | dateFr}}</td>
-        <td class="note padding05">{{.Notes | nl2br}}</td>
+        <td class="{{if .Notes}}note {{end}}padding05">{{.Notes | nl2br}}</td>
     </tr>
 {{end}}
     
@@ -67,7 +68,7 @@
     let coutParBenne = 0;
 </script>
 
-<!-- *********************************************** -->
+<!-- *********************** Transport ************************ -->
 <h2>
     Transport plateforme     
     {{if .TasActifs}}
@@ -294,7 +295,7 @@
 {{end}}
 
 
-<!-- *********************************************** -->
+<!-- *********************** Rangement ************************ -->
 <h2>
     Rangement
     <a class="padding-left" href="/chantier/plaquette/{{.Id}}/range/new">
