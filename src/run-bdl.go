@@ -143,6 +143,8 @@ func main() {
 	r.HandleFunc("/humidite/delete/{id:[0-9]+}", H(control.DeleteHumid))
 
 	r.HandleFunc("/bilans", H(control.FormBilans))
+	
+	r.HandleFunc("/sylviculture/recherche", H(control.SearchSylvi))
 
 	r.HandleFunc("/ug/search", H(control.SearchUG))
 	r.HandleFunc("/ug/{id:[0-9]+}", H(control.ShowUG))

@@ -58,20 +58,22 @@
               <div class="float-right"><a href="/chantier/chauffage-fermier/new" class="bold">+</a></div>
               <br style="clear:both;">
           </div>
+          <hr style="width:80%;">
+          <a href="/sylviculture/recherche">Recherche / bilans sylviculture</a>
         </div>
-      </li>
+  </li>
       
-      <li class="dropdown">
-        <a class="dropbtn{{if eq .Menu "ventes"}} active{{end}} cursor-default" href="/vente/liste">Ventes</a>
-        <div class="dropdown-content">
-          <a href="/vente/recherche">Recherche / bilans ventes</a>
-          <div>
-              <div class="float-left"><a href="/vente/liste">Ventes</a></div>
-              <div class="float-right"><a href="/vente/new" class="bold">+</a></div>
-              <br style="clear:both;">
-          </div>
-        </div>
-      </li>
+  <li class="dropdown">
+    <a class="dropbtn{{if eq .Menu "ventes"}} active{{end}} cursor-default" href="/vente/liste">Ventes</a>
+    <div class="dropdown-content">
+      <a href="/vente/recherche">Recherche / bilans ventes</a>
+      <div>
+          <div class="float-left"><a href="/vente/liste">Ventes</a></div>
+          <div class="float-right"><a href="/vente/new" class="bold">+</a></div>
+          <br style="clear:both;">
+      </div>
+    </div>
+  </li>
                   
   <li class="dropdown">
     <a class="dropbtn{{if eq .Menu "bilans"}} active{{end}} cursor-default" href="/bilans">Bilans</a>

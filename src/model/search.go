@@ -1,5 +1,5 @@
 /*
-Fonctions liées à la recherche
+Fonctions liées à la recherche, communes à plusieurs recherches.
 
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.

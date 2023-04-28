@@ -11,24 +11,24 @@
 
     <!-- ********************************************************************************* -->
     <h2>Type de recherche</h2>
-        <div class="big2 padding-left">
-            <div>
-                <input type="radio" name="type-bilan" id="ventes-plaquettes" value="ventes-plaquettes" onclick="changeChoixBilan(this);">
-                <label for="ventes-plaquettes">Ventes plaquettes</label>
-            </div>
-            
-            <div class="padding-top">
-                <input type="radio" name="type-bilan" id="client-plaquettes" value="client-plaquettes" onclick="changeChoixBilan(this);">
-                <label for="client-plaquettes">Achats plaquettes par client</label>
-                {{/* 
-                <div class="padding-top05 padding-left2">
-                    <select name="liste-client-plaquettes" id="liste-client-plaquettes" class="width30">
-                        {{.ClientsPlaquettesOptions}}
-                    </select>
-                </div>
-                */}}
-            </div>
+    <div class="big2 padding-left">
+        <div>
+            <input type="radio" name="type-bilan" id="ventes-plaquettes" value="ventes-plaquettes" onclick="changeChoixBilan(this);">
+            <label for="ventes-plaquettes">Ventes plaquettes</label>
         </div>
+        
+        <div class="padding-top">
+            <input type="radio" name="type-bilan" id="client-plaquettes" value="client-plaquettes" onclick="changeChoixBilan(this);">
+            <label for="client-plaquettes">Achats plaquettes par client</label>
+            {{/* 
+            <div class="padding-top05 padding-left2">
+                <select name="liste-client-plaquettes" id="liste-client-plaquettes" class="width30">
+                    {{.ClientsPlaquettesOptions}}
+                </select>
+            </div>
+            */}}
+        </div>
+    </div>
     
     <!-- ********************************************************************************* -->
     <h2>Filtres</h2>
