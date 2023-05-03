@@ -101,6 +101,11 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		//
+		weboClientsPlaquettes, err := WeboClientsPlaquettes(ctx)
+		if err != nil {
+			return err
+		}
+		//
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Choix bilan",
@@ -111,7 +116,7 @@ func FormBilans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				Periods:                  periods,
 				HasChantier:              hasChantier,
 				UrlAction:                "/bilans",
-				ClientsPlaquettesOptions: webo.FmtOptions(WeboClientsPlaquettes(ctx), "CHOOSE_CLIENT"),
+				ClientsPlaquettesOptions: webo.FmtOptions(weboClientsPlaquettes, "CHOOSE_CLIENT"),
 				Proprietaires:            proprietaires,
 			},
 			Menu: "bilans",

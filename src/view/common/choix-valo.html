@@ -1,18 +1,19 @@
 {{/* 
-    Formulaire de choix d'un ou plusieurs propriétaires.
+    Formulaire de choix d'une ou plusieurs valorisations.
     Un seul appel par page possible.
     
-    Cette template doit être appelée avec une structure contenant un champ PropriosMap.
-    PropriosMap est uniquement utilisée dans le constructeur.
+    Cette template doit être appelée avec une variable go contenant un champ ValoCodes.
+    ValoCodes est uniquement utilisée dans le constructeur.
     
     Utilisation :
         <script>
-            const choixProprio = new ChoixProprio();
+            const choixValo = new ChoixValo();
         </script>
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
+
 
 <style>
     .link{
@@ -23,20 +24,20 @@
 
 <script>
 
-class ChoixProprio{
+class ChoixValo{
     
     #html;
     
     constructor(){
         this.#html = `
-        <fieldset class="choix-proprio">
-            <legend>Propriétaires</legend>
+        <fieldset class="choix-valo">
+            <legend>Valorisations</legend>
             <details open>
-                <summary><span id="choix-proprio-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                <summary><span id="choix-valo-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
                 ${this.#buildCheckboxes()}
                 <div class="margin-top05">
-                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixProprio_toutSelectionner(); choixProprio_updateSummary();">Tous</a>
-                    <a class="link" id="aucun" onclick="choixProprio_rienSelectionner(); choixProprio_updateSummary();">Aucun</a>
+                    <a class="link padding-left2 padding-right2" id="tous" onclick="choixValo_toutSelectionner(); choixValo_choixChanged();">Toutes</a>
+                    <a class="link" id="aucun" onclick="choixValo_rienSelectionner(); choixValo_choixChanged();">Aucune</a>
                 </div>
             </details>
         </fieldset>
@@ -47,30 +48,32 @@ class ChoixProprio{
     
     #buildCheckboxes(){
         let res = '';
-        {{ range $id, $nom := .PropriosMap }}
+        {{range .ValoCodes}}
             res += '<label class="block">'
-                + `<input class="chk-proprio" type="checkbox" id="choix-proprio-` + {{$id}} + `" name="choix-proprio-` + {{$id}} + `" onchange="choixProprio_updateSummary();">`
-                + {{$nom}}
+                + `<input class="chk-valo" type="checkbox" id="choix-valo-` + {{.}} + `" name="choix-valo-` + {{.}} + `" onchange="choixValo_choixChanged();">`
+                + '{{. | labelValorisationAvecChauferEtPlaq}}'
                 + '</label>';
         {{end}}
         return res;
     }
+    
     
     display(){
         document.write(this.#html);
     }
     
     initialize(){
-        choixProprio_toutSelectionner();
-        choixProprio_updateSummary();
+        choixValo_toutSelectionner();
+        choixValo_choixChanged();
     }
 
 } // end class
 
-function choixProprio_updateSummary(){
+function choixValo_choixChanged(){
+    // update summary string
     let tous = true;
     const checkedElements = [];
-    const elements = document.getElementsByClassName('chk-proprio');
+    const elements = document.getElementsByClassName('chk-valo');
     for(const elt of elements){
         if(elt.checked == false){
             tous = false;
@@ -81,7 +84,7 @@ function choixProprio_updateSummary(){
     }
     let str = '';
     if(tous){
-        str = 'Tous les propriétaires';
+        str = 'Toutes les valorisations';
     }
     else{
         const l = checkedElements.length;
@@ -91,18 +94,18 @@ function choixProprio_updateSummary(){
             str += ' + ...';
         }
     }
-    document.getElementById('choix-proprio-summary').innerHTML = str;
+    document.getElementById('choix-valo-summary').innerHTML = str;
 }
 
-function choixProprio_toutSelectionner(){
-    const elements = document.getElementsByClassName('chk-proprio');
+function choixValo_toutSelectionner(){
+    const elements = document.getElementsByClassName('chk-valo');
     for(const elt of elements){
         elt.checked = true;
     }
 }
 
-function choixProprio_rienSelectionner(){
-    const elements = document.getElementsByClassName('chk-proprio');
+function choixValo_rienSelectionner(){
+    const elements = document.getElementsByClassName('chk-valo');
     for(const elt of elements){
         elt.checked = false;
     }
@@ -111,8 +114,8 @@ function choixProprio_rienSelectionner(){
 /** 
     Renvoie un booléen ; utilisé par validateForm() du formulaire appelant
 **/
-function choixProprio_isAllSelected(){
-    const elements = document.getElementsByClassName('chk-proprio');
+function choixValo_isAllSelected(){
+    const elements = document.getElementsByClassName('chk-valo');
     for(const elt of elements){
         if(elt.checked == false){
             return false;
@@ -125,16 +128,17 @@ function choixProprio_isAllSelected(){
     Renvoie un message d'erreur (ou chaîne vide si pas d'erreur).
     Utilisé par validateForm() du formulaire appelant.
 **/
-function choixProprio_validateForm(){
-    const elements = document.getElementsByClassName('chk-proprio');
+function choixValo_validateForm(){
+    const elements = document.getElementsByClassName('chk-valo');
     let selectionVide = true;
     for(const elt of elements){
         if(elt.checked == true){
             selectionVide = false;
+            break;
         }
     }
     if(selectionVide){
-        return '- Vous devez au moins sélectionner un propriétaire.';
+        return '- Vous devez au moins sélectionner une valorisation.';
     }
     return '';
 }

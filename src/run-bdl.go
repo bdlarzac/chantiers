@@ -108,6 +108,7 @@ func main() {
 	r.HandleFunc("/chantier/plaquette/{id-chantier:[0-9]+}/range/delete/{id-pr:[0-9]+}", H(control.DeletePlaqRange))
 
 	r.HandleFunc("/vente/recherche", H(control.SearchVente))
+	r.HandleFunc("/vente/recherche-par-client", H(control.SearchVenteParClient))
 	r.HandleFunc("/vente/liste", H(control.ListVentePlaq))
 	r.HandleFunc("/vente/liste/{annee:[0-9]+}", H(control.ListVentePlaq))
 	r.HandleFunc("/vente/{id-vente:[0-9]+}", H(control.ShowVentePlaq))

@@ -3,7 +3,7 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<h1>Activités</h1>
+<h1>Ventes</h1>
 
 <div class="recap-filtres">
     {{$.Details.RecapFiltres | safeHTML}}
@@ -16,13 +16,13 @@
 
 <div id="tab-liste" class="tabcontent">
     <p>
-        {{ template "activite-search-show-list.html" . }}
+        {{ template "vente-search-show-list.html" . }}
     </p>
 </div>
                                                                                                                                                       
 <div id="tab-bilan-saison" class="tabcontent">
     <p>
-        {{ template "activite-search-show-bilan-saison.html" . }}
+        {{ template "vente-search-show-bilan-saison.html" . }}
     </p>
 </div>
 

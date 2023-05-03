@@ -1,0 +1,54 @@
+{{/*
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+<div style="padding:.5rem 0 0 5rem;">
+    <h1>{{$.Header.Title}}</h1>
+</div>
+
+
+<form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
+
+    <div class="flex-wrap">
+        <div>
+            <div>
+                {{template "choix-periode.html" $.Details}}
+                <script>const choixPeriode = new ChoixPeriode();</script>
+            </div>
+            <div>
+                {{template "choix-valo.html" $.Details}}
+                <script>const choixValo = new ChoixValo();</script>
+            </div>
+        </div>
+        <div class="margin-left">
+            {{template "choix-proprio.html" $.Details}}
+            <script>const choixProprio = new ChoixProprio();</script>
+        </div>
+    </div>
+    
+    <div class="float-right">
+        <input class="big-button" type="submit" value="Valider">
+        <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
+        <input type="hidden" name="choix-ALL-valo" id="choix-ALL-valo" value="">
+    </div>
+                                                                                                                                      
+</form>
+
+<script>
+
+function validateForm(){
+    let msg = '';
+    document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
+    document.getElementById('choix-ALL-valo').value = choixValo_isAllSelected();
+    msg += choixPeriode_validateForm();
+    msg += choixProprio_validateForm();
+    msg += choixValo_validateForm();
+    //
+    if(msg != ''){
+        alert("Impossible de valider ce formulaire : \n" + msg);
+        return false;
+    }
+    return true;
+}
+</script>
+

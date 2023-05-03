@@ -141,7 +141,8 @@ func AllValorisationCodes() []string {
 
 // Pareil que AllValorisationCodes(), avec en plus CF (chauffage fermier) et PQ (plaquettes)
 func AllValorisationCodesAvecChauferEtPlaq() []string {
-	return []string{"PQ", "PP", "CH", "CF", "PL", "PI", "BO"}
+    // codes triés par ordre alphabétique des labels correspondant
+	return []string{"BO", "CH", "CF", "PP", "PL", "PI", "PQ"}
 }
 
 // Labels du type de valorisation (pour Chautre)

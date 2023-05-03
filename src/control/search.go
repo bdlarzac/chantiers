@@ -1,6 +1,7 @@
 /*
 Fonctions auxiliaires liées à la recherche au niveau controller.
-Voir activite-search.go, venteplaqsearch.go pour le contrôle des formulaires de recherche.
+Fonctions communes à la recherche d'activités et de à la recherche de ventes.
+Voir activite-search.go, vente-search.go pour le contrôle des formulaires de recherche.
 
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -11,6 +12,8 @@ import (
 	"net/http"
 	"strings"
 )
+
+// ************************** computeFiltre *******************************
 
 /*
 Filtre fermier : renvoie un tableau de strings.
@@ -111,3 +114,27 @@ func computeFiltreParcelle(r *http.Request) (result []string) {
 	result = strings.Split(r.PostFormValue("ids-parcelles"), ";")
 	return result
 }
+
+/*
+Filtre valorisations : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient une liste de codes essence.
+*/
+func computeFiltreValo(r *http.Request) (result []string) {
+	if r.PostFormValue("choix-ALL-valo") == "true" {
+		return []string{}
+	}
+	result = []string{}
+	for key, _ := range r.PostForm {
+		if strings.Index(key, "choix-valo-") != 0 {
+			continue
+		}
+		if r.PostFormValue(key) != "on" {
+			continue
+		}
+		code := key[11:]
+		result = append(result, code)
+	}
+	return result
+}
+

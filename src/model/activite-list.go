@@ -1,5 +1,5 @@
 /*
-Calcul d'activités, en appliquant des filtres
+Calcul d'activités, en appliquant des filtres.
 
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -17,48 +17,49 @@ import (
 // ************************** Fonction principale *******************************
 
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Activite, err error) {
-	fmt.Printf("ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
+fmt.Printf("ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 	result = []*Activite{}
 	//
 	// Première sélection, par filtre période
 	//
 	var tmp []*Activite
-	// if plaq dans le filtre activite
+	// if plaq dans le filtre activite (pas implémenté)
 	tmp, err = computePlaqFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode(\"plaq\")")
+		return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
 	}
 	result = append(result, tmp...)
 	//
 	tmp, err = computeChautreFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computeChautreFromFiltrePeriode(\"plaq\")")
+		return result, werr.Wrapf(err, "Erreur appel computeChautreFromFiltrePeriode()")
 	}
 	result = append(result, tmp...)
 	//
 	tmp, err = computeChauferFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computeChauferFromFiltrePeriode(\"plaq\")")
+		return result, werr.Wrapf(err, "Erreur appel computeChauferFromFiltrePeriode()")
 	}
 	result = append(result, tmp...)
 	//
 	// Filtres suivants
 	//
 	if len(filtres["essence"]) != 0 {
-		result = filtreEssence(db, result, filtres["essence"])
+		result = filtreActivite_essence(db, result, filtres["essence"])
 	}
 	//
 	if len(filtres["fermier"]) != 0 {
 		for _, activite := range result {
 			activite.ComputeFermiers(db)
 		}
-		result = filtreFermier(db, result, filtres["fermier"])
+		result = filtreActivite_fermier(db, result, filtres["fermier"])
 	}
+	//
 	if len(filtres["ug"]) != 0 {
 		for _, activite := range result {
 			activite.ComputeUGs(db)
 		}
-		result = filtreFermier(db, result, filtres["ug"])
+		result = filtreActivite_ug(db, result, filtres["ug"])
 	}
 	//
 	// préparation (faire le plus tard possible pour optimiser)
@@ -70,13 +71,13 @@ func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (resu
 	}
 	//
 	if len(filtres["parcelle"]) != 0 {
-		result = filtreParcelle(db, result, filtres["parcelle"])
+		result = filtreActivite_parcelle(db, result, filtres["parcelle"])
 	}
 	//
 	if len(filtres["proprio"]) != 0 {
-		result, err = filtreProprio(db, result, filtres["proprio"])
+		result, err = filtreActivite_proprio(db, result, filtres["proprio"])
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel filtreProprio()")
+			return result, werr.Wrapf(err, "Erreur appel filtreActivite_proprio()")
 		}
 	}
 	//fmt.Printf("result = %+v\n",result)
@@ -157,7 +158,7 @@ func computeChauferFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (resul
 
 // ************************** Filtres *******************************
 
-func filtreEssence(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+func filtreActivite_essence(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
 	result = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
@@ -170,7 +171,7 @@ func filtreEssence(db *sqlx.DB, input []*Activite, filtre []string) (result []*A
 	return result
 }
 
-func filtreFermier(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+func filtreActivite_fermier(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
 	result = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
@@ -186,7 +187,7 @@ func filtreFermier(db *sqlx.DB, input []*Activite, filtre []string) (result []*A
 	return result
 }
 
-func filtreUGs(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+func filtreActivite_ug(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
 	result = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
@@ -202,7 +203,7 @@ func filtreUGs(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activ
 	return result
 }
 
-func filtreParcelle(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+func filtreActivite_parcelle(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
 	result = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
@@ -218,7 +219,7 @@ func filtreParcelle(db *sqlx.DB, input []*Activite, filtre []string) (result []*
 	return result
 }
 
-func filtreProprio(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite, err error) {
+func filtreActivite_proprio(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite, err error) {
 	result = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
@@ -228,7 +229,6 @@ func filtreProprio(db *sqlx.DB, input []*Activite, filtre []string) (result []*A
 				if err != nil {
 					return result, werr.Wrapf(err, "Erreur appel GetParcelle()")
 				}
-
 				if parcelle.IdProprietaire == id {
 					result = append(result, a)
 					break

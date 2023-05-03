@@ -6,12 +6,11 @@
 	        chaufer
 	        chautre
 	        plaq
-	        plaqop
-	        plaqrange
-	        plaqtrans
-	        ventecharge
-	        ventelivre
-	        venteplaq
+	        // plaqop
+	        // plaqrange
+	        // plaqtrans
+	        // ventecharge
+	        // ventelivre
 
 		@copyright  BDL, Bois du Larzac.
 		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.

@@ -86,7 +86,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 					"/static/lib/table-sort/table-sort.js"},
 			},
 			Menu: "accueil",
-			Details: detailsSearchResults{
+			Details: detailsActiviteSearchResults{
 				Activites:                activites,
 				RecapFiltres:             recapFiltres,
 				ActiviteMap:              model.GetActivitesMap(),
@@ -138,7 +138,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 					"/static/css/form.css"},
 			},
 			Menu: "accueil",
-			Details: detailsSearchForm{
+			Details: detailsActiviteSearchForm{
 				Periods:     periods,
 				EssencesMap: essencesMap,
 				PropriosMap: propriosMap,

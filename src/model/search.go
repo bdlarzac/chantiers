@@ -17,6 +17,16 @@ import (
 	// "fmt"
 )
 
+func filtreValoContientAutreValo(filtreValo []string) bool {
+    codes := AllValorisationCodes() // codes utilisés par chautre - ne contient pas PQ et CF
+    for _, code := range(codes){
+        if tiglib.InArrayString(code, filtreValo) {
+            return true
+        }
+    }
+    return false
+}
+
 func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result string, err error) {
 	result = ""
 	// Si aucun filtre

@@ -140,6 +140,12 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
+		//
+		weboFournisseur, err := WeboFournisseur(ctx)
+		if err != nil {
+			return err
+		}
+		//
 		ctx.TemplateName = "venteplaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -154,7 +160,7 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 			},
 			Details: detailsVentePlaqForm{
 				Vente:              vente,
-				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), "CHOOSE_FOURNISSEUR"),
+				FournisseurOptions: webo.FmtOptions(weboFournisseur, "CHOOSE_FOURNISSEUR"),
 				ListeActeurs:       listeActeurs,
 				UrlAction:          "/vente/new",
 			},
@@ -197,14 +203,22 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			return err
 		}
+		//
 		vente, err := model.GetVentePlaqFull(ctx.DB, idVente)
 		if err != nil {
 			return err
 		}
+		//
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
 			return err
 		}
+		//
+		weboFournisseur, err := WeboFournisseur(ctx)
+		if err != nil {
+			return err
+		}
+		//
 		ctx.TemplateName = "venteplaq-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -218,7 +232,7 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 					"/static/js/toogle.js"},
 			},
 			Details: detailsVentePlaqForm{
-				FournisseurOptions: webo.FmtOptions(WeboFournisseur(ctx), "fournisseur-"+strconv.Itoa(vente.IdFournisseur)),
+				FournisseurOptions: webo.FmtOptions(weboFournisseur, "fournisseur-"+strconv.Itoa(vente.IdFournisseur)),
 				Vente:              vente,
 				ListeActeurs:       listeActeurs,
 				UrlAction:          "/vente/update/" + vars["id-vente"],

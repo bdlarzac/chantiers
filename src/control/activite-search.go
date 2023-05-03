@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type detailsSearchForm struct {
+type detailsActiviteSearchForm struct {
 	Periods     [][2]time.Time    // pour choix-date
 	EssencesMap map[string]string // pour choix-essence
 	PropriosMap map[int]string    // pour choix-proprio
@@ -25,7 +25,7 @@ type detailsSearchForm struct {
 	UrlAction   string
 }
 
-type detailsSearchResults struct {
+type detailsActiviteSearchResults struct {
 	Activites                []*model.Activite
 	RecapFiltres             string
 	ActiviteMap              map[string]string
@@ -86,7 +86,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 					"/static/lib/table-sort/table-sort.js"},
 			},
 			Menu: "accueil",
-			Details: detailsSearchResults{
+			Details: detailsActiviteSearchResults{
 				Activites:                activites,
 				RecapFiltres:             recapFiltres,
 				ActiviteMap:              model.GetActivitesMap(),
@@ -138,7 +138,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 					"/static/css/form.css"},
 			},
 			Menu: "accueil",
-			Details: detailsSearchForm{
+			Details: detailsActiviteSearchForm{
 				Periods:     periods,
 				EssencesMap: essencesMap,
 				PropriosMap: propriosMap,

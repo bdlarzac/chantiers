@@ -14,6 +14,7 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"strconv"
 )
@@ -166,39 +167,40 @@ func WeboTVAExt(ctx *ctxt.Context, chooseId, idPrefix string) []webo.OptionStrin
 
 // Renvoie la liste des fournisseurs de plaquettes
 // dans un format utilisable par webo
-func WeboFournisseur(ctx *ctxt.Context) []webo.OptionString {
-	res := []webo.OptionString{}
+func WeboFournisseur(ctx *ctxt.Context) (res []webo.OptionString, err error) {
+	res = []webo.OptionString{}
 	fournisseurs, err := model.GetFournisseurs(ctx.DB)
 	if err != nil {
-		panic("La base de donnée doit contenir au moins un fournisseur de plaquettes")
+		return res, werr.Wrapf(err, "La base de donnée doit contenir au moins un fournisseur de plaquettes")
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_FOURNISSEUR", OptionLabel: "--- Choisir ---"})
 	for _, fournisseur := range fournisseurs {
 		res = append(res, webo.OptionString{OptionValue: "fournisseur-" + strconv.Itoa(fournisseur.Id), OptionLabel: fournisseur.Nom})
 	}
-	return res
+	return res, nil
 }
 
 // Renvoie la liste des clients plaquettes
 // dans un format utilisable par webo
-func WeboClientsPlaquettes(ctx *ctxt.Context) []webo.OptionString {
-	res := []webo.OptionString{}
+// A supprimer
+func WeboClientsPlaquettes(ctx *ctxt.Context) (res []webo.OptionString, err error) {
+	res = []webo.OptionString{}
 	clients, err := model.GetClientsPlaquettes(ctx.DB)
 	if err != nil {
-		panic(err)
+		return res, werr.Wrapf(err, "Erreur appel model.GetClientsPlaquettes()")
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_CLIENT", OptionLabel: "--- Choisir ---"})
 	for _, client := range clients {
 		res = append(res, webo.OptionString{OptionValue: "acteur-" + strconv.Itoa(client.Id), OptionLabel: client.Nom})
 	}
-	return res
+	return res, nil
 }
 
 // Renvoie la liste des tas actifs
 // dans un format utilisable par webo
 // les attributs value et id des options sont de la forme tas-<id du tas> (ex: tas-3)
-func WeboTas(ctx *ctxt.Context) ([]webo.OptionString, error) {
-	res := []webo.OptionString{}
+func WeboTas(ctx *ctxt.Context) (res []webo.OptionString, err error) {
+	res = []webo.OptionString{}
 	tas, err := model.GetAllTasActifsFull(ctx.DB)
 	if err != nil {
 		return res, err
@@ -212,8 +214,8 @@ func WeboTas(ctx *ctxt.Context) ([]webo.OptionString, error) {
 
 // Renvoie la liste des fermiers SCTL
 // dans un format utilisable par webo
-func WeboFermier(ctx *ctxt.Context) ([]webo.OptionString, error) {
-	res := []webo.OptionString{}
+func WeboFermier(ctx *ctxt.Context) (res []webo.OptionString, err error) {
+	res = []webo.OptionString{}
 	fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 	if err != nil {
 		return res, err
