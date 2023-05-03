@@ -48,6 +48,10 @@ fmt.Printf("ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 		result = filtreActivite_essence(db, result, filtres["essence"])
 	}
 	//
+	if len(filtres["valo"]) != 0 {
+		result = filtreActivite_valo(db, result, filtres["valo"])
+	}
+	//
 	if len(filtres["fermier"]) != 0 {
 		for _, activite := range result {
 			activite.ComputeFermiers(db)
@@ -163,6 +167,19 @@ func filtreActivite_essence(db *sqlx.DB, input []*Activite, filtre []string) (re
 	for _, a := range input {
 		for _, f := range filtre {
 			if a.CodeEssence == f {
+				result = append(result, a)
+				break
+			}
+		}
+	}
+	return result
+}
+
+func filtreActivite_valo(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+	result = []*Activite{}
+	for _, a := range input {
+		for _, f := range filtre {
+			if a.TypeValo == f {
 				result = append(result, a)
 				break
 			}

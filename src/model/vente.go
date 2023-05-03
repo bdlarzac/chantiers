@@ -14,6 +14,7 @@
 package model
 
 import (
+	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"strconv"
@@ -46,46 +47,174 @@ func (v *Vente) String() string {
 	return v.Titre
 }
 
+// ************************** Get many *******************************
 
-// ************************** Get one *******************************
-
-func GetVente(db *sqlx.DB, typeVente string, idVente int) (vente *Vente, err error) {
-	vente = &Vente{}
-	vente.TypeVente = typeVente
-	switch typeVente {
-	case "plaq":
-		err = vente.computeOneFromVentePlaq(db, idVente)
-		break
-	case "autre":
-		err = vente.computeOneFromChautre(db, idVente)
-		break
+func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Vente, err error) {
+	result = []*Vente{}
+	//
+	// Première sélection, par filtre période
+	//
+	var tmp []*Vente
+	// Si les ventes plaquettes sont demandées
+	if len(filtres["valo"]) == 0 || tiglib.InArrayString("PQ", filtres["valo"]) {
+        tmp, err = computeVentePlaqFromFiltrePeriode(db, filtres["periode"])
+        if err != nil {
+            return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
+        }
+        result = append(result, tmp...)
+    }
+	// Si d'autres valorisations que les plaquettes sont demandées
+	if len(filtres["valo"]) == 0 || filtreValoContientAutreValo(filtres["valo"]) {
+        tmp, err = computeVenteChautreFromFiltrePeriode(db, filtres["periode"])
+        if err != nil {
+            return result, werr.Wrapf(err, "Erreur appel computeVenteChautreFromFiltrePeriode()")
+        }
+        result = append(result, tmp...)
+    }
+	//
+	// Filtres suivants
+	//
+	if len(filtres["essence"]) != 0 {
+		result = filtreVente_essence(db, result, filtres["essence"])
 	}
-	if err != nil {
-		return vente, werr.Wrapf(err, "Erreur appel vente.computeOneFrom "+typeVente)
+	//
+	if len(filtres["valo"]) != 0 {
+		result = filtreVente_valo(db, result, filtres["valo"])
 	}
-	return vente, nil
+	//
+	if len(filtres["proprio"]) != 0 {
+		result, err = filtreVente_proprio(db, result, filtres["proprio"])
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel filtreVente_proprio()")
+		}
+	}
+	//fmt.Printf("result = %+v\n",result)
+	// TODO éventuellement, trier par date
+	return result, nil
 }
 
-// ************************** compute one *******************************
+// ****************************************************************************************************
+// ************************** Auxiliaires de ComputeVentesFromFiltres() *******************************
+// ****************************************************************************************************
 
-func (v *Vente) computeOneFromVentePlaq(db *sqlx.DB, idVente int) (err error) {
-	vp, err := GetVentePlaq(db, idVente)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetVentePlaq()")
+// ************************** Selection initiale, par période *******************************
+
+func computeVentePlaqFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Vente, err error) {
+	var query string
+	ventes := []*VentePlaq{}
+	query = "select * from venteplaq"
+	if len(filtrePeriode) == 2 {
+		query += " where datevente >= $1 and datevente <= $2"
+		err = db.Select(&ventes, query, filtrePeriode[0], filtrePeriode[1])
+	} else {
+		err = db.Select(&ventes, query)
 	}
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, vp := range ventes {
+		vente, err := ventePlaq2Vente(db, vp)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel ventePlaq2Vente()")
+		}
+		result = append(result, vente)
+	}
+	return result, nil
+}
+
+func computeVenteChautreFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Vente, err error) {
+	var query string
+	chantiers := []*Chautre{}
+	query = "select * from chautre"
+	if len(filtrePeriode) == 2 {
+		query += " where datecontrat >= $1 and datecontrat <= $2"
+		err = db.Select(&chantiers, query, filtrePeriode[0], filtrePeriode[1])
+	} else {
+		err = db.Select(&chantiers, query)
+	}
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, ch := range chantiers {
+		vente, err := chautre2Vente(db, ch)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel chautre2Vente()")
+		}
+		result = append(result, vente)
+	}
+	return result, nil
+}
+
+// ************************** Application des filtres *******************************
+// En entrée : liste de ventes
+// En sortie : liste de ventes qui satisfont au filtre
+
+func filtreVente_essence(db *sqlx.DB, input []*Vente, filtre []string) (result []*Vente) {
+	result = []*Vente{}
+	for _, v := range input {
+		for _, f := range filtre {
+			if v.CodeEssence == f {
+				result = append(result, v)
+				break
+			}
+		}
+	}
+	return result
+}
+
+func filtreVente_valo(db *sqlx.DB, input []*Vente, filtre []string) (result []*Vente) {
+	result = []*Vente{}
+	for _, v := range input {
+		for _, f := range filtre {
+			if v.TypeValo == f {
+				result = append(result, v)
+				break
+			}
+		}
+	}
+	return result
+}
+
+// TODO implement
+func filtreVente_proprio(db *sqlx.DB, input []*Vente, filtre []string) (result []*Vente, err error) {
+	result = []*Vente{}
+	/* 
+	for _, a := range input {
+		for _, f := range filtre {
+			id, _ := strconv.Atoi(f)
+			for _, lienParcelle := range a.LiensParcelles {
+				parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
+				if err != nil {
+					return result, werr.Wrapf(err, "Erreur appel GetParcelle()")
+				}
+				if parcelle.IdProprietaire == id {
+					result = append(result, a)
+					break
+				}
+			}
+		}
+	}
+	*/
+	return result, nil
+}
+
+// ************************** Conversion de struct vers une Vente *******************************
+
+func ventePlaq2Vente(db *sqlx.DB, vp *VentePlaq) (v *Vente, err error) {
+    v = &Vente{}
 	err = vp.ComputeClient(db) // Obligatoire pour pouvoir utiliser String()
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
+		return v, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
 	}
 	v.Id = vp.Id
 	v.TypeVente = "plaq"
 	v.Titre = vp.String()
-	v.URL = "/chantier/plaquette/" + strconv.Itoa(idVente)
+	v.URL = "/vente/" + strconv.Itoa(vp.Id)
 	v.DateVente = vp.DateVente
 	v.TypeValo = "PQ"
 	err = vp.ComputeQte(db)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
+		return v, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
 	}
 	v.Volume = vp.Qte
 	v.Unite = "MA"
@@ -96,14 +225,11 @@ func (v *Vente) computeOneFromVentePlaq(db *sqlx.DB, idVente int) (err error) {
 	v.NumFacture = vp.NumFacture
 	v.DateFacture = vp.DateFacture
 	v.Notes = vp.Notes
-	return nil
+	return v, nil
 }
 
-func (v *Vente) computeOneFromChautre(db *sqlx.DB, idChautre int) (err error) {
-	ch, err := GetChautre(db, idChautre)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetChautre()")
-	}
+func chautre2Vente(db *sqlx.DB, ch *Chautre) (v *Vente, err error) {
+    v = &Vente{}
 	v.Id = ch.Id
 	v.TypeVente = "autre"
 	v.Titre = ch.Titre
@@ -119,5 +245,5 @@ func (v *Vente) computeOneFromChautre(db *sqlx.DB, idChautre int) (err error) {
 	v.NumFacture = ch.NumFacture
 	v.DateFacture = ch.DateFacture
 	v.Notes = ch.Notes
-	return nil
+	return v, nil
 }

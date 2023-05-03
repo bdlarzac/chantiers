@@ -17,6 +17,7 @@ import (
 type detailsActiviteSearchForm struct {
 	Periods     [][2]time.Time    // pour choix-date
 	EssencesMap map[string]string // pour choix-essence
+	ValoCodes   []string          // pour choix-valo
 	PropriosMap map[int]string    // pour choix-proprio
 	Fermiers    []*model.Fermier  // pour choix-fermier
 	AllUGs      []*model.UG       // pour choix-ug - liens-ugs-modal
@@ -54,6 +55,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		filtres := map[string][]string{}
 		filtres["fermier"] = computeFiltreFermier(r)
 		filtres["essence"] = computeFiltreEssence(r)
+		filtres["valo"]    = computeFiltreValo(r)
 		filtres["proprio"] = computeFiltreProprio(r)
 		filtres["periode"] = computeFiltrePeriode(r)
 		filtres["ug"] = computeFiltreUG(r)
@@ -141,6 +143,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Details: detailsActiviteSearchForm{
 				Periods:     periods,
 				EssencesMap: essencesMap,
+				ValoCodes:   model.AllValorisationCodesAvecChauferEtPlaq(),
 				PropriosMap: propriosMap,
 				Fermiers:    fermiers,
 				AllUGs:      allUGs,
