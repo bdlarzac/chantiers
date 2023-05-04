@@ -19,6 +19,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
+	"fmt"
 )
 
 type Vente struct {
@@ -56,7 +57,8 @@ func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result 
 	//
 	var tmp []*Vente
 	// Si les ventes plaquettes sont demandées
-	if len(filtres["valo"]) == 0 || tiglib.InArrayString("PQ", filtres["valo"]) {
+	if len(filtres["valo"]) == 0 || tiglib.InArray("PQ", filtres["valo"]) {
+fmt.Println("filtre valo")
         tmp, err = computeVentePlaqFromFiltrePeriode(db, filtres["periode"])
         if err != nil {
             return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")

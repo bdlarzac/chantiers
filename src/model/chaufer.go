@@ -107,7 +107,7 @@ func GetChauferDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	}
 	for _, d := range list {
 		y := strconv.Itoa(d.Year())
-		if !tiglib.InArrayString(y, res) && y != exclude {
+		if !tiglib.InArray(y, res) && y != exclude {
 			res = append(res, y)
 		}
 	}

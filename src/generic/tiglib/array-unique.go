@@ -13,7 +13,7 @@ package tiglib
 func ArrayUniqueString(e []string) []string {
 	r := []string{}
 	for _, s := range e {
-		if !InArrayString(s, r[:]) {
+		if !InArray(s, r[:]) {
 			r = append(r, s)
 		}
 	}
@@ -24,7 +24,7 @@ func ArrayUniqueString(e []string) []string {
 func ArrayUniqueInt(e []int) []int {
 	r := []int{}
 	for _, s := range e {
-		if !InArrayInt(s, r[:]) {
+		if !InArray(s, r[:]) {
 			r = append(r, s)
 		}
 	}

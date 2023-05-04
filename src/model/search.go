@@ -20,7 +20,7 @@ import (
 func filtreValoContientAutreValo(filtreValo []string) bool {
     codes := AllValorisationCodes() // codes utilisés par chautre - ne contient pas PQ et CF
     for _, code := range(codes){
-        if tiglib.InArrayString(code, filtreValo) {
+        if tiglib.InArray(code, filtreValo) {
             return true
         }
     }

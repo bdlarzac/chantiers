@@ -190,7 +190,7 @@ func GetPlaqDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	}
 	for _, d := range list {
 		y := strconv.Itoa(d.Year())
-		if !tiglib.InArrayString(y, res) && y != exclude {
+		if !tiglib.InArray(y, res) && y != exclude {
 			res = append(res, y)
 		}
 	}
@@ -724,7 +724,7 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	}
 	// si AV et pas AP => supprimer tas AV
 	for _, av := range idsStockageAV {
-		if !tiglib.InArrayInt(av, idsStockageAP) {
+		if !tiglib.InArray(av, idsStockageAP) {
 			// Attention, ne pas faire un DeleteTas() directement avec une query
 			// car DeleteTas() a pour effet de supprimer les activités qui lui sont reliées.
 			var idTasToDelete int
@@ -741,7 +741,7 @@ func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	}
 	// si AP et pas AV => créer tas AP
 	for _, ap := range idsStockageAP {
-		if !tiglib.InArrayInt(ap, idsStockageAV) {
+		if !tiglib.InArray(ap, idsStockageAV) {
 			tas := NewTas(ap, ch.Id, 0, true)
 			_, err = InsertTas(db, tas)
 			if err != nil {

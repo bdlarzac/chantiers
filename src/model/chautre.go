@@ -137,7 +137,7 @@ func GetChautreDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
 	}
 	for _, d := range list {
 		y := strconv.Itoa(d.Year())
-		if !tiglib.InArrayString(y, res) && y != exclude {
+		if !tiglib.InArray(y, res) && y != exclude {
 			res = append(res, y)
 		}
 	}
@@ -244,7 +244,7 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 			return werr.Wrapf(err, "Erreur appel UG.ComputeProprietaires()")
 		}
 		for _, proprio := range ug.Proprietaires {
-			if !tiglib.InArrayInt(proprio.Id, idsProprios) {
+			if !tiglib.InArray(proprio.Id, idsProprios) {
 				idsProprios = append(idsProprios, proprio.Id)
 				ch.Proprietaires = append(ch.Proprietaires, proprio)
 			}
