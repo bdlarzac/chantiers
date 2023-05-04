@@ -263,8 +263,8 @@ func GetUGsSortedByCode(db *sqlx.DB) (ugs []*UG, err error) {
 		code2 := strings.Replace(ug2.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
 		tmp2 := strings.Split(code2, "-")
 		// teste chiffres romains
-		idx1 := tiglib.ArraySearchString(romans, tmp1[0])
-		idx2 := tiglib.ArraySearchString(romans, tmp2[0])
+		idx1 := tiglib.ArraySearch(romans, tmp1[0])
+		idx2 := tiglib.ArraySearch(romans, tmp2[0])
 		if idx1 < idx2 {
 			return true
 		}
