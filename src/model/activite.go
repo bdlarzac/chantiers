@@ -25,6 +25,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
+"fmt"
 )
 
 type Activite struct {
@@ -74,6 +75,7 @@ func (a *Activite) String() string {
 	return a.Titre
 }
 
+
 // ************************** Instance methods *******************************
 
 func (a *Activite) ComputeLiensParcelles(db *sqlx.DB) (err error) {
@@ -100,56 +102,275 @@ func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
 	return nil
 }
 
-// ************************** Get one *******************************
-
-func GetActivite(db *sqlx.DB, typeActivite string, idActivite int) (activ *Activite, err error) {
-	activ = &Activite{}
-	activ.TypeActivite = typeActivite
-	switch typeActivite {
-	case "chaufer":
-		err = activ.computeOneFromChaufer(db, idActivite)
-		break
-	case "chautre":
-		err = activ.computeOneFromChautre(db, idActivite)
-		break
-	case "plaq":
-		err = activ.computeOneFromPlaq(db, idActivite)
-		break
-	}
+// ************************** Get many *******************************
+func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Activite, err error) {
+fmt.Printf("ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
+	result = []*Activite{}
+	//
+	// Première sélection, par filtre période
+	//
+	var tmp []*Activite
+	// if plaq dans le filtre activite (pas implémenté)
+	tmp, err = computePlaqFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return activ, werr.Wrapf(err, "Erreur appel activ.computeOneFrom "+typeActivite)
+		return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
 	}
-	return activ, nil
+	result = append(result, tmp...)
+	//
+	tmp, err = computeChautreFromFiltrePeriode(db, filtres["periode"])
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur appel computeChautreFromFiltrePeriode()")
+	}
+	result = append(result, tmp...)
+	//
+	tmp, err = computeChauferFromFiltrePeriode(db, filtres["periode"])
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur appel computeChauferFromFiltrePeriode()")
+	}
+	result = append(result, tmp...)
+	//
+	// Filtres suivants
+	//
+	if len(filtres["essence"]) != 0 {
+		result = filtreActivite_essence(db, result, filtres["essence"])
+	}
+	//
+	if len(filtres["valo"]) != 0 {
+		result = filtreActivite_valo(db, result, filtres["valo"])
+	}
+	//
+	if len(filtres["fermier"]) != 0 {
+		for _, activite := range result {
+			activite.ComputeFermiers(db)
+		}
+		result = filtreActivite_fermier(db, result, filtres["fermier"])
+	}
+	//
+	if len(filtres["ug"]) != 0 {
+		for _, activite := range result {
+			activite.ComputeUGs(db)
+		}
+		result = filtreActivite_ug(db, result, filtres["ug"])
+	}
+	//
+	// préparation (faire le plus tard possible pour optimiser)
+	//
+	if len(filtres["proprio"]) != 0 || len(filtres["parcelle"]) != 0 {
+		for _, activite := range result {
+			activite.ComputeLiensParcelles(db)
+		}
+	}
+	//
+	if len(filtres["parcelle"]) != 0 {
+		result = filtreActivite_parcelle(db, result, filtres["parcelle"])
+	}
+	//
+	if len(filtres["proprio"]) != 0 {
+		result, err = filtreActivite_proprio(db, result, filtres["proprio"])
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel filtreActivite_proprio()")
+		}
+	}
+//fmt.Printf("result = %+v\n",result)
+	// TODO éventuellement, trier par date
+	return result, nil
 }
 
-// ************************** Compute one *******************************
+// ****************************************************************************************************
+// ************************** Auxiliaires de ComputeActivitesFromFiltres() ****************************
+// ****************************************************************************************************
 
-func (a *Activite) computeOneFromPlaq(db *sqlx.DB, idActivite int) (err error) {
-	ch, err := GetPlaq(db, idActivite)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetPlaq()")
+// ************************** Selection initiale, par période *******************************
+
+func computePlaqFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+	var query string
+	chantiers := []*Plaq{}
+	query = "select * from plaq"
+	if len(filtrePeriode) == 2 {
+		query += " where datedeb >= $1 and datedeb <= $2"
+		err = db.Select(&chantiers, query, filtrePeriode[0], filtrePeriode[1])
+	} else {
+		err = db.Select(&chantiers, query)
 	}
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, chantier := range chantiers {
+		tmp, err := plaq2Activite(db, chantier)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel plaq2Activite()")
+		}
+		result = append(result, tmp)
+	}
+	return result, nil
+}
+
+func computeChautreFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+	var query string
+	chantiers := []*Chautre{}
+	query = "select * from chautre"
+	if len(filtrePeriode) == 2 {
+		query += " where datecontrat >= $1 and datecontrat <= $2"
+		err = db.Select(&chantiers, query, filtrePeriode[0], filtrePeriode[1])
+	} else {
+		err = db.Select(&chantiers, query)
+	}
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, chantier := range chantiers {
+		tmp, err := chautre2Activite(db, chantier)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel chautre2Activite()")
+		}
+		result = append(result, tmp)
+	}
+	return result, nil
+}
+
+func computeChauferFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+	var query string
+	chantiers := []*Chaufer{}
+	query = "select * from chaufer"
+	if len(filtrePeriode) == 2 {
+		query += " where datechantier >= $1 and datechantier <= $2"
+		err = db.Select(&chantiers, query, filtrePeriode[0], filtrePeriode[1])
+	} else {
+		err = db.Select(&chantiers, query)
+	}
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	for _, chantier := range chantiers {
+		tmp, err := chaufer2Activite(db, chantier)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel chaufer2Activite()")
+		}
+		result = append(result, tmp)
+	}
+	return result, nil
+}
+
+// ************************** Filtres *******************************
+// En entrée : liste d'activités
+// En sortie : liste d'activités qui satisfont au filtre
+
+func filtreActivite_essence(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+	result = []*Activite{}
+	for _, a := range input {
+		for _, f := range filtre {
+			if a.CodeEssence == f {
+				result = append(result, a)
+				break
+			}
+		}
+	}
+	return result
+}
+
+func filtreActivite_valo(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+	result = []*Activite{}
+	for _, a := range input {
+		for _, f := range filtre {
+			if a.TypeValo == f {
+				result = append(result, a)
+				break
+			}
+		}
+	}
+	return result
+}
+
+func filtreActivite_fermier(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+	result = []*Activite{}
+	for _, a := range input {
+		for _, f := range filtre {
+			id, _ := strconv.Atoi(f)
+			for _, fermier := range a.Fermiers {
+				if fermier.Id == id {
+					result = append(result, a)
+					break
+				}
+			}
+		}
+	}
+	return result
+}
+
+func filtreActivite_ug(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+	result = []*Activite{}
+	for _, a := range input {
+		for _, f := range filtre {
+			id, _ := strconv.Atoi(f)
+			for _, ug := range a.UGs {
+				if ug.Id == id {
+					result = append(result, a)
+					break
+				}
+			}
+		}
+	}
+	return result
+}
+
+func filtreActivite_parcelle(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
+	result = []*Activite{}
+	for _, a := range input {
+		for _, f := range filtre {
+			id, _ := strconv.Atoi(f)
+			for _, lienParcelle := range a.LiensParcelles {
+				if lienParcelle.IdParcelle == id {
+					result = append(result, a)
+					break
+				}
+			}
+		}
+	}
+	return result
+}
+
+func filtreActivite_proprio(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite, err error) {
+	result = []*Activite{}
+	for _, a := range input {
+		for _, f := range filtre {
+			id, _ := strconv.Atoi(f)
+			for _, lienParcelle := range a.LiensParcelles {
+				parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
+				if err != nil {
+					return result, werr.Wrapf(err, "Erreur appel GetParcelle()")
+				}
+				if parcelle.IdProprietaire == id {
+					result = append(result, a)
+					break
+				}
+			}
+		}
+	}
+	return result, nil
+}
+
+// ************************** Conversion de struct vers une Activite *******************************
+
+func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
+    a = &Activite{}
 	a.Id = ch.Id
 	a.Titre = ch.Titre
-	a.URL = "/chantier/plaquette/" + strconv.Itoa(idActivite)
+	a.URL = "/chantier/plaquette/" + strconv.Itoa(a.Id)
 	a.DateActivite = ch.DateDebut
 	a.TypeValo = "PQ"
 	err = ch.ComputeVolume(db)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel ComputeVolume()")
+		return a, werr.Wrapf(err, "Erreur appel ComputeVolume()")
 	}
 	a.Volume = ch.Volume
 	a.Unite = "MA"
 	a.CodeEssence = ch.Essence
 	a.Notes = ch.Notes
-	return nil
+	return a, nil
 }
 
-func (a *Activite) computeOneFromChautre(db *sqlx.DB, idActivite int) (err error) {
-	ch, err := GetChautre(db, idActivite)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetChautre()")
-	}
+func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
+    a = &Activite{}
 	a.Id = ch.Id
 	a.Titre = ch.Titre
 	//	a.URL = "/chautre/" + strconv.Itoa(idActivite)
@@ -164,14 +385,11 @@ func (a *Activite) computeOneFromChautre(db *sqlx.DB, idActivite int) (err error
 	a.NumFacture = ch.NumFacture
 	a.DateFacture = ch.DateFacture
 	a.Notes = ch.Notes
-	return nil
+	return a, nil
 }
 
-func (a *Activite) computeOneFromChaufer(db *sqlx.DB, idActivite int) (err error) {
-	ch, err := GetChaufer(db, idActivite)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel GetChaufer()")
-	}
+func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
+    a = &Activite{}
 	a.Id = ch.Id
 	a.Titre = ch.Titre
 	//	a.URL = "/chaufer/" + strconv.Itoa(idActivite)
@@ -181,5 +399,5 @@ func (a *Activite) computeOneFromChaufer(db *sqlx.DB, idActivite int) (err error
 	a.Unite = ch.Unite
 	a.CodeEssence = ch.Essence
 	a.Notes = ch.Notes
-	return nil
+	return a, nil
 }
