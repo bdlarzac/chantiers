@@ -20,6 +20,12 @@
 {{end}}
 
 {{if .Details.Chantiers}}
+
+<div class="bold padding-left padding-top">
+    <span class="link padding-right2" onclick="toutVoir();">Tout voir</span>
+    <span class="link" onclick="toutCacher();">Tout cacher</span>
+</div>
+
 <table class="entities">
     
     <thead>
@@ -57,7 +63,7 @@
                 {{.Volume}} {{.Unite | labelUnite}}
             </td>
             <td>
-                <details>
+                <details class="details-entite">{{/* class pour tout voir / tout cacher */}}
                     <summary>Voir / cacher</summary>
                     <div class="grid2-pres">
                     
@@ -95,7 +101,7 @@
 {{end}} {{/* end if .Details.Chantiers */}}
 
 <script>
-// *****************************************
+
 function deleteChantier(idChantier, acheteur, date){
     const msg = "Attention, en cliquant sur OK,\n"
             + "le chantier " + acheteur + " - "  + date + "\nsera définitivement supprimé";
@@ -104,4 +110,20 @@ function deleteChantier(idChantier, acheteur, date){
         window.location = "/chantier/chauffage-fermier/delete/" + idChantier;
     }
 }
+
+// répétition de code avec chautre-list.html
+
+function toutVoir(){
+    const elements = document.getElementsByClassName('details-entite');
+    for(const elt of elements){
+        elt.open = true;
+    }
+}
+function toutCacher(){
+    const elements = document.getElementsByClassName('details-entite');
+    for(const elt of elements){
+        elt.open = false;
+    }
+}
+
 </script>
