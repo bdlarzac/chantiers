@@ -41,7 +41,12 @@
                 </a>
             {{end}}
         </td>
-        <td><a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>
+        <td>
+            {{/* data-nom : hack pour trier par nom, cf table-sort.js */}}
+            <span data-nom="{{.Nom}} {{.Prenom}}">
+                <a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a>
+            </span>
+        </td>
         <td class="whitespace-nowrap">
             {{range .CodesRoles}}
                 <div>{{index $.Details.RolesMap .}}</div>
