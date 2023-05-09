@@ -50,6 +50,13 @@ summary{
     background:lightsalmon;
 }
 
+.menu-liste{
+    background:lightblue;
+}
+.menu-recherche{
+    background:lightgreen;
+}
+
 /* ================ Particular styles applied to several pages ================ */
 
 h1{padding-left:1rem;}

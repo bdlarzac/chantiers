@@ -32,7 +32,7 @@
   <li class="dropdown">
     <span class="dropbtn{{if eq .Menu "production"}} active{{end}} cursor-default">Production</span>
     <div class="dropdown-content">
-          <a href="/activite/recherche">Recherche / bilans activités</a>
+          <a href="/activite/recherche" class="menu-recherche">Recherche / bilans activités</a>
           <hr style="width:80%;">
           <a class="cursor-default">Plaquettes</a>
           <div class="padding-left">
@@ -59,20 +59,20 @@
               <br style="clear:both;">
           </div>
           <hr style="width:80%;">
-          <a href="/sylviculture/recherche">Recherche / bilans sylviculture</a>
+          <a href="/sylviculture/recherche" class="menu-recherche">Recherche / bilans sylviculture</a>
         </div>
   </li>
       
   <li class="dropdown">
     <a class="dropbtn{{if eq .Menu "ventes"}} active{{end}} cursor-default" href="/vente/liste">Ventes</a>
     <div class="dropdown-content">
-      <a href="/vente/recherche">Recherche / bilans ventes</a>
+      <a href="/vente/recherche" class="menu-recherche">Recherche / bilans ventes</a>
       <div>
           <div class="float-left"><a href="/vente/liste">Liste ventes plaquettes</a></div>
           <div class="float-right"><a href="/vente/new" class="bold">+</a></div>
           <br style="clear:both;">
       </div>
-      <a href="/vente/recherche-par-client">Ventes par client</a>
+      {{/* <a href="/vente/recherche-par-client">Ventes par client</a> */}}
     </div>
   </li>
                   
