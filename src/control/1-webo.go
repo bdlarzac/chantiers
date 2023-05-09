@@ -16,6 +16,7 @@ import (
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
+	"fmt"
 	"strconv"
 )
 
@@ -207,7 +208,8 @@ func WeboTas(ctx *ctxt.Context) (res []webo.OptionString, err error) {
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_TAS", OptionLabel: "--- Choisir ---"})
 	for _, t := range tas {
-		res = append(res, webo.OptionString{OptionValue: "tas-" + strconv.Itoa(t.Id), OptionLabel: t.Nom})
+        label := fmt.Sprintf("%s (%.1f maps)", t.Nom, t.Stock)
+		res = append(res, webo.OptionString{OptionValue: "tas-" + strconv.Itoa(t.Id), OptionLabel: label})
 	}
 	return res, nil
 }
