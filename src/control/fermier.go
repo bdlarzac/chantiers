@@ -44,7 +44,8 @@ func ListFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 		Menu: "acteurs",
 		Footer: ctxt.Footer{
-			JSFiles: []string{},
+			JSFiles: []string{
+				"/static/lib/table-sort/table-sort.js"},
 		},
 		Details: detailsFermierList{
 			List:  list,

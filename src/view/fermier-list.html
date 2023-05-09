@@ -10,26 +10,34 @@
 <div class="big3 padding-left">{{.Details.Count}} fermiers</div>
 
 <table class="entities" style="width:100%;">
-<tr>
-    <th>Id SCTL</th>
-    <th>Nom</th>
-    <th>Adresse</th>
-    <th>CP</th>
-    <th>Ville</th>
-    <th>Tel</th>
-    <th>Email</th>
-</tr>
-
-{{range .Details.List}}
-<tr>
-    <td>{{.Id}}</td>
-    <td><a href="/fermier/{{.Id}}">{{.Nom}} {{.Prenom}}</a></td>
-    <td>{{.Adresse}}</td>
-    <td>{{.Cp}}</td>
-    <td>{{.Ville}}</td>
-    <td>{{.Tel}}</td>
-    <td>{{.Email}}</td>
-</tr>
-{{end}}
+<thead>
+    <tr>
+        <th class="order">Id SCTL</th>
+        <th class="order">Nom</th>
+        <th>Adresse</th>
+        <th class="order">CP</th>
+        <th>Ville</th>
+        <th>Tel</th>
+        <th>Email</th>
+    </tr>
+</thead>
+<tbody>
+    {{range .Details.List}}
+    <tr>
+        <td>{{.Id}}</td>
+        <td>
+            {{/* data-nom : hack pour trier par nom, cf table-sort.js */}}
+            <span data-nom="{{.Nom}} {{.Prenom}}">
+                <a href="/fermier/{{.Id}}">{{.Nom}} {{.Prenom}}</a>
+            </span>
+        </td>
+        <td>{{.Adresse}}</td>
+        <td>{{.Cp}}</td>
+        <td>{{.Ville}}</td>
+        <td>{{.Tel}}</td>
+        <td>{{.Email}}</td>
+    </tr>
+    {{end}}
+<tbody>
 
 </table>
