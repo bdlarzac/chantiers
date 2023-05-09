@@ -102,7 +102,7 @@ async function afficheLieudits(idsUGs, idsLieudits){
         labelElt = document.createElement("label");
         labelElt.setAttribute("for", idDansForm);
         labelElt.style.fontWeight = "normal";
-        labelElt.innerHTML = nom + ' <a class="padding-left" target="_blank" href="/lieudit/' + idDB + '">&#8618;</a>';
+        labelElt.innerHTML = nom + ' <a class="padding-left" href="/lieudit/' + idDB + '" target="_blank">&#8618;</a>';
         divElt = document.createElement("div");
         divElt.appendChild(checkElt);
         divElt.appendChild(labelElt);
