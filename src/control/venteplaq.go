@@ -63,7 +63,11 @@ func ListVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 				"/view/common/prix.js"},
 		},
 		Menu:   "ventes",
-		Footer: ctxt.Footer{},
+		Footer: ctxt.Footer{
+			JSFiles: []string{
+				"/static/lib/table-sort/table-sort.js",
+			},
+		},
 		Details: detailsVentePlaqList{
 			Ventes: ventes,
 			Annee:  annee,

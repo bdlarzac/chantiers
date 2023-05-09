@@ -14,7 +14,7 @@
     <div class="grid2-form">           
         
         <label>Vente</label>
-        <div>{{.Vente.String}}</div>
+        <div class="bold"><a href="/vente/{{.Vente.Id}}">{{.Vente.String}}</a></div>
         
         <label for="datelivre">Date livraison</label>
         <input type="date" name="datelivre" id="datelivre" value="{{.DateLivre | dateIso}}" class="width20">

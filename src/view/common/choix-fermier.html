@@ -30,7 +30,8 @@ class ChoixFermier{
                         <option id="choix-fermier-no-limit" value="choix-fermier-no-limit" selected>Tous les fermiers</option>
         `;
                         {{range .Fermiers}}
-                            this.#html += '<option id="choix-fermier-' + {{.Id}} + '" value="choix-fermier-' + {{.Id}} + '">' + {{.Nom}} + '</option>\n';
+                            this.#html += '<option id="choix-fermier-' + {{.Id}} + '" value="choix-fermier-' + {{.Id}} + '">'
+                                + {{.Nom}} + ' ' + {{.Prenom}} + '</option>\n';
                         {{end}}
         this.#html += `
                     </select>

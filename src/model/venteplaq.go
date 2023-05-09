@@ -76,6 +76,13 @@ func (vp *VentePlaq) FullString() string {
 	return "Vente " + vp.String()
 }
 
+func (vp *VentePlaq) StringSansDate() string {
+	if vp.Client == nil {
+		panic("Erreur dans le code - Le client d'une vente plaquettes doit être calculé avant d'appeler String()")
+	}
+	return "Vente " + vp.Client.String()
+}
+
 // ************************** Get one *******************************
 
 func GetVentePlaq(db *sqlx.DB, id int) (*VentePlaq, error) {

@@ -29,48 +29,61 @@
 </script>
 
 <table class="entities">
-    <tr>
-        <th colspan="2"></th>
-        <th>Qté</th>
-        <th>Prix TTC</th>
-        <th title="Comment la livraison apparaît sur la facture">Livr.</th>
-        <th>Num facture</th>
-        <th>Date facture</th>
-    </tr>
+    <thead>
+        <tr>
+            <th></th>
+            <th class="order">Date vente</th>
+            <th class="order">Titre</th>
+            <th class="order">Qté</th>
+            <th>Prix TTC</th>
+            <th title="Comment la livraison apparaît sur la facture" class="cursor-help">Livr.</th>
+            <th>Num facture</th>
+            <th>Date facture</th>
+        </tr>
+    </thead>
+    <tbody>
 {{end}}
 {{range .Details.Ventes}}
-    <tr>
-        <script>
-            prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
-            prixLivraisonHT = 0;
-            prixTotalHT = prixPlaquettesHT;
-            {{if .FactureLivraison}}
-                prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.Qte}});
-            {{end}}
-            prixPlaquettesTTC = prixTTC(prixPlaquettesHT, {{.TVA}});
-            prixLivraisonTTC = prixTTC(prixLivraisonHT, {{.FactureLivraisonTVA}});
-            prixTotalTTC = prixPlaquettesTTC + prixLivraisonTTC;
-        </script>
-        <td>
-            <a href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
-                <img src="/static/img/facture.png" title="Voir la facture" />
-            </a>
-            <a href="/vente/update/{{.Id}}">
-                <img src="/static/img/update.png" title="Modifier cette vente">
-            </a>
-            <a href="#" onclick='deleteVentePlaquette({{.Id}}, "{{.Client.String}}", "{{.DateVente | dateFr}}");'>
-                <img src="/static/img/delete.png" title="Supprimer cette vente">
-            </a>
-        </td>
-        <td><a href="/vente/{{.Id}}">{{.FullString}}</a></td>
-        <td class="right"><script>document.write(formatNb({{.Qte}}));</script> maps</td>
-        <td class="right"><script>document.write(formatNb(round(prixTotalTTC, 2)));</script> &euro;</td>
-        <td>{{.FactureLivraisonUnite}}</td>
-        <td>{{.NumFacture}}</td>
-        <td>{{.DateFacture | dateFr}}</td>
-    </tr>
+        <tr>
+            <td>
+            <script>
+                prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
+                prixLivraisonHT = 0;
+                prixTotalHT = prixPlaquettesHT;
+                {{if .FactureLivraison}}
+                    prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.Qte}});
+                {{end}}
+                prixPlaquettesTTC = prixTTC(prixPlaquettesHT, {{.TVA}});
+                prixLivraisonTTC = prixTTC(prixLivraisonHT, {{.FactureLivraisonTVA}});
+                prixTotalTTC = prixPlaquettesTTC + prixLivraisonTTC;
+            </script>
+                <a href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
+                    <img src="/static/img/facture.png" title="Voir la facture" />
+                </a>
+                <a href="/vente/update/{{.Id}}">
+                    <img src="/static/img/update.png" title="Modifier cette vente">
+                </a>
+                <a href="#" onclick='deleteVentePlaquette({{.Id}}, "{{.Client.String}}", "{{.DateVente | dateFr}}");'>
+                    <img src="/static/img/delete.png" title="Supprimer cette vente">
+                </a>
+            </td>
+            <td>
+                {{/* data-date : hack pour trier par date, cf table-sort.js */}}
+                <span data-date="{{.DateVente}}">{{.DateVente | dateFr}}</span>
+            </td>
+            <td>
+                {{/* data-titre : hack pour trier par titre, cf table-sort.js */}}
+                <span data-titre="{{.StringSansDate}}"><a href="/vente/{{.Id}}">{{.StringSansDate}}</a></span>
+            </td>
+            <td class="right"><script>document.write(formatNb({{.Qte}}));</script> maps</td>
+            <td class="right"><script>document.write(formatNb(round(prixTotalTTC, 2)));</script> &euro;</td>
+            <td>{{.FactureLivraisonUnite}}</td>
+            <td>{{.NumFacture}}</td>
+            <td>{{.DateFacture | dateFr}}</td>
+        </tr>
 {{end}}
 {{if .Details.Ventes}}
+    </tbody>
 </table>
 {{end}}
 

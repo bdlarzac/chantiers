@@ -2,6 +2,9 @@
     https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript
     Solution of Cesar Morillas
     
+    Also used https://stackoverflow.com/questions/18452743/localcompare-for-integers
+    Answer of pomo
+    
     Usage : include in html page <script src="table_sort.js"></script> AFTER the tables (or use defer).
     The call to table_sort() (see end of current file) must be done after the tables are displayed.
     
@@ -55,10 +58,10 @@ function table_sort() {
         // const a_val = a.children[index].innerText;
         // const b_val = b.children[index].innerText;
         // note Thierry : changé innerText en innerHTML de manière à pouvoir trier par date
-        //avec un hack du style : <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
+        // avec un hack du style : <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
         const a_val = a.children[index].innerHTML;
         const b_val = b.children[index].innerHTML;
-        return (asc) ? a_val.localeCompare(b_val) : b_val.localeCompare(a_val);
+        return (asc) ? a_val.localeCompare(b_val, undefined, {'numeric': true}) : b_val.localeCompare(a_val, undefined, {'numeric': true});
       });
       arr.forEach(elem => {
         th_elem.closest("table").querySelector("tbody").appendChild(elem);
