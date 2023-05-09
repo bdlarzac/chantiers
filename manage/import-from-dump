@@ -2,6 +2,7 @@
 
 #
 # Commande pour importer un dump postgres de la base de prod dans la base locale 
+# A exécuter depuis le répertoire courant (appli/manage).
 #
 
 if [ $# -ne 1 ]; then

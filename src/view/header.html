@@ -13,9 +13,12 @@
     <link href="/static/lib/menu/menu.css" rel="stylesheet" type="text/css">
     {{range .Header.CSSFiles}}<link href="{{.}}" rel="stylesheet" type="text/css">
     {{end}}
+    {{/* CSS à inclure en dernier */}}
     {{if eq .RunMode "dev"}}
-        {{/* CSS à inclure en dernier */}}
         <link href="/static/css/bdl-dev.css" rel="stylesheet" type="text/css">
+    {{end}}
+    {{if eq .RunMode "beta"}}
+        <link href="/static/css/bdl-beta.css" rel="stylesheet" type="text/css">
     {{end}}
     {{range .Header.JSFiles}}
         <script src="{{.}}"></script>
@@ -23,4 +26,7 @@
 </head>
 
 <body>
+    {{if eq .RunMode "dev"}}
+        <div style="position:fixed; top:10px; right:20px; z-index:1000; font-weight:bold; font-size:2rem;">--- DEV ---</div>
+    {{end}}
 <div class="content">

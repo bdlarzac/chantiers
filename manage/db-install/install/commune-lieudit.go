@@ -139,7 +139,7 @@ func FillLieuditMot(ctx *ctxt.Context) {
 	for _, row := range rows {
 		parts := strings.Split(row.Nom, " ")
 		for _, part := range parts {
-			if tiglib.InArrayString(part, ignore) {
+			if tiglib.InArray(part, ignore) {
 				continue
 			}
 			corres[part] = append(corres[part], ld{row.Id, row.Nom})

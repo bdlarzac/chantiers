@@ -38,7 +38,7 @@ func main() {
 		return
 	}
 	migration := os.Args[1]
-	if !tiglib.InArrayString(migration, possibleMigrations) {
+	if !tiglib.InArray(migration, possibleMigrations) {
 		fmt.Println("MIGRATION INEXISTANTE : " + migration)
 		fmt.Println(msgPossibles)
 		return

@@ -11,8 +11,8 @@
 **/
 
 :root {
-    --main-bg-color:radial-gradient(circle, rgba(181,139,50,1) 23%, rgba(164,203,58,1) 100%);
-    /*
     --main-bg-color:lightblue;
+    /*
+    --main-bg-color:radial-gradient(circle, rgba(181,139,50,1) 23%, rgba(164,203,58,1) 100%);
     */
 }
