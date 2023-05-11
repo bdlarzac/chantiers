@@ -1,0 +1,60 @@
+{{/* 
+    Formulaire de choix d'un client (client vente plaquette ou chantier autre valorisation).
+    Un seul appel par page possible.
+    
+    Cette template doit être appelée avec une structure contenant un champ Clients.
+    Clients est uniquement utilisée dans le constructeur.
+    
+    Utilisation :
+        <script>
+            const choixClient = new ChoixClient();
+        </script>
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+<script>
+
+class ChoixClient{
+    
+    #html;
+    
+    constructor(){
+        this.#html = `
+        <fieldset class="choix-client">
+            <legend>Client</legend>
+            <details open>
+                <summary><span id="choix-client-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                    <select class="margin-top" name="select-choix-client" id="select-choix-client" onChange="choixClient_updateSummary();">
+                        <option id="choix-client-no-limit" value="choix-client-no-limit" selected>Tous les clients</option>
+        `;
+                        {{range .Clients}}
+                            this.#html += '<option id="choix-client-' + {{.Id}} + '" value="choix-client-' + {{.Id}} + '">'
+                                + {{.Nom}} + ' ' + {{.Prenom}} + '</option>\n';
+                        {{end}}
+        this.#html += `
+                    </select>
+            </details>
+        </fieldset>
+        `;
+        this.display();
+        this.initialize();
+    } // end constructor
+    
+    display(){
+        document.write(this.#html);
+    }
+    
+    initialize(){
+        choixClient_updateSummary();
+    }
+    
+} // end class
+
+function choixClient_updateSummary(){
+    const clientElt = document.getElementById("select-choix-client");
+    document.getElementById('choix-client-summary').innerHTML = clientElt.options[clientElt.selectedIndex].text;
+}
+
+</script>

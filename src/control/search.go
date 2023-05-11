@@ -29,6 +29,19 @@ func computeFiltreFermier(r *http.Request) (result []string) {
 }
 
 /*
+Filtre client : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient une liste avec un seul élément, l'id du client sélectionné (id dans la table acteur).
+*/
+func computeFiltreClient(r *http.Request) (result []string) {
+	choix := r.PostFormValue("select-choix-client")
+	if choix == "choix-client-no-limit" {
+		return []string{}
+	}
+	return []string{choix[13:]}
+}
+
+/*
 Filtre essence : renvoie un tableau de strings.
   - Si pas de filtre, contient un tableau vide.
   - Sinon contient une liste de codes essence.

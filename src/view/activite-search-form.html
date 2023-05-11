@@ -6,6 +6,10 @@
     <h1>Recherche d'activités</h1>
 </div>
 
+<div class="bold padding-left padding-bottom">
+    <span class="link padding-right2" onclick="toutDeplier();">Tout déplier</span>
+    <span class="link" onclick="toutReplier();">Tout replier</span>
+</div>
 
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
 
@@ -22,7 +26,7 @@
             </div>
             <div class="margin-top">
                 {{template "choix-fermier.html" $.Details}}
-                <script>const choixFermier = new ChoixFermier('choix-fermier');</script>
+                <script>const choixFermier = new ChoixFermier();</script>
             </div>
         </div>
         
@@ -38,14 +42,16 @@
         </div>
         
         <div class="inline-block margin-left05">
-            {{template "choix-ug.html" $.Details}}
-            <script>const choixUG = new ChoixUG();</script>
+            <div>
+                {{template "choix-ug.html" $.Details}}
+                <script>const choixUG = new ChoixUG();</script>
+            </div>
+            <div class="margin-top05">
+                {{template "choix-parcelle.html" $.Details}}
+                <script>const choixParcelle = new ChoixParcelle();</script>
+            </div>
         </div>
         
-        <div class="inline-block margin-left05">
-            {{template "choix-parcelle.html" $.Details}}
-            <script>const choixParcelle = new ChoixParcelle();</script>
-        </div>
         
     </div>
     
@@ -61,6 +67,26 @@
 </form>
 
 <script>
+
+function toutDeplier(){
+    document.querySelector('.choix-periode > details').open = true;
+    document.querySelector('.choix-proprio > details').open = true;
+    document.querySelector('.choix-fermier > details').open = true;
+    document.querySelector('.choix-essence > details').open = true;
+    document.querySelector('.choix-valo > details').open = true;
+    document.querySelector('.choix-ug > details').open = true;
+    document.querySelector('.choix-parcelle > details').open = true;
+}
+
+function toutReplier(){
+    document.querySelector('.choix-periode > details').open = false;
+    document.querySelector('.choix-proprio > details').open = false;
+    document.querySelector('.choix-fermier > details').open = false;
+    document.querySelector('.choix-essence > details').open = false;
+    document.querySelector('.choix-valo > details').open = false;
+    document.querySelector('.choix-ug > details').open = false;
+    document.querySelector('.choix-parcelle > details').open = false;
+}
 
 function validateForm(){
     let msg = '';
@@ -82,5 +108,6 @@ function validateForm(){
     }
     return true;
 }
+
 </script>
 

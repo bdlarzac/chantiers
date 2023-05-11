@@ -126,8 +126,9 @@ func NewActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		acteur.Deletable = true // nouvellement créé, pas SCTL, pas d'activité => effaçable
 		id, err := model.InsertActeur(ctx.DB, acteur)
 		if err != nil {
-			return err
+		    return err
 		}
+		// pour new, on redirige vers l'acteur nouvellement créé
 		ctx.Redirect = "/acteur/" + strconv.Itoa(id)
 		return nil
 	default:
@@ -177,7 +178,9 @@ func UpdateActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return err
 		}
-		ctx.Redirect = "/acteur/" + r.PostFormValue("id")
+		// pour update, plus pratique de rediriger vers la liste
+		ctx.Redirect = "/acteur/liste"
+		//ctx.Redirect = "/acteur/" + r.PostFormValue("id")
 		return nil
 	default:
 		//

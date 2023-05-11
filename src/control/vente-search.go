@@ -16,8 +16,9 @@ import (
 
 type detailsVenteSearchForm struct {
 	Periods     [][2]time.Time    // pour choix-date
-	PropriosMap map[int]string    // pour choix-proprio
 	ValoCodes   []string          // pour choix-valo
+	PropriosMap map[int]string    // pour choix-proprio
+	Clients     []*model.Acteur   // pour choix-client
 	UrlAction   string
 }
 
@@ -47,8 +48,9 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		//
 		filtres := map[string][]string{}
 		filtres["periode"] = computeFiltrePeriode(r)
-		filtres["proprio"] = computeFiltreProprio(r)
 		filtres["valo"] = computeFiltreValo(r)
+		filtres["client"] = computeFiltreClient(r)
+		filtres["proprio"] = computeFiltreProprio(r)
 		ventes, err := model.ComputeVentesFromFiltres(ctx.DB, filtres)
 		if err != nil {
 			return err
@@ -75,7 +77,6 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Details: detailsVenteSearchResults{
 				RecapFiltres:             recapFiltres,
 				Ventes:                   ventes,
-				//BilansVentesParSaison: bilansVentesParSaison,
 				Tab:                      tab,
 			},
 		}
@@ -94,10 +95,11 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		if err != nil {
 			return err
 		}
-		// essencesMap, err := model.GetEssencesMap(ctx.DB)
-		// if err != nil {
-			// return err
-		// }
+		clients, err := model.GetClients(ctx.DB)
+		if err != nil {
+			return err
+		}
+		//
 		propriosMap, err := model.GetProprietaires(ctx.DB)
 		if err != nil {
 			return err
@@ -113,8 +115,8 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Menu: "ventes",
 			Details: detailsVenteSearchForm{
 				Periods:     periods,
-				//EssencesMap: essencesMap,
 				PropriosMap: propriosMap,
+				Clients:     clients,
 				ValoCodes:   model.AllValorisationCodesAvecChauferEtPlaq(),
 				UrlAction:   "/vente/recherche",
 			},

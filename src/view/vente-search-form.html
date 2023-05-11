@@ -2,10 +2,14 @@
     @copyright  BDL, Bois du Larzac.
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
-<div style="padding:.5rem 0 0 5rem;">
+<div class="padding-left">
     <h1>{{$.Header.Title}}</h1>
 </div>
 
+<div class="bold padding-left padding-bottom">
+    <span class="link padding-right2" onclick="toutDeplier();">Tout déplier</span>
+    <span class="link" onclick="toutReplier();">Tout replier</span>
+</div>
 
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
 
@@ -15,14 +19,20 @@
                 {{template "choix-periode.html" $.Details}}
                 <script>const choixPeriode = new ChoixPeriode();</script>
             </div>
-            <div>
+            <div class="margin-top05">
                 {{template "choix-valo.html" $.Details}}
                 <script>const choixValo = new ChoixValo();</script>
             </div>
         </div>
         <div class="margin-left">
-            {{template "choix-proprio.html" $.Details}}
-            <script>const choixProprio = new ChoixProprio();</script>
+            <div>
+                {{template "choix-client.html" $.Details}}
+                <script>const choixClient = new ChoixClient();</script>
+            </div>
+            <div class="margin-top05">
+                {{template "choix-proprio.html" $.Details}}
+                <script>const choixProprio = new ChoixProprio();</script>
+            </div>
         </div>
     </div>
     
@@ -35,6 +45,20 @@
 </form>
 
 <script>
+
+function toutDeplier(){
+    document.querySelector('.choix-periode > details').open = true;
+    document.querySelector('.choix-valo > details').open = true;
+    document.querySelector('.choix-client > details').open = true;
+    document.querySelector('.choix-proprio > details').open = true;
+}
+
+function toutReplier(){
+    document.querySelector('.choix-periode > details').open = false;
+    document.querySelector('.choix-valo > details').open = false;
+    document.querySelector('.choix-client > details').open = false;
+    document.querySelector('.choix-proprio > details').open = false;
+}
 
 function validateForm(){
     let msg = '';

@@ -53,11 +53,11 @@ summary, .link{
     background:lightsalmon;
 }
 
-.menu-liste{
-    background:lightblue;
-}
 .menu-recherche{
     background:lightgreen;
+}
+.menus li a.menu-recherche:hover{
+    background:#4ff44f;
 }
 
 /* ================ Particular styles applied to several pages ================ */

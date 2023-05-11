@@ -17,15 +17,6 @@ import (
 	// "fmt"
 )
 
-func filtreValoContientAutreValo(filtreValo []string) bool {
-    codes := AllValorisationCodes() // codes utilisés par chautre - ne contient pas PQ et CF
-    for _, code := range(codes){
-        if tiglib.InArray(code, filtreValo) {
-            return true
-        }
-    }
-    return false
-}
 
 func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result string, err error) {
 	result = ""
@@ -77,6 +68,15 @@ func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result strin
 			return result, werr.Wrapf(err, "Erreur appel GetFermier()")
 		}
 		result += "<tr><td>Fermier :</td><td><a href=\"/fermier/" + strconv.Itoa(fermier.Id) + "\">" + fermier.String() + "</a>" + "</td></tr>\n"
+	}
+	//
+	if len(filtres["client"]) != 0 {
+		id, _ := strconv.Atoi(filtres["client"][0])
+		client, err := GetActeur(db, id)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel GetActeur()")
+		}
+		result += "<tr><td>Client :</td><td><a href=\"/acteur/" + strconv.Itoa(client.Id) + "\">" + client.String() + "</a>" + "</td></tr>\n"
 	}
 	//
 	if len(filtres["essence"]) != 0 {

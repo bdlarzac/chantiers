@@ -118,17 +118,57 @@ func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
 // ************************** Get many *******************************
 
 /*
-Renvoie une liste d'Acteurs triés en utilisant un champ de la table
-(sert pour url /acteur/liste)
+Renvoie une liste d'Acteurs triés en utilisant un champ de la table.
+//////////////// TODO En fait, toujours utilisée en triant par nom, on pourrait supprimer le param field
 @param field    Champ de la table acteur utilisé pour le tri
 */
 func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := "select * from acteur where id<>0 order by " + field
 	err = db.Select(&acteurs, query)
-	for _, acteur := range acteurs {
-		acteur.ComputeCodesRoles(db)
+	if err != nil {
+		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
 	}
+	for _, acteur := range acteurs {
+		err = acteur.ComputeCodesRoles(db)
+        if err != nil {
+            return acteurs, werr.Wrapf(err, "Erreur appel ComputeCodesRoles()")
+        }
+	}
+	return acteurs, nil
+}
+
+/*
+Renvoie une liste d'Acteurs ayant un rôle donné.
+Les acteurs ne contiennent que les champs de la table.
+Les acteurs sont triés par nom.
+@param code_role    Code d'un rôle utilisateur
+
+////////////// pas encore utilisée //////////////////
+*/
+func GetActeursByRole(db *sqlx.DB, code_role string) (acteurs []*Acteur, err error) {
+	acteurs = []*Acteur{}
+	query := `select * from acteur id in(select id_acteur from acteur_role where code_role=$1) order by nom`
+	err = db.Select(&acteurs, query, code_role)
+	if err != nil {
+		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return acteurs, nil
+}
+
+/*
+Renvoie une liste d'Acteurs ayant comme rôle client PF ou client d'un chantier autres valorisations.
+Les acteurs ne contiennent que les champs de la table.
+Les acteurs sont triés par nom.
+*/
+func GetClients(db *sqlx.DB) (acteurs []*Acteur, err error) {
+	acteurs = []*Acteur{}
+	query := `select * from acteur where id in(
+	    select id_acteur from acteur_role where code_role in(
+	        'AVC-CH', 'AVC-BO', 'AVC-PL', 'AVC-PP', 'VPL-CL'
+	        )
+        ) order by nom`
+	err = db.Select(&acteurs, query)
 	if err != nil {
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -142,6 +182,7 @@ Ne contient que les champs de la table acteur.
 Les autres champs ne sont pas remplis.
 */
 func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
+    ////////////// remplacer par GetActeursByRole() //////////////
 	acteurs = []*Acteur{}
 	query := "select * from acteur where fournisseur"
 	err = db.Select(&acteurs, query)
@@ -155,6 +196,7 @@ func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
 Ne contient que les champs de la table acteur.
 Les autres champs ne sont pas remplis.
+////////////// remplacer par GetSortedActeursByRole() //////////////
 */
 func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
@@ -187,6 +229,7 @@ func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 
 /*
 Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
+////////////// remplacer par GetSortedActeursByRole() //////////////
 */
 func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}

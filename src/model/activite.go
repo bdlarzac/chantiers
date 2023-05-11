@@ -6,11 +6,6 @@
 	        chaufer
 	        chautre
 	        plaq
-	        // plaqop
-	        // plaqrange
-	        // plaqtrans
-	        // ventecharge
-	        // ventelivre
 
 		@copyright  BDL, Bois du Larzac.
 		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -60,12 +55,6 @@ func GetActivitesMap() map[string]string {
 		"chaufer": "Chauffage fermier",
 		"chautre": "Autre valorisation",
 		"plaq":    "Ch. plaquettes",
-		// "plaqop":       "",
-		// "plaqrange":    "",
-		// "plaqtrans":    "",
-		// "ventecharge":  "",
-		// "ventelivre":   "",
-		// "venteplaq":    "",
 	}
 }
 
@@ -104,28 +93,28 @@ func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
 
 // ************************** Get many *******************************
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Activite, err error) {
-fmt.Printf("ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
+fmt.Printf("model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 	result = []*Activite{}
 	//
 	// Première sélection, par filtre période
 	//
 	var tmp []*Activite
 	// if plaq dans le filtre activite (pas implémenté)
-	tmp, err = computePlaqFromFiltrePeriode(db, filtres["periode"])
+	tmp, err = computePlaqActivitesFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
+		return result, werr.Wrapf(err, "Erreur appel computePlaqActivitesFromFiltrePeriode()")
 	}
 	result = append(result, tmp...)
 	//
-	tmp, err = computeChautreFromFiltrePeriode(db, filtres["periode"])
+	tmp, err = computeChautreActivitesFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computeChautreFromFiltrePeriode()")
+		return result, werr.Wrapf(err, "Erreur appel computeChautreActivitesFromFiltrePeriode()")
 	}
 	result = append(result, tmp...)
 	//
-	tmp, err = computeChauferFromFiltrePeriode(db, filtres["periode"])
+	tmp, err = computeChauferActivitesFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computeChauferFromFiltrePeriode()")
+		return result, werr.Wrapf(err, "Erreur appel computeChauferActivitesFromFiltrePeriode()")
 	}
 	result = append(result, tmp...)
 	//
@@ -181,8 +170,9 @@ fmt.Printf("ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 // ****************************************************************************************************
 
 // ************************** Selection initiale, par période *******************************
+// Fabriquent des activités
 
-func computePlaqFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+func computePlaqActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
 	var query string
 	chantiers := []*Plaq{}
 	query = "select * from plaq"
@@ -205,7 +195,7 @@ func computePlaqFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result [
 	return result, nil
 }
 
-func computeChautreFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+func computeChautreActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
 	var query string
 	chantiers := []*Chautre{}
 	query = "select * from chautre"
@@ -228,7 +218,7 @@ func computeChautreFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (resul
 	return result, nil
 }
 
-func computeChauferFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+func computeChauferActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
 	var query string
 	chantiers := []*Chaufer{}
 	query = "select * from chaufer"
@@ -249,6 +239,60 @@ func computeChauferFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (resul
 		result = append(result, tmp)
 	}
 	return result, nil
+}
+
+// ************************** Conversion de struct vers une Activite *******************************
+// Auxiliaires des fonctions compute*ActivitesFromFiltrePeriode()
+
+func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
+    a = &Activite{}
+	a.Id = ch.Id
+	a.Titre = ch.Titre
+	a.URL = "/chantier/plaquette/" + strconv.Itoa(a.Id)
+	a.DateActivite = ch.DateDebut
+	a.TypeValo = "PQ"
+	err = ch.ComputeVolume(db)
+	if err != nil {
+		return a, werr.Wrapf(err, "Erreur appel ComputeVolume()")
+	}
+	a.Volume = ch.Volume
+	a.Unite = "MA"
+	a.CodeEssence = ch.Essence
+	a.Notes = ch.Notes
+	return a, nil
+}
+
+func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
+    a = &Activite{}
+	a.Id = ch.Id
+	a.Titre = ch.Titre
+	//	a.URL = "/chautre/" + strconv.Itoa(idActivite)
+	a.DateActivite = ch.DateContrat
+	a.Volume = ch.VolumeRealise
+	a.TypeValo = ch.TypeValo
+	a.Unite = ch.Unite
+	a.CodeEssence = ch.Essence
+	a.PUHT = ch.PUHT
+	a.PrixHT = ch.PUHT * ch.VolumeRealise
+	a.TVA = ch.TVA
+	a.NumFacture = ch.NumFacture
+	a.DateFacture = ch.DateFacture
+	a.Notes = ch.Notes
+	return a, nil
+}
+
+func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
+    a = &Activite{}
+	a.Id = ch.Id
+	a.Titre = ch.Titre
+	//	a.URL = "/chaufer/" + strconv.Itoa(idActivite)
+	a.DateActivite = ch.DateChantier
+	a.TypeValo = "CF"
+	a.Volume = ch.Volume
+	a.Unite = ch.Unite
+	a.CodeEssence = ch.Essence
+	a.Notes = ch.Notes
+	return a, nil
 }
 
 // ************************** Filtres *******************************
@@ -349,55 +393,3 @@ func filtreActivite_proprio(db *sqlx.DB, input []*Activite, filtre []string) (re
 	return result, nil
 }
 
-// ************************** Conversion de struct vers une Activite *******************************
-
-func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
-    a = &Activite{}
-	a.Id = ch.Id
-	a.Titre = ch.Titre
-	a.URL = "/chantier/plaquette/" + strconv.Itoa(a.Id)
-	a.DateActivite = ch.DateDebut
-	a.TypeValo = "PQ"
-	err = ch.ComputeVolume(db)
-	if err != nil {
-		return a, werr.Wrapf(err, "Erreur appel ComputeVolume()")
-	}
-	a.Volume = ch.Volume
-	a.Unite = "MA"
-	a.CodeEssence = ch.Essence
-	a.Notes = ch.Notes
-	return a, nil
-}
-
-func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
-    a = &Activite{}
-	a.Id = ch.Id
-	a.Titre = ch.Titre
-	//	a.URL = "/chautre/" + strconv.Itoa(idActivite)
-	a.DateActivite = ch.DateContrat
-	a.Volume = ch.VolumeRealise
-	a.TypeValo = ch.TypeValo
-	a.Unite = ch.Unite
-	a.CodeEssence = ch.Essence
-	a.PUHT = ch.PUHT
-	a.PrixHT = ch.PUHT * ch.VolumeRealise
-	a.TVA = ch.TVA
-	a.NumFacture = ch.NumFacture
-	a.DateFacture = ch.DateFacture
-	a.Notes = ch.Notes
-	return a, nil
-}
-
-func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
-    a = &Activite{}
-	a.Id = ch.Id
-	a.Titre = ch.Titre
-	//	a.URL = "/chaufer/" + strconv.Itoa(idActivite)
-	a.DateActivite = ch.DateChantier
-	a.TypeValo = "CF"
-	a.Volume = ch.Volume
-	a.Unite = ch.Unite
-	a.CodeEssence = ch.Essence
-	a.Notes = ch.Notes
-	return a, nil
-}
