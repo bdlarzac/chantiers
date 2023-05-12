@@ -53,12 +53,12 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		}
 		//
 		filtres := map[string][]string{}
-		filtres["fermier"] = computeFiltreFermier(r)
-		filtres["essence"] = computeFiltreEssence(r)
-		filtres["valo"]    = computeFiltreValo(r)
-		filtres["proprio"] = computeFiltreProprio(r)
-		filtres["periode"] = computeFiltrePeriode(r)
-		filtres["ug"] = computeFiltreUG(r)
+		filtres["fermier"]  = computeFiltreFermier(r)
+		filtres["essence"]  = computeFiltreEssence(r)
+		filtres["valo"]     = computeFiltreValo(r)
+		filtres["proprio"]  = computeFiltreProprio(r)
+		filtres["periode"]  = computeFiltrePeriode(r)
+		filtres["ug"]       = computeFiltreUG(r)
 		filtres["parcelle"] = computeFiltreParcelle(r)
 		activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
 		if err != nil {
@@ -85,7 +85,8 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/lib/tabstrip/tabstrip.js",
-					"/static/lib/table-sort/table-sort.js"},
+					"/static/lib/table-sort/table-sort.js",
+				},
 			},
 			Menu: "accueil",
 			Details: detailsActiviteSearchResults{

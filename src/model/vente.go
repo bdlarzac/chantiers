@@ -52,7 +52,7 @@ func (v *Vente) String() string {
 // ************************** Get many *******************************
 
 func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Vente, err error) {
-fmt.Printf("=== model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
+fmt.Printf("=== model.ComputeVentesFromFiltres() - filtres = %+v\n", filtres)
 	result = []*Vente{}
 	//
 	// 1 - détermine dans quelles tables rechercher à partir du filtre valorisations
@@ -131,13 +131,10 @@ func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode,
 	    query += " where " + strings.Join(and, " and ")
 	    query = db.Rebind(query) // transforme les ? en $1, $2 etc.
 	}
-fmt.Printf("venteplaq query = %s\n",query)
-fmt.Printf("venteplaq args = %s\n",args)
     err = db.Select(&ventePlaqs, query, args...)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
-fmt.Printf("len(ventePlaqs) = %d\n",len(ventePlaqs))
 	for _, vp := range ventePlaqs {
 		vente, err := ventePlaq2Vente(db, vp)
 		if err != nil {
@@ -172,13 +169,10 @@ func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePer
 	    query += " where " + strings.Join(and, " and ")
 	    query = db.Rebind(query) // transforme les ? en $1, $2 etc.
 	}
-fmt.Printf("chautre query = %s\n",query)
-fmt.Printf("chautre args = %s\n",args)
     err = db.Select(&chantiers, query, args...)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
-fmt.Printf("len(chantiers) = %d\n",len(chantiers))
 	for _, ch := range chantiers {
 		vente, err := chautre2Vente(db, ch)
 		if err != nil {

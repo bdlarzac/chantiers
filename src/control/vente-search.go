@@ -24,11 +24,12 @@ type detailsVenteSearchForm struct {
 
 // ventes de tous les clients
 type detailsVenteSearchResults struct {
-	Ventes        []*model.Vente
-	RecapFiltres  string
-	DateDebut     time.Time
-	DateFin       time.Time
-	Tab                      string
+	Ventes                []*model.Vente
+	RecapFiltres          string
+	DateDebut             time.Time
+	DateFin               time.Time
+	BilansVentesParSaison []*model.BilanVentesParSaison
+	Tab                   string
 }
 
 func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
@@ -61,6 +62,11 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			return err
 		}
 		//
+		bilansVentesParSaison, err := model.ComputeBilansVentesParSaison(ctx.DB, ctx.Config.DebutSaison, ventes)
+		if err != nil {
+			return err
+		}
+		//
 		ctx.TemplateName = "vente-search-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -83,6 +89,7 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Details: detailsVenteSearchResults{
 				RecapFiltres:             recapFiltres,
 				Ventes:                   ventes,
+				BilansVentesParSaison:    bilansVentesParSaison,
 				Tab:                      tab,
 			},
 		}
