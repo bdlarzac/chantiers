@@ -129,7 +129,7 @@ func LabelUniteHTML(abbrev string) string {
 	return LabelUnite(abbrev)
 }
 
-// ************************** Chantiers autres valorisations *******************************
+// ************************** Valorisations *******************************
 // cf type postgres typevalo
 
 // L'ordre des valorisations correspond à la demande de BDL
@@ -140,6 +140,14 @@ func AllValorisationCodes() []string {
 }
 
 // Pareil que AllValorisationCodes(), avec en plus CF (chauffage fermier) et PQ (plaquettes)
+// Utilisé pour la recherche de ventes
+func AllValorisationCodesAvecChaufer() []string {
+    // codes triés par ordre alphabétique des labels correspondant
+	return []string{"BO", "CH", "PP", "PL", "PI", "PQ"}
+}
+
+// Pareil que AllValorisationCodes(), avec en plus CF (chauffage fermier) et PQ (plaquettes)
+// Utilisé pour la recherche d'activités
 func AllValorisationCodesAvecChauferEtPlaq() []string {
     // codes triés par ordre alphabétique des labels correspondant
 	return []string{"BO", "CH", "CF", "PP", "PL", "PI", "PQ"}

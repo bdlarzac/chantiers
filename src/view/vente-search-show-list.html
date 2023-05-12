@@ -12,7 +12,10 @@
         <th>Titre</th>
         <th class="order">Valorisation</th>
         <th class="order">Essence</th>
-        <th>Volume</th>
+        <th class="order">Volume</th>
+        <th class="order">Prix HT</th>
+        <th>Facture</th>
+        <th class="order">Date facture</th>
     </tr>
 </thead>
 
@@ -34,6 +37,15 @@
         </td>
         <td>
             {{.Volume}} {{.Unite | labelUnite}}
+        </td>
+        <td class="right">
+            <script>document.write(formatNb(round({{.PrixHT}}, 2)));</script> &euro;
+        </td>
+        <td>
+            {{.NumFacture}}
+        </td>
+        <td>
+            {{.DateFacture | dateFr}}
         </td>
     </tr>
     {{end}}

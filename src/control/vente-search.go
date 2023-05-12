@@ -65,13 +65,19 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title:    "Ventes",
-				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
-				JSFiles: []string{"/static/js/formatNb.js"},
+				CSSFiles: []string{
+				    "/static/lib/tabstrip/tabstrip.css",
+				},
+				JSFiles: []string{
+				    "/static/js/formatNb.js",
+				    "/static/js/round.js",
+				},
 			},
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/lib/tabstrip/tabstrip.js",
-					"/static/lib/table-sort/table-sort.js"},
+					"/static/lib/table-sort/table-sort.js",
+				},
 			},
 			Menu: "accueil",
 			Details: detailsVenteSearchResults{
@@ -110,14 +116,15 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Header: ctxt.Header{
 				Title: "Recherche de ventes",
 				CSSFiles: []string{
-					"/static/css/form.css"},
+					"/static/css/form.css",
+				},
 			},
 			Menu: "ventes",
 			Details: detailsVenteSearchForm{
 				Periods:     periods,
 				PropriosMap: propriosMap,
 				Clients:     clients,
-				ValoCodes:   model.AllValorisationCodesAvecChauferEtPlaq(),
+				ValoCodes:   model.AllValorisationCodesAvecChaufer(),
 				UrlAction:   "/vente/recherche",
 			},
 		}

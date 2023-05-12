@@ -18,6 +18,7 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"strconv"
+	"strings"
 	"time"
 	"fmt"
 )
@@ -51,11 +52,11 @@ func (v *Vente) String() string {
 // ************************** Get many *******************************
 
 func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Vente, err error) {
-fmt.Printf("model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
+fmt.Printf("=== model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 	result = []*Vente{}
 	//
 	// 1 - détermine dans quelles tables rechercher à partir du filtre valorisations
-	// on pourrait déterminer plus précisément à partir du filtre clients
+	// on pourrait déterminer plus précisément à partir du filtre clients (avec les rôles)
 	// mais compliqué sans gagner en efficacité
 	//
 	tables := []string{}
@@ -71,6 +72,7 @@ fmt.Printf("model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
             tables = append(tables, "chautre") // car len(filtres["valo"]) > 0
 	    }
 	}
+fmt.Printf("tables = %v\n",tables)
 	//
 	// 2 - Filtres periode et client (et valo pour chautre)
 	//
@@ -109,29 +111,33 @@ fmt.Printf("model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 
 // ************************** Selection par période et client et valo *******************************
 
+/*  Fabrique des Ventes à partir de la table venteplaq */
 func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode, filtreClient []string) (result []*Vente, err error) {
-	var query string
 	ventePlaqs := []*VentePlaq{}
-	query = "select * from venteplaq"
+	and := []string{}
+	var args []interface{}
 	if len(filtreClient) == 1 {
-	    query += " where id_client=$1"
-        if len(filtrePeriode) == 2 {
-            query += " and datevente >= $2 and datevente <= $3"
-            err = db.Select(&ventePlaqs, query, filtreClient[0], filtrePeriode[0], filtrePeriode[1])
-        } else {
-            err = db.Select(&ventePlaqs, query, filtreClient[0])
-        }
-    } else {
-        if len(filtrePeriode) == 2 {
-            query += " and datevente >= $1 and datevente <= $2"
-            err = db.Select(&ventePlaqs, query, filtrePeriode[0], filtrePeriode[1])
-        } else {
-            err = db.Select(&ventePlaqs, query)
-        }
+	    and = append(and, "id_client=?")
+	    args = append(args, filtreClient[0])
     }
+    if len(filtrePeriode) == 2 {
+        and = append(and, "datevente >= ? and datevente <= ?")
+	    args = append(args, filtrePeriode[0])
+	    args = append(args, filtrePeriode[1])
+    }
+    //
+	query := "select * from venteplaq"
+	if len(and) > 0 {
+	    query += " where " + strings.Join(and, " and ")
+	    query = db.Rebind(query) // transforme les ? en $1, $2 etc.
+	}
+fmt.Printf("venteplaq query = %s\n",query)
+fmt.Printf("venteplaq args = %s\n",args)
+    err = db.Select(&ventePlaqs, query, args...)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
+fmt.Printf("len(ventePlaqs) = %d\n",len(ventePlaqs))
 	for _, vp := range ventePlaqs {
 		vente, err := ventePlaq2Vente(db, vp)
 		if err != nil {
@@ -142,34 +148,37 @@ func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode,
 	return result, nil
 }
 
+/*  Fabrique des Ventes à partir de la table chautre */
 func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePeriode, filtreClient, filtreValo []string) (result []*Vente, err error) {
-    
-    
-    // en cours, implémeter filtre valo avec ...params
-    
-    
-	var query string
 	chantiers := []*Chautre{}
-	query = "select * from chautre"
+	and := []string{}
+	var args []interface{}
 	if len(filtreClient) == 1 {
-	    query += " where id_acheteur=$1"
-        if len(filtrePeriode) == 2 {
-            query += " and datecontrat >= $2 and datecontrat <= $3"
-            err = db.Select(&chantiers, query, filtreClient[0], filtrePeriode[0], filtrePeriode[1])
-        } else {
-            err = db.Select(&chantiers, query, filtreClient[0])
-        }
-    } else {
-        if len(filtrePeriode) == 2 {
-            query += " where datecontrat >= $1 and datecontrat <= $2"
-            err = db.Select(&chantiers, query, filtrePeriode[0], filtrePeriode[1])
-        } else {
-            err = db.Select(&chantiers, query)
-        }
+	    and = append(and, "id_acheteur=?")
+	    args = append(args, filtreClient[0])
+	}
+    if len(filtrePeriode) == 2 {
+        and = append(and, "datecontrat >= ? and datecontrat <= ?")
+	    args = append(args, filtrePeriode[0])
+	    args = append(args, filtrePeriode[1])
     }
+    if len(filtreValo) > 0 {
+        inClause := "typevalo in('" + strings.Join(filtreValo, "','") + "')"
+        and = append(and, inClause)
+    }
+    //
+	query := "select * from chautre"
+	if len(and) > 0 {
+	    query += " where " + strings.Join(and, " and ")
+	    query = db.Rebind(query) // transforme les ? en $1, $2 etc.
+	}
+fmt.Printf("chautre query = %s\n",query)
+fmt.Printf("chautre args = %s\n",args)
+    err = db.Select(&chantiers, query, args...)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
+fmt.Printf("len(chantiers) = %d\n",len(chantiers))
 	for _, ch := range chantiers {
 		vente, err := chautre2Vente(db, ch)
 		if err != nil {
@@ -177,6 +186,7 @@ func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePer
 		}
 		result = append(result, vente)
 	}
+	//
 	return result, nil
 }
 
@@ -217,7 +227,7 @@ func ventePlaq2Vente(db *sqlx.DB, vp *VentePlaq) (v *Vente, err error) {
 	}
 	v.Id = vp.Id
 	v.TypeVente = "plaq"
-	v.Titre = vp.String()
+	v.Titre = vp.StringSansDate()
 	v.URL = "/vente/" + strconv.Itoa(vp.Id)
 	v.DateVente = vp.DateVente
 	v.TypeValo = "PQ"
