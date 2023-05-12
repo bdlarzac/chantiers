@@ -25,7 +25,7 @@ import (
 
 type Activite struct {
 	Id           int
-	TypeActivite string
+	TypeActivite string // "plaq", "chautre" ou "chaufer"
 	Titre        string
 	URL          string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
 	DateActivite time.Time
@@ -93,7 +93,7 @@ func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
 
 // ************************** Get many *******************************
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Activite, err error) {
-fmt.Printf("model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
+fmt.Printf(" === model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 	result = []*Activite{}
 	//
 	// Première sélection, par filtre période
@@ -135,15 +135,20 @@ fmt.Printf("model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 		result = filtreActivite_fermier(db, result, filtres["fermier"])
 	}
 	//
-	if len(filtres["ug"]) != 0 {
-		for _, activite := range result {
-			activite.ComputeUGs(db)
-		}
-		result = filtreActivite_ug(db, result, filtres["ug"])
-	}
 	//
 	// préparation (faire le plus tard possible pour optimiser)
 	//
+	// on calcule toujours les UGs puisqu'on affiche une liste par UG
+    for _, activite := range result {
+        err = activite.ComputeUGs(db)
+        if err != nil {
+            return result, werr.Wrapf(err, "Erreur appel ComputeUGs()")
+        }
+    }
+    //
+	if len(filtres["ug"]) != 0 {
+		result = filtreActivite_ug(db, result, filtres["ug"])
+	}
 	if len(filtres["proprio"]) != 0 || len(filtres["parcelle"]) != 0 {
 		for _, activite := range result {
 			activite.ComputeLiensParcelles(db)
@@ -247,6 +252,7 @@ func computeChauferActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []strin
 func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
     a = &Activite{}
 	a.Id = ch.Id
+	a.TypeActivite = "plaq"
 	a.Titre = ch.Titre
 	a.URL = "/chantier/plaquette/" + strconv.Itoa(a.Id)
 	a.DateActivite = ch.DateDebut
@@ -265,6 +271,7 @@ func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
 func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
     a = &Activite{}
 	a.Id = ch.Id
+	a.TypeActivite = "chautre"
 	a.Titre = ch.Titre
 	//	a.URL = "/chautre/" + strconv.Itoa(idActivite)
 	a.DateActivite = ch.DateContrat
@@ -284,6 +291,7 @@ func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
 func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
     a = &Activite{}
 	a.Id = ch.Id
+	a.TypeActivite = "chaufer"
 	a.Titre = ch.Titre
 	//	a.URL = "/chaufer/" + strconv.Itoa(idActivite)
 	a.DateActivite = ch.DateChantier

@@ -31,6 +31,7 @@ type detailsActiviteSearchResults struct {
 	RecapFiltres             string
 	ActiviteMap              map[string]string
 	BilansActivitesParSaison []*model.BilanActivitesParSaison
+	ActivitesParUG           []*model.ActivitesParUG
 	Tab                      string
 }
 
@@ -94,6 +95,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				RecapFiltres:             recapFiltres,
 				ActiviteMap:              model.GetActivitesMap(),
 				BilansActivitesParSaison: bilansActivitesParSaison,
+				ActivitesParUG:           model.ComputeActivitesParUG(activites),
 				Tab:                      tab,
 			},
 		}
