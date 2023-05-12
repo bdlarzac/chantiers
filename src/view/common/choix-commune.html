@@ -1,0 +1,58 @@
+{{/* 
+    Formulaire de choix d'une commune.
+    Un seul appel par page possible.
+    
+    Cette template doit être appelée avec une structure contenant un champ AllCommunes.
+    AllCommunes est uniquement utilisée dans le constructeur.
+    
+    Utilisation :
+        <script>
+            const choixCommune = new ChoixCommune();
+        </script>
+
+	@copyright  BDL, Bois du Larzac.
+	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+<script>
+
+class ChoixCommune{
+    
+    #html;
+    
+    constructor(){
+        this.#html = `
+        <fieldset class="choix-commune">
+            <legend>Commune</legend>
+            <details open>
+                <summary><span id="choix-commune-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
+                    <select class="margin-top" name="select-choix-commune" id="select-choix-commune" onChange="choixCommune_updateSummary();">
+                        <option id="choix-commune-no-limit" value="choix-commune-no-limit" selected>Tous les communes</option>\n`;
+                        {{range .AllCommunes}}
+                            this.#html += '<option id="choix-commune-{{.Id}}" value="choix-commune-{{.Id}}">{{.Nom}}</option>\n';
+                        {{end}}
+        this.#html += `
+                    </select>
+            </details>
+        </fieldset>
+        `;
+        this.display();
+        this.initialize();
+    } // end constructor
+    
+    display(){
+        document.write(this.#html);
+    }
+    
+    initialize(){
+        choixCommune_updateSummary();
+    }
+    
+} // end class
+
+function choixCommune_updateSummary(){
+    const communeElt = document.getElementById("select-choix-commune");
+    document.getElementById('choix-commune-summary').innerHTML = communeElt.options[communeElt.selectedIndex].text;
+}
+
+</script>

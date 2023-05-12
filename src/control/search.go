@@ -29,6 +29,19 @@ func computeFiltreFermier(r *http.Request) (result []string) {
 }
 
 /*
+Filtre commune : renvoie un tableau de strings.
+  - Si pas de filtre, contient un tableau vide.
+  - Sinon contient une liste avec un seul élément, l'id de la commune sélectionnée.
+*/
+func computeFiltreCommune(r *http.Request) (result []string) {
+	choix := r.PostFormValue("select-choix-commune")
+	if choix == "choix-commune-no-limit" {
+		return []string{}
+	}
+	return []string{choix[14:]}
+}
+
+/*
 Filtre client : renvoie un tableau de strings.
   - Si pas de filtre, contient un tableau vide.
   - Sinon contient une liste avec un seul élément, l'id du client sélectionné (id dans la table acteur).

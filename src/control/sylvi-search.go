@@ -9,28 +9,21 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
+//	"github.com/gorilla/mux"
 	"net/http"
-	"time"
 )
 
 type detailsSylviForm struct {
-	Periods     [][2]time.Time    // pour choix-date
 	EssencesMap map[string]string // pour choix-essence
-	PropriosMap map[int]string    // pour choix-proprio
 	Fermiers    []*model.Fermier  // pour choix-fermier
-	AllUGs      []*model.UG       // pour choix-ug - liens-ugs-modal
-	UGs         []*model.UG       // pour choix-ug - liens-ugs - toujours vide, utile que pour compatibilité avec liens-ugs.html
 	AllCommunes []*model.Commune  // pour choix-parcelle
 	UrlAction   string
 }
 
 type detailsSylviResults struct {
-	Activites                []*model.Activite
-	RecapFiltres             string
-	ActiviteMap              map[string]string
-	BilansActivitesParSaison []*model.BilanActivitesParSaison
-	Tab                      string
+	UGs          []*model.UG
+	RecapFiltres string
+//	Tab          string
 }
 
 /*
@@ -45,20 +38,17 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-		vars := mux.Vars(r)
-		tab := vars["tab"]
-		if tab == "" {
-			tab = "liste"
-		}
+		// vars := mux.Vars(r)
+		// tab := vars["tab"]
+		// if tab == "" {
+			// tab = "liste"
+		// }
 		//
 		filtres := map[string][]string{}
 		filtres["fermier"] = computeFiltreFermier(r)
 		filtres["essence"] = computeFiltreEssence(r)
-		filtres["proprio"] = computeFiltreProprio(r)
-		filtres["periode"] = computeFiltrePeriode(r)
-		filtres["ug"] = computeFiltreUG(r)
-		filtres["parcelle"] = computeFiltreParcelle(r)
-		activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
+		filtres["commune"] = computeFiltreCommune(r)
+		ugs, err := model.ComputeUGsFromFiltres(ctx.DB, filtres)
 		if err != nil {
 			return err
 		}
@@ -68,30 +58,23 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			return err
 		}
 		//
-		bilansActivitesParSaison, err := model.ComputeBilansActivitesParSaison(ctx.DB, ctx.Config.DebutSaison, activites)
-		if err != nil {
-			return err
-		}
-		//
 		ctx.TemplateName = "sylvi-search-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title:    "Activités",
-				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
-				JSFiles: []string{"/static/js/formatNb.js"},
+				// CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
+				// JSFiles: []string{"/static/js/formatNb.js"},
 			},
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					"/static/lib/tabstrip/tabstrip.js",
+					// "/static/lib/tabstrip/tabstrip.js",
 					"/static/lib/table-sort/table-sort.js"},
 			},
-			Menu: "accueil",
-			Details: detailsActiviteSearchResults{
-				Activites:                activites,
-				RecapFiltres:             recapFiltres,
-				ActiviteMap:              model.GetActivitesMap(),
-				BilansActivitesParSaison: bilansActivitesParSaison,
-				Tab:                      tab,
+			Menu: "production",
+			Details: detailsSylviResults{
+				UGs:          ugs,
+				RecapFiltres: recapFiltres,
+//				Tab:                      tab,
 			},
 		}
 		return nil
@@ -99,29 +82,17 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		//
 		// Affiche form
 		//
-		vars := mux.Vars(r)
-		tab := vars["tab"]
-		if tab == "" {
-			tab = "liste"
-		}
+		// vars := mux.Vars(r)
+		// tab := vars["tab"]
+		// if tab == "" {
+			// tab = "liste"
+		// }
 		//
-		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
-		if err != nil {
-			return err
-		}
 		essencesMap, err := model.GetEssencesMap(ctx.DB)
 		if err != nil {
 			return err
 		}
-		propriosMap, err := model.GetProprietaires(ctx.DB)
-		if err != nil {
-			return err
-		}
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
-		if err != nil {
-			return err
-		}
-		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
 		if err != nil {
 			return err
 		}
@@ -138,15 +109,12 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 					"/static/css/form.css"},
 			},
 			Menu: "accueil",
-			Details: detailsActiviteSearchForm{
-				Periods:     periods,
+			Details: detailsSylviForm{
 				EssencesMap: essencesMap,
-				PropriosMap: propriosMap,
 				Fermiers:    fermiers,
-				AllUGs:      allUGs,
-				UGs:         []*model.UG{},
 				AllCommunes: allCommunes,
-				UrlAction:   "/sylviculture/recherche/" + tab,
+//				UrlAction:   "/sylviculture/recherche/" + tab,
+				UrlAction:   "/sylviculture/recherche/",
 			},
 		}
 		return nil

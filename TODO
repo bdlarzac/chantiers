@@ -2,6 +2,11 @@
 Pour voir les fonctions qui ne renvoient pas des pointeurs :
 grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | grep -v '\[\]int'
 
+2023
+--------------------------------------------------------------------------------------------------
+- Nettoyer la table des fermiers non agricoles ; voir les associations parcelle_fermier qui restent.
+
+
 #9 lien chantier parcelle
 --------------------------------------------------------------------------------------------------
 
@@ -98,15 +103,13 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 
 - voir bug DEVEZ GRAN / DEVEZ GRAND
 
-- read mdb / windows
-
 - UG : Surf_Recalcul ou Surf_SIG ? Demander Jean Cullié
 
 - dans UG.type_coupe : garder 0 0 ?
 
 - Comment modéliser ça :
   id  |   code   |   type_coupe    | previsionnel_coupe |      type_peuplement       | surface  
-------+----------+-----------------+--------------------+----------------------------+----------
+--------------------------------------------------------------------------------------------------
    24 | XIII-21  | ESP2 2021       | ESP3               | PS                         |  1.71119
    25 | XIII-21  | ESP2 2021       | ESP3               | PS                         |  0.41453
    26 | XIII-21  | ESP2 2021       | ESP3               | PS                         |  0.08319
@@ -114,7 +117,7 @@ Le test sur transporteur / rangeur / chargeur / livreur n'est plus valable
 
 
 Notes vrac
---------------------
+--------------------------------------------------------------------------------------------------
 
 debug.stack()
 go.dev
