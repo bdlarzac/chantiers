@@ -27,11 +27,9 @@ class ChoixFermier{
             <details open>
                 <summary><span id="choix-fermier-summary" class="padding-left2">{{/* filled by js */}}</span></summary>
                     <select class="margin-top" name="select-choix-fermier" id="select-choix-fermier" onChange="choixFermier_updateSummary();">
-                        <option id="choix-fermier-no-limit" value="choix-fermier-no-limit" selected>Tous les fermiers</option>
-        `;
+                        <option id="choix-fermier-no-limit" value="choix-fermier-no-limit" selected>Tous les fermiers</option>\n`;
                         {{range .Fermiers}}
-                            this.#html += '<option id="choix-fermier-' + {{.Id}} + '" value="choix-fermier-' + {{.Id}} + '">'
-                                + {{.Nom}} + ' ' + {{.Prenom}} + '</option>\n';
+                            this.#html += '<option id="choix-fermier-{{.Id}}" value="choix-fermier-{{.Id}}">{{.Nom}} {{.Prenom}}</option>\n';
                         {{end}}
         this.#html += `
                     </select>

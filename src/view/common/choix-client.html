@@ -30,8 +30,7 @@ class ChoixClient{
                         <option id="choix-client-no-limit" value="choix-client-no-limit" selected>Tous les clients</option>
         `;
                         {{range .Clients}}
-                            this.#html += '<option id="choix-client-' + {{.Id}} + '" value="choix-client-' + {{.Id}} + '">'
-                                + {{.Nom}} + ' ' + {{.Prenom}} + '</option>\n';
+                            this.#html += '<option id="choix-client-{{.Id}}" value="choix-client-{{.Id}}">{{.Nom}} {{.Prenom}}</option>\n';
                         {{end}}
         this.#html += `
                     </select>

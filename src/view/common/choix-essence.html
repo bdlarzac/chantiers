@@ -43,9 +43,9 @@ class ChoixEssence{
         let res = '';
         {{ range $code, $label := .EssencesMap }}
             res += '<label class="block">'
-                + `<input class="chk-essence" type="checkbox" id="choix-essence-` + {{$code}} + `" name="choix-essence-` + {{$code}} + `" onchange="choixEssence_choixChanged();">`
+                + '<input class="chk-essence" type="checkbox" id="choix-essence-{{$code}}" name="choix-essence-{{$code}}" onchange="choixEssence_choixChanged();">'
                 + '{{$label}}'
-                + '</label>';
+                + '</label>\n';
         {{end}}
         return res;
     }

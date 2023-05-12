@@ -43,7 +43,7 @@ class ChoixValo{
         let res = '';
         {{range .ValoCodes}}
             res += '<label class="block">'
-                + `<input class="chk-valo" type="checkbox" id="choix-valo-` + {{.}} + `" name="choix-valo-` + {{.}} + `" onchange="choixValo_choixChanged();">`
+                + '<input class="chk-valo" type="checkbox" id="choix-valo-{{.}}" name="choix-valo-{{.}}" onchange="choixValo_choixChanged();">'
                 + '{{. | labelValorisationAvecChauferEtPlaq}}'
                 + '</label>';
         {{end}}

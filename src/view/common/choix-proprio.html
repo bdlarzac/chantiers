@@ -42,9 +42,9 @@ class ChoixProprio{
         let res = '';
         {{ range $id, $nom := .PropriosMap }}
             res += '<label class="block">'
-                + `<input class="chk-proprio" type="checkbox" id="choix-proprio-` + {{$id}} + `" name="choix-proprio-` + {{$id}} + `" onchange="choixProprio_updateSummary();">`
+                + '<input class="chk-proprio" type="checkbox" id="choix-proprio-{{$id}}" name="choix-proprio-{{$id}}" onchange="choixProprio_updateSummary();">'
                 + {{$nom}}
-                + '</label>';
+                + '</label>\n';
         {{end}}
         return res;
     }

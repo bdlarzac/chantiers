@@ -30,7 +30,7 @@ class ChoixParcelle {
                     <select class=" margin-right" name="choix-parcelle-select-commune" id="choix-parcelle-select-commune">
                         <option id="choix-parcelle-choose-commune" value="choix-parcelle-choose-commune">--- Choisir une commune ---</option>`;
                         {{range .AllCommunes}}
-                            this.#html += '<option id="choix-parcelle-commune-' + {{.Id}} + '" value="choix-parcelle-commune-' + {{.Id}} + '">' + {{.Nom}} + '</option>\n';
+                            this.#html += '<option id="choix-parcelle-commune-{{.Id}}" value="choix-parcelle-commune-{{.Id}}">{{.Nom}}</option>\n';
                         {{end}}
         this.#html += `
                     </select>
