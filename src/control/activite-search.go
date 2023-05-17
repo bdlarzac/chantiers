@@ -146,7 +146,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Details: detailsActiviteSearchForm{
 				Periods:     periods,
 				EssencesMap: essencesMap,
-				ValoCodes:   model.AllValorisationCodesAvecChauferEtPlaq(),
+				ValoCodes:   model.AllValoCodesAvecChauferEtPlaq(),
 				PropriosMap: propriosMap,
 				Fermiers:    fermiers,
 				AllUGs:      allUGs,

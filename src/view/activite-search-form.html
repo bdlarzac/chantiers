@@ -89,9 +89,11 @@ function toutReplier(){
 }
 
 function validateForm(){
+console.log('validateForm');
     let msg = '';
     document.getElementById('choix-ALL-essence').value = choixEssence_isAllSelected();
     document.getElementById('choix-ALL-proprio').value = choixProprio_isAllSelected();
+    document.getElementById('choix-ALL-valo').value = choixValo_isAllSelected();
     msg += choixPeriode_validateForm();
     msg += choixProprio_validateForm();
     msg += choixValo_validateForm();

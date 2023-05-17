@@ -2,7 +2,7 @@
 *****************************************************************************
 
 	Valorisations
-	cf type postgres typevalo
+	cf type postgres typevalorisation
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -12,7 +12,9 @@
 */
 package model
 
-var valoMap = map[string]string{
+// Association code valorisation => label
+// Les codes correspondent aux valeurs stockées en base dans chautre.typevalo
+var ValoMap = map[string]string{
 	"BO": "Bois d'oeuvre",
 	"CF": "Chauffage fermier",
 	"CH": "Chauffage client",
@@ -22,64 +24,52 @@ var valoMap = map[string]string{
 	"PQ": "Plaquettes",
 }
 
-
-// ************************** Labels *******************************
-
-// Labels du type de valorisation (pour Chautre)
-// @param abbrev : valorisation telle que stockée en base
-func LabelValorisation(abbrev string) string {
-	switch abbrev {
-	case "PP":
-		return "Pâte à papier"
-	case "CH":
-		return "Chauffage"
-	case "PL":
-		return "Palette"
-	case "PI":
-		return "Piquets"
-	case "BO":
-		return "Bois d'oeuvre"
-	}
-	return "??? BUG LabelValorisation ("+abbrev+") ???"
-}
-
-// Labels du type de valorisation
-// Utilisé par bilans, où
-// - "Chauffage" doit être séparé en 2 : chauffage fermier ( de chaufer) et chauffage client (de chautre)
-// - On doit ajouter chantiers plaquettes
-func LabelValorisationAvecChauferEtPlaq(abbrev string) string {
-	switch abbrev {
-	case "CF":
-		return "Chauffage fermier"
-	case "CH":
-		return "Chauffage client"
-	case "PQ":
-		return "Plaquettes"
-	}
-	return LabelValorisation(abbrev)
-}
-
-
 // ************************** Codes *******************************
 
-// L'ordre des valorisations correspond à la demande de BDL
-// @return  Tous les codes des valorisations de chautre
-// Correspond au type typevalo en base
-func AllValorisationCodes() []string {
+// Codes utilisés pour chautre
+func AllValoCodes() []string {
+    // L'ordre des valorisations correspond à la demande de BDL
 	return []string{"PP", "CH", "PL", "PI", "BO"}
 }
 
-// Pareil que AllValorisationCodes(), avec en plus CF (chauffage fermier) et PQ (plaquettes)
+// Pareil que AllValoCodes(), avec en plus CF (chauffage fermier)
 // Utilisé pour la recherche de ventes
-func AllValorisationCodesAvecChaufer() []string {
+func AllValoCodesAvecChaufer() []string {
     // codes triés par ordre alphabétique des labels correspondant
 	return []string{"BO", "CH", "PP", "PL", "PI", "PQ"}
 }
 
-// Pareil que AllValorisationCodes(), avec en plus CF (chauffage fermier) et PQ (plaquettes)
+// Pareil que AllValoCodes(), avec en plus CF (chauffage fermier) et PQ (plaquettes)
 // Utilisé pour la recherche d'activités
-func AllValorisationCodesAvecChauferEtPlaq() []string {
+func AllValoCodesAvecChauferEtPlaq() []string {
     // codes triés par ordre alphabétique des labels correspondant
 	return []string{"BO", "CH", "CF", "PP", "PL", "PI", "PQ"}
+}
+
+// ************************** Unités *******************************
+
+// Renvoie le code de l'unité correspondant à une valorisation, tel que stocké en base
+// Comprend les valos pour chautre + CF pour chauffage fermier + PQ pour plaquettes
+func CodeValo2CodeUnite(codeValo string) string {
+	switch codeValo {
+	case "PP":
+		return "TO"
+	case "CH":
+		return "ST"
+	case "CF":
+		return "ST"
+	case "PL":
+		return "ST"
+	case "PI":
+		// 2023-05-17 je ne comprends pas cette histoire
+		// l'unité "nb de piquets" n'est plus utilisée
+		// suite à demande BDL de pouvoir choisir stères ou nb de piquets
+		return "ST"
+	case "BO":
+		return "M3"
+	case "PQ":
+		return "MA"
+	}
+	return "??? Code inconnu dans CodeValo2CodeUnite ("+codeValo+")  ???"
 }
 

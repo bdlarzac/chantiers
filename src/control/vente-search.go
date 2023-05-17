@@ -131,7 +131,7 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 				Periods:     periods,
 				PropriosMap: propriosMap,
 				Clients:     clients,
-				ValoCodes:   model.AllValorisationCodesAvecChaufer(),
+				ValoCodes:   model.AllValoCodesAvecChaufer(),
 				UrlAction:   "/vente/recherche",
 			},
 		}

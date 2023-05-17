@@ -10,7 +10,7 @@ package model
 import (
     "sort"
 //	"github.com/jmoiron/sqlx"
-"fmt"
+//"fmt"
 )
 
 /* Liste d'activités ayant lieu dans une UG donnée */
@@ -35,12 +35,12 @@ func ComputeActivitesParUG(activites []*Activite) (result []*ActivitesParUG) {
             mapug[code].Activites = append(mapug[code].Activites, activite)
         }
     }
-for k, v := range(mapug){
+/* for k, v := range(mapug){
     fmt.Printf("=== %s ===\n",k)
     for _, a := range(v.Activites){
         fmt.Printf("%d - %s - %s\n",a.Id, a.TypeActivite, a.Titre)
     }
-}
+} */
     keys := []string{}
     for k, _ := range(mapug){
         keys = append(keys, k)

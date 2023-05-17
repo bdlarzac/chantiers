@@ -14,11 +14,15 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	// "fmt"
+ "fmt"
 )
 
-
+/* 
+Calcule un récapitulatif des choix effetués dans un formulaires contenant des filtres.
+Pour affichage dans la page de résultat.
+*/
 func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result string, err error) {
+fmt.Printf("filtres = %+v\n", filtres)
 	result = ""
 	// Si aucun filtre
 	aucun := true
@@ -48,6 +52,7 @@ func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result strin
 		strFin := tiglib.DateFr(fin)
 		result += "<tr><td>Période :</td><td>" + strDeb + " - " + strFin + "</td></tr>\n"
 	}
+	//
 	if len(filtres["proprio"]) != 0 {
 		tmp := []string{} // Comme il n'y a que 2 propriétaires, tmp ne contient qu'un élément - mais code écrit pour un cas plus général
 		for _, value := range filtres["proprio"] {
@@ -60,6 +65,8 @@ func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result strin
 		}
 		result += "<tr><td>Propriétaire :</td><td>" + strings.Join(tmp, ", ") + "</td></tr>\n"
 	}
+	//
+	//
 	//
 	if len(filtres["fermier"]) != 0 {
 		id, _ := strconv.Atoi(filtres["fermier"][0])
@@ -80,6 +87,24 @@ func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result strin
 	}
 	//
 	if len(filtres["essence"]) != 0 {
+		tmp := []string{}
+		essenceMap, err := GetEssencesMap(db)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel GetEssencesMap()")
+		}
+		for _, code := range filtres["essence"] {
+			essenceLabel := essenceMap[code]
+			tmp = append(tmp, essenceLabel)
+		}
+		result += "<tr><td>Essences :</td><td>" + strings.Join(tmp, ", ") + "</td></tr>\n"
+	}
+	//
+	if len(filtres["valo"]) != 0 {
+	    
+	    
+	    ///////////// ici en cours //////////////
+	    
+	    
 		tmp := []string{}
 		essenceMap, err := GetEssencesMap(db)
 		if err != nil {
@@ -119,6 +144,6 @@ func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result strin
 	}
 	//
 	result += "</table>\n"
-	//
+ 	//
 	return result, nil
 }

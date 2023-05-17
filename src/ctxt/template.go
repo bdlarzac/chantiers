@@ -44,16 +44,14 @@ func MustInitTemplates() {
 		"year":       year,
 		"zero2empty": zero2empty,
 		// Pipelines related to current program
-		"labelActivite":                      labelActivite,
-		"labelEssence":                       labelEssence,
-		"labelExploitation":                  labelExploitation,
-		"labelStockFrais":                    labelStockFrais,
-		"labelTypeVente":                     labelTypeVente,
-		"labelUnite":                         labelUnite,
-		"labelValorisation":                  labelValorisation,
-		"labelValorisationAvecChauferEtPlaq": labelValorisationAvecChauferEtPlaq,
-		"valorisation2unite":                 valorisation2unite,
-		"valorisation2uniteLabel":            valorisation2uniteLabel,
+		"labelActivite":     labelActivite,
+		"labelEssence":      labelEssence,
+		"labelExploitation": labelExploitation,
+		"labelStockFrais":   labelStockFrais,
+		"labelTypeVente":    labelTypeVente,
+		"labelUnite":        labelUnite,
+		"labelValo":         labelValo,
+		"valo2uniteLabel":   valo2uniteLabel,
 	}
 	tmpl = template.
 		Must(template.
@@ -182,53 +180,41 @@ func safeHTML(str string) template.HTML {
 // ************************* Pipelines related to current program ********************************
 
 // Type d'opération simple (abattage, débardage...) à partir de son code
-func labelActivite(str string) template.HTML {
-	return template.HTML(model.LabelActivite(str))
+func labelActivite(code string) template.HTML {
+	return template.HTML(model.LabelActivite(code))
 }
 
 // Nom d'une essence (chêne etc.) à partir de son code
-func labelEssence(str string) template.HTML {
-	return template.HTML(model.LabelEssence(str))
+func labelEssence(code string) template.HTML {
+	return template.HTML(model.LabelEssence(code))
 }
 
 // Type d'exploitation (1 - 5), à partir de son code
-func labelExploitation(str string) template.HTML {
-	return template.HTML(model.LabelExploitation(str))
+func labelExploitation(code string) template.HTML {
+	return template.HTML(model.LabelExploitation(code))
 }
 
 // Type de frais pour stockage (loyer, assurance, élec) à partir de son code
-func labelStockFrais(str string) template.HTML {
-	return template.HTML(model.LabelStockFrais(str))
+func labelStockFrais(code string) template.HTML {
+	return template.HTML(model.LabelStockFrais(code))
 }
 
 // Type de vente (pour chautre) à partir de son code
-func labelTypeVente(str string) template.HTML {
-	return template.HTML(model.LabelTypeVente(str))
+func labelTypeVente(code string) template.HTML {
+	return template.HTML(model.LabelTypeVente(code))
 }
 
 // Nom d'une unité utilisée dans cette appli, à partir de son code
-func labelUnite(str string) template.HTML {
-	return template.HTML(model.LabelUniteHTML(str))
+func labelUnite(code string) template.HTML {
+	return template.HTML(model.LabelUnite(code))
 }
 
 // Type de valorisation (palette, pâte à papier...), à partir de son code
-func labelValorisation(str string) template.HTML {
-	return template.HTML(model.LabelValorisation(str))
-}
-
-// Même chose que labelValorisation(), avec :
-// "CH" renvoie "Chauffage client"
-// "CF" renvoie " Chauffage fermier"
-func labelValorisationAvecChauferEtPlaq(str string) template.HTML {
-	return template.HTML(model.LabelValorisationAvecChauferEtPlaq(str))
+func labelValo(code string) template.HTML {
+	return template.HTML(model.ValoMap[code])
 }
 
 // Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
-func valorisation2uniteLabel(str string) template.HTML {
-	return template.HTML(model.LabelUnite(model.Valorisation2unite(str)))
-}
-
-// Renvoie le code unité correspondant à un type de valorisation (palette, pâte à papier...)
-func valorisation2unite(str string) template.HTML {
-	return template.HTML(model.Valorisation2unite(str))
+func valo2uniteLabel(code string) template.HTML {
+	return template.HTML(model.LabelUnite(model.CodeValo2CodeUnite(code)))
 }

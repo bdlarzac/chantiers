@@ -26,6 +26,10 @@ type Essence struct {
 
 /*
 Renvoie une map code essence => nom long
+////////
+ATTENTION incohérence - déplacer dans 1-enums-labels.go (?)
+Même question pour valo
+////////
 */
 func GetEssencesMap(db *sqlx.DB) (essencesMap map[string]string, err error) {
 	type essence struct {

@@ -99,11 +99,11 @@ func WeboExploitation() []webo.OptionString {
 func WeboChautreValo() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_VALORISATION", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "valorisation-PP", OptionLabel: model.LabelValorisation("PP")},
-		webo.OptionString{OptionValue: "valorisation-CH", OptionLabel: model.LabelValorisation("CH")},
-		webo.OptionString{OptionValue: "valorisation-PL", OptionLabel: model.LabelValorisation("PL")},
-		webo.OptionString{OptionValue: "valorisation-PI", OptionLabel: model.LabelValorisation("PI")},
-		webo.OptionString{OptionValue: "valorisation-BO", OptionLabel: model.LabelValorisation("BO")},
+		webo.OptionString{OptionValue: "valorisation-PP", OptionLabel: model.ValoMap["PP"]},
+		webo.OptionString{OptionValue: "valorisation-CH", OptionLabel: model.ValoMap["CH"]},
+		webo.OptionString{OptionValue: "valorisation-PL", OptionLabel: model.ValoMap["PL"]},
+		webo.OptionString{OptionValue: "valorisation-PI", OptionLabel: model.ValoMap["PI"]},
+		webo.OptionString{OptionValue: "valorisation-BO", OptionLabel: model.ValoMap["BO"]},
 	}
 }
 

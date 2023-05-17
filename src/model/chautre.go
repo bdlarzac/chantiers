@@ -53,16 +53,6 @@ func (ch *Chautre) String() string {
 	return ch.Titre
 }
 
-/*
-// #13 - transféré dans 2023-02-20-titre-chantier - supprimer si inutile
-func (ch *Chautre) String() string {
-	if ch.Acheteur == nil {
-		panic("Erreur dans le code - L'acheteur d'un chantier autre valorisation doit être calculé avant d'appeler String()")
-	}
-	return LabelValorisation(ch.TypeValo) + " " + ch.Acheteur.String() + " " + tiglib.DateFr(ch.DateContrat)
-}
-*/
-
 func (ch *Chautre) FullString() string {
 	return "Chantier autre valorisation " + ch.String()
 }
