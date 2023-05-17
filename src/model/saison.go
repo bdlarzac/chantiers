@@ -1,11 +1,12 @@
 /*
 *****************************************************************************
 
-	Calculs utilisés dans les bilans
+	Code liés aux saisons
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 	@history    2021-01-19 10:09:42+01:00, Thierry Graff : Creation
+	@history    2023-05-17 09:16:48+02:00, Thierry Graff : Refactor, isole le code lié aux saisonx
 
 *******************************************************************************
 */
@@ -19,20 +20,6 @@ import (
 	"strings"
 	"time"
 )
-
-/*
-Structure de données adaptée au bilan par valorisation et par essence
-Normalement, aurait dû être :
-type Valorisation map[string]map[string][2]float64
-
-	"BO":
-	    "CH": {<volume>, <chiffe affaire>}
-
-mais pas été foutu de faire fonctionner ça, donc fait une map du style :
-"BO-CH-vol": <volume>,
-"BO-CH-ca": <chiffe affaire>
-*/
-type Valorisations map[string]float64
 
 /*
 Renvoie un tableau contenant les dates de début / fin des "saisons"
@@ -149,94 +136,4 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 		res = append(res, [2]time.Time{d, endPeriod})
 	}
 	return res, true, nil
-}
-
-func ComputeBilanValoEssences(db *sqlx.DB, dateDeb, dateFin time.Time, idsProprio []int) (valos Valorisations, err error) {
-	essenceCodes := AllEssenceCodes()
-	valoCodes := AllValorisationCodesAvecChauferEtPlaq() // {"PP", "CH", "PL", "PI", "BO", "CF", "PQ"}
-	// AllValorisationCodes() contient les valos pour les chantiers "autres valorisations"
-	// Les bilans ont d'autres types de valorisation
-	//	valoCodes = append(valoCodes, "CF") // pour séparer chauffage fermier / chauffage client
-	//	valoCodes = append(valoCodes, "PQ") // pour ajouter plaquettes
-	valos = make(Valorisations)
-	for _, valoCode := range valoCodes {
-		for _, essenceCode := range essenceCodes {
-			valos[valoCode+"-"+essenceCode+"-vol"] = 0
-			valos[valoCode+"-"+essenceCode+"-ca"] = 0
-		}
-	}
-	//
-	// chautre
-	//
-	chautres := []*Chautre{}
-	query := `select * from chautre where datecontrat >= ? and datecontrat <= ?
-	            and id in(
-	                select id_chantier from chantier_ug where type_chantier='chautre' and id_ug in(
-	                    select id_ug from parcelle_ug where id_parcelle in(
-	                        select id from parcelle where id_proprietaire in(?)
-	                    )
-	                )
-	            )
-	`
-	query, args, err := sqlx.In(query, dateDeb, dateFin, idsProprio)
-	query = db.Rebind(query) // transforme ? en $1 etc.
-	err = db.Select(&chautres, query, args...)
-	if err != nil {
-		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, chautre := range chautres {
-		valos[chautre.TypeValo+"-"+chautre.Essence+"-vol"] += chautre.VolumeRealise
-		valos[chautre.TypeValo+"-"+chautre.Essence+"-ca"] += chautre.PUHT * chautre.VolumeRealise
-	}
-	//
-	// chaufer
-	//
-	chaufers := []*Chaufer{}
-	query = `select * from chaufer where datechantier >= ? and datechantier <= ?
-	            and id in(
-	                select id_chantier from chantier_ug where type_chantier='chaufer' and id_ug in(
-	                    select id_ug from parcelle_ug where id_parcelle in(
-	                        select id from parcelle where id_proprietaire in(?)
-	                    )
-	                )
-	            )
-	`
-	query, args, err = sqlx.In(query, dateDeb, dateFin, idsProprio)
-	query = db.Rebind(query) // transforme ? en $1 etc.
-	err = db.Select(&chaufers, query, args...)
-	if err != nil {
-		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, chaufer := range chaufers {
-		valos["CF-"+chaufer.Essence+"-vol"] += chaufer.Volume // CF = chauffage fermier
-	}
-	//
-	// plaq
-	//
-	plaqs := []*Plaq{}
-	query = `select * from plaq where datedeb >= ? and datedeb <= ?
-	            and id in(
-	                select id_chantier from chantier_ug where type_chantier='plaq' and id_ug in(
-	                    select id_ug from parcelle_ug where id_parcelle in(
-	                        select id from parcelle where id_proprietaire in(?)
-	                    )
-	                )
-	            )
-	`
-	query, args, err = sqlx.In(query, dateDeb, dateFin, idsProprio)
-	query = db.Rebind(query) // transforme ? en $1 etc.
-	err = db.Select(&plaqs, query, args...)
-	if err != nil {
-		return valos, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, plaq := range plaqs {
-		err = plaq.ComputeVolume(db)
-		if err != nil {
-			return valos, werr.Wrapf(err, "Erreur appel plaq.computeVolume()")
-		}
-		valos["PQ-PS-vol"] += plaq.Volume // PQ = plaquettes ; PS = pin sylvestre
-		// valos["PQ-PS-ca"] dépend des ventes ; trop compliqué (?)
-	}
-	//
-	return valos, err
 }
