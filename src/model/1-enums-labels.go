@@ -2,9 +2,6 @@
 *****************************************************************************
 
 	Enums manipulées par le programme
-	En théorie, les fonctions All*Codes() devraient
-	renvoyer des valeurs tirées de la base avec des queries du type :
-	SELECT unnest(enum_range(NULL::my_type));
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -45,30 +42,6 @@ func LabelActivite(code string) string {
 		return "Chargement"
 	}
 	return "??? BUG LabelActivite ("+code+") ???"
-}
-
-// ************************** Essences (= espèces d'arbres) *******************************
-// cf type postgres typessence
-
-// @return  Tous les codes des essences
-func AllEssenceCodes() []string {
-	return []string{"PS", "CN", "CT", "GV"}
-}
-
-// Labels des essences  manipulées par l'appli
-// @param code : essence telle que stockée en base
-func LabelEssence(code string) string {
-	switch code {
-	case "PS":
-		return "Pin sylvestre"
-	case "CN":
-		return "Chêne"
-	case "CT":
-		return "Châtaigner"
-	case "GV":
-		return "Genévrier"
-	}
-	return "??? BUG LabelEssence ("+code+") ???"
 }
 
 // ************************** Type d'exploitation *******************************

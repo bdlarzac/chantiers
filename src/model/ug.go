@@ -27,31 +27,16 @@ type UG struct {
 	Id         int
 	Code       string
 	SurfaceSIG string `db:"surface_sig"`
-	//
-	// #15 remove after execution of migration
-	//
-	TypeCoupe         string `db:"type_coupe"`
-	PrevisionnelCoupe string `db:"previsionnel_coupe"`
-	TypePeuplement    string `db:"type_peuplement"`
-	//
-	// end #15 remove after execution of migration
-	//
-	// new #15
-	//
 	CodeTypo          string `db:"code_typo"`
 	Coupe             string `db:"coupe"`
 	AnneeIntervention string `db:"annee_intervention"`
 	PSGSuivant        string `db:"psg_suivant"`
-	// pas stocké en base
+	// pas stocké dans la table ug
 	NomTypo string
-	//
-	// end new #15
-	//
-	// pas stocké en base
 	Parcelles        []*Parcelle
 	Fermiers         []*Fermier
 	Proprietaires    []*Acteur
-	Essences         []*Essence
+	CodesEssence     []*string
 	Recaps           map[string]RecapUG
 	SortedRecapYears []string // années contenant de l'activité prise en compte dans Recaps
 }
@@ -357,14 +342,11 @@ func (ug *UG) ComputeProprietaires(db *sqlx.DB) error {
 }
 
 func (ug *UG) ComputeEssences(db *sqlx.DB) error {
-	if len(ug.Essences) != 0 {
+	if len(ug.CodesEssence) != 0 {
 		return nil // déjà calculé
 	}
-	query := `
-        select * from essence where code in(
-            select code_essence from ug_essence where id_ug =$1
-        ) order by nom`
-	err := db.Select(&ug.Essences, query, ug.Id)
+	query := `select code_essence from ug_essence where id_ug =$1 order by code_essence`
+	err := db.Select(&ug.CodesEssence, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

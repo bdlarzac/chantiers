@@ -15,8 +15,8 @@
             
             <div class="padding-top05">Essences</div>
             <div class="padding-top05">
-                {{range .Essences}}
-                    <div>{{.NomLong}}</div>
+                {{range .CodesEssence}}
+                    <div>{{. | labelEssence}}</div>
                 {{end}}
             </div>
         

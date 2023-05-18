@@ -1,6 +1,4 @@
 /*
-*
-*****************************************************************************
 
 	Essence (= espèce d'arbre)
 
@@ -8,21 +6,8 @@
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 	@history    2023-03-03 08:57:51+01:00, Thierry Graff : Creation
 
-*******************************************************************************
-*
 */
 package model
-
-import (
-	"bdl.local/bdl/generic/wilk/werr"
-	"github.com/jmoiron/sqlx"
-)
-
-/* type Essence struct {
-	Code    string
-	Nom     string
-	NomLong string
-} */
 
 var EssenceMap = map[string]string{
     "AL": "Alisier",
@@ -30,7 +15,7 @@ var EssenceMap = map[string]string{
     "CT": "Châtaigner",
     "CD": "Cèdre",
     "DG": "Douglas",
-    "EM": "Erable de Mtp",
+    "EM": "Erable de Montpellier",
     "ER": "Erable",
     "FL": "Mélange feuillus",
     "GV": "Genévrier",

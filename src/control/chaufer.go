@@ -34,7 +34,6 @@ type detailsChauferList struct {
 	Chantiers       []*model.Chaufer
 	Annee           string   // année courante
 	Annees          []string // toutes les années avec chantier
-	TotalParEssence map[string]float64
 }
 
 // *********************************************************
@@ -55,14 +54,6 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		return err
 	}
 	//
-	totalParEssence := map[string]float64{}
-	for _, essence := range model.AllEssenceCodes() {
-		totalParEssence[essence] = 0
-	}
-	for _, ch := range chantiers {
-		totalParEssence[ch.Essence] += ch.Volume
-	}
-	//
 	titrePage := "Chantiers chauffage fermier " + annee
 	ctx.TemplateName = "chaufer-list.html"
 	ctx.Page = &ctxt.Page{
@@ -78,7 +69,6 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			Chantiers:       chantiers,
 			Annee:           annee,
 			Annees:          annees,
-			TotalParEssence: totalParEssence,
 		},
 		Footer: ctxt.Footer{
 			JSFiles: []string{

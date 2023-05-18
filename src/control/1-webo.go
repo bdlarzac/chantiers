@@ -23,13 +23,13 @@ import (
 // Renvoie la liste des essences possibles
 // dans un format utilisable par webo
 func WeboEssence() []webo.OptionString {
-	return []webo.OptionString{
+    optionStrings := []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_ESSENCE", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "essence-PS", OptionLabel: model.LabelEssence("PS")},
-		webo.OptionString{OptionValue: "essence-CN", OptionLabel: model.LabelEssence("CN")},
-		webo.OptionString{OptionValue: "essence-CT", OptionLabel: model.LabelEssence("CT")},
-		webo.OptionString{OptionValue: "essence-GV", OptionLabel: model.LabelEssence("GV")},
-	}
+    }
+    for _, code := range(model.EssenceCodes){
+        optionStrings = append(optionStrings, webo.OptionString{OptionValue: "essence-" + code, OptionLabel: model.EssenceMap[code]})
+    }
+    return optionStrings
 }
 
 // Renvoie la liste des unités possibles dans un Chautre

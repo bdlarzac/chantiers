@@ -437,7 +437,7 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	y += he
 	pdf.SetXY(x, y)
 	wi = w1
-	str = "Vente " + tr(model.ValoMap[ch.TypeValo]) + " - " + tr(model.LabelEssence(ch.Essence))
+	str = "Vente " + tr(model.ValoMap[ch.TypeValo]) + " - " + tr(model.EssenceMap[ch.Essence])
 	pdf.MultiCell(wi, he, str, "LRB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
