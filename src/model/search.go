@@ -88,13 +88,8 @@ fmt.Printf("filtres = %+v\n", filtres)
 	//
 	if len(filtres["essence"]) != 0 {
 		tmp := []string{}
-		essenceMap, err := GetEssencesMap(db)
-		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel GetEssencesMap()")
-		}
 		for _, code := range filtres["essence"] {
-			essenceLabel := essenceMap[code]
-			tmp = append(tmp, essenceLabel)
+			tmp = append(tmp, EssenceMap[code])
 		}
 		result += "<tr><td>Essences :</td><td>" + strings.Join(tmp, ", ") + "</td></tr>\n"
 	}
@@ -106,14 +101,6 @@ fmt.Printf("filtres = %+v\n", filtres)
 	    
 	    
 		tmp := []string{}
-		essenceMap, err := GetEssencesMap(db)
-		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel GetEssencesMap()")
-		}
-		for _, code := range filtres["essence"] {
-			essenceLabel := essenceMap[code]
-			tmp = append(tmp, essenceLabel)
-		}
 		result += "<tr><td>Essences :</td><td>" + strings.Join(tmp, ", ") + "</td></tr>\n"
 	}
 	//

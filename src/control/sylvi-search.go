@@ -14,7 +14,7 @@ import (
 )
 
 type detailsSylviForm struct {
-	EssencesMap map[string]string // pour choix-essence
+	EssenceCodes []string         // pour choix-essence
 	Fermiers    []*model.Fermier  // pour choix-fermier
 	AllCommunes []*model.Commune  // pour choix-parcelle
 	UrlAction   string
@@ -88,10 +88,6 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			// tab = "liste"
 		// }
 		//
-		essencesMap, err := model.GetEssencesMap(ctx.DB)
-		if err != nil {
-			return err
-		}
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 		if err != nil {
 			return err
@@ -110,7 +106,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			},
 			Menu: "accueil",
 			Details: detailsSylviForm{
-				EssencesMap: essencesMap,
+				EssenceCodes: model.EssenceCodes,
 				Fermiers:    fermiers,
 				AllCommunes: allCommunes,
 //				UrlAction:   "/sylviculture/recherche/" + tab,

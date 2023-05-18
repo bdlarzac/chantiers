@@ -15,15 +15,15 @@ import (
 )
 
 type detailsActiviteSearchForm struct {
-	Periods     [][2]time.Time    // pour choix-date
-	EssencesMap map[string]string // pour choix-essence
-	ValoCodes   []string          // pour choix-valo
-	PropriosMap map[int]string    // pour choix-proprio
-	Fermiers    []*model.Fermier  // pour choix-fermier
-	AllUGs      []*model.UG       // pour choix-ug - liens-ugs-modal
-	UGs         []*model.UG       // pour choix-ug - liens-ugs - toujours vide, utile que pour compatibilité avec liens-ugs.html
-	AllCommunes []*model.Commune  // pour choix-parcelle
-	UrlAction   string
+	Periods      [][2]time.Time    // pour choix-date
+	EssenceCodes []string          // pour choix-essence
+	ValoCodes    []string          // pour choix-valo
+	PropriosMap  map[int]string    // pour choix-proprio
+	Fermiers     []*model.Fermier  // pour choix-fermier
+	AllUGs       []*model.UG       // pour choix-ug - liens-ugs-modal
+	UGs          []*model.UG       // pour choix-ug - liens-ugs - toujours vide, utile que pour compatibilité avec liens-ugs.html
+	AllCommunes  []*model.Commune  // pour choix-parcelle
+	UrlAction    string
 }
 
 type detailsActiviteSearchResults struct {
@@ -114,10 +114,6 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		if err != nil {
 			return err
 		}
-		essencesMap, err := model.GetEssencesMap(ctx.DB)
-		if err != nil {
-			return err
-		}
 		propriosMap, err := model.GetProprietaires(ctx.DB)
 		if err != nil {
 			return err
@@ -144,15 +140,15 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			},
 			Menu: "accueil",
 			Details: detailsActiviteSearchForm{
-				Periods:     periods,
-				EssencesMap: essencesMap,
-				ValoCodes:   model.AllValoCodesAvecChauferEtPlaq(),
-				PropriosMap: propriosMap,
-				Fermiers:    fermiers,
-				AllUGs:      allUGs,
-				UGs:         []*model.UG{},
-				AllCommunes: allCommunes,
-				UrlAction:   "/activite/recherche/" + tab,
+				Periods:      periods,
+				EssenceCodes: model.EssenceCodes,
+				ValoCodes:    model.AllValoCodesAvecChauferEtPlaq(),
+				PropriosMap:  propriosMap,
+				Fermiers:     fermiers,
+				AllUGs:       allUGs,
+				UGs:          []*model.UG{},
+				AllCommunes:  allCommunes,
+				UrlAction:    "/activite/recherche/" + tab,
 			},
 		}
 		return nil

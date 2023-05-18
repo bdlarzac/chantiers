@@ -28,6 +28,15 @@ type StockFrais struct {
 	Notes      string
 }
 
+// Association code StockFrais => label
+// Les codes correspondent aux valeurs stockées en base dans typefrais.stockfrais
+// = valeurs du type postgres typestockfrais
+var StockFraisMap = map[string]string{
+	"AS": "Assurance",
+	"EL": "Electricité",
+	"LO": "Loyer",
+}
+
 // *********************************************************
 func GetStockFrais(db *sqlx.DB, id int) (sf *StockFrais, err error) {
 	sf = &StockFrais{}

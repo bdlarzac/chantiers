@@ -2,8 +2,8 @@
     Formulaire de choix d'une ou plusieurs essences.
     Un seul appel par page possible.
     
-    Cette template doit être appelée avec une variable go contenant un champ EssencesMap.
-    EssencesMap est uniquement utilisée dans le constructeur.
+    Cette template doit être appelée avec une variable go contenant un champ EssencesCodes.
+    EssencesCodes est uniquement utilisée dans le constructeur.
     
     Utilisation :
         <script>
@@ -41,10 +41,10 @@ class ChoixEssence{
     
     #buildCheckboxes(){
         let res = '';
-        {{ range $code, $label := .EssencesMap }}
+        {{range .EssenceCodes}}
             res += '<label class="block">'
-                + '<input class="chk-essence" type="checkbox" id="choix-essence-{{$code}}" name="choix-essence-{{$code}}" onchange="choixEssence_choixChanged();">'
-                + '{{$label}}'
+                + '<input class="chk-essence" type="checkbox" id="choix-essence-{{.}}" name="choix-essence-{{.}}" onchange="choixEssence_choixChanged();">'
+                + '{{. | labelEssence}}'
                 + '</label>\n';
         {{end}}
         return res;

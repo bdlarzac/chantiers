@@ -38,9 +38,9 @@ func WeboEssence() []webo.OptionString {
 func WeboChautreUnite() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_UNITE", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.LabelUnite("ST")},
-		webo.OptionString{OptionValue: "unite-TO", OptionLabel: model.LabelUnite("TO")},
-		webo.OptionString{OptionValue: "unite-M3", OptionLabel: model.LabelUnite("M3")},
+		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.UniteMap["ST"]},
+		webo.OptionString{OptionValue: "unite-TO", OptionLabel: model.UniteMap["TO"]},
+		webo.OptionString{OptionValue: "unite-M3", OptionLabel: model.UniteMap["M3"]},
 	}
 }
 
@@ -50,8 +50,8 @@ func WeboChautreUnite() []webo.OptionString {
 func WeboChauferUnite() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_UNITE", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "unite-MA", OptionLabel: model.LabelUnite("MA")},
-		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.LabelUnite("ST")},
+		webo.OptionString{OptionValue: "unite-MA", OptionLabel: model.UniteMap["MA"]},
+		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.UniteMap["ST"]},
 	}
 }
 
@@ -60,10 +60,10 @@ func WeboChauferUnite() []webo.OptionString {
 func WeboPlaqOpUnite() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_UNITE", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "unite-JO", OptionLabel: model.LabelUnite("JO")}, // jour
-		webo.OptionString{OptionValue: "unite-HE", OptionLabel: model.LabelUnite("HE")}, // heure
-		webo.OptionString{OptionValue: "unite-MA", OptionLabel: model.LabelUnite("MA")}, // map
-		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.LabelUnite("ST")}, // stère
+		webo.OptionString{OptionValue: "unite-JO", OptionLabel: model.UniteMap["JO"]}, // jour
+		webo.OptionString{OptionValue: "unite-HE", OptionLabel: model.UniteMap["HE"]}, // heure
+		webo.OptionString{OptionValue: "unite-MA", OptionLabel: model.UniteMap["MA"]}, // map
+		webo.OptionString{OptionValue: "unite-ST", OptionLabel: model.UniteMap["ST"]}, // stère
 	}
 }
 
@@ -141,9 +141,9 @@ func WeboGranulo() []webo.OptionString {
 func WeboStockFrais() []webo.OptionString {
 	return []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_STOCKFRAIS", OptionLabel: "--- Choisir ---"},
-		webo.OptionString{OptionValue: "stockfrais-AS", OptionLabel: model.LabelStockFrais("AS")},
-		webo.OptionString{OptionValue: "stockfrais-EL", OptionLabel: model.LabelStockFrais("EL")},
-		webo.OptionString{OptionValue: "stockfrais-LO", OptionLabel: model.LabelStockFrais("LO")},
+		webo.OptionString{OptionValue: "stockfrais-AS", OptionLabel: model.StockFraisMap["AS"]},
+		webo.OptionString{OptionValue: "stockfrais-EL", OptionLabel: model.StockFraisMap["EL"]},
+		webo.OptionString{OptionValue: "stockfrais-LO", OptionLabel: model.StockFraisMap["LO"]},
 	}
 }
 

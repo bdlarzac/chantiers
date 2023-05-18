@@ -122,7 +122,7 @@ func chautre_titreParDefaut_2023_02_20(ch *model.Chautre) string {
 	if ch.Acheteur == nil {
 		panic("Erreur dans le code - L'acheteur d'un chantier autre valorisation doit être calculé avant d'appeler String()")
 	}
-	return model.LabelValorisation(ch.TypeValo) + " " + ch.Acheteur.String() + " " + tiglib.DateFr(ch.DateContrat)
+	return model.ValoMap[ch.TypeValo] + " " + ch.Acheteur.String() + " " + tiglib.DateFr(ch.DateContrat)
 }
 
 //

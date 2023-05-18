@@ -18,9 +18,9 @@ package model
 // cf type postgres typeop pour opérations simples des chantiers plaquettes
 
 // Labels du type d'opération simple pour PlaqOp
-// @param abbrev : type d'opération tel que stocké en base
-func LabelActivite(abbrev string) string {
-	switch abbrev {
+// @param code : type d'opération tel que stocké en base
+func LabelActivite(code string) string {
+	switch code {
 	//
 	// opérations simples des chantiers plaquettes
 	//
@@ -44,7 +44,7 @@ func LabelActivite(abbrev string) string {
 	case "CG":
 		return "Chargement"
 	}
-	return "??? BUG LabelActivite ("+abbrev+") ???"
+	return "??? BUG LabelActivite ("+code+") ???"
 }
 
 // ************************** Essences (= espèces d'arbres) *******************************
@@ -56,9 +56,9 @@ func AllEssenceCodes() []string {
 }
 
 // Labels des essences  manipulées par l'appli
-// @param abbrev : essence telle que stockée en base
-func LabelEssence(abbrev string) string {
-	switch abbrev {
+// @param code : essence telle que stockée en base
+func LabelEssence(code string) string {
+	switch code {
 	case "PS":
 		return "Pin sylvestre"
 	case "CN":
@@ -68,32 +68,16 @@ func LabelEssence(abbrev string) string {
 	case "GV":
 		return "Genévrier"
 	}
-	return "??? BUG LabelEssence ("+abbrev+") ???"
-}
-
-// Labels du type de vente (pour Chautre)
-// @param abbrev : type de vente tel que stockée en base
-func LabelTypeVente(abbrev string) string {
-	switch abbrev {
-	case "NON":
-		return "Non spécifié"
-	case "BSP":
-		return "Bois-sur-pied"
-	case "BDR":
-		return "Bord-de-route"
-	case "LIV":
-		return "Livré"
-	}
-	return "??? BUG LabelTypeVente ("+abbrev+") ???"
+	return "??? BUG LabelEssence ("+code+") ???"
 }
 
 // ************************** Type d'exploitation *******************************
 // cf type postgres typexploitation
 
 // Labels du type d'exploitation
-// @param abbrev : type d'exploitation
-func LabelExploitation(abbrev string) string {
-	switch abbrev {
+// @param code : type d'exploitation
+func LabelExploitation(code string) string {
+	switch code {
 	case "1":
 		return "1ère"
 	case "2":
@@ -105,31 +89,14 @@ func LabelExploitation(abbrev string) string {
 	case "5":
 		return "5ème"
 	}
-	return "??? BUG LabelExploitation ("+abbrev+") ???"
+	return "??? BUG LabelExploitation ("+code+") ???"
 }
 
 // ************************** Granulométrie *******************************
 // cf type postgres typegranulo
 
 // Labels du type de granulométrie
-// @param abbrev : type de granulométrie
-func LabelGranulo(abbrev string) string {
-	return abbrev // le type stocké en base correspond au label
-}
-
-// ************************** Frais des lieux de stockage *******************************
-// cf type postgres typestockfrais
-
-// Labels du type de frais (pour lieu de stockage)
-// @param abbrev : type de frais tel que stockée en base
-func LabelStockFrais(abbrev string) string {
-	switch abbrev {
-	case "AS":
-		return "Assurance"
-	case "EL":
-		return "Electricité"
-	case "LO":
-		return "Loyer"
-	}
-	return "??? BUG LabelStockFrais ("+abbrev+") ???"
+// @param code : type de granulométrie
+func LabelGranulo(code string) string {
+	return code // le type stocké en base correspond au label
 }

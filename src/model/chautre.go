@@ -47,6 +47,16 @@ type Chautre struct {
 	Acheteur       *Acteur
 }
 
+// Association code type vente => label
+// Les codes correspondent aux valeurs stockées en base dans chautre.typevente
+// = valeurs du type postgres typevente
+var ChautreTypeVenteMap = map[string]string{
+	"NON": "Non spécifié",
+	"BSP": "Bois-sur-pied",
+	"BDR": "Bord-de-route",
+	"LIV": "Livré",
+}
+
 // ************************** Nom *******************************
 
 func (ch *Chautre) String() string {

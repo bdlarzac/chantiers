@@ -1,8 +1,7 @@
 /*
 *****************************************************************************
 
-	Code lié aux unites
-	cf type postgres typeunite
+	Code lié aux unites.
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -12,24 +11,15 @@
 */
 package model
 
-// Labels des unités manipulées par l'appli - format adapté à select html (à cause de m3)
-// @param abbrev : unité telle que stockée en base
-func LabelUnite(abbrev string) string {
-	switch abbrev {
-	case "HE":
-		return "heures"
-	case "JO":
-		return "jours"
-	case "M3":
-		return "m<sup>3</sup>"
-	case "MA":
-		return "maps"
-	case "NP": // nb de piquets
-		return "piquets"
-	case "ST":
-		return "stères"
-	case "TO":
-		return "tonnes"
-	}
-	return "??? BUG LabelUnite ("+abbrev+") ???"
+// Association code unité => label
+// Les codes correspondent aux valeurs stockées en base dans les tables plaqop, chaufer, chautre
+// = valeurs du type postgres typeunite
+var UniteMap = map[string]string{
+	"HE": "heures",
+	"JO": "jours",
+	"M3": "m<sup>3</sup>",
+	"MA": "maps",
+	"NP": "piquets", // nb de piquets
+	"ST": "stères",
+	"TO": "tonnes",
 }

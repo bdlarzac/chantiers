@@ -2,7 +2,6 @@
 *****************************************************************************
 
 	Valorisations
-	cf type postgres typevalorisation
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -12,8 +11,9 @@
 */
 package model
 
-// Association code valorisation => label
+// Associations code valorisation => label
 // Les codes correspondent aux valeurs stockées en base dans chautre.typevalo
+// = valeurs du type postgres typevalorisation
 var ValoMap = map[string]string{
 	"BO": "Bois d'oeuvre",
 	"CF": "Chauffage fermier",
@@ -60,11 +60,9 @@ func CodeValo2CodeUnite(codeValo string) string {
 		return "ST"
 	case "PL":
 		return "ST"
-	case "PI":
-		// 2023-05-17 je ne comprends pas cette histoire
-		// l'unité "nb de piquets" n'est plus utilisée
-		// suite à demande BDL de pouvoir choisir stères ou nb de piquets
-		return "ST"
+    // devenu inutile suite à demande BDL de pouvoir choisir stères ou nb de piquets
+	//case "PI":
+	//	return "ST"
 	case "BO":
 		return "M3"
 	case "PQ":

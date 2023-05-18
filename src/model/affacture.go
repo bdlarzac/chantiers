@@ -173,11 +173,11 @@ func (aff *Affacture) computeItemsOperationSimple(db *sqlx.DB, typeActivite stri
 			Titre: "M.O. " + LabelActivite(typeActivite),
 			Colonnes: []AffactureColonne{
 				{
-					Titre:  "Nb " + LabelUnite(elt.Unite),
+					Titre:  "Nb " + UniteMap[elt.Unite],
 					Valeur: strconv.FormatFloat(elt.Qte, 'f', 2, 64),
 				},
 				{
-					Titre:  "Prix / " + strings.TrimSuffix(LabelUnite(elt.Unite), "s"),
+					Titre:  "Prix / " + strings.TrimSuffix(UniteMap[elt.Unite], "s"),
 					Valeur: strconv.FormatFloat(elt.PUHT, 'f', 2, 64),
 				},
 				{

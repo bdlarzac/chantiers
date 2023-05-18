@@ -48,7 +48,6 @@ func MustInitTemplates() {
 		"labelEssence":      labelEssence,
 		"labelExploitation": labelExploitation,
 		"labelStockFrais":   labelStockFrais,
-		"labelTypeVente":    labelTypeVente,
 		"labelUnite":        labelUnite,
 		"labelValo":         labelValo,
 		"valo2uniteLabel":   valo2uniteLabel,
@@ -186,7 +185,7 @@ func labelActivite(code string) template.HTML {
 
 // Nom d'une essence (chêne etc.) à partir de son code
 func labelEssence(code string) template.HTML {
-	return template.HTML(model.LabelEssence(code))
+	return template.HTML(model.EssenceMap[code])
 }
 
 // Type d'exploitation (1 - 5), à partir de son code
@@ -196,17 +195,12 @@ func labelExploitation(code string) template.HTML {
 
 // Type de frais pour stockage (loyer, assurance, élec) à partir de son code
 func labelStockFrais(code string) template.HTML {
-	return template.HTML(model.LabelStockFrais(code))
-}
-
-// Type de vente (pour chautre) à partir de son code
-func labelTypeVente(code string) template.HTML {
-	return template.HTML(model.LabelTypeVente(code))
+	return template.HTML(model.StockFraisMap[code])
 }
 
 // Nom d'une unité utilisée dans cette appli, à partir de son code
 func labelUnite(code string) template.HTML {
-	return template.HTML(model.LabelUnite(code))
+	return template.HTML(model.UniteMap[code])
 }
 
 // Type de valorisation (palette, pâte à papier...), à partir de son code
@@ -216,5 +210,5 @@ func labelValo(code string) template.HTML {
 
 // Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
 func valo2uniteLabel(code string) template.HTML {
-	return template.HTML(model.LabelUnite(model.CodeValo2CodeUnite(code)))
+	return template.HTML(model.UniteMap[model.CodeValo2CodeUnite(code)])
 }
