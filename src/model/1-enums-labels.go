@@ -12,7 +12,6 @@
 package model
 
 // ************************** Opérations simples *******************************
-// cf type postgres typeop pour opérations simples des chantiers plaquettes
 
 // Labels du type d'opération simple pour PlaqOp
 // @param code : type d'opération tel que stocké en base
@@ -45,7 +44,6 @@ func LabelActivite(code string) string {
 }
 
 // ************************** Type d'exploitation *******************************
-// cf type postgres typexploitation
 
 // Labels du type d'exploitation
 // @param code : type d'exploitation
@@ -66,7 +64,6 @@ func LabelExploitation(code string) string {
 }
 
 // ************************** Granulométrie *******************************
-// cf type postgres typegranulo
 
 // Labels du type de granulométrie
 // @param code : type de granulométrie

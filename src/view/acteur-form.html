@@ -243,7 +243,7 @@ window.addEventListener("load", function(){
 });
 
 function initialize(){
-    {{range .CodesRoles}}
+    {{range .CodesRole}}
         document.getElementById("{{.}}").checked = true;
     {{end}}
 }
@@ -254,7 +254,7 @@ function validateForm(){
         msg += "- Vous devez renseigner le nom.\n";
     }
     // on laisse la possibilité de créer un client sans rôle
-    fillCodesRoles();
+    fillCodesRole();
     if(msg != ""){
         alert("Impossible de valider ce formulaire : \n" + msg);
         return false;
@@ -266,7 +266,7 @@ function validateForm(){
     Remplit l'attribut value de l'élément "codes-roles" (input type="hidden") :
     Cette value est de la forme : "VPL-LI;PLR-PO;DIV-MH"
 **/
-function fillCodesRoles(){
+function fillCodesRole(){
     let msg = "";
     const hiddenValues = []; // tableau pour fabriquer value du hidden field
     //

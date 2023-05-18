@@ -29,8 +29,8 @@ type StockFrais struct {
 }
 
 // Association code StockFrais => label
-// Les codes correspondent aux valeurs stockées en base dans typefrais.stockfrais
-// = valeurs du type postgres typestockfrais
+// Les codes correspondent aux valeurs stockées en base dans :
+// - typefrais.stockfrais
 var StockFraisMap = map[string]string{
 	"AS": "Assurance",
 	"EL": "Electricité",

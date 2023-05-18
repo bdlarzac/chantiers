@@ -16,7 +16,6 @@ import (
 type detailsActeurList struct {
 	List     []*model.Acteur
 	Count    int
-	RolesMap map[string]string
 }
 
 type detailsActeurForm struct {
@@ -27,7 +26,6 @@ type detailsActeurForm struct {
 type detailsActeurShow struct {
 	Acteur    *model.Acteur
 	Activites []*model.ActeurActivite
-	RolesMap  map[string]string
 }
 
 // *********************************************************
@@ -44,11 +42,6 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		}
 	}
 	//
-	rolesMap, err := model.GetRolesMap(ctx.DB)
-	if err != nil {
-		return err
-	}
-	//
 	ctx.TemplateName = "acteur-list.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
@@ -62,7 +55,6 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		Details: detailsActeurList{
 			List:     list,
 			Count:    model.CountActeurs(ctx.DB),
-			RolesMap: rolesMap,
 		},
 	}
 	return nil
@@ -89,11 +81,6 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		return err
 	}
 	//
-	rolesMap, err := model.GetRolesMap(ctx.DB)
-	if err != nil {
-		return err
-	}
-	//
 	ctx.TemplateName = "acteur-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
@@ -105,7 +92,6 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		Details: detailsActeurShow{
 			Acteur:    acteur,
 			Activites: activites,
-			RolesMap:  rolesMap,
 		},
 	}
 	return nil
@@ -245,7 +231,7 @@ func acteurForm2var(r *http.Request) (*model.Acteur, error) {
 		//test nécessaire car si str est vide, Split renvoie un tableu contenant une chaîne vide
 		tmp := strings.Split(r.PostFormValue("codes-roles"), ";")
 		for _, str := range tmp {
-			acteur.CodesRoles = append(acteur.CodesRoles, str)
+			acteur.CodesRole = append(acteur.CodesRole, str)
 		}
 	}
 	//

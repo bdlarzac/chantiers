@@ -12,8 +12,8 @@
 package model
 
 // Associations code valorisation => label
-// Les codes correspondent aux valeurs stockées en base dans chautre.typevalo
-// = valeurs du type postgres typevalorisation
+// Les codes correspondent aux valeurs stockées en base dans :
+// - chautre.typevalo
 var ValoMap = map[string]string{
 	"BO": "Bois d'oeuvre",
 	"CF": "Chauffage fermier",

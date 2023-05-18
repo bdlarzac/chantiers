@@ -125,10 +125,6 @@ func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
 	if err != nil {
 		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeEssences()")
 	}
-	err = ug.ComputeTypo(db)
-	if err != nil {
-		return ug, werr.Wrapf(err, "Erreur appel UG.ComputeTypo()")
-	}
 	return ug, nil
 }
 
@@ -347,18 +343,6 @@ func (ug *UG) ComputeEssences(db *sqlx.DB) error {
 	}
 	query := `select code_essence from ug_essence where id_ug =$1 order by code_essence`
 	err := db.Select(&ug.CodesEssence, query, ug.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return nil
-}
-
-func (ug *UG) ComputeTypo(db *sqlx.DB) error {
-	if ug.NomTypo != "" {
-		return nil // déjà calculé
-	}
-	query := `select nom from typo where code=$1`
-	err := db.Get(&ug.NomTypo, query, ug.CodeTypo)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

@@ -30,7 +30,7 @@ const ID_GFA = 3
 type Acteur struct {
 	Id           int
 	Nom          string
-	CodesRoles   []string
+	CodesRole    []string
 	Prenom       string
 	Adresse1     string
 	Adresse2     string
@@ -53,6 +53,7 @@ type Acteur struct {
 
 // Sert à afficher la liste des activités d'un acteur.
 // Contient les infos utilisées pour l'affichage, pas les activités.
+///////////////////// TODO  supprimer et remplacer par model.Activite
 type ActeurActivite struct {
 	Date        time.Time
 	Role        string
@@ -111,7 +112,7 @@ func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
 	if err != nil {
 		return nil, werr.Wrapf(err, "Erreur Appel GetActeur()")
 	}
-	a.ComputeCodesRoles(db)
+	a.ComputeCodesRole(db)
 	return a, nil
 }
 
@@ -130,9 +131,9 @@ func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) 
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	for _, acteur := range acteurs {
-		err = acteur.ComputeCodesRoles(db)
+		err = acteur.ComputeCodesRole(db)
         if err != nil {
-            return acteurs, werr.Wrapf(err, "Erreur appel ComputeCodesRoles()")
+            return acteurs, werr.Wrapf(err, "Erreur appel ComputeCodesRole()")
         }
 	}
 	return acteurs, nil
@@ -247,12 +248,12 @@ func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 
 // ************************** Compute *******************************
 
-func (a *Acteur) ComputeCodesRoles(db *sqlx.DB) (err error) {
-	if len(a.CodesRoles) != 0 {
+func (a *Acteur) ComputeCodesRole(db *sqlx.DB) (err error) {
+	if len(a.CodesRole) != 0 {
 		return nil // déjà calculé
 	}
 	query := `select code_role from acteur_role where id_acteur=$1`
-	err = db.Select(&a.CodesRoles, query, a.Id)
+	err = db.Select(&a.CodesRole, query, a.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -733,7 +734,7 @@ func InsertActeur(db *sqlx.DB, acteur *Acteur) (id int, err error) {
 	if err != nil {
 		return 0, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	err = insertLiensActeurRole(db, id, acteur.CodesRoles)
+	err = insertLiensActeurRole(db, id, acteur.CodesRole)
 	if err != nil {
 		return id, werr.Wrapf(err, "Erreur appel insertLiensActeurRole()")
 	}
@@ -781,7 +782,7 @@ func UpdateActeur(db *sqlx.DB, acteur *Acteur) (err error) {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-	err = updateLiensActeurRole(db, acteur.Id, acteur.CodesRoles)
+	err = updateLiensActeurRole(db, acteur.Id, acteur.CodesRole)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel updateLiensActeurRole()")
 	}

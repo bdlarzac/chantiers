@@ -9,6 +9,11 @@
 */
 package model
 
+// Association code essence => label
+// Les codes correspondent aux valeurs stockées en base dans :
+// - chautre.essence
+// - chaufer.essence
+// - plaq.essence
 var EssenceMap = map[string]string{
     "AL": "Alisier",
     "CN": "Chêne",

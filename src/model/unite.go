@@ -12,8 +12,10 @@
 package model
 
 // Association code unité => label
-// Les codes correspondent aux valeurs stockées en base dans les tables plaqop, chaufer, chautre
-// = valeurs du type postgres typeunite
+// Les codes correspondent aux valeurs stockées en base dans :
+// - plaqop.unite
+// - chaufer.unite
+// - chautre.unite
 var UniteMap = map[string]string{
 	"HE": "heures",
 	"JO": "jours",

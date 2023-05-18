@@ -47,7 +47,10 @@ func MustInitTemplates() {
 		"labelActivite":     labelActivite,
 		"labelEssence":      labelEssence,
 		"labelExploitation": labelExploitation,
+		"labelRole":         labelRole,
 		"labelStockFrais":   labelStockFrais,
+        "labelTypo":         labelTypo,
+        "labelTypo_long":    labelTypo_long,
 		"labelUnite":        labelUnite,
 		"labelValo":         labelValo,
 		"valo2uniteLabel":   valo2uniteLabel,
@@ -188,14 +191,30 @@ func labelEssence(code string) template.HTML {
 	return template.HTML(model.EssenceMap[code])
 }
 
-// Type d'exploitation (1 - 5), à partir de son code
+// Nom d'un type d'exploitation (1 - 5), à partir de son code
 func labelExploitation(code string) template.HTML {
 	return template.HTML(model.LabelExploitation(code))
 }
 
-// Type de frais pour stockage (loyer, assurance, élec) à partir de son code
+// Nom d'un type de frais pour stockage (loyer, assurance, élec) à partir de son code
 func labelStockFrais(code string) template.HTML {
 	return template.HTML(model.StockFraisMap[code])
+}
+
+// Nom d'un rôle (pour les acteurs) à partir de son code
+func labelRole(code string) template.HTML {
+	return template.HTML(model.RoleMap[code])
+}
+
+// Nom d'une typo (couche typologique venant du PSG) utilisée dans cette appli, à partir de son code
+func labelTypo(code string) template.HTML {
+	return template.HTML(model.TypoMap[code])
+}
+
+// Nom d'une typo (couche typologique venant du PSG) utilisée dans cette appli, à partir de son code
+// Nom complet
+func labelTypo_long(code string) template.HTML {
+	return template.HTML(model.TypoMap_long[code])
 }
 
 // Nom d'une unité utilisée dans cette appli, à partir de son code

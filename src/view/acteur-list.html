@@ -48,8 +48,8 @@
             </span>
         </td>
         <td class="whitespace-nowrap">
-            {{range .CodesRoles}}
-                <div>{{index $.Details.RolesMap .}}</div>
+            {{range .CodesRole}}
+                <div>{{. | labelRole}}</div>
             {{end}}
         </td>
         <td>

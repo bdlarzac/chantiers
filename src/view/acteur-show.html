@@ -21,11 +21,11 @@
     
 </h1>
 
-{{if $.Details.Acteur.CodesRoles}}
+{{if $.Details.Acteur.CodesRole}}
     <div class="margin-left margin-bottom">
         <b>Rôles :</b>
-        {{range $.Details.Acteur.CodesRoles}}
-            <span class="margin-right">{{index $.Details.RolesMap .}}</span>
+        {{range $.Details.Acteur.CodesRole}}
+            <span class="margin-right">{{. | labelRole}}</span>
         {{end}}
     </div>
 {{end}}
