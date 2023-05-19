@@ -21,15 +21,6 @@
     
 </h1>
 
-{{if $.Details.Acteur.CodesRole}}
-    <div class="margin-left margin-bottom">
-        <b>Rôles :</b>
-        {{range $.Details.Acteur.CodesRole}}
-            <span class="margin-right">{{. | labelRole}}</span>
-        {{end}}
-    </div>
-{{end}}
-
 <div class="page-content">
 
 <div class="flex-wrap">
@@ -39,9 +30,18 @@
 
 <div class="grid2-pres">
     
+        {{with .CodesRole}}
+        <div class="padding-bottom05">Rôles</div>
+        <div class="padding-bottom05">
+            {{range .}}
+                <div>{{. | labelRole}}</div>
+            {{end}}
+        </div>
+        {{end}}
+
         <div>Nom / Dénomination</div>
         <div>{{.Nom}}</div>
-    
+        
         <div>Prénom / Statut juridique</div>
         <div>{{.Prenom}}</div>
     

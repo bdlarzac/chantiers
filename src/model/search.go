@@ -95,13 +95,11 @@ fmt.Printf("filtres = %+v\n", filtres)
 	}
 	//
 	if len(filtres["valo"]) != 0 {
-	    
-	    
-	    ///////////// ici en cours //////////////
-	    
-	    
 		tmp := []string{}
-		result += "<tr><td>Essences :</td><td>" + strings.Join(tmp, ", ") + "</td></tr>\n"
+		for _, code := range filtres["valo"] {
+			tmp = append(tmp, ValoMap[code])
+		}
+		result += "<tr><td>Valorisations :</td><td>" + strings.Join(tmp, ", ") + "</td></tr>\n"
 	}
 	//
 	if len(filtres["ug"]) != 0 {

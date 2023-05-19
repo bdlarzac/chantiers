@@ -1,7 +1,7 @@
 /*
 *****************************************************************************
 
-	Fonctions liées aux rôles des acteurs
+	Rôles des acteurs
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -10,11 +10,6 @@
 *******************************************************************************
 */
 package model
-
-import (
-	"bdl.local/bdl/generic/wilk/werr"
-	"github.com/jmoiron/sqlx"
-)
 
 // Association code rôle => label
 // Attention, si on modifie les codes, il faut aussi modifier view/acteur-form.html à la main
