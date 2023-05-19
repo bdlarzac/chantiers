@@ -23,13 +23,13 @@ import (
 // Renvoie la liste des essences possibles
 // dans un format utilisable par webo
 func WeboEssence() []webo.OptionString {
-    optionStrings := []webo.OptionString{
+	optionStrings := []webo.OptionString{
 		webo.OptionString{OptionValue: "CHOOSE_ESSENCE", OptionLabel: "--- Choisir ---"},
-    }
-    for _, code := range(model.EssenceCodes){
-        optionStrings = append(optionStrings, webo.OptionString{OptionValue: "essence-" + code, OptionLabel: model.EssenceMap[code]})
-    }
-    return optionStrings
+	}
+	for _, code := range model.EssenceCodes {
+		optionStrings = append(optionStrings, webo.OptionString{OptionValue: "essence-" + code, OptionLabel: model.EssenceMap[code]})
+	}
+	return optionStrings
 }
 
 // Renvoie la liste des unités possibles dans un Chautre
@@ -208,7 +208,7 @@ func WeboTas(ctx *ctxt.Context) (res []webo.OptionString, err error) {
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_TAS", OptionLabel: "--- Choisir ---"})
 	for _, t := range tas {
-        label := fmt.Sprintf("%s (%.1f maps)", t.Nom, t.Stock)
+		label := fmt.Sprintf("%s (%.1f maps)", t.Nom, t.Stock)
 		res = append(res, webo.OptionString{OptionValue: "tas-" + strconv.Itoa(t.Id), OptionLabel: label})
 	}
 	return res, nil

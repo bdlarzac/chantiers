@@ -40,7 +40,7 @@ func main() {
 	migration := os.Args[1]
 	if !tiglib.InArray(migration, possibleMigrations) {
 		fmt.Println("MIGRATION INEXISTANTE : " + migration)
-        fmt.Println("Modifier 1.main.go pour la rajouter dans le switch : ")
+		fmt.Println("Modifier 1.main.go pour la rajouter dans le switch : ")
 		fmt.Println(msgPossibles)
 		return
 	}
@@ -79,9 +79,11 @@ func main() {
 		Migrate_2023_04_03_role_acteur__16(ctx)
 	case "Migrate_2023_05_18_clean_types__19":
 		Migrate_2023_05_18_clean_types__19(ctx)
-    default:
-        fmt.Println("Migration inconnue : " + migration)
-        fmt.Println("Modifier 1.main.go pour la rajouter dans le switch : ")
+	case "Migrate_2023_05_19_ug_again__18":
+		Migrate_2023_05_19_ug_again__18(ctx)
+	default:
+		fmt.Println("Migration inconnue : " + migration)
+		fmt.Println("Modifier 1.main.go pour la rajouter dans le switch : ")
 	}
 
 }

@@ -163,4 +163,3 @@ func computeFiltreValo(r *http.Request) (result []string) {
 	}
 	return result
 }
-

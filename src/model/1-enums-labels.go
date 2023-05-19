@@ -40,7 +40,7 @@ func LabelActivite(code string) string {
 	case "CG":
 		return "Chargement"
 	}
-	return "??? BUG LabelActivite ("+code+") ???"
+	return "??? BUG LabelActivite (" + code + ") ???"
 }
 
 // ************************** Type d'exploitation *******************************
@@ -60,7 +60,7 @@ func LabelExploitation(code string) string {
 	case "5":
 		return "5ème"
 	}
-	return "??? BUG LabelExploitation ("+code+") ???"
+	return "??? BUG LabelExploitation (" + code + ") ???"
 }
 
 // ************************** Granulométrie *******************************

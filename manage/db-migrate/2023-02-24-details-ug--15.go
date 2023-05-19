@@ -16,10 +16,10 @@ import (
 	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
-//	"bdl.local/bdl/model"
+	//	"bdl.local/bdl/model"
 	"fmt"
 	"path"
-//	"strings"
+	// "strings"
 )
 
 func Migrate_2023_02_24_details_ug__15(ctx *ctxt.Context) {
@@ -205,72 +205,73 @@ Remplit la table ug_essence en utilisant les ugs déjà en base (pour conserver 
 Les essences sont stockées actuellement dans la colonne type_peuplement
 */
 func fill_table_ug_essence_2023_02_24(ctx *ctxt.Context) {
-/* 
-Attention : code commenté car suite à l'excution de cette migration, 
-alter_table_ug_2023_02_24() supprime entre autres la colonne type_peuplement.
-Lorsqu'on enlève le champ correspondant de la struct model.UG, la présente fonction ne compile plus.
-	db := ctx.DB
-	var err error
-	// map contenu de la colonne type_peuplement => code essence stocké en base
-	// Selon Jean Culié, les autres codes sont des erreurs de saisie
-	codeMap := map[string]string{
-		"Al":                  "AL",
-		"Al pars":             "AL",
-		"Al. ss tage":         "AL",
-		"CH":                  "CN",
-		"CH pars":             "CN",
-		"CHa":                 "CT",
-		"Cd":                  "CD",
-		"Cdre":                "CD",
-		"Ch":                  "CN",
-		"Cha":                 "CT",
-		"D pars":              "DG",
-		"Douglas":             "DG",
-		"Er":                  "ER",
-		"Er Ch":               "ER", // Verifier si = érable ou érable champêtre
-		"Er de Mpt":           "EM",
-		"Er de Mtp":           "EM",
-		"Er pars":             "ER",
-		"F":                   "FL",
-		"F divers":            "FL",
-		"H":                   "HT",
-		"H pars":              "HT",
-		"PN":                  "PN",
-		"PN pars":             "PN",
-		"PS":                  "PS",
-		"PS pars":             "PS",
-		"Plantation feuillus": "FL",
-	}
-	ugs := []*model.UG{}
-	err = db.Select(&ugs, `select * from ug`)
-	if err != nil {
-		panic(err)
-	}
-	stmt, err := db.Prepare("insert into ug_essence(id_ug,code_essence,epars) values($1,$2,$3)")
-	defer stmt.Close()
-	if err != nil {
-		panic(err)
-	}
-	for _, ug := range ugs {
-		strEssences := ug.TypePeuplement
-		essences := strings.Split(strEssences, "+")
-		for _, ess := range essences {
-			ess = strings.TrimSpace(ess)
-			codeEss, ok := codeMap[ess]
-			if !ok {
-				continue
-			}
-			epars := false
-			if strings.Index(ess, "pars") != -1 {
-				epars = true
-			}
-			_, err = stmt.Exec(ug.Id, codeEss, epars)
-			if err != nil {
-				panic(err)
-			}
-		}
-	}
-*/
+	/*
+	   Attention : code commenté car suite à l'excution de cette migration,
+	   alter_table_ug_2023_02_24() supprime entre autres la colonne type_peuplement.
+	   Lorsqu'on enlève le champ correspondant de la struct model.UG, la présente fonction ne compile plus.
+
+	   	db := ctx.DB
+	   	var err error
+	   	// map contenu de la colonne type_peuplement => code essence stocké en base
+	   	// Selon Jean Culié, les autres codes sont des erreurs de saisie
+	   	codeMap := map[string]string{
+	   		"Al":                  "AL",
+	   		"Al pars":             "AL",
+	   		"Al. ss tage":         "AL",
+	   		"CH":                  "CN",
+	   		"CH pars":             "CN",
+	   		"CHa":                 "CT",
+	   		"Cd":                  "CD",
+	   		"Cdre":                "CD",
+	   		"Ch":                  "CN",
+	   		"Cha":                 "CT",
+	   		"D pars":              "DG",
+	   		"Douglas":             "DG",
+	   		"Er":                  "ER",
+	   		"Er Ch":               "ER", // Verifier si = érable ou érable champêtre
+	   		"Er de Mpt":           "EM",
+	   		"Er de Mtp":           "EM",
+	   		"Er pars":             "ER",
+	   		"F":                   "FL",
+	   		"F divers":            "FL",
+	   		"H":                   "HT",
+	   		"H pars":              "HT",
+	   		"PN":                  "PN",
+	   		"PN pars":             "PN",
+	   		"PS":                  "PS",
+	   		"PS pars":             "PS",
+	   		"Plantation feuillus": "FL",
+	   	}
+	   	ugs := []*model.UG{}
+	   	err = db.Select(&ugs, `select * from ug`)
+	   	if err != nil {
+	   		panic(err)
+	   	}
+	   	stmt, err := db.Prepare("insert into ug_essence(id_ug,code_essence,epars) values($1,$2,$3)")
+	   	defer stmt.Close()
+	   	if err != nil {
+	   		panic(err)
+	   	}
+	   	for _, ug := range ugs {
+	   		strEssences := ug.TypePeuplement
+	   		essences := strings.Split(strEssences, "+")
+	   		for _, ess := range essences {
+	   			ess = strings.TrimSpace(ess)
+	   			codeEss, ok := codeMap[ess]
+	   			if !ok {
+	   				continue
+	   			}
+	   			epars := false
+	   			if strings.Index(ess, "pars") != -1 {
+	   				epars = true
+	   			}
+	   			_, err = stmt.Exec(ug.Id, codeEss, epars)
+	   			if err != nil {
+	   				panic(err)
+	   			}
+	   		}
+	   	}
+	*/
 }
 
 func fill_table_essence_2023_02_24(ctx *ctxt.Context) {

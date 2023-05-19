@@ -17,10 +17,10 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-"fmt"
 )
 
 type Activite struct {
@@ -64,7 +64,6 @@ func (a *Activite) String() string {
 	return a.Titre
 }
 
-
 // ************************** Instance methods *******************************
 
 func (a *Activite) ComputeLiensParcelles(db *sqlx.DB) (err error) {
@@ -93,7 +92,7 @@ func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
 
 // ************************** Get many *******************************
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Activite, err error) {
-fmt.Printf(" === model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
+	fmt.Printf(" === model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
 	result = []*Activite{}
 	//
 	// Première sélection, par filtre période
@@ -139,13 +138,13 @@ fmt.Printf(" === model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres
 	// préparation (faire le plus tard possible pour optimiser)
 	//
 	// on calcule toujours les UGs puisqu'on affiche une liste par UG
-    for _, activite := range result {
-        err = activite.ComputeUGs(db)
-        if err != nil {
-            return result, werr.Wrapf(err, "Erreur appel ComputeUGs()")
-        }
-    }
-    //
+	for _, activite := range result {
+		err = activite.ComputeUGs(db)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel ComputeUGs()")
+		}
+	}
+	//
 	if len(filtres["ug"]) != 0 {
 		result = filtreActivite_ug(db, result, filtres["ug"])
 	}
@@ -165,7 +164,7 @@ fmt.Printf(" === model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres
 			return result, werr.Wrapf(err, "Erreur appel filtreActivite_proprio()")
 		}
 	}
-//fmt.Printf("result = %+v\n",result)
+	//fmt.Printf("result = %+v\n",result)
 	// TODO éventuellement, trier par date
 	return result, nil
 }
@@ -250,7 +249,7 @@ func computeChauferActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []strin
 // Auxiliaires des fonctions compute*ActivitesFromFiltrePeriode()
 
 func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
-    a = &Activite{}
+	a = &Activite{}
 	a.Id = ch.Id
 	a.TypeActivite = "plaq"
 	a.Titre = ch.Titre
@@ -269,7 +268,7 @@ func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
 }
 
 func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
-    a = &Activite{}
+	a = &Activite{}
 	a.Id = ch.Id
 	a.TypeActivite = "chautre"
 	a.Titre = ch.Titre
@@ -289,7 +288,7 @@ func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
 }
 
 func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
-    a = &Activite{}
+	a = &Activite{}
 	a.Id = ch.Id
 	a.TypeActivite = "chaufer"
 	a.Titre = ch.Titre
@@ -400,4 +399,3 @@ func filtreActivite_proprio(db *sqlx.DB, input []*Activite, filtre []string) (re
 	}
 	return result, nil
 }
-

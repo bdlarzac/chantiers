@@ -49,8 +49,8 @@ func MustInitTemplates() {
 		"labelExploitation": labelExploitation,
 		"labelRole":         labelRole,
 		"labelStockFrais":   labelStockFrais,
-        "labelTypo":         labelTypo,
-        "labelTypo_long":    labelTypo_long,
+		"labelTypo":         labelTypo,
+		"labelTypo_long":    labelTypo_long,
 		"labelUnite":        labelUnite,
 		"labelValo":         labelValo,
 		"valo2uniteLabel":   valo2uniteLabel,
@@ -66,42 +66,42 @@ func MustInitTemplates() {
 // ************************* Generic pipelines ********************************
 
 /*
-	Displays a date, format DD/MM/YYYY.
-	@copyright  Thierry Graff
-	@license    GPL
+Displays a date, format DD/MM/YYYY.
+@copyright  Thierry Graff
+@license    GPL
 */
 func dateFr(t time.Time) template.HTML {
 	return template.HTML(tiglib.DateFr(t))
 }
 
 /*
-	Displays a date, format YYYY-MM-DD.
-	@copyright  Thierry Graff
-	@license    GPL
+Displays a date, format YYYY-MM-DD.
+@copyright  Thierry Graff
+@license    GPL
 */
 func dateIso(t time.Time) template.HTML {
 	return template.HTML(tiglib.DateIso(t))
 }
 
 /*
-	@copyright Thierry Graff
-	@license    GPL
+@copyright Thierry Graff
+@license    GPL
 */
 func modulo(i, mod int) int {
 	return i % mod
 }
 
 /*
-	@copyright  Thierry Graff
-	@license    GPL
+@copyright  Thierry Graff
+@license    GPL
 */
 func nl2br(t string) template.HTML {
 	return template.HTML(strings.Replace(template.HTMLEscapeString(t), "\n", "<br>", -1))
 }
 
 /*
-	@copyright  Thierry Graff
-	@license    GPL
+@copyright  Thierry Graff
+@license    GPL
 */
 func plus(a, b int) int {
 	return a + b
@@ -114,9 +114,9 @@ func round(x float64, precision int) float64 {
 }
 
 /*
-	From https://www.php2golang.com/method/function.ucfirst.html
-	@copyright  Thierry Graff
-	@license    GPL
+From https://www.php2golang.com/method/function.ucfirst.html
+@copyright  Thierry Graff
+@license    GPL
 */
 func ucFirst(str string) template.HTML {
 	for _, v := range str {
@@ -127,20 +127,20 @@ func ucFirst(str string) template.HTML {
 }
 
 /*
-	Displays the year of a date, format YYYY.
-	@copyright  Thierry Graff
-	@license    GPL
+Displays the year of a date, format YYYY.
+@copyright  Thierry Graff
+@license    GPL
 */
 func year(t time.Time) template.HTML {
 	return template.HTML(strconv.Itoa(t.Year()))
 }
 
 /*
-	Used to initialize input type=number with "" instead of "0".
-	No error check.
-	@param      val  Must be an int or a float64.
-	@copyright  Thierry Graff
-	@license    GPL
+Used to initialize input type=number with "" instead of "0".
+No error check.
+@param      val  Must be an int or a float64.
+@copyright  Thierry Graff
+@license    GPL
 */
 func zero2empty(val interface{}) template.HTML {
 	var res string
@@ -162,18 +162,18 @@ func zero2empty(val interface{}) template.HTML {
 }
 
 /*
-	To display prices, with a precision of 1E-2. Zeroes are added if needed.
-	Ex: twoDigits(12.5) returns 12.50 instead of 12.5
-	@copyright  Thierry Graff
-	@license    GPL
+To display prices, with a precision of 1E-2. Zeroes are added if needed.
+Ex: twoDigits(12.5) returns 12.50 instead of 12.5
+@copyright  Thierry Graff
+@license    GPL
 */
 func twoDigits(f float64) template.HTML {
 	return template.HTML(fmt.Sprintf("%.2f", f))
 }
 
 /*
-	@copyright  Thierry Graff
-	@license    GPL
+@copyright  Thierry Graff
+@license    GPL
 */
 func safeHTML(str string) template.HTML {
 	return template.HTML(str)

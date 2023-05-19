@@ -9,21 +9,21 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-//	"github.com/gorilla/mux"
+	//	"github.com/gorilla/mux"
 	"net/http"
 )
 
 type detailsSylviForm struct {
 	EssenceCodes []string         // pour choix-essence
-	Fermiers    []*model.Fermier  // pour choix-fermier
-	AllCommunes []*model.Commune  // pour choix-parcelle
-	UrlAction   string
+	Fermiers     []*model.Fermier // pour choix-fermier
+	AllCommunes  []*model.Commune // pour choix-parcelle
+	UrlAction    string
 }
 
 type detailsSylviResults struct {
 	UGs          []*model.UG
 	RecapFiltres string
-//	Tab          string
+	// Tab          string
 }
 
 /*
@@ -41,7 +41,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		// vars := mux.Vars(r)
 		// tab := vars["tab"]
 		// if tab == "" {
-			// tab = "liste"
+		// tab = "liste"
 		// }
 		//
 		filtres := map[string][]string{}
@@ -61,7 +61,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		ctx.TemplateName = "sylvi-search-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title:    "Activités",
+				Title: "Activités",
 				// CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 				// JSFiles: []string{"/static/js/formatNb.js"},
 			},
@@ -74,7 +74,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Details: detailsSylviResults{
 				UGs:          ugs,
 				RecapFiltres: recapFiltres,
-//				Tab:                      tab,
+				//				Tab:                      tab,
 			},
 		}
 		return nil
@@ -85,7 +85,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		// vars := mux.Vars(r)
 		// tab := vars["tab"]
 		// if tab == "" {
-			// tab = "liste"
+		// tab = "liste"
 		// }
 		//
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
@@ -107,10 +107,10 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Menu: "accueil",
 			Details: detailsSylviForm{
 				EssenceCodes: model.EssenceCodes,
-				Fermiers:    fermiers,
-				AllCommunes: allCommunes,
-//				UrlAction:   "/sylviculture/recherche/" + tab,
-				UrlAction:   "/sylviculture/recherche/",
+				Fermiers:     fermiers,
+				AllCommunes:  allCommunes,
+				//				UrlAction:   "/sylviculture/recherche/" + tab,
+				UrlAction: "/sylviculture/recherche/",
 			},
 		}
 		return nil

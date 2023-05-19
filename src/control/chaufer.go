@@ -31,9 +31,9 @@ type detailsChauferForm struct {
 }
 
 type detailsChauferList struct {
-	Chantiers       []*model.Chaufer
-	Annee           string   // année courante
-	Annees          []string // toutes les années avec chantier
+	Chantiers []*model.Chaufer
+	Annee     string   // année courante
+	Annees    []string // toutes les années avec chantier
 }
 
 // *********************************************************
@@ -66,9 +66,9 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 		Menu: "production",
 		Details: detailsChauferList{
-			Chantiers:       chantiers,
-			Annee:           annee,
-			Annees:          annees,
+			Chantiers: chantiers,
+			Annee:     annee,
+			Annees:    annees,
 		},
 		Footer: ctxt.Footer{
 			JSFiles: []string{

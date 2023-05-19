@@ -24,15 +24,18 @@ import (
 )
 
 type UG struct {
-	Id         int
-	Code       string
-	SurfaceSIG string `db:"surface_sig"`
-	CodeTypo          string `db:"code_typo"`
-	Coupe             string `db:"coupe"`
-	AnneeIntervention string `db:"annee_intervention"`
-	PSGSuivant        string `db:"psg_suivant"`
+	Id                        int
+	Code                      string
+	SurfaceSIG                string `db:"surface_sig"`
+	CodeTypo                  string `db:"code_typo"`
+	Coupe                     string `db:"coupe"`
+	AnneeIntervention         string `db:"annee_intervention"`
+	PSGSuivant                string `db:"psg_suivant"`
+	VolumeStockOuRecouvrement string `db:"volume_stock_ou_recouvrement"`
+	IntensitePrelevement      string `db:"intensite_prelevement"`
+	AmenagementDivers         string `db:"amenagement_divers"`
 	// pas stocké dans la table ug
-	NomTypo string
+	NomTypo          string
 	Parcelles        []*Parcelle
 	Fermiers         []*Fermier
 	Proprietaires    []*Acteur

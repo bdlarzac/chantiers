@@ -53,7 +53,7 @@ type Acteur struct {
 
 // Sert à afficher la liste des activités d'un acteur.
 // Contient les infos utilisées pour l'affichage, pas les activités.
-///////////////////// TODO  supprimer et remplacer par model.Activite
+// /////////////////// TODO  supprimer et remplacer par model.Activite
 type ActeurActivite struct {
 	Date        time.Time
 	Role        string
@@ -132,9 +132,9 @@ func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) 
 	}
 	for _, acteur := range acteurs {
 		err = acteur.ComputeCodesRole(db)
-        if err != nil {
-            return acteurs, werr.Wrapf(err, "Erreur appel ComputeCodesRole()")
-        }
+		if err != nil {
+			return acteurs, werr.Wrapf(err, "Erreur appel ComputeCodesRole()")
+		}
 	}
 	return acteurs, nil
 }
@@ -183,7 +183,7 @@ Ne contient que les champs de la table acteur.
 Les autres champs ne sont pas remplis.
 */
 func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
-    ////////////// remplacer par GetActeursByRole() //////////////
+	////////////// remplacer par GetActeursByRole() //////////////
 	acteurs = []*Acteur{}
 	query := "select * from acteur where fournisseur"
 	err = db.Select(&acteurs, query)

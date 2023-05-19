@@ -1,9 +1,13 @@
-/**
-    Functions equivalent to php function in_array().
-    
-    @copyright  Thierry Graff
-    @license    GPL - conforms to file LICENCE located in root directory of current repository.
-**/
+/*
+*
+
+	Functions equivalent to php function in_array().
+
+	@copyright  Thierry Graff
+	@license    GPL - conforms to file LICENCE located in root directory of current repository.
+
+*
+*/
 package tiglib
 
 // InArray returns true if elt belongs to slice arr

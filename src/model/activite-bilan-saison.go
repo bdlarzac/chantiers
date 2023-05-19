@@ -35,67 +35,66 @@ type TotalActivitesParValo struct {
 }
 
 func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
-    activitesParSaison, err := ComputeActivitesParSaison(db, debutSaison, activites)
+	activitesParSaison, err := ComputeActivitesParSaison(db, debutSaison, activites)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur appel ComputeActivitesParSaison()")
 	}
 	result = []*BilanActivitesParSaison{}
-	for _, activiteParSaison := range(activitesParSaison){
-	    if len(activiteParSaison.Activites) == 0 {
-	        continue // exclut les saisons sans activités des bilans
-	    }
-	    currentRes := BilanActivitesParSaison{
-	        Datedeb: activiteParSaison.Datedeb,
-	        Datefin: activiteParSaison.Datefin,
-	        TotalActivitesParValo:[]*TotalActivitesParValo{},
-        }
-	    // map intermédiaire
-        mapValos := map[string]TotalActivitesParValo{}
-        for _, activite := range(activiteParSaison.Activites){
-            valo := activite.TypeValo
-            if _, ok := mapValos[valo]; !ok {
-                mapValos[valo] = TotalActivitesParValo{TypeValo: valo}
-            }
-            entry := mapValos[valo]
-            entry.Volume += activite.Volume
-            entry.Unite = activite.Unite /////////////////// ici faire conversion d'unité pour certaines valos ? ///////////////////
-            entry.PrixHT += activite.PrixHT
-            mapValos[valo] = entry
-        }
-        // utilise map pour remplir currentRes
-        for valo, total := range(mapValos){
-            newRes := TotalActivitesParValo{
-                TypeValo: valo,
-                Volume: total.Volume,
-                Unite: total.Unite,
-                PrixHT: total.PrixHT,
-            }
-            currentRes.TotalActivitesParValo = append(currentRes.TotalActivitesParValo, &newRes)
-        }
-        result = append(result, &currentRes)
+	for _, activiteParSaison := range activitesParSaison {
+		if len(activiteParSaison.Activites) == 0 {
+			continue // exclut les saisons sans activités des bilans
+		}
+		currentRes := BilanActivitesParSaison{
+			Datedeb:               activiteParSaison.Datedeb,
+			Datefin:               activiteParSaison.Datefin,
+			TotalActivitesParValo: []*TotalActivitesParValo{},
+		}
+		// map intermédiaire
+		mapValos := map[string]TotalActivitesParValo{}
+		for _, activite := range activiteParSaison.Activites {
+			valo := activite.TypeValo
+			if _, ok := mapValos[valo]; !ok {
+				mapValos[valo] = TotalActivitesParValo{TypeValo: valo}
+			}
+			entry := mapValos[valo]
+			entry.Volume += activite.Volume
+			entry.Unite = activite.Unite /////////////////// ici faire conversion d'unité pour certaines valos ? ///////////////////
+			entry.PrixHT += activite.PrixHT
+			mapValos[valo] = entry
+		}
+		// utilise map pour remplir currentRes
+		for valo, total := range mapValos {
+			newRes := TotalActivitesParValo{
+				TypeValo: valo,
+				Volume:   total.Volume,
+				Unite:    total.Unite,
+				PrixHT:   total.PrixHT,
+			}
+			currentRes.TotalActivitesParValo = append(currentRes.TotalActivitesParValo, &newRes)
+		}
+		result = append(result, &currentRes)
 	}
 	return result, nil
 }
 
 func ComputeActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*ActiviteParSaison, err error) {
-    limites, _, err := ComputeLimitesSaisons(db, debutSaison)
-    tiglib.ArrayReverse(limites)
+	limites, _, err := ComputeLimitesSaisons(db, debutSaison)
+	tiglib.ArrayReverse(limites)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur appel ComputeLimitesSaisons()")
 	}
 	result = []*ActiviteParSaison{}
-    for _, limite := range(limites){
-        newRes := ActiviteParSaison{Datedeb: limite[0], Datefin: limite[1], Activites: []*Activite{}}
-        result = append(result, &newRes)
-    }
-    for _, activite := range(activites){
-        for i, _ := range(result){
-            if (activite.DateActivite.After(result[i].Datedeb) || activite.DateActivite.Equal(result[i].Datedeb)) && activite.DateActivite.Before(result[i].Datefin){
-                result[i].Activites = append(result[i].Activites, activite)
-                break
-            }
-        }
-    }
+	for _, limite := range limites {
+		newRes := ActiviteParSaison{Datedeb: limite[0], Datefin: limite[1], Activites: []*Activite{}}
+		result = append(result, &newRes)
+	}
+	for _, activite := range activites {
+		for i, _ := range result {
+			if (activite.DateActivite.After(result[i].Datedeb) || activite.DateActivite.Equal(result[i].Datedeb)) && activite.DateActivite.Before(result[i].Datefin) {
+				result[i].Activites = append(result[i].Activites, activite)
+				break
+			}
+		}
+	}
 	return result, nil
 }
-

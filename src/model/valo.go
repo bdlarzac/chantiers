@@ -28,21 +28,21 @@ var ValoMap = map[string]string{
 
 // Codes utilisés pour chautre
 func AllValoCodes() []string {
-    // L'ordre des valorisations correspond à la demande de BDL
+	// L'ordre des valorisations correspond à la demande de BDL
 	return []string{"PP", "CH", "PL", "PI", "BO"}
 }
 
 // Pareil que AllValoCodes(), avec en plus CF (chauffage fermier)
 // Utilisé pour la recherche de ventes
 func AllValoCodesAvecChaufer() []string {
-    // codes triés par ordre alphabétique des labels correspondant
+	// codes triés par ordre alphabétique des labels correspondant
 	return []string{"BO", "CH", "PP", "PL", "PI", "PQ"}
 }
 
 // Pareil que AllValoCodes(), avec en plus CF (chauffage fermier) et PQ (plaquettes)
 // Utilisé pour la recherche d'activités
 func AllValoCodesAvecChauferEtPlaq() []string {
-    // codes triés par ordre alphabétique des labels correspondant
+	// codes triés par ordre alphabétique des labels correspondant
 	return []string{"BO", "CH", "CF", "PP", "PL", "PI", "PQ"}
 }
 
@@ -60,7 +60,7 @@ func CodeValo2CodeUnite(codeValo string) string {
 		return "ST"
 	case "PL":
 		return "ST"
-    // devenu inutile suite à demande BDL de pouvoir choisir stères ou nb de piquets
+		// devenu inutile suite à demande BDL de pouvoir choisir stères ou nb de piquets
 	//case "PI":
 	//	return "ST"
 	case "BO":
@@ -68,6 +68,5 @@ func CodeValo2CodeUnite(codeValo string) string {
 	case "PQ":
 		return "MA"
 	}
-	return "??? Code inconnu dans CodeValo2CodeUnite ("+codeValo+")  ???"
+	return "??? Code inconnu dans CodeValo2CodeUnite (" + codeValo + ")  ???"
 }
-

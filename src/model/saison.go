@@ -13,8 +13,8 @@
 package model
 
 import (
-	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"strings"

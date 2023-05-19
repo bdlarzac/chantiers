@@ -14,8 +14,8 @@ import (
 )
 
 type detailsActeurList struct {
-	List     []*model.Acteur
-	Count    int
+	List  []*model.Acteur
+	Count int
 }
 
 type detailsActeurForm struct {
@@ -53,8 +53,8 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				"/static/lib/table-sort/table-sort.js"},
 		},
 		Details: detailsActeurList{
-			List:     list,
-			Count:    model.CountActeurs(ctx.DB),
+			List:  list,
+			Count: model.CountActeurs(ctx.DB),
 		},
 	}
 	return nil
@@ -112,7 +112,7 @@ func NewActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		acteur.Deletable = true // nouvellement créé, pas SCTL, pas d'activité => effaçable
 		id, err := model.InsertActeur(ctx.DB, acteur)
 		if err != nil {
-		    return err
+			return err
 		}
 		// pour new, on redirige vers l'acteur nouvellement créé
 		ctx.Redirect = "/acteur/" + strconv.Itoa(id)

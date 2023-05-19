@@ -15,14 +15,14 @@ import (
 )
 
 type detailsActiviteSearchForm struct {
-	Periods      [][2]time.Time    // pour choix-date
-	EssenceCodes []string          // pour choix-essence
-	ValoCodes    []string          // pour choix-valo
-	PropriosMap  map[int]string    // pour choix-proprio
-	Fermiers     []*model.Fermier  // pour choix-fermier
-	AllUGs       []*model.UG       // pour choix-ug - liens-ugs-modal
-	UGs          []*model.UG       // pour choix-ug - liens-ugs - toujours vide, utile que pour compatibilité avec liens-ugs.html
-	AllCommunes  []*model.Commune  // pour choix-parcelle
+	Periods      [][2]time.Time   // pour choix-date
+	EssenceCodes []string         // pour choix-essence
+	ValoCodes    []string         // pour choix-valo
+	PropriosMap  map[int]string   // pour choix-proprio
+	Fermiers     []*model.Fermier // pour choix-fermier
+	AllUGs       []*model.UG      // pour choix-ug - liens-ugs-modal
+	UGs          []*model.UG      // pour choix-ug - liens-ugs - toujours vide, utile que pour compatibilité avec liens-ugs.html
+	AllCommunes  []*model.Commune // pour choix-parcelle
 	UrlAction    string
 }
 
@@ -54,12 +54,12 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		}
 		//
 		filtres := map[string][]string{}
-		filtres["fermier"]  = computeFiltreFermier(r)
-		filtres["essence"]  = computeFiltreEssence(r)
-		filtres["valo"]     = computeFiltreValo(r)
-		filtres["proprio"]  = computeFiltreProprio(r)
-		filtres["periode"]  = computeFiltrePeriode(r)
-		filtres["ug"]       = computeFiltreUG(r)
+		filtres["fermier"] = computeFiltreFermier(r)
+		filtres["essence"] = computeFiltreEssence(r)
+		filtres["valo"] = computeFiltreValo(r)
+		filtres["proprio"] = computeFiltreProprio(r)
+		filtres["periode"] = computeFiltrePeriode(r)
+		filtres["ug"] = computeFiltreUG(r)
 		filtres["parcelle"] = computeFiltreParcelle(r)
 		activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
 		if err != nil {
@@ -81,7 +81,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Header: ctxt.Header{
 				Title:    "Activités",
 				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
-				JSFiles: []string{"/static/js/formatNb.js"},
+				JSFiles:  []string{"/static/js/formatNb.js"},
 			},
 			Footer: ctxt.Footer{
 				JSFiles: []string{

@@ -15,10 +15,10 @@ import (
 )
 
 type detailsVenteSearchForm struct {
-	Periods     [][2]time.Time    // pour choix-date
-	ValoCodes   []string          // pour choix-valo
-	PropriosMap map[int]string    // pour choix-proprio
-	Clients     []*model.Acteur   // pour choix-client
+	Periods     [][2]time.Time  // pour choix-date
+	ValoCodes   []string        // pour choix-valo
+	PropriosMap map[int]string  // pour choix-proprio
+	Clients     []*model.Acteur // pour choix-client
 	UrlAction   string
 }
 
@@ -70,13 +70,13 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		ctx.TemplateName = "vente-search-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title:    "Ventes",
+				Title: "Ventes",
 				CSSFiles: []string{
-				    "/static/lib/tabstrip/tabstrip.css",
+					"/static/lib/tabstrip/tabstrip.css",
 				},
 				JSFiles: []string{
-				    "/static/js/formatNb.js",
-				    "/static/js/round.js",
+					"/static/js/formatNb.js",
+					"/static/js/round.js",
 				},
 			},
 			Footer: ctxt.Footer{
@@ -87,10 +87,10 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			},
 			Menu: "accueil",
 			Details: detailsVenteSearchResults{
-				RecapFiltres:             recapFiltres,
-				Ventes:                   ventes,
-				BilansVentesParSaison:    bilansVentesParSaison,
-				Tab:                      tab,
+				RecapFiltres:          recapFiltres,
+				Ventes:                ventes,
+				BilansVentesParSaison: bilansVentesParSaison,
+				Tab:                   tab,
 			},
 		}
 		return nil
@@ -140,5 +140,5 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 }
 
 func SearchVenteParClient(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
-    return nil
+	return nil
 }
