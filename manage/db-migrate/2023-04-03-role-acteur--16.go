@@ -1,18 +1,12 @@
 /*
-*
-*****************************************************************************
-
 	    https://github.com/bdlarzac/chantiers/issues/16
 	    Ajouter la notion de rôle aux acteurs
 
-		Intégration : commit
+		Intégration : commit 019cab9
 
 		@copyright  BDL, Bois du Larzac
 		@license    GPL
 		@history    2023-02-24 14:43:07+01:00, Thierry Graff : Creation
-
-*******************************************************************************
-*
 */
 package main
 

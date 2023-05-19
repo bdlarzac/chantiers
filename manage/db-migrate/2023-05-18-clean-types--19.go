@@ -1,17 +1,13 @@
 /*
-*******************************************************************************
-
-	    https://github.com/bdlarzac/chantiers/issues/19
-	    Adapte les types postgres aux évolutions du logiciel
-	    = supprime les types existant et utilise des char à la place
-	    
-		Intégration : commit
-
-		@copyright  BDL, Bois du Larzac
-		@license    GPL
-		@history    2023-05-18 06:45:23+02:00, Thierry Graff : Creation
-
-*******************************************************************************
+    https://github.com/bdlarzac/chantiers/issues/19
+    Adapte les types postgres aux évolutions du logiciel
+    = supprime les types existant et utilise des char à la place
+    
+    Intégration : commit
+    
+    @copyright  BDL, Bois du Larzac
+    @license    GPL
+    @history    2023-05-18 06:45:23+02:00, Thierry Graff : Creation
 */
 package main
 
@@ -21,12 +17,13 @@ import (
 )
 
 func Migrate_2023_05_18_clean_types__19(ctx *ctxt.Context) {
-//	drop_types_2023_05_18(ctx)
+	drop_types_2023_05_18(ctx)
 	drop_tables_2023_05_18(ctx)
 	fmt.Println("Migration effectuée : 2023-05-18-clean-types--19")
 }
 
 func drop_types_2023_05_18(ctx *ctxt.Context) {
+    var err error
 	db := ctx.DB
 	queries1 := []string{
 	    `alter table plaq alter column essence         type char(2)`,
@@ -60,23 +57,34 @@ func drop_types_2023_05_18(ctx *ctxt.Context) {
 	}
 	for _, query := range(queries1){
 	    fmt.Println(query)
-        _, _ = db.Exec(query)
+        _, err = db.Exec(query)
+		if err != nil {
+			panic(err)
+		}
 	}
 	for _, query := range(queries2){
 	    fmt.Println(query)
-        _, _ = db.Exec(query)
+        _, err = db.Exec(query)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
 func drop_tables_2023_05_18(ctx *ctxt.Context) {
-//	db := ctx.DB
+    var err error
+	db := ctx.DB
 	queries := []string{
         `drop table essence`,
+	    `alter table acteur_role drop constraint acteur_role_code_role_fkey`,
         `drop table role`,
         `drop table typo`,
 	}
 	for _, query := range(queries){
 	    fmt.Println(query)
-//        _, _ = db.Exec(query)
+        _, err = db.Exec(query)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

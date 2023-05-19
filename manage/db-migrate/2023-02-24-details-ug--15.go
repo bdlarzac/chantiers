@@ -1,7 +1,4 @@
 /*
-*
-*****************************************************************************
-
 	    https://github.com/bdlarzac/chantiers/issues/15
 
 		Modifier la table ug et ré-écrire l'import depuis ug.csv pour avoir des données plus détaillées.
@@ -12,9 +9,6 @@
 		@copyright  BDL, Bois du Larzac
 		@license    GPL
 		@history    2023-02-24 14:43:07+01:00, Thierry Graff : Creation
-
-*******************************************************************************
-*
 */
 package main
 
@@ -22,10 +16,10 @@ import (
 	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
-	"bdl.local/bdl/model"
+//	"bdl.local/bdl/model"
 	"fmt"
 	"path"
-	"strings"
+//	"strings"
 )
 
 func Migrate_2023_02_24_details_ug__15(ctx *ctxt.Context) {
@@ -211,6 +205,10 @@ Remplit la table ug_essence en utilisant les ugs déjà en base (pour conserver 
 Les essences sont stockées actuellement dans la colonne type_peuplement
 */
 func fill_table_ug_essence_2023_02_24(ctx *ctxt.Context) {
+/* 
+Attention : code commenté car suite à l'excution de cette migration, 
+alter_table_ug_2023_02_24() supprime entre autres la colonne type_peuplement.
+Lorsqu'on enlève le champ correspondant de la struct model.UG, la présente fonction ne compile plus.
 	db := ctx.DB
 	var err error
 	// map contenu de la colonne type_peuplement => code essence stocké en base
@@ -272,6 +270,7 @@ func fill_table_ug_essence_2023_02_24(ctx *ctxt.Context) {
 			}
 		}
 	}
+*/
 }
 
 func fill_table_essence_2023_02_24(ctx *ctxt.Context) {
