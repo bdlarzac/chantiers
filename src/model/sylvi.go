@@ -13,59 +13,105 @@
 package model
 
 import (
-	//	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//	"strconv"
-	//	"strings"
+	"strconv"
+	//"strings"
 	"fmt"
 )
 
 // ************************** Get many *******************************
 
 func ComputeUGsFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*UG, err error) {
-	fmt.Printf("=== model.ComputeUGsFromFiltres() - filtres = %+v\n", filtres)
+fmt.Printf("=== model.ComputeUGsFromFiltres() - filtres = %+v\n", filtres)
 	result = []*UG{}
 	//
 	// Filtres sur les champs de la table ug
 	//
+// voir s'il y en a
+    result, err = filtreUG_sansfiltre(db)
+    if err != nil {
+        return result, werr.Wrapf(err, "Erreur appel filtreUG_sansfiltre()")
+    }
+    // prépare pour affichage et filtres
+// A faire ici que si besoin d'afficher - sinon faire à l'intérieur de la fonction qui filtre
+    for _, ug := range(result){
+        err = ug.ComputeEssences(db)
+        if err != nil {
+            return result, werr.Wrapf(err, "Erreur appel UG.ComputeEssences()")
+        }
+        err = ug.ComputeFermiers(db)
+        if err != nil {
+            return result, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
+        }
+    }
 	//
 	// Filtres suivants
 	//
+//////// peut-être ici ComputeFermiers et autres sur toutes les ugs si doit être affiché dans le résultat
 	if len(filtres["essence"]) != 0 {
-		result, err = filtreUG_essence(db, result, filtres["essence"])
+        result, err = filtreUG_essence(db, result, filtres["essence"])
+        if err != nil {
+            return result, werr.Wrapf(err, "Erreur appel filtreUG_essence()")
+        }
+    }
+    //
+	if len(filtres["fermier"]) != 0 {
+		result, err = filtreUG_fermier(db, result, filtres["fermier"])
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel filtreUG_essence()")
+			return result, werr.Wrapf(err, "Erreur appel filtreUG_fermier()")
 		}
 	}
+	
 	//fmt.Printf("result = %+v\n",result)
-	// TODO éventuellement, trier par date
 	return result, nil
 }
 
-// ************************** Application des filtres *******************************
-// En entrée : liste de ventes
-// En sortie : liste de ventes qui satisfont au filtre
+// ****************************************************************************************************
+// ************************** Auxiliaires de ComputeActivitesFromFiltres() ****************************
+// ****************************************************************************************************
 
-// TODO implement
+// ************************** Selection initiale, par champs de la table ug *******************************
+func filtreUG_sansfiltre(db *sqlx.DB) (result []*UG, err error) {
+	result = []*UG{}
+	query := "select * from ug"
+    err = db.Select(&result, query)
+	if err != nil {
+		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+	}
+	return result, nil
+}
+
+
+// ************************** Filtres *******************************
+// En entrée : liste d'UGs
+// En sortie : liste d'UGs qui satisfont au filtre
+
 func filtreUG_essence(db *sqlx.DB, input []*UG, filtre []string) (result []*UG, err error) {
 	result = []*UG{}
-	/*
-		for _, a := range input {
-			for _, f := range filtre {
-				id, _ := strconv.Atoi(f)
-				for _, lienParcelle := range a.LiensParcelles {
-					parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
-					if err != nil {
-						return result, werr.Wrapf(err, "Erreur appel GetParcelle()")
-					}
-					if parcelle.IdProprietaire == id {
-						result = append(result, a)
-						break
-					}
-				}
-			}
-		}
-	*/
-	return result, nil
+	for _, ug := range input {
+        for _, codeEssence := range(ug.CodesEssence){
+            if tiglib.InArray(codeEssence, filtre){
+                result = append(result, ug)
+                break
+            }
+        }
+	}
+	return result, err
 }
+
+func filtreUG_fermier(db *sqlx.DB, input []*UG, filtre []string) (result []*UG, err error) {
+	result = []*UG{}
+	idFermier, _ := strconv.Atoi(filtre[0])
+	for _, ug := range input {
+        for _, fermier := range(ug.Fermiers){
+            if fermier.Id == idFermier {
+                result = append(result, ug)
+                break
+            }
+        }
+	}
+	return result, err
+}
+

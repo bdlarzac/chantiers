@@ -8,7 +8,7 @@ A partir de data/manage/ug.csv, ajouter dans la table ug les colonnes :
 - Amenagement_divers
 Profiter de la migration pour réparer les erreurs de la colonne Coupe
 
-Intégration : commit
+Intégration : commit 6cfba5d
 
 @copyright  BDL, Bois du Larzac
 @license    GPL

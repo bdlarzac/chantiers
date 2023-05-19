@@ -26,6 +26,12 @@ type Commune struct {
 
 const N_COMMUNES = 13
 
+// ************************** Nom *******************************
+
+func (c *Commune) String() string {
+	return c.Nom
+}
+
 // ************************** Get one *******************************
 /*
    Renvoie une Commune contenant Id et Nom.

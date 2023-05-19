@@ -16,11 +16,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	// "fmt"
 )
 
 type UG struct {
@@ -39,7 +37,7 @@ type UG struct {
 	Parcelles        []*Parcelle
 	Fermiers         []*Fermier
 	Proprietaires    []*Acteur
-	CodesEssence     []*string
+	CodesEssence     []string
 	Recaps           map[string]RecapUG
 	SortedRecapYears []string // années contenant de l'activité prise en compte dans Recaps
 }

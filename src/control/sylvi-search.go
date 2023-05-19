@@ -9,7 +9,7 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	//	"github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -23,7 +23,8 @@ type detailsSylviForm struct {
 type detailsSylviResults struct {
 	UGs          []*model.UG
 	RecapFiltres string
-	// Tab          string
+////// supprimer si finalement pas de tab
+	Tab          string
 }
 
 /*
@@ -38,11 +39,12 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-		// vars := mux.Vars(r)
-		// tab := vars["tab"]
-		// if tab == "" {
-		// tab = "liste"
-		// }
+////// supprimer si finalement pas de tab
+		vars := mux.Vars(r)
+		tab := vars["tab"]
+		if tab == "" {
+            tab = "liste"
+		}
 		//
 		filtres := map[string][]string{}
 		filtres["fermier"] = computeFiltreFermier(r)
@@ -61,20 +63,21 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		ctx.TemplateName = "sylvi-search-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Activités",
-				// CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
+				Title: "Sylviculture",
+				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 				// JSFiles: []string{"/static/js/formatNb.js"},
 			},
 			Footer: ctxt.Footer{
 				JSFiles: []string{
-					// "/static/lib/tabstrip/tabstrip.js",
+					"/static/lib/tabstrip/tabstrip.js",
 					"/static/lib/table-sort/table-sort.js"},
 			},
 			Menu: "production",
 			Details: detailsSylviResults{
 				UGs:          ugs,
 				RecapFiltres: recapFiltres,
-				//				Tab:                      tab,
+////// supprimer si finalement pas de tab
+				Tab:                      tab,
 			},
 		}
 		return nil
@@ -82,11 +85,12 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		//
 		// Affiche form
 		//
-		// vars := mux.Vars(r)
-		// tab := vars["tab"]
-		// if tab == "" {
-		// tab = "liste"
-		// }
+////// supprimer si finalement pas de tab
+		vars := mux.Vars(r)
+		tab := vars["tab"]
+		if tab == "" {
+            tab = "liste"
+		}
 		//
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 		if err != nil {
@@ -102,15 +106,17 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Header: ctxt.Header{
 				Title: "Recherche sylviculture",
 				CSSFiles: []string{
-					"/static/css/form.css"},
+					"/static/css/form.css",
+				},
 			},
-			Menu: "accueil",
+			Menu: "production",
 			Details: detailsSylviForm{
 				EssenceCodes: model.EssenceCodes,
 				Fermiers:     fermiers,
 				AllCommunes:  allCommunes,
-				//				UrlAction:   "/sylviculture/recherche/" + tab,
-				UrlAction: "/sylviculture/recherche/",
+////// supprimer si finalement pas de tab
+				UrlAction:   "/sylviculture/recherche/" + tab,
+				//UrlAction: "/sylviculture/recherche",
 			},
 		}
 		return nil

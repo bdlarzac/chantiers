@@ -1,0 +1,59 @@
+{{/*
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+{{with .Details.UGs}}
+
+<div class="margin-left bold">{{len .}} résultats</div>
+<table class="entities">
+<thead>
+    <tr>
+        <th class="order">Code</th>
+        <th>Essences</th>
+        <th class="order">Typo</th>
+        <th class="order">Coupe</th>
+        <th class="order">Année</th>
+        <th>Activités</th>
+        <th>Fermiers</th>
+    </tr>
+</thead>
+
+<tbody>
+    {{range .}}
+    <tr>
+        <td>
+            {{.Code}}
+        </td>
+        <td>
+            {{range .CodesEssence}}
+                <div>{{. | labelEssence}}</div>
+            {{end}}
+        </td>
+        <td>
+            <span title="{{.CodeTypo | labelTypo_long}}"><b>{{.CodeTypo}}</b> {{.CodeTypo | labelTypo}}</span>
+        </td>
+        <td>
+            {{.Coupe}}
+        </td>
+        <td>
+            {{.AnneeIntervention}}
+        </td>
+        <td>
+            todo
+        </td>
+        <td>
+            {{range .Fermiers}}
+                <div>{{.}}</div>
+            {{end}}
+        </td>
+    </tr>
+    {{end}}
+</tbody>
+</table>
+
+{{else}} {{/* with .Details.Activites */}}
+
+<div class="">Aucune activité ne correspond aux critères demandés</div>
+
+{{end}} {{/* with .Details.Activites */}}

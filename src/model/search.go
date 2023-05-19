@@ -66,8 +66,6 @@ func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result strin
 		result += "<tr><td>Propriétaire :</td><td>" + strings.Join(tmp, ", ") + "</td></tr>\n"
 	}
 	//
-	//
-	//
 	if len(filtres["fermier"]) != 0 {
 		id, _ := strconv.Atoi(filtres["fermier"][0])
 		fermier, err := GetFermier(db, id)
@@ -75,6 +73,15 @@ func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result strin
 			return result, werr.Wrapf(err, "Erreur appel GetFermier()")
 		}
 		result += "<tr><td>Fermier :</td><td><a href=\"/fermier/" + strconv.Itoa(fermier.Id) + "\">" + fermier.String() + "</a>" + "</td></tr>\n"
+	}
+	//
+	if len(filtres["commune"]) != 0 {
+		id, _ := strconv.Atoi(filtres["commune"][0])
+		commune, err := GetCommune(db, id)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel GetCommune()")
+		}
+		result += "<tr><td>Commune :</td><td>" + commune.String() + "</td></tr>\n"
 	}
 	//
 	if len(filtres["client"]) != 0 {

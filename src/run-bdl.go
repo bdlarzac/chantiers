@@ -144,6 +144,8 @@ func main() {
 	r.HandleFunc("/humidite/delete/{id:[0-9]+}", H(control.DeleteHumid))
 
 	r.HandleFunc("/sylviculture/recherche", H(control.SearchSylvi))
+////// supprimer si finalement pas de tab
+	r.HandleFunc("/sylviculture/recherche/{tab}", H(control.SearchSylvi))
 
 	r.HandleFunc("/ug/search", H(control.SearchUG))
 	r.HandleFunc("/ug/{id:[0-9]+}", H(control.ShowUG))

@@ -136,7 +136,8 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Header: ctxt.Header{
 				Title: "Recherche d'activité",
 				CSSFiles: []string{
-					"/static/css/form.css"},
+					"/static/css/form.css",
+				},
 			},
 			Menu: "accueil",
 			Details: detailsActiviteSearchForm{

@@ -3,7 +3,7 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<h1>Activités</h1>
+<h1>Recherche sylviculture</h1>
 
 <div class="recap-filtres">
     {{$.Details.RecapFiltres | safeHTML}}
@@ -11,20 +11,24 @@
 
 <div class="tab">
   <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-liste');" id="liste">Liste</button>
+  {{/* 
   <button class="tablinks" onclick="openTab(event, 'tab-bilan-saison');" id="bilan-saison">Bilan / saison</button>
+  */}}
 </div>
 
 <div id="tab-liste" class="tabcontent">
     <p>
-        {{ template "activite-search-show-list.html" . }}
+        {{ template "sylvi-search-show-list.html" . }}
     </p>
 </div>
-                                                                                                                                                      
+
+{{/* 
 <div id="tab-bilan-saison" class="tabcontent">
     <p>
-        {{ template "activite-search-show-bilan-saison.html" . }}
+        {{ template "sylvi-search-show-bilan-saison.html" . }}
     </p>
 </div>
+*/}}
 
 <script>
 // ***************************************
