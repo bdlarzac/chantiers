@@ -29,28 +29,20 @@ fmt.Printf("=== model.ComputeUGsFromFiltres() - filtres = %+v\n", filtres)
 	//
 	// Filtres sur les champs de la table ug
 	//
-// voir s'il y en a
     result, err = filtreUG_sansfiltre(db)
     if err != nil {
         return result, werr.Wrapf(err, "Erreur appel filtreUG_sansfiltre()")
     }
-    // prépare pour affichage et filtres
-// A faire ici que si besoin d'afficher - sinon faire à l'intérieur de la fonction qui filtre
-    for _, ug := range(result){
-        err = ug.ComputeEssences(db)
-        if err != nil {
-            return result, werr.Wrapf(err, "Erreur appel UG.ComputeEssences()")
-        }
-        err = ug.ComputeFermiers(db)
-        if err != nil {
-            return result, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
-        }
-    }
 	//
 	// Filtres suivants
 	//
-//////// peut-être ici ComputeFermiers et autres sur toutes les ugs si doit être affiché dans le résultat
 	if len(filtres["essence"]) != 0 {
+        for _, ug := range(result){
+            err = ug.ComputeEssences(db)
+            if err != nil {
+                return result, werr.Wrapf(err, "Erreur appel UG.ComputeEssences()")
+            }
+        }
         result, err = filtreUG_essence(db, result, filtres["essence"])
         if err != nil {
             return result, werr.Wrapf(err, "Erreur appel filtreUG_essence()")
@@ -58,13 +50,37 @@ fmt.Printf("=== model.ComputeUGsFromFiltres() - filtres = %+v\n", filtres)
     }
     //
 	if len(filtres["fermier"]) != 0 {
+        for _, ug := range(result){
+            err = ug.ComputeFermiers(db)
+            if err != nil {
+                return result, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
+            }
+        }
 		result, err = filtreUG_fermier(db, result, filtres["fermier"])
 		if err != nil {
 			return result, werr.Wrapf(err, "Erreur appel filtreUG_fermier()")
 		}
 	}
-	
-	//fmt.Printf("result = %+v\n",result)
+	// Compute liés à l'affichage si pas déjà calculé pour les filtres
+	if len(filtres["essence"]) == 0 {
+        for _, ug := range(result){
+            err = ug.ComputeEssences(db)
+            if err != nil {
+                return result, werr.Wrapf(err, "Erreur appel UG.ComputeEssences()")
+            }
+        }
+    }
+    //
+	if len(filtres["fermier"]) == 0 {
+        for _, ug := range(result){
+            err = ug.ComputeFermiers(db)
+            if err != nil {
+                return result, werr.Wrapf(err, "Erreur appel UG.ComputeFermiers()")
+            }
+        }
+	}
+	//
+//fmt.Printf("result = %+v\n",result)
 	return result, nil
 }
 
