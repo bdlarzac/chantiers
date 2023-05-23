@@ -1,28 +1,16 @@
 /*
-*
+    Function equivalent to php function array_unique().
 
-	Functions equivalent to php function array_unique()
-
-	Note: depend on in-array.go
-
-*
+    Note: depends on in-array.go
+    
+    @copyright  Thierry Graff
+    @license    GPL - conforms to file LICENCE located in root directory of current repository.
 */
 package tiglib
 
-// Equivalent of php function array_unique for a slice of strings
-func ArrayUniqueString(e []string) []string {
-	r := []string{}
-	for _, s := range e {
-		if !InArray(s, r[:]) {
-			r = append(r, s)
-		}
-	}
-	return r
-}
-
-// Equivalent of php function array_unique for a slice of ints
-func ArrayUniqueInt(e []int) []int {
-	r := []int{}
+// ArrayUnique is an equivalent of php function array_unique - generic version
+func ArrayUnique[T comparable](e []T) []T {
+	r := []T{}
 	for _, s := range e {
 		if !InArray(s, r[:]) {
 			r = append(r, s)

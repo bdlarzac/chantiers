@@ -25,6 +25,7 @@ import (
 	"bdl.local/bdl/generic/tiglib"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -34,55 +35,131 @@ func Migrate_2023_05_22_non_agricoles__20(ctx *ctxt.Context) {
 	// check
 	//
 	idsFermier := computeFermiersNonAgricoles_2023_05_22(ctx, versionSCTL)
-	//fmt.Printf("ids fermier = \n%v\n",tiglib.JoinInt(idsFermier, ","))
+	//fmt.Printf("\nids fermier - len = %d : %v\n", len(idsFermier), idsFermier)
 	//
-	idsParcelle := computeParcelles_2023_05_22(ctx, idsFermier)
-	//fmt.Printf("ids parcelle = \n%v\n",tiglib.JoinInt(idsParcelle, ","))
+	idsParcelle_full := computeParcellesFull_2023_05_22(ctx, idsFermier)
+	//fmt.Printf("\nidsParcelle_full - len = %d : %v\n", len(idsParcelle_full), idsParcelle_full)
 	//
-	idsParcelle_problem := checkParcelles_2023_05_22(ctx, idsFermier, idsParcelle)
-	fmt.Printf("idsParcelle_problem = %v\n", idsParcelle_problem)
+	idsParcelle_shared := computeSharedParcelles_2023_05_22(ctx, idsFermier, idsParcelle_full)
+	//fmt.Printf("\nidsParcelle_shared - len = %d : %v\n", len(idsParcelle_shared), idsParcelle_shared)
 	//
-//	idsChantier := computeChantiers_2023_05_22(ctx, idsParcelle)
-	//fmt.Printf("ids chantier = \n%v\n",tiglib.JoinInt(idsChantier, ","))
+	idsParcelle_to_delete := computeParcellesToDelete_2023_05_22(ctx, idsParcelle_full, idsParcelle_shared)
+	//fmt.Printf("\nidsParcelle_to_delete - len = %d : %v\n", len(idsParcelle_to_delete), idsParcelle_to_delete)
+	//
+	// Pour vérifier
+	//idsChantier := computeChantiers_2023_05_22(ctx, idsParcelle_to_delete)
+	//fmt.Printf("\nidsChantier - len = %d : %v\n", len(idsChantier), idsChantier)
 	//
 	// clean
 	//
-//	strIn := tiglib.JoinInt(idsParcelle, ",")
-//	clean_parcelle_ug_2023_05_22(ctx, strIn)
-	// clean_parcelle_lieuDit_2023_05_22(ctx, strIn)
-	// clean_parcelle_fermier_2023_05_22(ctx, strIn)
-	// clean_chantier_parcelle_2023_05_22(ctx, strIn)
+	strIn := tiglib.JoinInt(idsParcelle_to_delete, ",")
+	clean_parcelle_ug_2023_05_22(ctx, strIn)
+	clean_parcelle_lieuDit_2023_05_22(ctx, strIn)
+	clean_parcelle_fermier_2023_05_22(ctx, strIn)
+	clean_fermiers_2023_05_22(ctx, idsFermier)
 	fmt.Println("Migration effectuée : 2023-01-16-fix-parcelle")
 }
 
 // ********************************** clean **********************************
 
+// deleted 40 rows in fermier
+// avant:  107
+// après:  67
+func clean_fermiers_2023_05_22(ctx *ctxt.Context, idsFermier []int) {
+    strIn := tiglib.JoinInt(idsFermier, ",")
+	query := "delete from fermier where id in(" + strIn + ")"
+	res, err := ctx.DB.Exec(query)
+	if err != nil {
+	    panic(err)
+	}
+    n, err := res.RowsAffected()
+	if err != nil {
+	    panic(err)
+	}
+    fmt.Printf("deleted %d rows in fermier\n", n)
+}
+
+// deleted 195 rows in parcelle_fermier
+// avant:  2464 
+// après:  2269
+func clean_parcelle_fermier_2023_05_22(ctx *ctxt.Context, strIn string) {
+	query := "delete from parcelle_fermier where id_parcelle in(" + strIn + ")"
+	res, err := ctx.DB.Exec(query)
+	if err != nil {
+	    panic(err)
+	}
+    n, err := res.RowsAffected()
+	if err != nil {
+	    panic(err)
+	}
+    fmt.Printf("deleted %d rows in parcelle_fermier\n", n)
+}
+
+// deleted 184 rows in parcelle_lieudit
+// avant:   2351
+// après:   2167
+func clean_parcelle_lieuDit_2023_05_22(ctx *ctxt.Context, strIn string) {
+	query := "delete from parcelle_lieudit where id_parcelle in(" + strIn + ")"
+	res, err := ctx.DB.Exec(query)
+	if err != nil {
+	    panic(err)
+	}
+    n, err := res.RowsAffected()
+	if err != nil {
+	    panic(err)
+	}
+    fmt.Printf("deleted %d rows in parcelle_lieudit\n", n)
+}
+
+// deleted 53 rows in parcelle_ug
+// avant:   1516
+// après:   1463
 func clean_parcelle_ug_2023_05_22(ctx *ctxt.Context, strIn string) {
 	query := "delete from parcelle_ug where id_parcelle in(" + strIn + ")"
-fmt.Println(query)
-	//res, err := db.Exec(query, idChantier)
-    //rowCnt, err := res.RowsAffected()
+	res, err := ctx.DB.Exec(query)
+	if err != nil {
+	    panic(err)
+	}
+    n, err := res.RowsAffected()
+	if err != nil {
+	    panic(err)
+	}
+    fmt.Printf("deleted %d rows in parcelle_ug\n", n)
 }
 
 // ********************************** check **********************************
 
 // Résultat : aucun chantier
 func computeChantiers_2023_05_22(ctx *ctxt.Context, idsParcelle []int) []int {
-	idsChantier := []int{}
+	res := []int{}
 	inStr := tiglib.JoinInt(idsParcelle, ",")
 	query := "select id_chantier from chantier_parcelle where id_parcelle in(" + inStr + ")"
-	err := ctx.DB.Select(&idsChantier, query)
+	err := ctx.DB.Select(&res, query)
 	if err != nil {
 		fmt.Println("Erreur query : "+query)
 	    panic(err)
 	}
-    return idsChantier
+    sort.Ints(res)
+    return res
 }
 
-// Vérifie si des parcelles reliées aux fermiers non-agricoles
-// ne sont pas aussi reliées avec des fermiers agricoles
-// Résultat : 37 parcelles
-func checkParcelles_2023_05_22(ctx *ctxt.Context, idsFermier, idsParcelle []int) []int {
+// Calcule les ids parcelles présents dans idsParcelle_full mais pas dans idsParcelle_shared
+// Résultat : 184 parcelles
+func computeParcellesToDelete_2023_05_22(ctx *ctxt.Context, idsParcelle_full, idsParcelle_shared []int) []int {
+	res := []int{}
+	for _, elt := range(idsParcelle_full){
+	    if !tiglib.InArray(elt, idsParcelle_shared){
+	        res = append(res, elt)
+	    }
+	}
+    sort.Ints(res)
+	return res
+}
+
+// Vérifie s'il existe des parcelles reliées aux fermiers non-agricoles
+// qui sont aussi reliées avec des fermiers agricoles
+// Résultat : 33 parcelles
+func computeSharedParcelles_2023_05_22(ctx *ctxt.Context, idsFermier, idsParcelle []int) []int {
 	res := []int{}
 	strFermiers := tiglib.JoinInt(idsFermier, ",")
 	strParcelles := tiglib.JoinInt(idsParcelle, ",")
@@ -92,23 +169,27 @@ func checkParcelles_2023_05_22(ctx *ctxt.Context, idsFermier, idsParcelle []int)
 		fmt.Println("Erreur query : "+query)
 	    panic(err)
 	}
+	res = tiglib.ArrayUnique(res)
+    sort.Ints(res)
 	return res
 }
 
-// Résultat : 238 parcelles
-func computeParcelles_2023_05_22(ctx *ctxt.Context, idsFermier []int) []int {
-	idsParcelle := []int{}
+// Résultat : 217 parcelles
+func computeParcellesFull_2023_05_22(ctx *ctxt.Context, idsFermier []int) []int {
+	res := []int{}
 	inStr := tiglib.JoinInt(idsFermier, ",")
 	query := "select id_parcelle from parcelle_fermier where id_fermier in(" + inStr + ")"
-	err := ctx.DB.Select(&idsParcelle, query)
+	err := ctx.DB.Select(&res, query)
 	if err != nil {
 		fmt.Println("Erreur query : "+query)
 	    panic(err)
 	}
-    return idsParcelle
+	res = tiglib.ArrayUnique(res)
+    sort.Ints(res)
+    return res
 }
 
-// Résultat : 40 fermiers
+// Résultat : 44 fermiers
 func computeFermiersNonAgricoles_2023_05_22(ctx *ctxt.Context, versionSCTL string) []int{
     dirname := install.GetSCTLDataDir(versionSCTL)
 	filename := dirname + string(os.PathSeparator) + "Exploita.csv"
@@ -116,7 +197,7 @@ func computeFermiersNonAgricoles_2023_05_22(ctx *ctxt.Context, versionSCTL strin
 	if err != nil {
 		panic("Erreur de lecture de Exploita.csv avec tiglib.CsvMap()")
 	}
-	result := []int{}
+	res := []int{}
 	for _, record := range records {
 		idExploitant, err := strconv.Atoi(record["IdExploitant"])
 		if idExploitant == 1 {
@@ -127,8 +208,9 @@ func computeFermiersNonAgricoles_2023_05_22(ctx *ctxt.Context, versionSCTL strin
 
 		}
 		if record["Agricole"] == "0" {
-		    result = append(result, idExploitant)
+		    res = append(res, idExploitant)
 		}
     }
-    return result
+    sort.Ints(res)
+    return res
 }
