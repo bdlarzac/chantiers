@@ -3,15 +3,15 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<h1>Recherche Ventes</h1>
+<h1 id="h1">Ventes - Liste</h1>
 
 <div class="recap-filtres">
     {{$.Details.RecapFiltres | safeHTML}}
 </div>
 
 <div class="tab">
-  <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-liste');" id="liste">Liste</button>
-  <button class="tablinks" onclick="openTab(event, 'tab-bilan-saison');" id="bilan-saison">Bilan / saison</button>
+  <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-liste'); changeH1('Liste');" id="liste">Liste</button>
+  <button class="tablinks" onclick="openTab(event, 'tab-bilan-saison'); changeH1('Bilan par saison');" id="bilan-saison">Bilan / saison</button>
 </div>
 
 <div id="tab-liste" class="tabcontent">
@@ -27,8 +27,13 @@
 </div>
 
 <script>
-// ***************************************
+
 window.addEventListener("load", function(){
     document.getElementById("{{.Details.Tab}}").click();
 });
+
+function changeH1(str){
+    document.getElementById("h1").innerHTML = 'Ventes - ' + str;
+}
+
 </script>

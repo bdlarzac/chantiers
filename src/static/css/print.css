@@ -3,53 +3,57 @@
 
 @media print {
 
-body{
-    font-size:10px;
-    font-family: "Times New Roman", Times, serif;
-    background:none;
-    margin:0;
-    padding:0;
-}
-
-.menus{
-    display:none;
-}
-
-
-.content,
-.menus,
-h1,
-.page-content,
-table.entities
-{
-    margin:0;
-    padding:0;
-    border:none;
-}
-
-.content{
-}
-
-h1{
-    padding-bottom:.5rem;
-}
-
-table.entities{
-    border:none;
-    border-collapse:collapse;
+    body{
+        font-size:10px;
+        font-family: "Times New Roman", Times, serif;
+        background:none;
+        margin:0;
+        padding:0;
+    }
     
-}
-
-table.entities tr{
-    border:1px solid black;
-}
-
-table.entities td,
-table.entities th
-{
-    border:1px solid black;
-}
-
-
+    .menus{
+        display:none;
+    }
+    
+    
+    .content,
+    .menus,
+    .page-content,
+    table.entities
+    {
+        margin:0;
+        padding:0;
+        border:none;
+    }
+    
+    .content{
+    }
+    
+    h1{
+        text-align:center;
+        padding-top:.5rem;
+        padding-bottom:.5rem;
+    }
+    
+    table.entities{
+        border:none;
+        border-collapse:collapse;
+        
+    }
+    
+    table.entities tr{
+        border:1px solid black;
+    }
+    
+    table.entities td,
+    table.entities th
+    {
+        border:1px solid black;
+    }
+    
+    /** tabstrips **/
+    .tablinks{
+        display:none;
+    }
 
 }
