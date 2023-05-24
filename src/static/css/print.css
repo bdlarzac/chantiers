@@ -1,4 +1,6 @@
-
+/* 
+    Voir en fin de fichier pour les styles appliqués à des pages particulières.
+*/
 
 
 @media print {
@@ -11,22 +13,21 @@
         padding:0;
     }
     
+    .no-print{
+        display:none;
+    }
+    
     .menus{
         display:none;
     }
     
-    
     .content,
     .menus,
-    .page-content,
-    table.entities
+    .page-content
     {
         margin:0;
         padding:0;
         border:none;
-    }
-    
-    .content{
     }
     
     h1{
@@ -35,7 +36,18 @@
         padding-bottom:.5rem;
     }
     
+    .tablinks{ /** tabstrips **/
+        display:none;
+    }
+    
+    .bigicon{
+        display:none;
+    }
+    
     table.entities{
+        margin:0;
+        margin-left:.5rem;
+        padding:0;
         border:none;
         border-collapse:collapse;
         
@@ -51,9 +63,4 @@
         border:1px solid black;
     }
     
-    /** tabstrips **/
-    .tablinks{
-        display:none;
-    }
-
 }

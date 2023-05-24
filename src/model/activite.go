@@ -17,34 +17,36 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
-	"fmt"
+	"bdl.local/bdl/generic/tiglib"
 	"github.com/jmoiron/sqlx"
+	"sort"
 	"strconv"
 	"time"
 )
 
 type Activite struct {
 	Id           int
-	TypeActivite string // "plaq", "chautre" ou "chaufer"
-	Titre        string
-	URL          string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
-	DateActivite time.Time
-	TypeValo     string
-	Volume       float64
-	Unite        string // pour le volume
-	CodeEssence  string
-	PrixHT       float64
-	PUHT         float64
-	TVA          float64
-	NumFacture   string
-	DateFacture  time.Time
-	Notes        string
-	// relations n-n
+    TypeActivite string // "plaq", "chautre" ou "chaufer"
+    Titre        string
+    URL          string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
+    DateActivite time.Time
+    TypeValo     string
+    CodeEssence  string
+    Volume       float64
+    Unite        string // pour le volume
+    //
+    Chautre      *Chautre
+    Chaufer      *Chaufer
+    //
+	PrixHT       float64            // pas utilisé
+	PUHT         float64            // pas utilisé
+	TVA          float64            // pas utilisé
+	NumFacture   string             // pas utilisé
+	DateFacture  time.Time          // pas utilisé
+	// relations n-n - utilies pour l'application de certains filtres
 	LiensParcelles []*ChantierParcelle
 	UGs            []*UG
 	Fermiers       []*Fermier
-	//
-	Details interface{}
 }
 
 /*
@@ -67,116 +69,132 @@ func (a *Activite) String() string {
 // ************************** Instance methods *******************************
 
 func (a *Activite) ComputeLiensParcelles(db *sqlx.DB) (err error) {
-	a.LiensParcelles, err = computeLiensParcellesOfChantier(db, a.TypeActivite, a.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
-	}
-	return nil
+    a.LiensParcelles, err = computeLiensParcellesOfChantier(db, a.TypeActivite, a.Id)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+    }
+    return nil
 }
 
 func (a *Activite) ComputeFermiers(db *sqlx.DB) (err error) {
-	a.Fermiers, err = computeFermiersOfChantier(db, a.TypeActivite, a.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel computeFermiersOfChantier()")
-	}
-	return nil
+    a.Fermiers, err = computeFermiersOfChantier(db, a.TypeActivite, a.Id)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel computeFermiersOfChantier()")
+    }
+    return nil
 }
 
 func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
-	a.UGs, err = computeUGsOfChantier(db, a.TypeActivite, a.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel computeUGsOfChantier()")
-	}
-	return nil
+    a.UGs, err = computeUGsOfChantier(db, a.TypeActivite, a.Id)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel computeUGsOfChantier()")
+    }
+    return nil
 }
 
 // ************************** Get many *******************************
-func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Activite, err error) {
-	fmt.Printf(" === model.ComputeActivitesFromFiltres() - filtres = %+v\n", filtres)
-	result = []*Activite{}
+func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*Activite, err error) {
+	res = []*Activite{}
 	//
 	// Première sélection, par filtre période
 	//
 	var tmp []*Activite
-	// if plaq dans le filtre activite (pas implémenté)
-	tmp, err = computePlaqActivitesFromFiltrePeriode(db, filtres["periode"])
-	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computePlaqActivitesFromFiltrePeriode()")
-	}
-	result = append(result, tmp...)
 	//
+	if len(filtres["valo"]) == 0 || tiglib.InArray("PQ", filtres["valo"]){
+        tmp, err = computePlaqActivitesFromFiltrePeriode(db, filtres["periode"])
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel computePlaqActivitesFromFiltrePeriode()")
+        }
+        res = append(res, tmp...)
+    }
+	//
+	// todo: calculer chautre que si len(filtre valo) == 0 ou contient une ou + valo parmi BO PL CH PP PI
 	tmp, err = computeChautreActivitesFromFiltrePeriode(db, filtres["periode"])
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computeChautreActivitesFromFiltrePeriode()")
+		return res, werr.Wrapf(err, "Erreur appel computeChautreActivitesFromFiltrePeriode()")
 	}
-	result = append(result, tmp...)
+	res = append(res, tmp...)
 	//
-	tmp, err = computeChauferActivitesFromFiltrePeriode(db, filtres["periode"])
-	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel computeChauferActivitesFromFiltrePeriode()")
-	}
-	result = append(result, tmp...)
+	if len(filtres["valo"]) == 0 || tiglib.InArray("CF", filtres["valo"]){
+        tmp, err = computeChauferActivitesFromFiltrePeriode(db, filtres["periode"])
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel computeChauferActivitesFromFiltrePeriode()")
+        }
+        res = append(res, tmp...)
+    }
 	//
 	// Filtres suivants
 	//
 	if len(filtres["essence"]) != 0 {
-		result = filtreActivite_essence(db, result, filtres["essence"])
+		res = filtreActivite_essence(db, res, filtres["essence"])
 	}
 	//
 	if len(filtres["valo"]) != 0 {
-		result = filtreActivite_valo(db, result, filtres["valo"])
+		res = filtreActivite_valo(db, res, filtres["valo"])
 	}
 	//
 	if len(filtres["fermier"]) != 0 {
-		for _, activite := range result {
+		for _, activite := range res {
 			activite.ComputeFermiers(db)
 		}
-		result = filtreActivite_fermier(db, result, filtres["fermier"])
+		res = filtreActivite_fermier(db, res, filtres["fermier"])
 	}
 	//
 	//
 	// préparation (faire le plus tard possible pour optimiser)
 	//
 	// on calcule toujours les UGs puisqu'on affiche une liste par UG
-	for _, activite := range result {
+	for _, activite := range res {
 		err = activite.ComputeUGs(db)
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel ComputeUGs()")
+			return res, werr.Wrapf(err, "Erreur appel ComputeUGs()")
 		}
 	}
 	//
 	if len(filtres["ug"]) != 0 {
-		result = filtreActivite_ug(db, result, filtres["ug"])
+		res = filtreActivite_ug(db, res, filtres["ug"])
 	}
 	if len(filtres["proprio"]) != 0 || len(filtres["parcelle"]) != 0 {
-		for _, activite := range result {
+		for _, activite := range res {
 			activite.ComputeLiensParcelles(db)
 		}
 	}
 	//
 	if len(filtres["parcelle"]) != 0 {
-		result = filtreActivite_parcelle(db, result, filtres["parcelle"])
+		res = filtreActivite_parcelle(db, res, filtres["parcelle"])
 	}
 	//
 	if len(filtres["proprio"]) != 0 {
-		result, err = filtreActivite_proprio(db, result, filtres["proprio"])
+		res, err = filtreActivite_proprio(db, res, filtres["proprio"])
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel filtreActivite_proprio()")
+			return res, werr.Wrapf(err, "Erreur appel filtreActivite_proprio()")
 		}
 	}
-	//fmt.Printf("result = %+v\n",result)
-	// TODO éventuellement, trier par date
-	return result, nil
+	// Tri par date
+	sortedRes := make(activiteSlice, 0, len(res))
+	for _, elt := range res {
+		sortedRes = append(sortedRes, elt)
+	}
+	sort.Sort(sortedRes)
+	return sortedRes, nil
 }
 
 // ****************************************************************************************************
 // ************************** Auxiliaires de ComputeActivitesFromFiltres() ****************************
 // ****************************************************************************************************
 
+// ************************** Auxiliaire pour trier par date *******************************
+
+type activiteSlice []*Activite
+func (p activiteSlice) Len() int           { return len(p) }
+func (p activiteSlice) Less(i, j int) bool { return p[i].DateActivite.Before(p[j].DateActivite) }
+func (p activiteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+
 // ************************** Selection initiale, par période *******************************
 // Fabriquent des activités
 
-func computePlaqActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+func computePlaqActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (res []*Activite, err error) {
 	var query string
 	chantiers := []*Plaq{}
 	query = "select * from plaq"
@@ -187,19 +205,19 @@ func computePlaqActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) 
 		err = db.Select(&chantiers, query)
 	}
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, chantier := range chantiers {
 		tmp, err := plaq2Activite(db, chantier)
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel plaq2Activite()")
+			return res, werr.Wrapf(err, "Erreur appel plaq2Activite()")
 		}
-		result = append(result, tmp)
+		res = append(res, tmp)
 	}
-	return result, nil
+	return res, nil
 }
 
-func computeChautreActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+func computeChautreActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (res []*Activite, err error) {
 	var query string
 	chantiers := []*Chautre{}
 	query = "select * from chautre"
@@ -210,19 +228,19 @@ func computeChautreActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []strin
 		err = db.Select(&chantiers, query)
 	}
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, chantier := range chantiers {
 		tmp, err := chautre2Activite(db, chantier)
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel chautre2Activite()")
+			return res, werr.Wrapf(err, "Erreur appel chautre2Activite()")
 		}
-		result = append(result, tmp)
+		res = append(res, tmp)
 	}
-	return result, nil
+	return res, nil
 }
 
-func computeChauferActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (result []*Activite, err error) {
+func computeChauferActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []string) (res []*Activite, err error) {
 	var query string
 	chantiers := []*Chaufer{}
 	query = "select * from chaufer"
@@ -233,16 +251,16 @@ func computeChauferActivitesFromFiltrePeriode(db *sqlx.DB, filtrePeriode []strin
 		err = db.Select(&chantiers, query)
 	}
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, chantier := range chantiers {
 		tmp, err := chaufer2Activite(db, chantier)
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel chaufer2Activite()")
+			return res, werr.Wrapf(err, "Erreur appel chaufer2Activite()")
 		}
-		result = append(result, tmp)
+		res = append(res, tmp)
 	}
-	return result, nil
+	return res, nil
 }
 
 // ************************** Conversion de struct vers une Activite *******************************
@@ -263,7 +281,6 @@ func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
 	a.Volume = ch.Volume
 	a.Unite = "MA"
 	a.CodeEssence = ch.Essence
-	a.Notes = ch.Notes
 	return a, nil
 }
 
@@ -272,18 +289,21 @@ func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
 	a.Id = ch.Id
 	a.TypeActivite = "chautre"
 	a.Titre = ch.Titre
-	//	a.URL = "/chautre/" + strconv.Itoa(idActivite)
+	a.URL = "/chantier/autre/" + strconv.Itoa(a.Id)
 	a.DateActivite = ch.DateContrat
 	a.Volume = ch.VolumeRealise
 	a.TypeValo = ch.TypeValo
 	a.Unite = ch.Unite
 	a.CodeEssence = ch.Essence
+	//
+	a.Chautre = ch
+	//
+	// inutile, à supprimer ?
 	a.PUHT = ch.PUHT
 	a.PrixHT = ch.PUHT * ch.VolumeRealise
 	a.TVA = ch.TVA
 	a.NumFacture = ch.NumFacture
 	a.DateFacture = ch.DateFacture
-	a.Notes = ch.Notes
 	return a, nil
 }
 
@@ -292,13 +312,12 @@ func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
 	a.Id = ch.Id
 	a.TypeActivite = "chaufer"
 	a.Titre = ch.Titre
-	//	a.URL = "/chaufer/" + strconv.Itoa(idActivite)
+	a.URL = "/chantier/chauffage-fermier/" + strconv.Itoa(a.Id)
 	a.DateActivite = ch.DateChantier
 	a.TypeValo = "CF"
 	a.Volume = ch.Volume
 	a.Unite = ch.Unite
 	a.CodeEssence = ch.Essence
-	a.Notes = ch.Notes
 	return a, nil
 }
 
@@ -306,96 +325,96 @@ func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
 // En entrée : liste d'activités
 // En sortie : liste d'activités qui satisfont au filtre
 
-func filtreActivite_essence(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
-	result = []*Activite{}
+func filtreActivite_essence(db *sqlx.DB, input []*Activite, filtre []string) (res []*Activite) {
+	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
 			if a.CodeEssence == f {
-				result = append(result, a)
+				res = append(res, a)
 				break
 			}
 		}
 	}
-	return result
+	return res
 }
 
-func filtreActivite_valo(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
-	result = []*Activite{}
+func filtreActivite_valo(db *sqlx.DB, input []*Activite, filtre []string) (res []*Activite) {
+	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
 			if a.TypeValo == f {
-				result = append(result, a)
+				res = append(res, a)
 				break
 			}
 		}
 	}
-	return result
+	return res
 }
 
-func filtreActivite_fermier(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
-	result = []*Activite{}
+func filtreActivite_fermier(db *sqlx.DB, input []*Activite, filtre []string) (res []*Activite) {
+	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
 			id, _ := strconv.Atoi(f)
 			for _, fermier := range a.Fermiers {
 				if fermier.Id == id {
-					result = append(result, a)
+					res = append(res, a)
 					break
 				}
 			}
 		}
 	}
-	return result
+	return res
 }
 
-func filtreActivite_ug(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
-	result = []*Activite{}
+func filtreActivite_ug(db *sqlx.DB, input []*Activite, filtre []string) (res []*Activite) {
+	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
 			id, _ := strconv.Atoi(f)
 			for _, ug := range a.UGs {
 				if ug.Id == id {
-					result = append(result, a)
+					res = append(res, a)
 					break
 				}
 			}
 		}
 	}
-	return result
+	return res
 }
 
-func filtreActivite_parcelle(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite) {
-	result = []*Activite{}
+func filtreActivite_parcelle(db *sqlx.DB, input []*Activite, filtre []string) (res []*Activite) {
+	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
 			id, _ := strconv.Atoi(f)
 			for _, lienParcelle := range a.LiensParcelles {
 				if lienParcelle.IdParcelle == id {
-					result = append(result, a)
+					res = append(res, a)
 					break
 				}
 			}
 		}
 	}
-	return result
+	return res
 }
 
-func filtreActivite_proprio(db *sqlx.DB, input []*Activite, filtre []string) (result []*Activite, err error) {
-	result = []*Activite{}
+func filtreActivite_proprio(db *sqlx.DB, input []*Activite, filtre []string) (res []*Activite, err error) {
+	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
 			id, _ := strconv.Atoi(f)
 			for _, lienParcelle := range a.LiensParcelles {
 				parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
 				if err != nil {
-					return result, werr.Wrapf(err, "Erreur appel GetParcelle()")
+					return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
 				}
 				if parcelle.IdProprietaire == id {
-					result = append(result, a)
+					res = append(res, a)
 					break
 				}
 			}
 		}
 	}
-	return result, nil
+	return res, nil
 }

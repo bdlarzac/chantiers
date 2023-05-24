@@ -5,13 +5,13 @@
 
 <h1>
     {{.Header.Title}}
-    <a class="padding-left" href="/chantier/chauffage-fermier/new">
+    <a class="no-print padding-left" href="/chantier/chauffage-fermier/new">
         <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau chantier autres valorisations" />
     </a>
 </h1>
 
 {{if .Details.Annees}}
-<div>
+<div class="no-print">
     Autres années :
     {{range .Details.Annees}}
     <a class="padding-left" href="/chantier/chauffage-fermier/liste/{{.}}">{{.}}</a>
@@ -21,7 +21,7 @@
 
 {{if .Details.Chantiers}}
 
-<div class="bold padding-left padding-top">
+<div class="no-print bold padding-left padding-top">
     <span class="link padding-right2" onclick="toutVoir();">Tout voir</span>
     <span class="link" onclick="toutCacher();">Tout cacher</span>
 </div>
@@ -30,7 +30,7 @@
     
     <thead>
         <tr>
-            <th></th>
+            <th class="no-print"></th>
             <th class="order">Date</th>
             <th class="order">Fermier</th>
             <th class="order">Essence</th>
@@ -41,7 +41,7 @@
     <tbody>
         {{range .Details.Chantiers}}
         <tr>
-            <td class="whitespace-nowrap">
+            <td class="no-print whitespace-nowrap">
                 <a href="/chantier/chauffage-fermier/update/{{.Id}}">
                     <img src="/static/img/update.png" title="Modifier ce chantier" />
                 </a>
@@ -57,7 +57,6 @@
             </td>
             <td>
                 {{.Essence | labelEssence}}
-                        
             </td>
             <td>
                 {{.Volume}} {{.Unite | labelUnite}}

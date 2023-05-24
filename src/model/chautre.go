@@ -70,11 +70,11 @@ func (ch *Chautre) FullString() string {
 
 // Renvoie un chantier autres valorisations
 // contenant uniquement les données stockées en base
-func GetChautre(db *sqlx.DB, idChantier int) (*Chautre, error) {
-	ch := &Chautre{}
+func GetChautre(db *sqlx.DB, idChantier int) (ch *Chautre, err error) {
+	ch = &Chautre{}
 	query := "select * from chautre where id=$1"
 	row := db.QueryRowx(query, idChantier)
-	err := row.StructScan(ch)
+	err = row.StructScan(ch)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur query : "+query)
 	}
@@ -90,8 +90,8 @@ Renvoie un chantier autres valorisations contenant :
   - les lieux-dits
   - les fermiers
 */
-func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
-	ch, err := GetChautre(db, idChantier)
+func GetChautreFull(db *sqlx.DB, idChantier int) (ch *Chautre, err error) {
+	ch, err = GetChautre(db, idChantier)
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre()")
 	}
@@ -126,11 +126,11 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (*Chautre, error) {
 Renvoie la liste des années ayant des chantiers autres valorisations,
 @param exclude   Année à exclure du résultat
 */
-func GetChautreDifferentYears(db *sqlx.DB, exclude string) ([]string, error) {
-	res := []string{}
+func GetChautreDifferentYears(db *sqlx.DB, exclude string) (res []string, err error) {
+	res = []string{}
 	list := []time.Time{}
 	query := "select datecontrat from chautre order by datecontrat desc"
-	err := db.Select(&list, query)
+	err = db.Select(&list, query)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -148,15 +148,15 @@ Renvoie la liste des chantiers autres valorisations pour une année donnée,
 triés par ordre chronologique inverse.
 Chaque chantier contient les mêmes champs que ceux renvoyés par GetChautreFull()
 */
-func GetChautresOfYear(db *sqlx.DB, annee string) ([]*Chautre, error) {
-	res := []*Chautre{}
+func GetChautresOfYear(db *sqlx.DB, annee string) (res []*Chautre, err error) {
+	res = []*Chautre{}
 	type ligne struct {
 		Id          int
 		DateContrat time.Time
 	}
 	tmp1 := []*ligne{}
 	query := "select id,datecontrat from chautre where extract(year from datecontrat)=$1 order by datecontrat"
-	err := db.Select(&tmp1, query, annee)
+	err = db.Select(&tmp1, query, annee)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -172,11 +172,10 @@ func GetChautresOfYear(db *sqlx.DB, annee string) ([]*Chautre, error) {
 
 // ************************** Compute *******************************
 
-func (ch *Chautre) ComputeAcheteur(db *sqlx.DB) error {
+func (ch *Chautre) ComputeAcheteur(db *sqlx.DB) (err error) {
 	if ch.Acheteur != nil {
 		return nil // déjà calculé
 	}
-	var err error
 	ch.Acheteur, err = GetActeur(db, ch.IdAcheteur)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetActeur()")

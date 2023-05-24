@@ -16,8 +16,8 @@ package model
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
-	"fmt"
 	"github.com/jmoiron/sqlx"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -51,9 +51,8 @@ func (v *Vente) String() string {
 
 // ************************** Get many *******************************
 
-func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*Vente, err error) {
-	fmt.Printf("=== model.ComputeVentesFromFiltres() - filtres = %+v\n", filtres)
-	result = []*Vente{}
+func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*Vente, err error) {
+	res = []*Vente{}
 	//
 	// 1 - détermine dans quelles tables rechercher à partir du filtre valorisations
 	// on pourrait déterminer plus précisément à partir du filtre clients (avec les rôles)
@@ -72,7 +71,6 @@ func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result 
 			tables = append(tables, "chautre") // car len(filtres["valo"]) > 0
 		}
 	}
-	fmt.Printf("tables = %v\n", tables)
 	//
 	// 2 - Filtres periode et client (et valo pour chautre)
 	//
@@ -80,39 +78,51 @@ func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (result 
 	if tiglib.InArray("venteplaq", tables) {
 		tmp, err = computeVentePlaqVenteFromFiltresPeriodeEtClient(db, filtres["periode"], filtres["client"])
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
+			return res, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
 		}
-		result = append(result, tmp...)
+		res = append(res, tmp...)
 	}
 	if tiglib.InArray("chautre", tables) {
 		tmp, err = computeChautreVentreFromFiltresPeriodeEtClientEtValo(db, filtres["periode"], filtres["client"], filtres["valo"])
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
+			return res, werr.Wrapf(err, "Erreur appel computePlaqFromFiltrePeriode()")
 		}
-		result = append(result, tmp...)
+		res = append(res, tmp...)
 	}
 	//
 	// Filtres suivants
 	//
 	if len(filtres["proprio"]) != 0 {
-		result, err = filtreVente_proprio(db, result, filtres["proprio"])
+		res, err = filtreVente_proprio(db, res, filtres["proprio"])
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel filtreVente_proprio()")
+			return res, werr.Wrapf(err, "Erreur appel filtreVente_proprio()")
 		}
 	}
-	//fmt.Printf("result = %+v\n",result)
-	// TODO éventuellement, trier par date
-	return result, nil
+	// Tri par date
+	sortedRes := make(venteSlice, 0, len(res))
+	for _, elt := range res {
+		sortedRes = append(sortedRes, elt)
+	}
+	sort.Sort(sortedRes)
+	return sortedRes, nil
 }
 
 // ****************************************************************************************************
 // ************************** Auxiliaires de ComputeVentesFromFiltres() *******************************
 // ****************************************************************************************************
 
+// ************************** Auxiliaire pour trier par date *******************************
+
+type venteSlice []*Vente
+func (p venteSlice) Len() int           { return len(p) }
+func (p venteSlice) Less(i, j int) bool { return p[i].DateVente.Before(p[j].DateVente) }
+func (p venteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+
 // ************************** Selection par période et client et valo *******************************
 
 /*  Fabrique des Ventes à partir de la table venteplaq */
-func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode, filtreClient []string) (result []*Vente, err error) {
+func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode, filtreClient []string) (res []*Vente, err error) {
 	ventePlaqs := []*VentePlaq{}
 	and := []string{}
 	var args []interface{}
@@ -133,20 +143,20 @@ func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode,
 	}
 	err = db.Select(&ventePlaqs, query, args...)
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, vp := range ventePlaqs {
 		vente, err := ventePlaq2Vente(db, vp)
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel ventePlaq2Vente()")
+			return res, werr.Wrapf(err, "Erreur appel ventePlaq2Vente()")
 		}
-		result = append(result, vente)
+		res = append(res, vente)
 	}
-	return result, nil
+	return res, nil
 }
 
 /*  Fabrique des Ventes à partir de la table chautre */
-func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePeriode, filtreClient, filtreValo []string) (result []*Vente, err error) {
+func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePeriode, filtreClient, filtreValo []string) (res []*Vente, err error) {
 	chantiers := []*Chautre{}
 	and := []string{}
 	var args []interface{}
@@ -171,17 +181,17 @@ func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePer
 	}
 	err = db.Select(&chantiers, query, args...)
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur query DB : "+query)
+		return res, werr.Wrapf(err, "Erreur query DB : "+query)
 	}
 	for _, ch := range chantiers {
 		vente, err := chautre2Vente(db, ch)
 		if err != nil {
-			return result, werr.Wrapf(err, "Erreur appel chautre2Vente()")
+			return res, werr.Wrapf(err, "Erreur appel chautre2Vente()")
 		}
-		result = append(result, vente)
+		res = append(res, vente)
 	}
 	//
-	return result, nil
+	return res, nil
 }
 
 // ************************** Application des filtres *******************************
@@ -189,8 +199,8 @@ func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePer
 // En sortie : liste de ventes qui satisfont au filtre
 
 // TODO implement
-func filtreVente_proprio(db *sqlx.DB, input []*Vente, filtre []string) (result []*Vente, err error) {
-	result = []*Vente{}
+func filtreVente_proprio(db *sqlx.DB, input []*Vente, filtre []string) (res []*Vente, err error) {
+	res = []*Vente{}
 	/*
 		for _, a := range input {
 			for _, f := range filtre {
@@ -198,17 +208,17 @@ func filtreVente_proprio(db *sqlx.DB, input []*Vente, filtre []string) (result [
 				for _, lienParcelle := range a.LiensParcelles {
 					parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
 					if err != nil {
-						return result, werr.Wrapf(err, "Erreur appel GetParcelle()")
+						return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
 					}
 					if parcelle.IdProprietaire == id {
-						result = append(result, a)
+						res = append(res, a)
 						break
 					}
 				}
 			}
 		}
 	*/
-	return result, nil
+	return res, nil
 }
 
 // ************************** Conversion de struct vers une Vente *******************************

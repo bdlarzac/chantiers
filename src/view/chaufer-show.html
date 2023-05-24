@@ -1,0 +1,79 @@
+{{/*
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+{{with .Details.Chantier}}
+
+<div class="inline-block padding-right3">
+    <h1>{{.FullString}}</h1>
+</div>
+
+<div class="inline-block">
+    <a href="/chantier/chauffage-fermier/update/{{.Id}}">
+        <img class="bigicon inline-block" src="/static/img/update.png" alt="Modifier ce chantier" title="Modifier ce chantier" >
+    </a>
+    <a href="#" onclick="deleteChantierChaufer({{.Id}}, {{.String}})">
+        <img class="bigicon inline-block" src="/static/img/delete.png" alt="Supprimer ce chantier" title="Supprimer ce chantier">
+    </a>                                                              
+    <a class="padding-left2" href="/chantier/chauffage-fermier/new">
+        <img class="bigicon inline-block" src="/static/img/new.png" alt="Créer un nouveau chantier chauffage fermier" title="Créer un nouveau chantier chauffage fermier">
+    </a>
+</div>
+
+<div class="grid2-pres">
+    
+    <div>Fermier</div>
+    <div><a href="/fermier/{{.IdFermier}}">{{.Fermier.String}}</a></div>
+    
+    <div>Date</div>
+    <div>{{.DateChantier | dateFr}}</div>
+    
+    <div>Essence</div>
+    <div>{{.Essence | labelEssence}}</div>
+    
+    <div>Volume</div>
+    <div>{{.Volume}} {{.Unite | labelUnite}}</div>
+    
+    <div class="margin-top05">UGs</div>
+    <div class="margin-top05">
+        {{range .UGs}}
+            <div><a href="/ug/{{.Id}}">{{.String}}</a></div>
+        {{end}}
+    </div>
+    
+    <div>Exploitation</div>
+    <div>{{.Exploitation | labelExploitation}}</div>
+
+    <div class="margin-top05">Parcelles</div>
+    <div class="margin-top05">
+        {{range .LiensParcelles}}
+            <div>
+                <a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a>
+                ({{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}})
+            </div>
+        {{end}}
+    </div>
+    
+    {{if .Notes}}
+        <div class="margin-top05">Notes</div>
+        <div class="margin-top05 note">{{.Notes | nl2br}}</div>
+    {{end}}
+    
+</div><!-- end class="grid2-pres" -->
+
+{{end}} {{/* end with .Details.Chantier */}}
+
+<script>
+function deleteChantierChaufer(idChantier, nomChantier){
+    const msg = "ATTENTION, en cliquant sur OK, ce chantier\n"
+            + "\"" + nomChantier + "\"\n"
+            + "sera définitivement supprimé.\n"
+            + "\nCette opération est définitive ET NE PEUT PAS ETRE ANNULEE.";
+    const r = confirm(msg);
+    if (r == true) {
+        window.location = "/chantier/chauffage-fermier/delete/" + idChantier;
+    }
+}
+
+</script>

@@ -1,0 +1,105 @@
+{{/*
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+{{with .Details.Chantier}}
+
+<div class="inline-block padding-right3">
+    <h1>{{.FullString}}</h1>
+</div>
+
+<div class="inline-block">
+    <a href="/chantier/autre/update/{{.Id}}">
+        <img class="bigicon inline-block" src="/static/img/update.png" alt="Modifier ce chantier" title="Modifier ce chantier" >
+    </a>
+    <a href="#" onclick="deleteChantierChautre({{.Id}}, {{.String}})">
+        <img class="bigicon inline-block" src="/static/img/delete.png" alt="Supprimer ce chantier" title="Supprimer ce chantier">
+    </a>                                                              
+    <a class="padding-left2" href="/chantier/autre/new">
+        <img class="bigicon inline-block" src="/static/img/new.png" alt="Créer un nouveau chantier autres valorisations" title="Créer un nouveau chantier autres valorisations">
+    </a>
+</div>
+
+<div class="grid2-pres">
+    
+    <div>Acheteur</div>
+    <div>{{.Acheteur}}</div>
+    
+    <div>Volume réalisé</div>
+    <div>{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
+    
+    {{if .VolumeContrat}}
+        <div>Volume contrat</div>
+        <div>{{.VolumeContrat}} {{.Unite | labelUnite}}</div>
+    {{end}}
+    
+    <div class="margin-top05">UGs</div>
+    <div class="margin-top05">{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
+    
+    <div>Exploitation</div>
+    <div>{{.Exploitation | labelExploitation}}</div>
+    
+    <div class="margin-top05">Parcelles</div>
+    <div class="margin-top05 grid2-pres">
+    {{range .LiensParcelles}}
+        <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
+        <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
+    {{end}}
+    </div>
+    
+    <div>Lieux-dits</div>
+    <div>{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
+    
+    <div>Fermiers</div>
+    <div>{{range .Fermiers}}<a href="/fermier/{{.Id}}">{{.String}}</a><br>{{end}}</div>
+    
+    <div>Propriétaires</div>
+    <div>{{range .Proprietaires}}<a href="/acteur/{{.Id}}">{{.String}}</a><br>{{end}}</div>
+    
+    <div class="margin-top05">PU HT</div>
+    <div class="margin-top05"><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>
+    
+    <div>Total HT</div>
+    <div><script>document.write(round(prixHT({{.PUHT}}, {{.VolumeRealise}}), 2));</script></span> &euro;</div>
+    
+    <div>TVA</div>
+    <div>{{.TVA}}</span> %</div>
+    
+    <div>Total TTC</div>
+    <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.VolumeRealise}}), {{.TVA}}), 2));</script></span> &euro;</div>
+    
+    <div class="padding-top05"><b>Facture</b></div>
+    <div></div>
+    
+    {{if not .DateFacture.IsZero}}
+        <div>Date</div>
+        <div>{{.DateFacture | dateFr}}</div>
+    {{end}}
+    
+    {{if .NumFacture}}
+        <div>Numéro</div>
+        <div>{{.NumFacture}}</div>
+    {{end}}
+    
+    {{if .Notes}}
+        <div>Notes</div>
+        <div>{{.Notes | nl2br}}</div>
+    {{end}}
+</div><!-- end class="grid2-pres" -->
+
+{{end}} {{/* end with .Details.Chantier */}}
+
+<script>
+function deleteChantierChautre(idChantier, nomChantier){
+    const msg = "ATTENTION, en cliquant sur OK, ce chantier\n"
+            + "\"" + nomChantier + "\"\n"
+            + "sera définitivement supprimé.\n"
+            + "\nCette opération est définitive ET NE PEUT PAS ETRE ANNULEE.";
+    const r = confirm(msg);
+    if (r == true) {
+        window.location = "/chantier/autre/delete/" + idChantier;
+    }
+}
+
+</script>

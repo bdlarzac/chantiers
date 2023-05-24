@@ -40,6 +40,10 @@ type detailsChautreList struct {
 	Annees    []string // toutes les années avec chantier
 }
 
+type detailsChautreShow struct {
+	Chantier         *model.Chautre
+}
+
 // *********************************************************
 func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
@@ -86,6 +90,43 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		url += "/" + annee
 	}
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: titrePage})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// *********************************************************
+// Affichage d'un chantier autres valorisations
+func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+	vars := mux.Vars(r)
+	idChantier, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return err
+	}
+	chantier, err := model.GetChautreFull(ctx.DB, idChantier)
+	if err != nil {
+		return err
+	}
+	ctx.TemplateName = "chautre-show.html"
+	ctx.Page = &ctxt.Page{
+		Header: ctxt.Header{
+			Title:    chantier.FullString(),
+			JSFiles: []string{
+				"/static/js/round.js",
+				"/view/common/prix.js",
+			},
+		},
+		Menu: "production",
+		Footer: ctxt.Footer{
+			JSFiles: []string{},
+		},
+		Details: detailsChautreShow{
+			Chantier:         chantier,
+		},
+	}
+	url := r.URL.String()
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.String()})
 	if err != nil {
 		return err
 	}

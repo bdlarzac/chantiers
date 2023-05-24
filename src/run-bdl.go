@@ -78,20 +78,22 @@ func main() {
 	r.HandleFunc("/chantier/autre/liste", H(control.ListChautre))
 	r.HandleFunc("/chantier/autre/liste/{annee:[0-9]+}", H(control.ListChautre))
 	r.HandleFunc("/chantier/autre/new", H(control.NewChautre))
+	r.HandleFunc("/chantier/autre/{id:[0-9]+}", H(control.ShowChautre))
 	r.HandleFunc("/chantier/autre/update/{id:[0-9]+}", H(control.UpdateChautre))
 	r.HandleFunc("/chantier/autre/delete/{id:[0-9]+}", H(control.DeleteChautre))
 
 	r.HandleFunc("/chantier/chauffage-fermier/liste/{annee:[0-9]+}", H(control.ListChaufer))
 	r.HandleFunc("/chantier/chauffage-fermier/liste", H(control.ListChaufer))
 	r.HandleFunc("/chantier/chauffage-fermier/new", H(control.NewChaufer))
+	r.HandleFunc("/chantier/chauffage-fermier/{id:[0-9]+}", H(control.ShowChaufer))
 	r.HandleFunc("/chantier/chauffage-fermier/update/{id:[0-9]+}", H(control.UpdateChaufer))
 	r.HandleFunc("/chantier/chauffage-fermier/delete/{id:[0-9]+}", H(control.DeleteChaufer))
 
 	r.HandleFunc("/chantier/plaquette/liste", H(control.ListPlaq))
 	r.HandleFunc("/chantier/plaquette/liste/{annee:[0-9]+}", H(control.ListPlaq))
 	r.HandleFunc("/chantier/plaquette/new", H(control.NewPlaq))
-	r.HandleFunc("/chantier/plaquette/update/{id:[0-9]+}", H(control.UpdatePlaq))
 	r.HandleFunc("/chantier/plaquette/{id:[0-9]+}", H(control.ShowPlaq))
+	r.HandleFunc("/chantier/plaquette/update/{id:[0-9]+}", H(control.UpdatePlaq))
 	r.HandleFunc("/chantier/plaquette/{id:[0-9]+}/{tab}", H(control.ShowPlaq))
 	r.HandleFunc("/chantier/plaquette/delete/{id:[0-9]+}", H(control.DeletePlaq))
 

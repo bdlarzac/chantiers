@@ -6,6 +6,10 @@
     <h1>Recherche sylviculture</h1>
 </div>
 
+<div class="no-print bold padding-left padding-bottom">
+    <span class="link padding-right2" onclick="toutDeplier();">Tout déplier</span>
+    <span class="link" onclick="toutReplier();">Tout replier</span>
+</div>
 
 <form class="form" action="{{$.Details.UrlAction}}" onsubmit="return validateForm();" method="post" novalidate>
 
@@ -36,6 +40,18 @@
 </form>
 
 <script>
+
+function toutDeplier(){
+    document.querySelector('.choix-commune > details').open = true;
+    document.querySelector('.choix-essence > details').open = true;
+    document.querySelector('.choix-fermier > details').open = true;
+}
+
+function toutReplier(){
+    document.querySelector('.choix-commune > details').open = false;
+    document.querySelector('.choix-essence > details').open = false;
+    document.querySelector('.choix-fermier > details').open = false;
+}
 
 function validateForm(){
     let msg = '';

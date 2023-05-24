@@ -104,17 +104,21 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    chantier.FullString(),
-			CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
+			CSSFiles: []string{
+                "/static/lib/tabstrip/tabstrip.css",
+			},
 			JSFiles: []string{
 				"/static/js/round.js",
 				"/static/js/formatNb.js",
 				"/view/common/prix.js",
-				"/view/common/plaq.js"},
+				"/view/common/plaq.js",
+			},
 		},
 		Menu: "production",
 		Footer: ctxt.Footer{
 			JSFiles: []string{
-				"/static/lib/tabstrip/tabstrip.js"},
+				"/static/lib/tabstrip/tabstrip.js",
+			},
 		},
 		Details: detailsPlaqShow{
 			Chantier:         chantier,
@@ -190,13 +194,15 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 				Title: "Nouveau chantier plaquettes",
 				CSSFiles: []string{
 					"/static/css/form.css",
-					"/static/css/modal.css"},
+					"/static/css/modal.css",
+				},
 			},
 			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/round.js",
-					"/static/js/toogle.js"},
+					"/static/js/toogle.js",
+				},
 			},
 			Details: detailsPlaqForm{
 				Chantier:            chantier,
@@ -282,13 +288,15 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				Title: "Modifier " + chantier.FullString(),
 				CSSFiles: []string{
 					"/static/css/form.css",
-					"/static/css/modal.css"},
+					"/static/css/modal.css",
+				},
 			},
 			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/round.js",
-					"/static/js/toogle.js"},
+					"/static/js/toogle.js",
+				},
 			},
 			Details: detailsPlaqForm{
 				Chantier:            chantier,

@@ -675,7 +675,7 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		}
 		res = append(res, new)
 	}
-	// tri par date
+	// Tri par date
 	sortedRes := make(acteurActiviteSlice, 0, len(res))
 	for _, elt := range res {
 		sortedRes = append(sortedRes, elt)

@@ -5,13 +5,13 @@
 
 <h1>
     {{.Header.Title}}
-    <a class="padding-left" href="/chantier/autre/new">
+    <a class="no-print padding-left" href="/chantier/autre/new">
         <img class="bigicon inline" src="/static/img/new.png" title="Créer un nouveau chantier autres valorisations" />
     </a>
 </h1>
 
 {{if .Details.Annees}}
-<div>
+<div class="no-print">
     Autres années :
     {{range .Details.Annees}}
     <a class="padding-left" href="/chantier/autre/liste/{{.}}">{{.}}</a>
@@ -21,7 +21,7 @@
 
 {{if .Details.Chantiers}}
 
-<div class="bold padding-left padding-top">
+<div class="no-print bold padding-left padding-top">
     <span class="link padding-right2" onclick="toutVoir();">Tout voir</span>
     <span class="link" onclick="toutCacher();">Tout cacher</span>
 </div>
@@ -29,19 +29,19 @@
 <table class="entities">
     <thead>
         <tr>
-            <th></th>
+            <th class="no-print"></th>
             <th class="order">Date</th>
             <th class="order">Acheteur</th>
             <th class="order">Valorisation</th>
             <th class="order">Essence</th>
             <th class="order">Volume</th>
-            <th>Details</th>
+            <th class="no-print">Details</th>
         </tr>
     </thead>
     <tbody>
         {{range .Details.Chantiers}}
         <tr>
-            <td class="whitespace-nowrap">
+            <td class="no-print whitespace-nowrap">
                 <a href="#" onclick='ShowFactureChautre({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
                     <img src="/static/img/facture.png" title="Voir la facture" />
                 </a>
@@ -69,7 +69,7 @@
             <td>
                 {{.VolumeRealise}} {{.Unite | labelUnite}}
             </td>
-            <td>
+            <td class="no-print">
                 <details class="details-entite">{{/* class pour tout voir / tout cacher */}}
                     <summary>Voir / cacher</summary>
                     <div class="grid2-pres">
