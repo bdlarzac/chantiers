@@ -156,28 +156,28 @@
         <input type="text" name="adresse2" id="adresse2" value="{{.Adresse2}}">
         
         <label class="optional" for="cp">Code postal</label>
-        <div><input type="text" name="cp" id="cp" size="5" value="{{.Cp}}"></div>
+        <div><input type="text" name="cp" id="cp" size="5" maxlength="5" value="{{.Cp}}"></div>
         
         <label class="optional" for="ville">Ville</label>
         <input type="text" name="ville" id="ville" value="{{.Ville}}">
         
         <label class="optional" for="tel">Téléphone</label>
-        <div><input type="text" name="tel" id="tel" size="14" value="{{.Tel}}"></div>
+        <div><input type="text" name="tel" id="tel" size="15" maxlength="15" value="{{.Tel}}"></div>
         
         <label class="optional" for="mobile">Téléphone portable</label>
-        <div><input type="text" name="mobile" id="mobile" size="14" value="{{.Mobile}}"></div>
+        <div><input type="text" name="mobile" id="mobile" size="15" maxlength="15" value="{{.Mobile}}"></div>
         
         <label class="optional" for="email">Email</label>
         <input type="text" name="email" id="email" value="{{.Email}}">
         
         <label class="optional" for="bic">BIC</label>
-        <input type="text" name="bic" id="bic" value="{{.Bic}}">
+        <input type="text" name="bic" id="bic" size="11" maxlength="11" value="{{.Bic}}">
         
         <label class="optional" for="iban">IBAN</label>
-        <input type="text" name="iban" id="iban" value="{{.Iban}}">
+        <input type="text" name="iban" id="iban" size="27" maxlength="27" value="{{.Iban}}">
         
         <label class="optional" for="siret">Siret</label>
-        <input type="text" name="siret" id="siret" value="{{.Siret}}">
+        <input type="text" name="siret" id="siret" size="14" maxlength="14" value="{{.Siret}}">
         
         <label class="optional" for="fournisseur">Fournisseur plaquettes</label>
         <div>
