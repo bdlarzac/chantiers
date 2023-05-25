@@ -138,7 +138,3 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		return nil
 	}
 }
-
-func SearchVenteParClient(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
-	return nil
-}

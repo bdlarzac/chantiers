@@ -369,13 +369,22 @@ func filtreActivite_fermier(db *sqlx.DB, input []*Activite, filtre []string) (re
 
 func filtreActivite_ug(db *sqlx.DB, input []*Activite, filtre []string) (res []*Activite) {
 	res = []*Activite{}
+	// map pour ne pas inclure des activités en double.
+	// Se produit si on demande des ugs voisines,
+	// avec des activités communes à plusieurs ugs demandées
+	m := map[int]bool{}
+    ActiviteLoop:
 	for _, a := range input {
+	    idActivite := a.Id
 		for _, f := range filtre {
 			id, _ := strconv.Atoi(f)
 			for _, ug := range a.UGs {
 				if ug.Id == id {
-					res = append(res, a)
-					break
+				    if _, ok := m[id]; !ok {
+                        res = append(res, a)
+                        m[idActivite] = true
+                        continue ActiviteLoop
+                    }
 				}
 			}
 		}

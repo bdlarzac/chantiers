@@ -68,9 +68,12 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 			Activites: activites,
 			Tab:       tab,
 		},
-		Footer: ctxt.Footer{
-			JSFiles: []string{"/static/lib/tabstrip/tabstrip.js"},
-		},
+        Footer: ctxt.Footer{
+            JSFiles: []string{
+                "/static/lib/tabstrip/tabstrip.js",
+                "/static/lib/table-sort/table-sort.js",
+            },
+        },
 	}
 	return nil
 }

@@ -445,6 +445,8 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 
 // ************************** Activité *******************************
 
+/////////////// TODO A supprimer, lorsque remplacé par struct Activite
+
 // Renvoie les activités ayant eu lieu sur une UG.
 // Ordre chronologique inverse
 // Ne renvoie que des infos pour afficher la liste, pas les activités réelles.

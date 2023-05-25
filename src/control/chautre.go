@@ -119,7 +119,6 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 		Menu: "production",
 		Footer: ctxt.Footer{
-			JSFiles: []string{},
 		},
 		Details: detailsChautreShow{
 			Chantier:         chantier,

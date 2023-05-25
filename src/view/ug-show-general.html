@@ -49,31 +49,40 @@
         <h2>Données foncières</h2>
         
         <div class="bold">Propriétaire(s)</div>
-        <ul class="naked margin-top0">
+        <ul class="naked margin-top02">
         {{range .Proprietaires}}
             <li><a href="/acteur/{{.Id}}">{{.String}}</a></li>
         {{end}}
         </ul>
         
         <div class="bold">Fermiers</div>
-        <ul class="naked margin-top0">
+        <ul class="naked margin-top02">
         {{range .Fermiers}}
             <li><a href="/fermier/{{.Id}}">{{.String}}</a></li>
         {{end}}
         </ul>
         
         <div class="bold">Parcelles</div>
-        <ul>
+        <table class="margin-left2 margin-top02">
         {{range .Parcelles}}
-            <li class="padding-bottom05">
-                <a href="/parcelle/{{.Id}}">{{.Code}}</a> ({{.Proprietaire}})
-                {{range .Lieudits}}
-                    <span class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></span>
-                {{end}}
-                <span class="padding-left">{{.Commune.Nom}}</span>
-            </li>
+            <tr class="padding-bottom05">
+                <td>
+                    <a href="/parcelle/{{.Id}}">{{.Code}}</a>
+                </td>
+                <td>
+                    ({{.Proprietaire}})
+                </td>
+                <td>
+                    {{range .Lieudits}}
+                        <span class="padding-left"><a href="/lieudit/{{.Id}}">{{.Nom}}</a></span>
+                    {{end}}
+                </td>
+                <td>
+                    <span class="padding-left">{{.Commune.Nom}}</span>
+                </td>
+            </tr>
         {{end}}
-        </ul>
+        </table>
     </div>
         
 {{end}}
@@ -83,17 +92,36 @@
     <div class="padding-left">
         <h2>Exploitation</h2>
         {{if .Activites}}
-        <table class="margin-left">
-        {{range .Activites}}
-            <tr>
-                <td>{{.Date | dateFr}}</td>
-                <td class="padding-left05"><a href="{{.URL}}">{{.NomActivite}}</a></td>
-            </tr>
-        {{end}}
-        </table>
-        
+            <table class="entities">
+            <thead>
+                <tr>
+                    <th class="order">Date</th>
+                    <th>Titre</th>
+                    <th class="order">Valorisation</th>
+                    <th class="order">Essence</th>
+                    <th class="order">Volume</th>
+                    <th class="order">Prix HT</th>
+                    <th>Facture</th>
+                    <th class="order">Date facture</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Activites}}
+                    <tr>
+                        <td>{{.Date | dateFr}}</td>
+                        <td class="padding-left05"><a href="{{.URL}}">{{.NomActivite}}</a></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {{end}}
+            </tbody>
+            </table>
         {{else}}
-        <h3>Aucune activité</h3>
+            <h3>Aucune activité</h3>
         {{end}}
     </div>
 {{end}}
