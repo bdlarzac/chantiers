@@ -79,7 +79,14 @@ fmt.Printf("=== model.ComputeUGsFromFiltres() - filtres = %+v\n", filtres)
             }
         }
 	}
-	//
+	// Calcul d'activités, à faire à la fin
+    for _, ug := range(result){
+        err = ug.ComputeActivites(db)
+        if err != nil {
+            return result, werr.Wrapf(err, "Erreur appel UG.ComputeActivites()")
+        }
+    }
+	
 //fmt.Printf("result = %+v\n",result)
 	return result, nil
 }

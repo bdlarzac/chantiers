@@ -84,43 +84,40 @@
         {{end}}
         </table>
     </div>
-        
-{{end}}
+    
 </div><!-- end flex-wrap -->
 
-{{with .Details}}
-    <div class="padding-left">
-        <h2>Exploitation</h2>
-        {{if .Activites}}
-            <table class="entities">
-            <thead>
+<div class="padding-left">
+    <h2>Exploitation</h2>
+    {{if .Activites}}
+        <table class="entities">
+        <thead>
+            <tr>
+                <th class="order">Date</th>
+                <th>Titre</th>
+                <th class="order">Valorisation</th>
+                <th class="order">Essence</th>
+                <th class="order">Volume</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Activites}}
                 <tr>
-                    <th class="order">Date</th>
-                    <th>Titre</th>
-                    <th class="order">Valorisation</th>
-                    <th class="order">Essence</th>
-                    <th class="order">Volume</th>
+                    <td>
+                        {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
+                        <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
+                    </td>
+                    <td class="padding-left05"><a href="{{.URL}}">{{.Titre}}</a></td>
+                    <td>{{.TypeValo | labelValo}}</td>
+                    <td>{{.CodeEssence | labelEssence}}</td>
+                    <td>{{.Volume}} {{.Unite | labelUnite}}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {{range .Activites}}
-                    <tr>
-                        <td>
-                            {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
-                            <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
-                        </td>
-                        <td class="padding-left05"><a href="{{.URL}}">{{.Titre}}</a></td>
-                        <td>{{.TypeValo | labelValo}}</td>
-                        <td>{{.CodeEssence | labelEssence}}</td>
-                        <td>{{.Volume}} {{.Unite | labelUnite}}</td>
-                    </tr>
-                {{end}}
-            </tbody>
-            </table>
-        {{else}}
-            <h3>Aucune activité</h3>
-        {{end}}
-    </div>
-{{end}}
-    
+            {{end}}
+        </tbody>
+        </table>
+    {{else}}
+        <h3>Aucune activité</h3>
+    {{end}}
+</div>
 
+{{end}}{{/* end with .Details.UG */}}

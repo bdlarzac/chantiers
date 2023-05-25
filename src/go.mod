@@ -12,3 +12,5 @@ require (
 	google.golang.org/appengine v1.6.7
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 )
+
+require golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect

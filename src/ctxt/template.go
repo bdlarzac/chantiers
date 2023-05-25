@@ -53,6 +53,7 @@ func MustInitTemplates() {
 		"labelTypo_long":    labelTypo_long,
 		"labelUnite":        labelUnite,
 		"labelValo":         labelValo,
+		"sortableUGCode":    sortableUGCode,
 		"valo2uniteLabel":   valo2uniteLabel,
 	}
 	tmpl = template.
@@ -225,6 +226,10 @@ func labelUnite(code string) template.HTML {
 // Type de valorisation (palette, pâte à papier...), à partir de son code
 func labelValo(code string) template.HTML {
 	return template.HTML(model.ValoMap[code])
+}
+
+func sortableUGCode(code string) template.HTML {
+	return template.HTML(model.SortableUGCode(code))
 }
 
 // Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)

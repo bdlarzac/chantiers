@@ -14,7 +14,7 @@
         <th class="order">Typo</th>
         <th class="order">Coupe</th>
         <th class="order">Année</th>
-        <th>Activités</th>
+        <th class="order">Activités</th>
         <th>Fermiers</th>
     </tr>
 </thead>
@@ -23,7 +23,8 @@
     {{range .}}
     <tr>
         <td>
-            {{.Code}}
+            {{/* data-code : hack pour trier par code (sinon trié par id), cf table-sort.js */}}
+            <span data-code="{{.Code | sortableUGCode}}"><a href="/ug/{{.Id}}">{{.Code}}</a> - {{.Code | sortableUGCode}}</span>
         </td>
         <td>
             {{range .CodesEssence}}
@@ -39,8 +40,11 @@
         <td>
             {{.AnneeIntervention}}
         </td>
-        <td>
-            todo
+        {{if .Activites}}<td style="background:lightblue;">{{else}}<td>{{end}}
+            {{range .Activites}}
+                <div><a href="{{.URL}}">{{.}}</a></div>
+            {{end}}
+            
         </td>
         <td>
             {{range .Fermiers}}

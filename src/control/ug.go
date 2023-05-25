@@ -16,7 +16,6 @@ import (
 
 type detailsUGShow struct {
 	UG        *model.UG
-	Activites []*model.Activite
 	Tab       string
 }
 
@@ -46,10 +45,9 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		return werr.Wrapf(err, "Erreur appel UG.ComputeRecap()")
 	}
 	//
-	filtres := map[string][]string{"ug":[]string{vars["id"]}}
-	activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
+	err = ug.ComputeActivites(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrapf(err, "Erreur appel UG.ComputeActivites()")
 	}
 	//
 	ctx.TemplateName = "ug-show.html"
@@ -62,7 +60,6 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Menu: "accueil",
 		Details: detailsUGShow{
 			UG:        ug,
-			Activites: activites,
 			Tab:       tab,
 		},
         Footer: ctxt.Footer{

@@ -350,9 +350,9 @@ func filtreActivite_fermier(db *sqlx.DB, input []*Activite, filtre []string) (re
 	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
-			id, _ := strconv.Atoi(f)
+			idFiltre, _ := strconv.Atoi(f)
 			for _, fermier := range a.Fermiers {
-				if fermier.Id == id {
+				if fermier.Id == idFiltre {
 					res = append(res, a)
 					break
 				}
@@ -372,10 +372,10 @@ func filtreActivite_ug(db *sqlx.DB, input []*Activite, filtre []string) (res []*
 	for _, a := range input {
 	    idActivite := a.Id
 		for _, f := range filtre {
-			id, _ := strconv.Atoi(f)
+			idFiltre, _ := strconv.Atoi(f)
 			for _, ug := range a.UGs {
-				if ug.Id == id {
-				    if _, ok := m[id]; !ok {
+				if ug.Id == idFiltre {
+				    if _, ok := m[idFiltre]; !ok {
                         res = append(res, a)
                         m[idActivite] = true
                         continue ActiviteLoop
@@ -391,9 +391,9 @@ func filtreActivite_parcelle(db *sqlx.DB, input []*Activite, filtre []string) (r
 	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
-			id, _ := strconv.Atoi(f)
+			idFiltre, _ := strconv.Atoi(f)
 			for _, lienParcelle := range a.LiensParcelles {
-				if lienParcelle.IdParcelle == id {
+				if lienParcelle.IdParcelle == idFiltre {
 					res = append(res, a)
 					break
 				}
@@ -407,13 +407,13 @@ func filtreActivite_proprio(db *sqlx.DB, input []*Activite, filtre []string) (re
 	res = []*Activite{}
 	for _, a := range input {
 		for _, f := range filtre {
-			id, _ := strconv.Atoi(f)
+			idFiltre, _ := strconv.Atoi(f)
 			for _, lienParcelle := range a.LiensParcelles {
 				parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
 				if err != nil {
 					return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
 				}
-				if parcelle.IdProprietaire == id {
+				if parcelle.IdProprietaire == idFiltre {
 					res = append(res, a)
 					break
 				}
