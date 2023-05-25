@@ -2,7 +2,7 @@
 
 #
 # Commande pour importer un dump postgres de la base de prod dans la base locale 
-# A exécuter depuis le répertoire courant (appli/manage).
+# A exécuter depuis le répertoire parent (appli/).
 #
 
 if [ $# -ne 1 ]; then
@@ -12,7 +12,7 @@ if [ $# -ne 1 ]; then
     exit
 fi
 
-source ../config.env
+source config.env
 
 dumpfile=$1
 zipfile=$dumpfile.zip

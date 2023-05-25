@@ -72,19 +72,21 @@
     <div class="padding-top05"><b>Facture</b></div>
     <div></div>
     
-    {{if not .DateFacture.IsZero}}
-        <div>Date</div>
-        <div>{{.DateFacture | dateFr}}</div>
-    {{end}}
+    <div>Date</div>
+    <div>{{.DateFacture | dateFr}}</div>
+
+    <div>Numéro</div>
+    <div>{{.NumFacture}}</div>
     
-    {{if .NumFacture}}
-        <div>Numéro</div>
-        <div>{{.NumFacture}}</div>
-    {{end}}
+    <div class="padding-top05"><b>Paiement</b></div>
+    <div></div>
     
+    <div>Date</div>
+    <div>{{.DatePaiement | dateFr}}</div>
+
     {{if .Notes}}
-        <div>Notes</div>
-        <div>{{.Notes | nl2br}}</div>
+        <div class="padding-top">Notes</div>
+        <div class="padding-top">{{.Notes | nl2br}}</div>
     {{end}}
 </div><!-- end class="grid2-pres" -->
 

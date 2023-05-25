@@ -37,6 +37,7 @@ type VentePlaq struct {
 	PUHT          float64
 	TVA           float64
 	DateVente     time.Time
+	DatePaiement  time.Time
 	// Facture
 	NumFacture            string
 	DateFacture           time.Time
@@ -304,6 +305,7 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
         puht,
         tva,
         datevente,
+        datepaiement,
         numfacture,
         datefacture,
         facturelivraison,
@@ -313,7 +315,7 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
         facturelivraisontva,
         facturenotes,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
@@ -322,6 +324,7 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
 		vp.PUHT,
 		vp.TVA,
 		vp.DateVente,
+		vp.DatePaiement,
 		vp.NumFacture,
 		vp.DateFacture,
 		vp.FactureLivraison,
@@ -341,6 +344,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
         puht,
         tva,
         datevente,
+        datepaiement,
         numfacture,
         datefacture,
         facturelivraison,
@@ -350,7 +354,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
         facturelivraisontva,
         facturenotes,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) where id=$15`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) where id=$16`
 	_, err := db.Exec(
 		query,
 		vp.IdClient,
@@ -358,6 +362,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 		vp.PUHT,
 		vp.TVA,
 		vp.DateVente,
+		vp.DatePaiement,
 		vp.NumFacture,
 		vp.DateFacture,
 		vp.FactureLivraison,

@@ -28,6 +28,7 @@ type Chautre struct {
 	TypeVente     string
 	TypeValo      string
 	DateContrat   time.Time
+	DatePaiement  time.Time
 	Exploitation  string
 	Essence       string
 	VolumeContrat float64
@@ -93,7 +94,7 @@ Renvoie un chantier autres valorisations contenant :
 func GetChautreFull(db *sqlx.DB, idChantier int) (ch *Chautre, err error) {
 	ch, err = GetChautre(db, idChantier)
 	if err != nil {
-		return ch, werr.Wrapf(err, "Erreur appel Chautre()")
+		return ch, werr.Wrapf(err, "Erreur appel GetChautre()")
 	}
 	err = ch.ComputeAcheteur(db)
 	if err != nil {
@@ -268,9 +269,10 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         puht,
         tva,
         datefacture,
+        datepaiement,
         numfacture,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) returning id`
 	idChantier = int(0)
 	err = db.QueryRow(
 		query,
@@ -287,6 +289,7 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		ch.PUHT,
 		ch.TVA,
 		ch.DateFacture,
+		ch.DatePaiement,
 		ch.NumFacture,
 		ch.Notes).Scan(&idChantier)
 	if err != nil {
@@ -334,9 +337,10 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
         puht,
         tva,
         datefacture,
+        datepaiement,
         numfacture,
         notes    
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) where id=$16`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) where id=$17`
 	_, err = db.Exec(
 		query,
 		ch.Titre,
@@ -352,6 +356,7 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		ch.PUHT,
 		ch.TVA,
 		ch.DateFacture,
+		ch.DatePaiement,
 		ch.NumFacture,
 		ch.Notes,
 		ch.Id)

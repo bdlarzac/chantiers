@@ -121,7 +121,7 @@
     <div class="flex-wrap">
         <div class="padding-right border-right margin-right">
             <div class="grid2-pres">
-                <span>Date</span>
+                <span>Date facture</span>
                 <span class="bold">
                     {{if not .DateFacture.IsZero}}
                         {{.DateFacture | dateFr}}
@@ -130,12 +130,21 @@
                     {{end}}
                 </span>
                 
-                <span>Numéro</span>                                                                                          
-                <span class="bold">
+                <span class="margin-top05">Numéro</span>                                                                                          
+                <span class="bold margin-top05">
                     {{if .NumFacture}}
                         {{.NumFacture}}
                     {{else}}
                         NON SPECIFIÉ
+                    {{end}}
+                </span>
+                
+                <span class="margin-top05">Date Paiement</span>
+                <span class="bold margin-top05">
+                    {{if not .DatePaiement.IsZero}}
+                        {{.DatePaiement | dateFr}}
+                    {{else}}
+                        NON SPECIFIÉE
                     {{end}}
                 </span>
             </div>

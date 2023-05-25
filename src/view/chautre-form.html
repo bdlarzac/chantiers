@@ -118,6 +118,11 @@
             <input type="text" size="11" name="numfacture" id="numfacture" value="{{.NumFacture}}" readonly>
         </div>
         
+        <label class="optional" for="datepaiement">Date de paiement</label>
+        <div>
+            <input type="date" name="datepaiement" id="datepaiement" value="{{.DatePaiement | dateIso}}">
+        </div>
+        
         <label class="optional" for="notes">Notes</label>
         <textarea rows="6" cols="50" name="notes" id="notes">{{.Notes}}</textarea>
         

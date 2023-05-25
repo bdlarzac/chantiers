@@ -33,6 +33,11 @@
         <label for="datevente">Date Vente</label>
         <input type="date" name="datevente" id="datevente" value="{{.DateVente | dateIso}}" class="width15">
     
+        <label class="optional" for="datepaiement">Date de paiement</label>
+        <div>
+            <input type="date" name="datepaiement" id="datepaiement" value="{{.DatePaiement | dateIso}}">
+        </div>
+        
     </div>
     
     <fieldset class="margin-top margin-bottom">

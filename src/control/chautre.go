@@ -375,6 +375,13 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 		}
 	}
 	//
+	if r.PostFormValue("datepaiement") != "" {
+		ch.DatePaiement, err = time.Parse("2006-01-02", r.PostFormValue("datepaiement"))
+		if err != nil {
+			return ch, vide, vide, vide, err
+		}
+	}
+	//
 	// Création d'un nouveau numéro de facture, uniquement pour form new
 	if r.PostFormValue("numfacture") == "" {
 		ch.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(ch.DateContrat.Year()))

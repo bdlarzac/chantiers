@@ -39,6 +39,7 @@
             <th title="Comment la livraison apparaît sur la facture" class="cursor-help">Livr.</th>
             <th>Num facture</th>
             <th>Date facture</th>
+            <th class="order">Date paiement</th>
         </tr>
     </thead>
     <tbody>
@@ -80,6 +81,10 @@
             <td>{{.FactureLivraisonUnite}}</td>
             <td>{{.NumFacture}}</td>
             <td>{{.DateFacture | dateFr}}</td>
+            <td>
+                {{/* data-date : hack pour trier par date, cf table-sort.js */}}
+                <span data-date="{{.DatePaiement}}">{{.DatePaiement | dateFr}}</span>
+            </td>
         </tr>
 {{end}}
 {{if .Details.Ventes}}

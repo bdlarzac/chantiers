@@ -317,6 +317,13 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 		}
 	}
 	//
+	if r.PostFormValue("datepaiement") != "" {
+		vente.DatePaiement, err = time.Parse("2006-01-02", r.PostFormValue("datepaiement"))
+		if err != nil {
+			return vente, err
+		}
+	}
+	//
 	vente.FactureLivraison = false
 	if r.PostFormValue("facturelivraison") == "on" {
 		vente.FactureLivraison = true
