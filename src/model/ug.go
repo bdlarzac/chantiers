@@ -15,7 +15,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
+//	"time"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
@@ -40,14 +40,6 @@ type UG struct {
 	CodesEssence     []string
 	Recaps           map[string]RecapUG
 	SortedRecapYears []string // années contenant de l'activité prise en compte dans Recaps
-}
-
-// Sert à afficher la liste des activités sur une UG.
-// Contient les infos utilisées pour l'affichage, pas les activités.
-type UGActivite struct {
-	Date        time.Time
-	URL         string // URL de la page de l'activité concernée
-	NomActivite string
 }
 
 type RecapUG struct {
@@ -442,97 +434,3 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 	//
 	return nil
 }
-
-// ************************** Activité *******************************
-
-/////////////// TODO A supprimer, lorsque remplacé par struct Activite
-
-// Renvoie les activités ayant eu lieu sur une UG.
-// Ordre chronologique inverse
-// Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
-func (u *UG) GetActivitesByDate(db *sqlx.DB) ([]*UGActivite, error) {
-	res := []*UGActivite{}
-	var err error
-	var query string
-	//
-	// Chantiers plaquettes
-	//
-	list1 := []Plaq{}
-	query = `select * from plaq where id in(
-	    select id_chantier from chantier_ug where type_chantier='plaq' and id_ug =$1
-    )`
-	err = db.Select(&list1, query, u.Id)
-	if err != nil {
-		return res, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, elt := range list1 {
-		err = elt.ComputeLieudits(db) // pour le nom du chantier
-		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
-		}
-		new := &UGActivite{
-			Date:        elt.DateDebut,
-			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.Id),
-			NomActivite: "Chantier plaquettes " + elt.String()}
-		res = append(res, new)
-	}
-	//
-	// Chantiers Autres valorisations
-	//
-	list3 := []Chautre{}
-	query = `select * from chautre where id in(
-	    select id_chantier from chantier_ug where type_chantier='chautre' and id_ug =$1
-    )`
-	err = db.Select(&list3, query, u.Id)
-	if err != nil {
-		return res, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, elt := range list3 {
-		err = elt.ComputeAcheteur(db)
-		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Chautre.ComputeAcheteur()")
-		}
-		new := &UGActivite{
-			Date:        elt.DateContrat,
-			URL:         "/chantier/autre/liste/" + strconv.Itoa(elt.DateContrat.Year()),
-			NomActivite: "Chantier " + elt.String()}
-		res = append(res, new)
-	}
-	//
-	// Chantiers Chauffage fermier
-	//
-	list4 := []Chaufer{}
-	query = `select * from chaufer where id in(
-	    select id_chantier from chantier_ug where type_chantier='chaufer' and id_ug =$1
-    )`
-	err = db.Select(&list4, query, u.Id)
-	if err != nil {
-		return res, werr.Wrapf(err, "Erreur query DB : "+query)
-	}
-	for _, elt := range list4 {
-		err = elt.ComputeFermier(db)
-		if err != nil {
-			return res, werr.Wrapf(err, "Erreur appel Chaufer.ComputeFermier()")
-		}
-		new := &UGActivite{
-			Date:        elt.DateChantier,
-			URL:         "/chantier/chauffage-fermier/liste/" + strconv.Itoa(elt.DateChantier.Year()),
-			NomActivite: "Chauffage fermier " + elt.String()}
-		res = append(res, new)
-	}
-	// tri par date
-	sortedRes := make(ugActiviteSlice, 0, len(res))
-	for _, elt := range res {
-		sortedRes = append(sortedRes, elt)
-	}
-	sort.Sort(sortedRes)
-	//
-	return sortedRes, nil
-}
-
-// Auxiliaires de GetActivitesByDate() pour trier par date
-type ugActiviteSlice []*UGActivite
-
-func (p ugActiviteSlice) Len() int           { return len(p) }
-func (p ugActiviteSlice) Less(i, j int) bool { return p[i].Date.After(p[j].Date) }
-func (p ugActiviteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }

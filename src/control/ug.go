@@ -1,10 +1,6 @@
 /*
-*
-
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
 */
 package control
 
@@ -20,7 +16,7 @@ import (
 
 type detailsUGShow struct {
 	UG        *model.UG
-	Activites []*model.UGActivite
+	Activites []*model.Activite
 	Tab       string
 }
 
@@ -50,7 +46,8 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		return werr.Wrapf(err, "Erreur appel UG.ComputeRecap()")
 	}
 	//
-	activites, err := ug.GetActivitesByDate(ctx.DB)
+	filtres := map[string][]string{"ug":[]string{vars["id"]}}
+	activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
 	if err != nil {
 		return err
 	}

@@ -22,6 +22,7 @@ import (
 	"sort"
 	"strconv"
 	"time"
+"fmt"
 )
 
 type Activite struct {
@@ -34,16 +35,12 @@ type Activite struct {
     CodeEssence  string
     Volume       float64
     Unite        string // pour le volume
-    //
-    Chautre      *Chautre
-    Chaufer      *Chaufer
-    //
-	PrixHT       float64            // pas utilisé
-	PUHT         float64            // pas utilisé
-	TVA          float64            // pas utilisé
-	NumFacture   string             // pas utilisé
-	DateFacture  time.Time          // pas utilisé
-	// relations n-n - utilies pour l'application de certains filtres
+	PUHT         float64
+	PrixHT       float64
+	// TVA          float64            // pas utilisé
+	// NumFacture   string             // pas utilisé
+	// DateFacture  time.Time          // pas utilisé
+	// relations n-n - utiles pour l'application de certains filtres
 	LiensParcelles []*ChantierParcelle
 	UGs            []*UG
 	Fermiers       []*Fermier
@@ -94,6 +91,7 @@ func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
 
 // ************************** Get many *******************************
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*Activite, err error) {
+fmt.Printf("filtres = %+v\n",filtres)
 	res = []*Activite{}
 	//
 	// Première sélection, par filtre période
@@ -275,12 +273,12 @@ func plaq2Activite(db *sqlx.DB, ch *Plaq) (a *Activite, err error) {
 	a.DateActivite = ch.DateDebut
 	a.TypeValo = "PQ"
 	err = ch.ComputeVolume(db)
+	a.CodeEssence = ch.Essence
 	if err != nil {
 		return a, werr.Wrapf(err, "Erreur appel ComputeVolume()")
 	}
 	a.Volume = ch.Volume
 	a.Unite = "MA"
-	a.CodeEssence = ch.Essence
 	return a, nil
 }
 
@@ -291,19 +289,16 @@ func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
 	a.Titre = ch.Titre
 	a.URL = "/chantier/autre/" + strconv.Itoa(a.Id)
 	a.DateActivite = ch.DateContrat
-	a.Volume = ch.VolumeRealise
 	a.TypeValo = ch.TypeValo
-	a.Unite = ch.Unite
 	a.CodeEssence = ch.Essence
-	//
-	a.Chautre = ch
-	//
-	// inutile, à supprimer ?
+	a.Volume = ch.VolumeRealise
+	a.Unite = ch.Unite
 	a.PUHT = ch.PUHT
 	a.PrixHT = ch.PUHT * ch.VolumeRealise
-	a.TVA = ch.TVA
-	a.NumFacture = ch.NumFacture
-	a.DateFacture = ch.DateFacture
+	// inutile, à supprimer ?
+	// a.TVA = ch.TVA
+	// a.NumFacture = ch.NumFacture
+	// a.DateFacture = ch.DateFacture
 	return a, nil
 }
 
@@ -315,9 +310,9 @@ func chaufer2Activite(db *sqlx.DB, ch *Chaufer) (a *Activite, err error) {
 	a.URL = "/chantier/chauffage-fermier/" + strconv.Itoa(a.Id)
 	a.DateActivite = ch.DateChantier
 	a.TypeValo = "CF"
+	a.CodeEssence = ch.Essence
 	a.Volume = ch.Volume
 	a.Unite = ch.Unite
-	a.CodeEssence = ch.Essence
 	return a, nil
 }
 

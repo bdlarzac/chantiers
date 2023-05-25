@@ -100,22 +100,19 @@
                     <th class="order">Valorisation</th>
                     <th class="order">Essence</th>
                     <th class="order">Volume</th>
-                    <th class="order">Prix HT</th>
-                    <th>Facture</th>
-                    <th class="order">Date facture</th>
                 </tr>
             </thead>
             <tbody>
                 {{range .Activites}}
                     <tr>
-                        <td>{{.Date | dateFr}}</td>
-                        <td class="padding-left05"><a href="{{.URL}}">{{.NomActivite}}</a></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
+                            <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
+                        </td>
+                        <td class="padding-left05"><a href="{{.URL}}">{{.Titre}}</a></td>
+                        <td>{{.TypeValo | labelValo}}</td>
+                        <td>{{.CodeEssence | labelEssence}}</td>
+                        <td>{{.Volume}} {{.Unite | labelUnite}}</td>
                     </tr>
                 {{end}}
             </tbody>
