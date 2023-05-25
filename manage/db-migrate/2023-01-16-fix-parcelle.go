@@ -63,9 +63,6 @@ func fillTableParcelle_2023_01_16(ctx *ctxt.Context, versionSCTL string) {
 	parcelles, _ := tiglib.CsvMap(filename, ';')
 	// update table parcelle
 	db := ctx.DB
-	if err != nil {
-		panic(err)
-	}
 	stmt, err := db.Prepare("update parcelle set id_commune=$1 where id=$2")
 	for _, parcelle := range parcelles {
 		idCommune, _ := strconv.Atoi(parcelle["IdCommune"])

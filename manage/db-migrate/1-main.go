@@ -83,6 +83,8 @@ func main() {
 		Migrate_2023_05_19_ug_again__18(ctx)
 	case "Migrate_2023_05_22_non_agricoles__20":
 		Migrate_2023_05_22_non_agricoles__20(ctx)
+	case "Migrate_2023_05_25_fix_code_ug":
+		Migrate_2023_05_25_fix_code_ug(ctx)
 	default:
 		fmt.Println("Migration inconnue : " + migration)
 		fmt.Println("Modifier 1.main.go pour la rajouter dans le switch : ")
