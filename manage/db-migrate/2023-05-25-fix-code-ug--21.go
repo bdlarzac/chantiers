@@ -17,7 +17,9 @@ bdlchantiers=> select code from ug where code like '%.%' order by code;
  XVIII.33
  XVIII.34
 
-	Intégration : commit 
+    ATTENTION, la version courante du fix ne gère pas les cas XIX.5 (id 195) et XIX-5 (id 227)
+
+	Intégration : commit 9453126  2023-05-25 12:21
 
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
@@ -31,7 +33,7 @@ import (
 	"strings"
 )
 
-func Migrate_2023_05_25_fix_code_ug(ctx *ctxt.Context) {
+func Migrate_2023_05_25_fix_code_ug__21(ctx *ctxt.Context) {
 	db := ctx.DB
     stmt_select, err := db.Prepare("select id, code from ug where code like '%.%'")
     if err != nil {
@@ -65,6 +67,6 @@ fmt.Printf("id=%d - code=%s - new = %s\n",id, code, newCode)
             panic(err)
         }
     }
-	fmt.Println("Migration effectuée : 2023-05-25-fix-code-ug")
+	fmt.Println("Migration effectuée : 2023-05-25-fix-code-ug--21")
 }
 
