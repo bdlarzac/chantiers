@@ -1,0 +1,3 @@
+
+Code générique, qui pourrait être dans des dépôts extérieurs et importé via go.mod
+Pour éviter de s'embêter à gérer des dépôts supplémentaires, le code est directement recopié ici.

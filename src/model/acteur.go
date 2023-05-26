@@ -14,6 +14,7 @@ package model
 import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -51,28 +52,61 @@ type Acteur struct {
 	Parcelles []*Parcelle
 }
 
-// Sert à afficher la liste des activités d'un acteur.
+// Sert à afficher la liste des activités d'un acteur (acteur-show.html).
 // Contient les infos utilisées pour l'affichage, pas les activités.
-// /////////////////// TODO  supprimer et remplacer par model.Activite
+// Distinct de model.Activite car prend en compte tous les rôles possibles des acteurs
+// Pourrait être supprimé et remplacé par model.Activite
+// Mais obligerait à rendre model.Activite plus complexe => laissé en l'état pour l'instant.
 type ActeurActivite struct {
 	Date        time.Time
 	Role        string
-	URL         string // URL de la page de l'activité concernée
+	URL         string    // URL de la page de l'activité concernée
 	NomActivite string
+	Quantite    float64
+	Unite       string    // pour Quantite
 }
 
 // ************************** Structure *******************************
 
+// IsDeletable indique si un acteur peut être supprimé, ou s'il doit être marqué comme inactif
 // cf règles de gestion dans cahier des charges
-// TODO GetActivitesByDate() génère beaucoup de requêtes inutiles
-// Possible d'implémenter IsDeletable() avec des select count(), plus économiques
-func (a *Acteur) IsDeletable(db *sqlx.DB) (bool, error) {
-	act, err := a.GetActivitesByDate(db)
-	if err != nil {
-		return false, werr.Wrapf(err, "Erreur appel GetActivitesByDate()")
-	}
-	// supprimable si associé à aucune activité
-	return len(act) == 0, nil
+func (a *Acteur) IsDeletable(db *sqlx.DB) (res bool, err error) {
+    queries := []string{
+        // mis en premier car le plus fréquent
+        "select count(*) from chautre where id_acheteur=$1",
+        "select count(*) from venteplaq where id_client=$1",
+        //
+        "select count(*) from plaqop where id_acteur=$1",
+        //
+        "select count(*) from plaqtrans where id_transporteur=$1",
+        "select count(*) from plaqtrans where id_conducteur=$1",
+        "select count(*) from plaqtrans where id_proprioutil=$1",
+        //
+        "select count(*) from plaqrange where id_rangeur=$1",
+        "select count(*) from plaqrange where id_conducteur=$1",
+        "select count(*) from plaqrange where id_proprioutil=$1",
+        //
+        "select count(*) from ventelivre where id_livreur=$1",
+        "select count(*) from ventelivre where id_conducteur=$1",
+        "select count(*) from ventelivre where id_proprioutil=$1",
+        //
+        "select count(*) from ventecharge where id_chargeur=$1",
+        "select count(*) from ventecharge where id_conducteur=$1",
+        "select count(*) from ventecharge where id_proprioutil=$1",
+        //
+        "select count(*) from humid_acteur where id_acteur=$1",
+    }
+    var count int
+    for _, query := range(queries){
+        err = db.QueryRow(query, a.Id).Scan(&count)
+        if err != nil {
+            return false, werr.Wrapf(err, fmt.Sprint("Erreur query: %s\n Acteur %d: %s", query, a.Id, a.String()))
+        }
+        if count != 0 {
+            return false, nil
+        }
+    }
+    return true, nil
 }
 
 // ************************** Nom *******************************
@@ -118,11 +152,9 @@ func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
 
 // ************************** Get many *******************************
 
-/*
-Renvoie une liste d'Acteurs triés en utilisant un champ de la table.
-//////////////// TODO En fait, toujours utilisée en triant par nom, on pourrait supprimer le param field
-@param field    Champ de la table acteur utilisé pour le tri
-*/
+// GetSortedActeurs renvoie une liste d'Acteurs triés en utilisant un champ de la table.
+// TODO En fait, toujours utilisée en triant par nom, on pourrait supprimer le param field
+// @param field    Champ de la table acteur utilisé pour le tri
 func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := "select * from acteur where id<>0 order by " + field
@@ -130,10 +162,14 @@ func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) 
 	if err != nil {
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	for _, acteur := range acteurs {
-		err = acteur.ComputeCodesRole(db)
+	for _, a := range acteurs {
+		err = a.ComputeCodesRole(db)
 		if err != nil {
 			return acteurs, werr.Wrapf(err, "Erreur appel ComputeCodesRole()")
+		}
+		a.Deletable, err = a.IsDeletable(db)
+		if err != nil {
+			return acteurs, werr.Wrapf(err, "Erreur appel Acteur.IsDeletable()")
 		}
 	}
 	return acteurs, nil

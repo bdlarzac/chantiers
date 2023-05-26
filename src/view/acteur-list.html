@@ -80,11 +80,12 @@ function deleteActeur(idActeur, nomActeur, deletable){
     let msg;
     if(deletable){
         msg = "ATTENTION, en cliquant sur OK,\n"
-                + "l'acteur \"" + nomActeur + "\" sera définitivement supprimé.\n";
+                + "l'acteur \"" + nomActeur + "\" sera DÉFINITIVEMENT supprimé.\n\n"
+                + "(Il n'a participé à aucune activité, donc il peut être supprimé)";
     }
     else{
         msg = "ATTENTION, en cliquant sur OK,\n"
-                + "l'acteur \"" + nomActeur + "\" sera marqué \"inactif\".\n"
+                + "l'acteur \"" + nomActeur + "\" sera marqué \"inactif\".\n\n"
                 + "(Il ne peut pas être supprimé car il a participé à des activités)";
     }
     if(confirm(msg)){

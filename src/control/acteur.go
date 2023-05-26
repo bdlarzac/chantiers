@@ -34,13 +34,6 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	if err != nil {
 		return err
 	}
-	for _, acteur := range list {
-		// TODO bizarre de faire ça ici, devrait être dans model/
-		acteur.Deletable, err = acteur.IsDeletable(ctx.DB)
-		if err != nil {
-			return err
-		}
-	}
 	//
 	ctx.TemplateName = "acteur-list.html"
 	ctx.Page = &ctxt.Page{
