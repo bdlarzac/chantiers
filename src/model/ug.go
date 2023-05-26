@@ -32,6 +32,7 @@ type UG struct {
 	// pas stocké dans la table ug
 	Parcelles        []*Parcelle
 	Fermiers         []*Fermier
+	Communes         []*Commune
 	Proprietaires    []*Acteur
 	CodesEssence     []string
 	Activites        []*Activite
@@ -126,6 +127,8 @@ func GetUG(db *sqlx.DB, id int) (ug *UG, err error) {
 
 // Calcule les champs d'une UG qui ne sont pas stockés en base.
 // Mais ne calcule pas les activités - parce que pas fait dans la v1 - mais pourrait être ajouté (?)
+// TODO voir si on ne devrait pas directement faire UG.ComputeLieudits, ComputeProprietaire et ComputeCommune
+// avec des jointures plutôt que de passer par la table parcelle
 func GetUGFull(db *sqlx.DB, id int) (ug *UG, err error) {
 	ug, err = GetUG(db, id)
 	if err != nil {
@@ -329,6 +332,24 @@ func (ug *UG) ComputeFermiers(db *sqlx.DB) (err error) {
             )
         ) order by nom`
 	err = db.Select(&ug.Fermiers, query, ug.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+// Pas utilisé par GetUGFull() - mais pourraît l'être
+func (ug *UG) ComputeCommunes(db *sqlx.DB) (err error) {
+	if len(ug.Communes) != 0 {
+		return nil // déjà calculé
+	}
+	query := `
+        select * from commune where id in(
+            select id_commune from parcelle where id in(
+                select id_parcelle from parcelle_ug where id_ug=$1
+            )
+        ) order by nom`
+	err = db.Select(&ug.Communes, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}

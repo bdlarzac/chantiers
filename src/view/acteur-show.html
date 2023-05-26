@@ -117,8 +117,9 @@
             <td class="padding-left">
                 <a href="{{.URL}}">{{.NomActivite}}</a>
             </td>
-            <td>
-                {{.Quantite}} {{.Unite | labelUnite}}
+            <td>{{if .Quantite}}
+                    {{.Quantite}} {{.Unite | labelUnite}}
+                {{end}}
             </td>
         </tr>
         {{end}}

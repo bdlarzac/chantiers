@@ -50,10 +50,8 @@ func GetCommune(db *sqlx.DB, id int) (commune *Commune, err error) {
 
 // ************************** Get many *******************************
 
-/*
-Renvoie une liste de communes triés en utilisant un champ de la table
-@param field    Champ de la table commune utilisé pour le tri
-*/
+// Renvoie une liste de communes triés en utilisant un champ de la table
+// @param field    Champ de la table commune utilisé pour le tri
 func GetSortedCommunes(db *sqlx.DB, field string) (communes []*Commune, err error) {
 	communes = []*Commune{}
 	query := "select * from commune order by " + field
@@ -64,9 +62,7 @@ func GetSortedCommunes(db *sqlx.DB, field string) (communes []*Commune, err erro
 	return communes, nil
 }
 
-/*
-Renvoie la liste de toutes les communes avec leurs lieux-dits
-*/
+// Renvoie la liste de toutes les communes avec leurs lieux-dits
 func ListCommunesEtLieudits(db *sqlx.DB) (communes []*Commune, err error) {
 	communes = make([]*Commune, N_COMMUNES)
 	query := "select * from commune"
@@ -84,6 +80,7 @@ func ListCommunesEtLieudits(db *sqlx.DB) (communes []*Commune, err error) {
 			return communes, werr.Wrapf(err, "Erreur fabrication Commune")
 		}
 		rows2, err := db.Queryx(queryLD, commune.Id)
+		defer rows2.Close()
 		if err != nil {
 			return communes, werr.Wrapf(err, "Erreur query DB : "+query)
 		}
