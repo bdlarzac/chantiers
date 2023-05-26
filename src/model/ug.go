@@ -488,7 +488,7 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 	//
 	// Chantier autres valorisations
 	//
-	ids, err = computeIdsChantiersFromUG(db, "chaufer", ug.Id)
+	ids, err = computeIdsChantiersFromUG(db, "chautre", ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel computeIdsChantiersFromUG()")
 	}
@@ -508,6 +508,7 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 			myrecap.Chauffage.Quantite += chantier.VolumeRealise
 			myrecap.Chauffage.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "PI":
+		    // ICI PROBLEME, car piquets en stères ou en nb de piquets => calcul faux
 			myrecap.Piquets.Quantite += chantier.VolumeRealise
 			myrecap.Piquets.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "PL":
