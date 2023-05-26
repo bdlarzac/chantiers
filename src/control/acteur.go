@@ -43,7 +43,8 @@ func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		Menu: "acteurs",
 		Footer: ctxt.Footer{
 			JSFiles: []string{
-				"/static/lib/table-sort/table-sort.js"},
+				"/static/lib/table-sort/table-sort.js",
+			},
 		},
 		Details: detailsActeurList{
 			List:  list,
@@ -79,9 +80,15 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		Header: ctxt.Header{
 			Title: acteur.String(),
 			CSSFiles: []string{
-				"/static/css/form.css"},
+				"/static/css/form.css",
+			},
 		},
 		Menu: "acteurs",
+		Footer: ctxt.Footer{
+			JSFiles: []string{
+				"/static/lib/table-sort/table-sort.js",
+			},
+		},
 		Details: detailsActeurShow{
 			Acteur:    acteur,
 			Activites: activites,

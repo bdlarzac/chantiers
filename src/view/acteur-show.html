@@ -34,7 +34,7 @@
         <div class="padding-bottom05">Rôles</div>
         <div class="padding-bottom05">
             {{range .}}
-                <div>{{. | labelRole}}</div>
+                <div class="padding-top05 padding-bottom05"><span class="role-acteur">{{. | labelRole}}</span></div>
             {{end}}
         </div>
         {{end}}
@@ -97,17 +97,32 @@
 <div class="padding-left">
     {{if .Details.Activites}}
     <div class="big3 bold margin-bottom">Activité</div>
-    <table class="margin-left">
-    {{range .Details.Activites}}
+    <table class="entities">
+        <thead>
+            <th class="order">Date</th>
+            <th class="order">Rôle</th>
+            <th>Activité</th>
+            <th>Quantité</th>
+        </thead>
+        <tbody>
+        {{range .Details.Activites}}
         <tr>
             <td>
-                {{.Date | dateFr}} : {{.Role | ucFirst}}
+                {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
+                <span data-date="{{.Date}}">{{.Date | dateFr}}</span>
+            </td>
+            <td>
+                {{.Role | ucFirst}}
             </td>
             <td class="padding-left">
                 <a href="{{.URL}}">{{.NomActivite}}</a>
             </td>
+            <td>
+                {{.Quantite}} {{.Unite | labelUnite}}
+            </td>
         </tr>
-    {{end}}
+        {{end}}
+        </tbody>
     </table>
     
     {{else}}

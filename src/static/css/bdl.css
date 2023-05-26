@@ -194,6 +194,13 @@ h1{padding-left:1rem;}
     border:2px solid gold;
 }
 
+.role-acteur{
+    background:#eee;
+    padding:3px;
+    border:1px solid grey;
+    border-radius:4px;
+}
+
 /* ================ A nettoyer / classer ================ */
 
 /* 2 columns, to present results */

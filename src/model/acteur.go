@@ -329,7 +329,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateDebut,
 			Role:        elt.RoleName(),
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: plaq.FullString()}
+			NomActivite: plaq.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       elt.Unite,
+		}
 		res = append(res, new)
 	}
 	//
@@ -354,7 +357,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateTrans,
 			Role:        "transporteur",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: plaq.FullString()}
+			NomActivite: plaq.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -379,7 +385,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateTrans,
 			Role:        "conducteur (transport)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: plaq.FullString()}
+			NomActivite: plaq.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -404,7 +413,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateTrans,
 			Role:        "propriétaire outil (transport)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: plaq.FullString()}
+			NomActivite: plaq.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -429,7 +441,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateRange,
 			Role:        "rangeur",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: plaq.FullString()}
+			NomActivite: plaq.FullString(),
+            // Quantite:    ,
+            // Unite:       ,
+		}
 		res = append(res, new)
 	}
 	//
@@ -454,7 +469,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateRange,
 			Role:        "conducteur (rangement)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: plaq.FullString()}
+			NomActivite: plaq.FullString(),
+            // Quantite:    ,
+            // Unite:       ,
+		}
 		res = append(res, new)
 	}
 	//
@@ -479,7 +497,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateRange,
 			Role:        "propriétaire outil (rangement)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
-			NomActivite: plaq.FullString()}
+			NomActivite: plaq.FullString(),
+            // Quantite:    ,
+            // Unite:       ,
+		}
 		res = append(res, new)
 	}
 	//
@@ -500,11 +521,18 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
 		}
+		err = elt.ComputeChargements(db) // besoin de chargements pour calculer quantité
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChargements()")
+		}
 		new := &ActeurActivite{
 			Date:        elt.DateLivre,
 			Role:        "livreur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: vp.FullString()}
+			NomActivite: vp.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -525,11 +553,18 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
 		}
+		err = elt.ComputeChargements(db) // besoin de chargements pour calculer quantité
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChargements()")
+		}
 		new := &ActeurActivite{
 			Date:        elt.DateLivre,
 			Role:        "conducteur (livraison)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: vp.FullString()}
+			NomActivite: vp.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -550,11 +585,18 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeClient()")
 		}
+		err = elt.ComputeChargements(db) // besoin de chargements pour calculer vp.Quantité
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChargements()")
+		}
 		new := &ActeurActivite{
 			Date:        elt.DateLivre,
 			Role:        "propriétaire outil (livraison)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: vp.FullString()}
+			NomActivite: vp.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -584,7 +626,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateCharge,
 			Role:        "chargeur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: vp.FullString()}
+			NomActivite: vp.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -617,7 +662,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateCharge,
 			Role:        "conducteur (chargement)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: vp.FullString()}
+			NomActivite: vp.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -650,7 +698,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateCharge,
 			Role:        "propriétaire outil (chargement)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
-			NomActivite: vp.FullString()}
+			NomActivite: vp.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -667,11 +718,18 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetActeur()")
 		}
+        err = elt.ComputeQte(db)
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
+        }
 		new := &ActeurActivite{
 			Date:        elt.DateVente,
 			Role:        "client plaquettes",
 			URL:         "/vente/" + strconv.Itoa(elt.Id),
-			NomActivite: elt.FullString()}
+			NomActivite: elt.FullString(),
+            Quantite:    elt.Qte,
+            Unite:       "MA",
+		}
 		res = append(res, new)
 	}
 	//
@@ -693,7 +751,10 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Date:        elt.DateContrat,
 			Role:        "acheteur chantier autres valorisations",
 			URL:         "/chantier/autre/liste/" + strconv.Itoa(elt.DateContrat.Year()),
-			NomActivite: elt.FullString()}
+			NomActivite: elt.FullString(),
+            Quantite:    elt.VolumeRealise,
+            Unite:       elt.Unite,
+		}
 		res = append(res, new)
 	}
 	//
@@ -708,6 +769,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "mesureur",
 			URL:         "/humidite/liste/" + strconv.Itoa(elt.DateMesure.Year()),
 			NomActivite: "Mesure humidité",
+            // Quantite:    ,
+            // Unite:       ,
 		}
 		res = append(res, new)
 	}
