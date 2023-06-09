@@ -6,12 +6,22 @@
     <h1>Logiciel de gestion forestière</h1>
 </div>
 
-
-{{if .Details.Recents}}
-    <h2>Activité récente</h2>
-    <ul class="naked">
-    {{range .Details.Recents}}
-        <li class="padding-bottom02"><a href="{{.URL}}">{{.Label}}</a></li>
+<div class="flex-wrap">
+    
+    <img 
+        src="/doc/schema-bdd-bdl.svg" alt="Schéma de la base BDL"
+        style="margin-left:2rem; padding:.5rem; background:white; border:1px solid grey;"
+    >
+    
+    {{if .Details.Recents}}
+    <div class="margin-left">
+        <h2>Activité récente</h2>
+        <ul class="naked">
+        {{range .Details.Recents}}
+            <li class="padding-bottom02"><a href="{{.URL}}">{{.Label}}</a></li>
+        {{end}}
+        </ul>
+    </div>
     {{end}}
-    </ul>
-{{end}}
+    
+</div><!--  class="flex-wrap" -->

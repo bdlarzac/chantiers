@@ -24,7 +24,7 @@
     <tr>
         <td>
             {{/* data-code : hack pour trier par code (sinon trié par id), cf table-sort.js */}}
-            <span data-code="{{.Code | sortableUGCode}}"><a href="/ug/{{.Id}}">{{.Code}}</a> - {{.Code | sortableUGCode}}</span>
+            <span data-code="{{.Code | sortableUGCode}}"><a href="/ug/{{.Id}}">{{.Code}}</a></span>
         </td>
         <td>
             {{range .CodesEssence}}
@@ -48,7 +48,7 @@
         </td>
         <td>
             {{range .Fermiers}}
-                <div>{{.}}</div>
+                <div><a href="/fermier/{{.Id}}">{{.}}</a></div>
             {{end}}
         </td>
     </tr>
