@@ -31,6 +31,7 @@ func QGisUpdate(db *sqlx.DB) (err error) {
             code_parcelle11 char(11) not null,
             titre                   varchar(255) not null,
             datecontrat             date not null,
+            essence                 char(2),
             volumerealise           numeric not null
         )
     `
@@ -39,11 +40,12 @@ func QGisUpdate(db *sqlx.DB) (err error) {
 	}
 	//
 	query = `
-        insert into ` + table + `(code_parcelle11, titre, datecontrat, volumerealise)
+        insert into ` + table + `(code_parcelle11, titre, datecontrat, essence, volumerealise)
             select
                 c.codeinsee||p.code         as code_parcelle11,
                 ch.titre                    as titre,
                 ch.datecontrat              as date,
+                ch.essence                  as essence,
                 ch.volumerealise            as quantite
             from parcelle           "p",
                  commune            "c",

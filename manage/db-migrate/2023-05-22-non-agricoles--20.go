@@ -32,7 +32,7 @@ import (
 func Migrate_2023_05_22_non_agricoles__20(ctx *ctxt.Context) {
 	versionSCTL := "2023-02-02"
 	//
-	// check
+	// prepare et check
 	//
 	idsFermier := computeFermiersNonAgricoles_2023_05_22(ctx, versionSCTL)
 	//fmt.Printf("\nids fermier - len = %d : %v\n", len(idsFermier), idsFermier)
@@ -52,10 +52,10 @@ func Migrate_2023_05_22_non_agricoles__20(ctx *ctxt.Context) {
 	//
 	// clean
 	//
-	strIn := tiglib.JoinInt(idsParcelle_to_delete, ",")
-	clean_parcelle_ug_2023_05_22(ctx, strIn)
-	clean_parcelle_lieuDit_2023_05_22(ctx, strIn)
-	clean_parcelle_fermier_2023_05_22(ctx, strIn)
+	strParcellesToDelete := tiglib.JoinInt(idsParcelle_to_delete, ",")
+	clean_parcelle_ug_2023_05_22(ctx, strParcellesToDelete)
+	clean_parcelle_lieuDit_2023_05_22(ctx, strParcellesToDelete)
+	clean_parcelle_fermier_2023_05_22(ctx, strParcellesToDelete)
 	clean_fermiers_2023_05_22(ctx, idsFermier)
 	fmt.Println("Migration effectuée : 2023-01-16-fix-parcelle")
 }
@@ -66,8 +66,8 @@ func Migrate_2023_05_22_non_agricoles__20(ctx *ctxt.Context) {
 // avant:  107
 // après:  67
 func clean_fermiers_2023_05_22(ctx *ctxt.Context, idsFermier []int) {
-    strIn := tiglib.JoinInt(idsFermier, ",")
-	query := "delete from fermier where id in(" + strIn + ")"
+    strIdsFermiers := tiglib.JoinInt(idsFermier, ",")
+	query := "delete from fermier where id in(" + strIdsFermiers + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
 	    panic(err)
@@ -82,8 +82,8 @@ func clean_fermiers_2023_05_22(ctx *ctxt.Context, idsFermier []int) {
 // deleted 195 rows in parcelle_fermier
 // avant:  2464 
 // après:  2269
-func clean_parcelle_fermier_2023_05_22(ctx *ctxt.Context, strIn string) {
-	query := "delete from parcelle_fermier where id_parcelle in(" + strIn + ")"
+func clean_parcelle_fermier_2023_05_22(ctx *ctxt.Context, strParcellesToDelete string) {
+	query := "delete from parcelle_fermier where id_parcelle in(" + strParcellesToDelete + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
 	    panic(err)
@@ -98,8 +98,8 @@ func clean_parcelle_fermier_2023_05_22(ctx *ctxt.Context, strIn string) {
 // deleted 184 rows in parcelle_lieudit
 // avant:   2351
 // après:   2167
-func clean_parcelle_lieuDit_2023_05_22(ctx *ctxt.Context, strIn string) {
-	query := "delete from parcelle_lieudit where id_parcelle in(" + strIn + ")"
+func clean_parcelle_lieuDit_2023_05_22(ctx *ctxt.Context, strParcellesToDelete string) {
+	query := "delete from parcelle_lieudit where id_parcelle in(" + strParcellesToDelete + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
 	    panic(err)
@@ -114,8 +114,8 @@ func clean_parcelle_lieuDit_2023_05_22(ctx *ctxt.Context, strIn string) {
 // deleted 53 rows in parcelle_ug
 // avant:   1516
 // après:   1463
-func clean_parcelle_ug_2023_05_22(ctx *ctxt.Context, strIn string) {
-	query := "delete from parcelle_ug where id_parcelle in(" + strIn + ")"
+func clean_parcelle_ug_2023_05_22(ctx *ctxt.Context, strParcellesToDelete string) {
+	query := "delete from parcelle_ug where id_parcelle in(" + strParcellesToDelete + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
 	    panic(err)
@@ -129,6 +129,7 @@ func clean_parcelle_ug_2023_05_22(ctx *ctxt.Context, strIn string) {
 
 // ********************************** check **********************************
 
+// Liste les chantiers reliés à des parcelles supprimées
 // Résultat : aucun chantier
 func computeChantiers_2023_05_22(ctx *ctxt.Context, idsParcelle []int) []int {
 	res := []int{}
