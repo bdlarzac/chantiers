@@ -9,30 +9,67 @@
 
 *******************************************************************************
 */
+
+/*
+-- test pour éviter de créer de nouvelles tables
+-- mais qgis ne fonctionne pas avec les vues
+create or replace view view_qgis_chautre as
+    select
+        c.codeinsee||p.code         as code_parcelle11,
+        ch.titre                    as titre,
+        ch.essence                  as essence,
+        ch.datecontrat              as date,
+        ch.volumerealise            as quantite,
+        ch.unite                    as unite
+    from parcelle           "p",
+         commune            "c",
+         chantier_parcelle  "cp",
+         chautre            "ch"
+    where p.id_commune = c.id
+        and cp.type_chantier='chautre'
+        and cp.id_chantier=ch.id
+        and cp.id_parcelle=p.id
+;
+*/
+
 package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
 )
 
 func QGisUpdate(db *sqlx.DB) (err error) {
+    err = qgisUpdate_plaq(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel qgisUpdate_plaq()")
+	}
+    err = qgisUpdate_chautre(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel qgisUpdate_chautre()")
+	}
+    err = qgisUpdate_chaufer(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel qgisUpdate_chaufer()")
+	}
+	return nil
+}
 
-	table := "qgis_chautre"
-
-	query := "drop table if exists " + table //  + " cascade"
+func qgisUpdate_plaq(db *sqlx.DB) (err error) {
+	table := "qgis_plaq"
+	query := "drop table if exists " + table
 	if _, err = db.Exec(query); err != nil {
 		return werr.Wrapf(err, "Erreur query: "+query)
 	}
 	//
 	query = `
         create table ` + table + `(
-            code_parcelle11 char(11) not null,
+            code_parcelle11         char(11) not null,
             titre                   varchar(255) not null,
-            datecontrat             date not null,
+            datechantier            date not null,
             essence                 char(2),
-            volumerealise           numeric not null
+            quantite                numeric not null,
+            unite                   char(2)
         )
     `
 	if _, err = db.Exec(query); err != nil {
@@ -40,13 +77,60 @@ func QGisUpdate(db *sqlx.DB) (err error) {
 	}
 	//
 	query = `
-        insert into ` + table + `(code_parcelle11, titre, datecontrat, essence, volumerealise)
+        insert into ` + table + `(code_parcelle11, titre, datechantier, essence, quantite, unite)
             select
-                c.codeinsee||p.code         as code_parcelle11,
-                ch.titre                    as titre,
-                ch.datecontrat              as date,
-                ch.essence                  as essence,
-                ch.volumerealise            as quantite
+                c.codeinsee||p.code,
+                ch.titre,
+                ch.datedeb,
+                ch.essence,
+                0,
+                'MA'
+            from parcelle           "p",
+                 commune            "c",
+                 chantier_parcelle  "cp",
+                 plaq               "ch"
+            where p.id_commune = c.id
+                and cp.type_chantier='plaq'
+                and cp.id_chantier=ch.id
+                and cp.id_parcelle=p.id
+    `
+	if _, err = db.Exec(query); err != nil {
+		return werr.Wrapf(err, "Erreur query: "+query)
+	}
+	//
+	return nil
+}
+
+func qgisUpdate_chautre(db *sqlx.DB) (err error) {
+	table := "qgis_chautre"
+	query := "drop table if exists " + table
+	if _, err = db.Exec(query); err != nil {
+		return werr.Wrapf(err, "Erreur query: "+query)
+	}
+	//
+	query = `
+        create table ` + table + `(
+            code_parcelle11         char(11) not null,
+            titre                   varchar(255) not null,
+            datechantier            date not null,
+            essence                 char(2),
+            quantite                numeric not null,
+            unite                   char(2)
+        )
+    `
+	if _, err = db.Exec(query); err != nil {
+		return werr.Wrapf(err, "Erreur query: "+query)
+	}
+	//
+	query = `
+        insert into ` + table + `(code_parcelle11, titre, datechantier, essence, quantite, unite)
+            select
+                c.codeinsee||p.code,
+                ch.titre,
+                ch.datecontrat,
+                ch.essence,
+                ch.volumerealise,
+                ch.unite
             from parcelle           "p",
                  commune            "c",
                  chantier_parcelle  "cp",
@@ -63,24 +147,48 @@ func QGisUpdate(db *sqlx.DB) (err error) {
 	return nil
 }
 
-/*
--- juste un test, sans doute à supprimer
-create or replace view view_qgis_chautre as
-    select
-        c.codeinsee||p.code         as code_parcelle11,
-        ch.titre                    as titre,
-        ch.essence                  as essence,
-        ch.datecontrat              as date,
-        ch.volumerealise            as quantite,
-        ch.unite                    as unite,
-        ch.puht*ch.volumerealise    as prixht
-    from parcelle           "p",
-         commune            "c",
-         chantier_parcelle  "cp",
-         chautre            "ch"
-    where p.id_commune = c.id
-        and cp.type_chantier='chautre'
-        and cp.id_chantier=ch.id
-        and cp.id_parcelle=p.id
-;
-*/
+func qgisUpdate_chaufer(db *sqlx.DB) (err error) {
+	table := "qgis_chaufer"
+	query := "drop table if exists " + table
+	if _, err = db.Exec(query); err != nil {
+		return werr.Wrapf(err, "Erreur query: "+query)
+	}
+	//
+	query = `
+        create table ` + table + `(
+            code_parcelle11         char(11) not null,
+            titre                   varchar(255) not null,
+            datechantier            date not null,
+            essence                 char(2),
+            quantite                numeric not null,
+            unite                   char(2)
+        )
+    `
+	if _, err = db.Exec(query); err != nil {
+		return werr.Wrapf(err, "Erreur query: "+query)
+	}
+	//
+	query = `
+        insert into ` + table + `(code_parcelle11, titre, datechantier, essence, quantite, unite)
+            select
+                c.codeinsee||p.code,
+                ch.titre,
+                ch.datechantier,
+                ch.essence,
+                ch.volume,
+                unite
+            from parcelle           "p",
+                 commune            "c",
+                 chantier_parcelle  "cp",
+                 chaufer            "ch"
+            where p.id_commune = c.id
+                and cp.type_chantier='chaufer'
+                and cp.id_chantier=ch.id
+                and cp.id_parcelle=p.id
+    `
+	if _, err = db.Exec(query); err != nil {
+		return werr.Wrapf(err, "Erreur query: "+query)
+	}
+	//
+	return nil
+}

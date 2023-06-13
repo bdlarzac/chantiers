@@ -17,10 +17,8 @@ import (
 	"time"
 )
 
-/*
-Calcule un récapitulatif des choix effetués dans un formulaires contenant des filtres.
-Pour affichage dans la page de résultat.
-*/
+// Calcule un récapitulatif des choix effetués dans un formulaires contenant des filtres.
+// Pour affichage dans la page de résultat.
 func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result string, err error) {
 	fmt.Printf("filtres = %+v\n", filtres)
 	result = ""
