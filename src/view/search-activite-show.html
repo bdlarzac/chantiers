@@ -3,7 +3,7 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<h1 id="h1">Ventes - Liste</h1>
+<h1 id="h1">Activités - Liste</h1>
 
 <div class="recap-filtres">
     {{$.Details.RecapFiltres | safeHTML}}
@@ -11,20 +11,28 @@
 
 <div class="tab">
   <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-liste'); changeH1('Liste');" id="liste">Liste</button>
+  <button class="tablinks" onclick="openTab(event, 'tab-liste-ug'); changeH1('Liste par UG');" id="liste-ug">Liste par UGs</button>
   <button class="tablinks" onclick="openTab(event, 'tab-bilan-saison'); changeH1('Bilan par saison');" id="bilan-saison">Bilan / saison</button>
 </div>
 
 <div id="tab-liste" class="tabcontent">
     <p>
-        {{ template "vente-search-show-list.html" . }}
+        {{ template "search-activite-show-list.html" . }}
     </p>
 </div>
                                                                                                                                                       
 <div id="tab-bilan-saison" class="tabcontent">
     <p>
-        {{ template "vente-search-show-bilan-saison.html" . }}
+        {{ template "search-activite-show-bilan-saison.html" . }}
     </p>
 </div>
+
+<div id="tab-liste-ug" class="tabcontent">
+    <p>
+        {{ template "search-activite-show-list-ug.html" . }}
+    </p>
+</div>
+
 
 <script>
 
@@ -33,7 +41,7 @@ window.addEventListener("load", function(){
 });
 
 function changeH1(str){
-    document.getElementById("h1").innerHTML = 'Ventes - ' + str;
+    document.getElementById("h1").innerHTML = 'Activités - ' + str;
 }
 
 </script>

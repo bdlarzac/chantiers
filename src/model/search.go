@@ -20,7 +20,7 @@ import (
 // Calcule un récapitulatif des choix effetués dans un formulaires contenant des filtres.
 // Pour affichage dans la page de résultat.
 func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result string, err error) {
-	fmt.Printf("filtres = %+v\n", filtres)
+fmt.Printf("search.go - filtres = %+v\n", filtres)
 	result = ""
 	// Si aucun filtre
 	aucun := true

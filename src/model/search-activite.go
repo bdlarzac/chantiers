@@ -91,7 +91,7 @@ func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
 
 // ************************** Get many *******************************
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*Activite, err error) {
-fmt.Printf("filtres = %+v\n",filtres)
+fmt.Printf("search-activite.go - filtres = %+v\n",filtres)
 	res = []*Activite{}
 	//
 	// Première sélection, par filtre période

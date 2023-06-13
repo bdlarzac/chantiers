@@ -9,7 +9,6 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
 	"net/http"
 	"time"
 )
@@ -35,9 +34,7 @@ type detailsActiviteSearchResults struct {
 	Tab                      string
 }
 
-/*
-Affiche / process le formulaire de recherche
-*/
+// Affiche / process le formulaire de recherche
 func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	switch r.Method {
 	case "POST":
@@ -46,11 +43,6 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		//
 		if err = r.ParseForm(); err != nil {
 			return err
-		}
-		vars := mux.Vars(r)
-		tab := vars["tab"]
-		if tab == "" {
-			tab = "liste"
 		}
 		//
 		filtres := map[string][]string{}
@@ -76,7 +68,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return err
 		}
 		//
-		ctx.TemplateName = "activite-search-show.html"
+		ctx.TemplateName = "search-activite-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title:    "Activités",
@@ -96,19 +88,13 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				ActiviteMap:              model.GetActivitesMap(),
 				BilansActivitesParSaison: bilansActivitesParSaison,
 				ActivitesParUG:           model.ComputeActivitesParUG(activites),
-				Tab:                      tab,
+				Tab:                      r.PostFormValue("type-resultat"),
 			},
 		}
 		return nil
 	default:
 		//
 		// Affiche form
-		//
-		vars := mux.Vars(r)
-		tab := vars["tab"]
-		if tab == "" {
-			tab = "liste"
-		}
 		//
 		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		if err != nil {
@@ -131,7 +117,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return err
 		}
 		//
-		ctx.TemplateName = "activite-search-form.html"
+		ctx.TemplateName = "search-activite-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Recherche d'activité",
@@ -149,7 +135,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				AllUGs:       allUGs,
 				UGs:          []*model.UG{},
 				AllCommunes:  allCommunes,
-				UrlAction:    "/activite/recherche/" + tab,
+				UrlAction:    "/activite/recherche",
 			},
 		}
 		return nil

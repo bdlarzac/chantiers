@@ -1,18 +1,13 @@
 /*
-*****************************************************************************
-
-	MAJ de la table qgis_export, qui peut être utilisée par qgis pour afficher les chantiers
-
+	MAJ des tables utilisées par qgis pour afficher les chantiers
+	
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 	@history    2023-03-31 13:41:35+02:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 
 /*
--- test pour éviter de créer de nouvelles tables
--- mais qgis ne fonctionne pas avec les vues
+-- test mais qgis ne fonctionne pas avec les vues
 create or replace view view_qgis_chautre as
     select
         c.codeinsee||p.code         as code_parcelle11,

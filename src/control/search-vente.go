@@ -9,7 +9,7 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
+//	"github.com/gorilla/mux"
 	"net/http"
 	"time"
 )
@@ -41,11 +41,6 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-		vars := mux.Vars(r)
-		tab := vars["tab"]
-		if tab == "" {
-			tab = "liste"
-		}
 		//
 		filtres := map[string][]string{}
 		filtres["periode"] = computeFiltrePeriode(r)
@@ -67,7 +62,7 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			return err
 		}
 		//
-		ctx.TemplateName = "vente-search-show.html"
+		ctx.TemplateName = "search-vente-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Ventes",
@@ -90,19 +85,13 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 				RecapFiltres:          recapFiltres,
 				Ventes:                ventes,
 				BilansVentesParSaison: bilansVentesParSaison,
-				Tab:                   tab,
+				Tab:                   r.PostFormValue("type-resultat"),
 			},
 		}
 		return nil
 	default:
 		//
 		// Affiche form
-		//
-		vars := mux.Vars(r)
-		tab := vars["tab"]
-		if tab == "" {
-			tab = "liste"
-		}
 		//
 		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		if err != nil {
@@ -118,7 +107,7 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			return err
 		}
 		//
-		ctx.TemplateName = "vente-search-form.html"
+		ctx.TemplateName = "search-vente-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Recherche de ventes",

@@ -60,7 +60,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			return err
 		}
 		//
-		ctx.TemplateName = "sylvi-search-show.html"
+		ctx.TemplateName = "search-sylvi-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Sylviculture",
@@ -101,7 +101,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			return err
 		}
 		//
-		ctx.TemplateName = "sylvi-search-form.html"
+		ctx.TemplateName = "search-sylvi-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
 				Title: "Recherche sylviculture",

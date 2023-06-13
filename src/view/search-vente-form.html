@@ -33,15 +33,27 @@
                 {{template "choix-proprio.html" $.Details}}
                 <script>const choixProprio = new ChoixProprio();</script>
             </div>
+            <div class="margin-top2 margin-left2 big2 padding-bottom">
+                <b>Type de résultat</b>
+                <div class="margin-top05 margin-left05">
+                    <input type="radio" name="type-resultat" id="liste" value="liste" checked>
+                    <label for="liste">Liste</label>
+                </div>
+                <div class="margin-top05 margin-left05">
+                    <input type="radio" name="type-resultat" id="bilan-saison" value="bilan-saison">
+                    <label for="bilan-saison">Bilan par saison</label>
+                </div>
+            </div>
         </div>
     </div>
     
     <div class="float-right">
         <input class="big-button" type="submit" value="Valider">
-        <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
-        <input type="hidden" name="choix-ALL-valo" id="choix-ALL-valo" value="">
     </div>
                                                                                                                                       
+    <input type="hidden" name="choix-ALL-proprio" id="choix-ALL-proprio" value="">
+    <input type="hidden" name="choix-ALL-valo" id="choix-ALL-valo" value="">
+    
 </form>
 
 <script>
