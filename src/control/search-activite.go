@@ -31,6 +31,7 @@ type detailsActiviteSearchResults struct {
 	ActiviteMap              map[string]string
 	BilansActivitesParSaison []*model.BilanActivitesParSaison
 	ActivitesParUG           []*model.ActivitesParUG
+	LabelProprios            map[int]string
 	Tab                      string
 }
 
@@ -68,6 +69,11 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return err
 		}
 		//
+		labelProprios, err := model.LabelActeurs(ctx.DB, "DIV-PF")
+		if err != nil {
+			return err
+		}
+		//
 		ctx.TemplateName = "search-activite-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -89,6 +95,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				BilansActivitesParSaison: bilansActivitesParSaison,
 				ActivitesParUG:           model.ComputeActivitesParUG(activites),
 				Tab:                      r.PostFormValue("type-resultat"),
+				LabelProprios:            labelProprios,
 			},
 		}
 		return nil

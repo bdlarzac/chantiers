@@ -13,8 +13,7 @@ package model
 
 // Association code rôle => label
 // Attention, si on modifie les codes, il faut aussi modifier view/acteur-form.html à la main
-// Les codes correspondent aux valeurs stockées en base dans :
-// - acteur_role.code_role
+// Les codes correspondent aux valeurs stockées en base dans acteur_role.code_role
 var RoleMap = map[string]string{
 	// Chantier plaquettes, opérations simples :
 	"PLA-AB": "Abatteur", // = bûcheron

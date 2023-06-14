@@ -47,7 +47,7 @@ type Acteur struct {
 	Fournisseur  bool
 	Actif        bool
 	Notes        string
-	// pas stocké en base
+	// pas stocké dans la table acteur
 	Deletable bool
 	Parcelles []*Parcelle
 }
@@ -115,12 +115,26 @@ func (a *Acteur) String() string {
 	return strings.TrimSpace(a.Prenom + " " + a.Nom)
 }
 
+// Renvoie une map id acteur => nom, pour un rôle donné
+func LabelActeurs(db *sqlx.DB, role string) (res map[int]string, err error) {
+    res = map[int]string{}
+    acteurs, err := GetActeursByRole(db, role)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur appel GetActeursByRole()")
+	}
+	for _, acteur := range(acteurs){
+	    res[acteur.Id] = acteur.String()
+	}
+    return res, nil
+}
+
 // ************************** Divers *******************************
 
 func CountActeurs(db *sqlx.DB) (count int) {
 	_ = db.QueryRow("select count(*) from acteur").Scan(&count)
 	return count
 }
+
 
 // ************************** Get one *******************************
 
@@ -175,17 +189,13 @@ func GetSortedActeurs(db *sqlx.DB, field string) (acteurs []*Acteur, err error) 
 	return acteurs, nil
 }
 
-/*
-Renvoie une liste d'Acteurs ayant un rôle donné.
-Les acteurs ne contiennent que les champs de la table.
-Les acteurs sont triés par nom.
-@param code_role    Code d'un rôle utilisateur
-
-////////////// pas encore utilisée //////////////////
-*/
+// Renvoie une liste d'Acteurs ayant un rôle donné.
+// Les acteurs ne contiennent que les champs de la table.
+// Les acteurs sont triés par nom.
+// @param code_role    Code d'un rôle utilisateur
 func GetActeursByRole(db *sqlx.DB, code_role string) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
-	query := `select * from acteur id in(select id_acteur from acteur_role where code_role=$1) order by nom`
+	query := `select * from acteur where id in(select id_acteur from acteur_role where code_role=$1) order by nom`
 	err = db.Select(&acteurs, query, code_role)
 	if err != nil {
 		return acteurs, werr.Wrapf(err, "Erreur query : "+query)
@@ -193,11 +203,9 @@ func GetActeursByRole(db *sqlx.DB, code_role string) (acteurs []*Acteur, err err
 	return acteurs, nil
 }
 
-/*
-Renvoie une liste d'Acteurs ayant comme rôle client PF ou client d'un chantier autres valorisations.
-Les acteurs ne contiennent que les champs de la table.
-Les acteurs sont triés par nom.
-*/
+// Renvoie une liste d'Acteurs ayant comme rôle client PF ou client d'un chantier autres valorisations.
+// Les acteurs ne contiennent que les champs de la table.
+// Les acteurs sont triés par nom.
 func GetClients(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := `select * from acteur where id in(
@@ -212,12 +220,10 @@ func GetClients(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	return acteurs, nil
 }
 
-/*
-Renvoie les Acteurs dont le champ Fournisseur = true
-( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
-Ne contient que les champs de la table acteur.
-Les autres champs ne sont pas remplis.
-*/
+// Renvoie les Acteurs dont le champ Fournisseur = true
+// ( = les fournisseurs de plaquettes ; en pratique, en 2020, 1 seul fournisseur : BDL)
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
 func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	////////////// remplacer par GetActeursByRole() //////////////
 	acteurs = []*Acteur{}
@@ -229,12 +235,10 @@ func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	return acteurs, nil
 }
 
-/*
-Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
-Ne contient que les champs de la table acteur.
-Les autres champs ne sont pas remplis.
+// Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
+// Ne contient que les champs de la table acteur.
+// Les autres champs ne sont pas remplis.
 ////////////// remplacer par GetSortedActeursByRole() //////////////
-*/
 func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := `select * from acteur where id in(
@@ -247,9 +251,7 @@ func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	return acteurs, nil
 }
 
-/*
-Utilisé pour construire html datalist
-*/
+// Utilisé pour construire html datalist
 func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}
 	acteurs := []*Acteur{}
@@ -264,10 +266,8 @@ func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 	return res, nil
 }
 
-/*
-Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
+// Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
 ////////////// remplacer par GetSortedActeursByRole() //////////////
-*/
 func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}
 	acteurs := []*Acteur{}
@@ -303,6 +303,8 @@ func (a *Acteur) ComputeCodesRole(db *sqlx.DB) (err error) {
 Renvoie les activités auxquelles un acteur a participé.
 Ordre chronologique inverse
 Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
+Distinct de model.Activite car concerne aussi les "petites" activités
+(abattage, débardage ... transport, livraison ...)
 */
 func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err error) {
 	res = []*ActeurActivite{}

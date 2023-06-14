@@ -23,7 +23,7 @@ type Parcelle struct {
 	Id             int // IdParcelle de la base SCTL
 	IdProprietaire int `db:"id_proprietaire"`
 	Code           string
-	Surface        float32
+	Surface        float64
 	IdCommune      int `db:"id_commune"`
 	// Pas en base
 	Proprietaire *Acteur

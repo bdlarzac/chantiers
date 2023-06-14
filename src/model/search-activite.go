@@ -26,20 +26,19 @@ import (
 )
 
 type Activite struct {
-	Id           int
-    TypeActivite string // "plaq", "chautre" ou "chaufer"
-    Titre        string
-    URL          string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
-    DateActivite time.Time
-    TypeValo     string
-    CodeEssence  string
-    Volume       float64
-    Unite        string // pour le volume
-	PUHT         float64
-	PrixHT       float64
-	// TVA          float64            // pas utilisé
-	// NumFacture   string             // pas utilisé
-	// DateFacture  time.Time          // pas utilisé
+	Id                int
+    TypeActivite      string // "plaq", "chautre" ou "chaufer"
+    Titre             string
+    URL               string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
+    DateActivite      time.Time
+    TypeValo          string
+    CodeEssence       string
+    Volume            float64
+    Unite             string // pour le volume
+	PUHT              float64
+	PrixHT            float64
+	SurfaceParProprio map[int]float64 // key = id proprio ; cf ComputeSurfaceParProprio()
+	SurfaceTotale     float64
 	// relations n-n - utiles pour l'application de certains filtres
 	LiensParcelles []*ChantierParcelle
 	UGs            []*UG
@@ -66,6 +65,9 @@ func (a *Activite) String() string {
 // ************************** Instance methods *******************************
 
 func (a *Activite) ComputeLiensParcelles(db *sqlx.DB) (err error) {
+    if len(a.LiensParcelles) != 0 {
+        return nil // déjà calculé
+    }
     a.LiensParcelles, err = computeLiensParcellesOfChantier(db, a.TypeActivite, a.Id)
     if err != nil {
         return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
@@ -74,6 +76,9 @@ func (a *Activite) ComputeLiensParcelles(db *sqlx.DB) (err error) {
 }
 
 func (a *Activite) ComputeFermiers(db *sqlx.DB) (err error) {
+    if len(a.Fermiers) != 0 {
+        return nil // déjà calculé
+    }
     a.Fermiers, err = computeFermiersOfChantier(db, a.TypeActivite, a.Id)
     if err != nil {
         return werr.Wrapf(err, "Erreur appel computeFermiersOfChantier()")
@@ -82,6 +87,9 @@ func (a *Activite) ComputeFermiers(db *sqlx.DB) (err error) {
 }
 
 func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
+    if len(a.UGs) != 0 {
+        return nil // déjà calculé
+    }
     a.UGs, err = computeUGsOfChantier(db, a.TypeActivite, a.Id)
     if err != nil {
         return werr.Wrapf(err, "Erreur appel computeUGsOfChantier()")
@@ -89,7 +97,39 @@ func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
     return nil
 }
 
+// Calcule a.SurfaceParProprio et a.SurfaceTotale
+func (a *Activite) ComputeSurfaceParProprio(db *sqlx.DB) (err error) {
+    err = a.ComputeLiensParcelles(db)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel ComputeLiensParcelles()")
+    }
+    // initialise
+    a.SurfaceParProprio = make(map[int]float64)
+    proprios, err := GetActeursByRole(db, "DIV-PF")
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel GetActeursByRole()")
+    }
+    // initialise pour tous les proprios pour être sûr d'avoir les clés (utilisé par ComputeBilansActivitesParSaison())
+    for _, proprio := range(proprios){
+        a.SurfaceParProprio[proprio.Id] = 0.0
+    }
+    // remplit
+    for _, lienParcelle := range(a.LiensParcelles) {
+        idProprio := lienParcelle.Parcelle.IdProprietaire
+        var surface float64
+        if lienParcelle.Entiere {
+            surface = lienParcelle.Parcelle.Surface
+        } else {
+            surface = lienParcelle.Surface
+        }
+        a.SurfaceTotale += surface
+        a.SurfaceParProprio[idProprio] += surface
+    }
+    return nil
+}
+
 // ************************** Get many *******************************
+
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*Activite, err error) {
 fmt.Printf("search-activite.go - filtres = %+v\n",filtres)
 	res = []*Activite{}

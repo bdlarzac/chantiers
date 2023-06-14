@@ -10,7 +10,11 @@
     {{with .BilansActivitesParSaison}}
         <table>
             <thead>
-                <tr><th colspan="2" class="padding-left4 left">Valorisation</th><th>Volume</th><th>Revenus HT</th></tr>
+                <tr>
+                    <th colspan="2" class="padding-left4 left">Valorisation</th>
+                    <th>Volume</th>
+                    <th>Revenus HT</th>
+                </tr>
             </thead>
             <tbody>
                 {{range .}}
@@ -29,7 +33,14 @@
                                 {{.Volume}} {{.Unite | labelUnite}}
                             </td>
                             <td class="padding-left2">
-                                <script>document.write(formatNb({{.PrixHT}}));</script> &euro;
+                                <table>
+                                {{range $idProprio, $prix := .PrixHT}}
+                                    <tr>
+                                        <td>{{index $.Details.LabelProprios $idProprio}}</td>
+                                        <td class="padding-left"><script>document.write(formatNb({{$prix}}));</script> &euro;</td>
+                                    </tr>
+                                {{end}}
+                                </table>
                             </td>
                         </tr>
                     {{end}}

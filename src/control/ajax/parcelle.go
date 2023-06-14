@@ -24,7 +24,7 @@ func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
 		Id      int            `json:"id"`
 		Name    string         `json:"name"`
 		Commune *model.Commune `json:"commune"`
-		Surface float32        `json:"surface"`
+		Surface float64        `json:"surface"`
 	}
 	var resp []respElement
 	for _, p := range parcelles {
