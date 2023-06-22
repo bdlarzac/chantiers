@@ -232,22 +232,21 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 	if len(ch.Proprietaires) != 0 {
 		return nil // déjà calculé
 	}
-	err = ch.ComputeUGs(db)
+	err = ch.ComputeLiensParcelles(db)
 	if err != nil {
-		return werr.Wrapf(err, "Erreur appel ch.ComputeUGs()")
+		return werr.Wrapf(err, "Erreur appel ch.ComputeLiensParcelles()")
 	}
 	idsProprios := []int{}
-	for _, ug := range ch.UGs {
-		err = ug.ComputeProprietaires(db)
-		if err != nil {
-			return werr.Wrapf(err, "Erreur appel UG.ComputeProprietaires()")
-		}
-		for _, proprio := range ug.Proprietaires {
-			if !tiglib.InArray(proprio.Id, idsProprios) {
-				idsProprios = append(idsProprios, proprio.Id)
-				ch.Proprietaires = append(ch.Proprietaires, proprio)
-			}
-		}
+	for _, lien := range ch.LiensParcelles {
+	    idProprio := lien.Parcelle.IdProprietaire
+        if !tiglib.InArray(idProprio, idsProprios) {
+            idsProprios = append(idsProprios, idProprio)
+            err = lien.Parcelle.ComputeProprietaire(db)
+            if err != nil {
+                return werr.Wrapf(err, "Erreur appel lien.Parcelle.ComputeProprietaire()")
+            }
+            ch.Proprietaires = append(ch.Proprietaires, lien.Parcelle.Proprietaire)
+        }
 	}
 	return nil
 }
