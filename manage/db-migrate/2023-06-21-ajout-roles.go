@@ -2,8 +2,10 @@
     Ajoute le certains rôles ne pouvant pas être modifiés par l'interface
     - DIV-PF (propriétaire foncier) aux acteurs SCTL et GFA
     - DIV-FO (fournisseur de plaquettes) à l'acteur BDL
-    Ces rôles ne peuvent pas être modifiés via l'interface car la notion de rôle n'existait pas au début
+    Ces rôles ne peuvent pas être modifiés via l'interface car la notion de rôle n'existait pas au début.
     (code à modifier dans le futur)
+    
+    Intégration: commit 1e5cd54
     
 	@copyright  BDL, Bois du Larzac
 	@license    GPL

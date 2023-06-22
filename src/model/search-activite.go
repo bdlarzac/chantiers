@@ -1,17 +1,13 @@
 /*
-*****************************************************************************
+    Activité générique - Représente toute activité = entité avec une date et souvent un prix.
+    Stocké dans les tables = types d'activité concernée
+        chaufer
+        chautre
+        plaq
 
-		Activité générique - Représente toute activité = entité avec une date et souvent un prix.
-		Stocké dans les tables = types d'activité concernée
-	        chaufer
-	        chautre
-	        plaq
-
-		@copyright  BDL, Bois du Larzac.
-		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-		@history    2023-03-09 14:54:36+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+    @history    2023-03-09 14:54:36+01:00, Thierry Graff : Creation
 */
 package model
 
@@ -45,9 +41,7 @@ type Activite struct {
 	Fermiers       []*Fermier
 }
 
-/*
-Renvoie une map code activité => nom
-*/
+// Renvoie une map code activité => nom
 func GetActivitesMap() map[string]string {
 	return map[string]string{
 		"chaufer": "Chauffage fermier",
@@ -335,10 +329,6 @@ func chautre2Activite(db *sqlx.DB, ch *Chautre) (a *Activite, err error) {
 	a.Unite = ch.Unite
 	a.PUHT = ch.PUHT
 	a.PrixHT = ch.PUHT * ch.VolumeRealise
-	// inutile, à supprimer ?
-	// a.TVA = ch.TVA
-	// a.NumFacture = ch.NumFacture
-	// a.DateFacture = ch.DateFacture
 	return a, nil
 }
 

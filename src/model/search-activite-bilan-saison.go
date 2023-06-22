@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-/* Liste d'activités ayant lieu dans une période donnée */
+// Liste d'activités ayant lieu dans une période donnée
 type ActiviteParSaison struct {
 	Datedeb   time.Time
 	Datefin   time.Time
@@ -22,16 +22,18 @@ type ActiviteParSaison struct {
 }
 
 type BilanActivitesParSaison struct {
-	Datedeb                        time.Time
-	Datefin                        time.Time
-	TotalActivitesParValo          []*TotalActivitesParValo
+	Datedeb               time.Time
+	Datefin               time.Time
+	TotalActivitesParValo []*TotalActivitesParValo
+//	Activites             []*Activite
 }
 
 type TotalActivitesParValo struct {
-	TypeValo string
-	Volume   float64
-	Unite    string
-	PrixHT   map[int]float64 // key = id proprio
+	TypeValo  string
+	Volume    float64
+	Unite     string
+	PrixHT    map[int]float64 // key = id proprio
+//	Activites []*Activite
 }
 
 func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
@@ -62,6 +64,7 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			entry.Volume += activite.Volume
 			entry.Unite = activite.Unite /////////////////// ici faire conversion d'unité pour certaines valos ? ///////////////////
 			entry.PrixHT = make(map[int]float64)
+//			entry.Activites = append(entry.Activites, activite)
 			//
 			// on répartit systématiquement le prix par proprio
 			// (pourrait être évité quand on veut un bilan pour tous les proprios - tant pis)
@@ -79,10 +82,11 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 		// utilise map intermédiaire pour remplir currentRes
 		for valo, total := range mapValos {
 			newRes := TotalActivitesParValo{
-				TypeValo: valo,
-				Volume:   total.Volume,
-				Unite:    total.Unite,
-				PrixHT:   total.PrixHT,
+				TypeValo:  valo,
+				Volume:    total.Volume,
+				Unite:     total.Unite,
+				PrixHT:    total.PrixHT,
+//				Activites: total.Activites,
 			}
 			currentRes.TotalActivitesParValo = append(currentRes.TotalActivitesParValo, &newRes)
 		}

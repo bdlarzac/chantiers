@@ -21,6 +21,8 @@
     padding: 14px 16px;
     transition: 0.3s;
     font-size: 17px;
+    border-radius:0 20px 0 0;
+    border-right:1px solid darkgrey;
 }
 
 /* Change background color of buttons on hover */

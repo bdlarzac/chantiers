@@ -11,6 +11,8 @@ import (
 	"bdl.local/bdl/model"
 	"net/http"
 	"time"
+	"strconv"
+	"golang.org/x/exp/slices"
 )
 
 type detailsActiviteSearchForm struct {
@@ -54,6 +56,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		filtres["periode"] = computeFiltrePeriode(r)
 		filtres["ug"] = computeFiltreUG(r)
 		filtres["parcelle"] = computeFiltreParcelle(r)
+		//
 		activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
 		if err != nil {
 			return err
@@ -72,6 +75,15 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		labelProprios, err := model.LabelActeurs(ctx.DB, "DIV-PF")
 		if err != nil {
 			return err
+		}
+		// on ne garde dans labelProprios que les propriétaires choisis,
+		// utilisé dans la template pour n'afficher que ces propriétaires.
+		if len(filtres["proprio"]) != 0{
+		    for idProprio, _ := range(labelProprios){
+		        if !slices.Contains(filtres["proprio"], strconv.Itoa(idProprio)) {
+		            delete(labelProprios, idProprio)
+                }
+		    }
 		}
 		//
 		ctx.TemplateName = "search-activite-show.html"
@@ -94,8 +106,8 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				ActiviteMap:              model.GetActivitesMap(),
 				BilansActivitesParSaison: bilansActivitesParSaison,
 				ActivitesParUG:           model.ComputeActivitesParUG(activites),
-				Tab:                      r.PostFormValue("type-resultat"),
 				LabelProprios:            labelProprios,
+				Tab:                      r.PostFormValue("type-resultat"),
 			},
 		}
 		return nil

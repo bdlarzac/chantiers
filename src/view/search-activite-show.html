@@ -13,25 +13,28 @@
   <button class="tablinks defaultOpen" onclick="openTab(event, 'tab-liste'); changeH1('Liste');" id="liste">Liste</button>
   <button class="tablinks" onclick="openTab(event, 'tab-liste-ug'); changeH1('Liste par UG');" id="liste-ug">Liste par UGs</button>
   <button class="tablinks" onclick="openTab(event, 'tab-bilan-saison'); changeH1('Bilan par saison');" id="bilan-saison">Bilan / saison</button>
+  {{/* 
+  <button class="tablinks" onclick="openTab(event, 'tab-detail-saison'); changeH1('Par saison, détails');" id="detail-saison">Par saison, détails</button>
+  */}}
 </div>
 
 <div id="tab-liste" class="tabcontent">
-    <p>
-        {{ template "search-activite-show-list.html" . }}
-    </p>
+    <p>{{ template "search-activite-show-list.html" . }}</p>
 </div>
                                                                                                                                                       
-<div id="tab-bilan-saison" class="tabcontent">
-    <p>
-        {{ template "search-activite-show-bilan-saison.html" . }}
-    </p>
+<div id="tab-liste-ug" class="tabcontent">
+    <p>{{ template "search-activite-show-list-ug.html" . }}</p>
 </div>
 
-<div id="tab-liste-ug" class="tabcontent">
-    <p>
-        {{ template "search-activite-show-list-ug.html" . }}
-    </p>
+<div id="tab-bilan-saison" class="tabcontent">
+    <p>{{ template "search-activite-show-bilan-saison.html" . }}</p>
 </div>
+
+{{/* 
+<div id="tab-detail-saison" class="tabcontent">
+    <p>{{ template "search-activite-show-detail-saison.html" . }}</p>
+</div>
+*/}}
 
 
 <script>

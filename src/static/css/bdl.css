@@ -232,10 +232,10 @@ table.entities{
 table.entities td, table.entities th{
     padding:.2rem .3rem;
 }
-table.entities tbody tr:nth-child(even){
+table.entities>tbody>tr:nth-child(even){
     background-color:lightyellow;
 }
-table.entities tbody tr:nth-child(odd){
+table.entities>tbody>tr:nth-child(odd){
     background-color:lightgrey;
 }
 table.entities tr.total{           

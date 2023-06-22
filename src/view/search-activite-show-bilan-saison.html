@@ -3,30 +3,47 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<!-- ********************************************************************************* -->
+<style>
+    #bilan-saison .titre-saison{
+        background:none;
+    }
+    #bilan-saison .total-saison{
+        background:#dbe599;
+        font-weight:bold;
+    }
+</style>
+
+<script>
+    const totaux = new Map();
+</script>
 
 {{with .Details}}
-
     {{with .BilansActivitesParSaison}}
-        <table>
+        <table id="bilan-saison" class="entities">
             <thead>
                 <tr>
-                    <th colspan="2" class="padding-left4 left">Valorisation</th>
+                    <th class="padding-left4 right">Valorisation</th>
                     <th>Volume</th>
                     <th>Revenus HT</th>
                 </tr>
             </thead>
             <tbody>
+                {{/* loop sur les saisons */}}
                 {{range .}}
-                    {{/*  {{printf "%+v" .}} */}}
-                    <tr>
-                        <td colspan="4" class="bold padding-top">
+                    <script>
+                        {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
+                           totaux.set({{$idProprio}}, 0);
+                        {{end}}
+                    </script>
+                    <tr class="titre-saison">
+                        <td colspan="3" class="bold padding-top">
+                            <br>
                             {{.Datedeb | dateFr}} - {{.Datefin | dateFr}}
                         </td>
                     </tr>
                     {{range .TotalActivitesParValo}}
                         <tr>
-                            <td colspan="2" class="padding-left4">
+                            <td class="right">
                                 {{.TypeValo | labelValo}}
                             </td>
                             <td class="padding-left2">
@@ -34,7 +51,12 @@
                             </td>
                             <td class="padding-left2">
                                 <table>
-                                {{range $idProprio, $prix := .PrixHT}}
+                                {{$prixHT := .PrixHT}} {{/* Sans cette affectation .PrixHT n'est plus accessible dans le range */}}
+                                {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
+                                    {{$prix := index $prixHT $idProprio}}
+                                    <script>
+                                        totaux.set({{$idProprio}}, totaux.get({{$idProprio}}) + {{$prix}});
+                                    </script>
                                     <tr>
                                         <td>{{index $.Details.LabelProprios $idProprio}}</td>
                                         <td class="padding-left"><script>document.write(formatNb({{$prix}}));</script> &euro;</td>
@@ -44,6 +66,19 @@
                             </td>
                         </tr>
                     {{end}}
+                    <tr class="total-saison">
+                        <td colspan="2">Total</td>
+                        <td class="padding-left2">
+                            <table>
+                            {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
+                                <tr>
+                                    <td>{{$labelProprio}}</td>
+                                    <td class="padding-left"><script>document.write(formatNb(totaux.get({{$idProprio}})));</script> &euro;</td>
+                                </tr>
+                            {{end}}
+                            </table>
+                        </td>
+                    </tr>
                 {{end}}
             <tbody>
         </table>

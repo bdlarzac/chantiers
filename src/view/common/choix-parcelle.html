@@ -64,7 +64,6 @@ class ChoixParcelle {
 function choixParcelle_updateSummary(){
     const summaryElt = document.getElementById('choix-parcelle-summary');
     const elements = document.getElementsByClassName('choix-parcelle-parcelle-ajoutee');
-//console.log('elements =', elements);
     if(elements.length == 0){
         summaryElt.innerHTML = 'Toutes les parcelles';
         return;
