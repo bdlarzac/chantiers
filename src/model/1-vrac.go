@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
-
 	Diverses fonctions utilitaires
 
 	@copyright  BDL, Bois du Larzac.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 	@history    2021-03-01 15:33:27+01:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package model
 
@@ -17,4 +13,3 @@ package model
 func Vert2sec(vert, pourcentPerte float64) float64 {
 	return vert * (100 - pourcentPerte) / 100
 }
-

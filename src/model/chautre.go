@@ -64,7 +64,7 @@ func (ch *Chautre) String() string {
 }
 
 func (ch *Chautre) FullString() string {
-	return "Chantier autre valorisation " + ch.String()
+	return "Chantier " + ValoMap[ch.TypeValo] + " " + ch.String()
 }
 
 // ************************** Get *******************************

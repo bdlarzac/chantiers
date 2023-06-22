@@ -26,8 +26,14 @@
     <div>Acheteur</div>
     <div>{{.Acheteur}}</div>
     
-    <div>Volume réalisé</div>
-    <div>{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
+    <div class="margin-top05">Valorisation</div>
+    <div class="margin-top05">{{.TypeValo | labelValo}}</div>
+    
+    <div>Type de vente</div>
+    <div>{{.TypeVente | labelTypeVente}}</div>
+    
+    <div class="margin-top05">Volume réalisé</div>
+    <div class="margin-top05">{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
     
     {{if .VolumeContrat}}
         <div>Volume contrat</div>
@@ -44,7 +50,14 @@
     <div class="margin-top05 grid2-pres">
     {{range .LiensParcelles}}
         <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
-        <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
+        <div>
+            {{if .Entiere}}
+                Entière
+                ({{round .Parcelle.Surface 2}} ha)
+            {{else}}
+                {{round .Surface 2}} ha
+            {{end}}
+        </div>
     {{end}}
     </div>
     

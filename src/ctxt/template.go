@@ -49,6 +49,7 @@ func MustInitTemplates() {
 		"labelExploitation": labelExploitation,
 		"labelRole":         labelRole,
 		"labelStockFrais":   labelStockFrais,
+		"labelTypeVente":    labelTypeVente,
 		"labelTypo":         labelTypo,
 		"labelTypo_long":    labelTypo_long,
 		"labelUnite":        labelUnite,
@@ -85,7 +86,7 @@ func dateIso(t time.Time) template.HTML {
 }
 
 /*
-@copyright Thierry Graff
+@copyright  Thierry Graff
 @license    GPL
 */
 func modulo(i, mod int) int {
@@ -180,7 +181,7 @@ func safeHTML(str string) template.HTML {
 	return template.HTML(str)
 }
 
-// ************************* Pipelines related to current program ********************************
+// ************************* Pipelines specific to current program ********************************
 
 // Type d'opération simple (abattage, débardage...) à partir de son code
 func labelActivite(code string) template.HTML {
@@ -205,6 +206,11 @@ func labelStockFrais(code string) template.HTML {
 // Nom d'un rôle (pour les acteurs) à partir de son code
 func labelRole(code string) template.HTML {
 	return template.HTML(model.RoleMap[code])
+}
+
+// Nom d'un type de vente (pour chautre: bois sur pied, bord de route...), à partir de son code
+func labelTypeVente(code string) template.HTML {
+	return template.HTML(model.ChautreTypeVenteMap[code])
 }
 
 // Nom d'une typo (couche typologique venant du PSG) utilisée dans cette appli, à partir de son code
@@ -232,7 +238,7 @@ func sortableUGCode(code string) template.HTML {
 	return template.HTML(model.SortableUGCode(code))
 }
 
-// Renvoie le label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
+// Label de l'unité correspondant à un type de valorisation (palette, pâte à papier...)
 func valo2uniteLabel(code string) template.HTML {
 	return template.HTML(model.UniteMap[model.CodeValo2CodeUnite(code)])
 }
