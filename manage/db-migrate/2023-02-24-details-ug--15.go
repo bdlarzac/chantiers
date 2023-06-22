@@ -16,10 +16,8 @@ import (
 	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
-	//	"bdl.local/bdl/model"
 	"fmt"
 	"path"
-	// "strings"
 )
 
 func Migrate_2023_02_24_details_ug__15(ctx *ctxt.Context) {
