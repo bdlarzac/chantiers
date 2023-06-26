@@ -81,10 +81,13 @@
             <td class="no-print">
                 <details class="details-entite">{{/* class pour tout voir / tout cacher */}}
                     <summary>Voir / cacher</summary>
-                    <div class="grid2-pres">
+                    <div class="grid2-pres padding-top05">
                         
-                        <div>UGs</div>
-                        <div>{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
+                        <div>Type de vente</div>
+                        <div>{{.TypeVente | labelTypeVente}}</div>
+                        
+                        <div class="padding-top05">UGs</div>
+                        <div class="padding-top05">{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
                         
                         <div>Parcelles</div>
                         <div class="grid2-pres">
@@ -107,11 +110,11 @@
                             <div>{{.VolumeContrat}} {{.Unite | labelUnite}}</div>
                         {{end}}
                         
-                        <div>Exploitation</div>
-                        <div>{{.Exploitation | labelExploitation}}</div>
+                        <div class="padding-top05">Exploitation</div>
+                        <div class="padding-top05">{{.Exploitation | labelExploitation}}</div>
                         
-                        <div>Volume réalisé</div>
-                        <div>{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
+                        <div class="padding-top05">Volume réalisé</div>
+                        <div class="padding-top05">{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
                         
                         <div>PU HT</div>
                         <div><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>

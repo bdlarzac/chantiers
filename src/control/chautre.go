@@ -83,16 +83,6 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 				"/static/lib/table-sort/table-sort.js"},
 		},
 	}
-	// Add recent - modifie URL pour éviter des doublons :
-	// Année non spécifiée dans URL = Année courante
-	url := r.URL.String()
-	if strings.HasSuffix(url, "/liste") {
-		url += "/" + annee
-	}
-	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: titrePage})
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -125,7 +115,7 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 	}
 	url := r.URL.String()
-	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.String()})
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.FullString()})
 	if err != nil {
 		return err
 	}
@@ -145,12 +135,11 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 			return err
 		}
 		//
-		_, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
+		chantier.Id, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
 			return err
 		}
-		ctx.Redirect = "/chantier/autre/liste/" + strconv.Itoa(chantier.DateContrat.Year())
-		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
+		ctx.Redirect = "/chantier/autre/" + strconv.Itoa(chantier.Id)
 		return nil
 	default:
 		//
@@ -191,7 +180,6 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				UrlAction:           "/chantier/autre/new",
 			},
 		}
-		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	}
 }
@@ -217,7 +205,7 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
-		ctx.Redirect = "/chantier/autre/liste/" + strconv.Itoa(chantier.DateContrat.Year())
+		ctx.Redirect = "/chantier/autre/" + strconv.Itoa(chantier.Id)
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	default:

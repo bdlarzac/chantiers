@@ -79,16 +79,6 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 				"/static/lib/table-sort/table-sort.js"},
 		},
 	}
-	// Add recent - modifie URL pour éviter des doublons :
-	// Année non spécifiée dans URL = Année courante
-	url := r.URL.String()
-	if strings.HasSuffix(url, "/liste") {
-		url += "/" + annee
-	}
-	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: titrePage})
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -122,7 +112,7 @@ func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		},
 	}
 	url := r.URL.String()
-	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.String()})
+	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.FullString()})
 	if err != nil {
 		return err
 	}
@@ -141,12 +131,11 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		if err != nil {
 			return err
 		}
-		_, err = model.InsertChaufer(ctx.DB, chantier, idsUG)
+		chantier.Id, err = model.InsertChaufer(ctx.DB, chantier, idsUG)
 		if err != nil {
 			return err
 		}
-		ctx.Redirect = "/chantier/chauffage-fermier/liste/" + strconv.Itoa(chantier.DateChantier.Year())
-		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
+		ctx.Redirect = "/chantier/chauffage-fermier/" + strconv.Itoa(chantier.Id)
 		return nil
 	default:
 		//
@@ -182,7 +171,6 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 					"/static/js/round.js"},
 			},
 		}
-		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	}
 }
@@ -206,8 +194,7 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		if err != nil {
 			return err
 		}
-		ctx.Redirect = "/chantier/chauffage-fermier/liste/" + strconv.Itoa(chantier.DateChantier.Year())
-		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
+		ctx.Redirect = "/chantier/chauffage-fermier/" + strconv.Itoa(chantier.Id)
 		return nil
 	default:
 		//
@@ -245,7 +232,6 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 					"/static/js/round.js"},
 			},
 		}
-		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
 		return nil
 	}
 }

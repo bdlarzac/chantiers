@@ -32,6 +32,7 @@
         <tr>
             <th class="no-print"></th>
             <th class="order">Date</th>
+            <th>Titre</th>
             <th class="order">Fermier</th>
             <th class="order">Essence</th>
             <th class="order">Volume</th>
@@ -51,6 +52,9 @@
             </td>
             <td>
                 {{.DateChantier | dateFr}}
+            </td>
+            <td>
+                <a href="/chantier/chauffage-fermier/{{.Id}}">{{.Titre}}</a>
             </td>
             <td>
                 <a href="/fermier/{{.IdFermier}}">{{.Fermier.String}}</a>

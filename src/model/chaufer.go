@@ -41,16 +41,6 @@ func (ch *Chaufer) String() string {
 	return ch.Titre
 }
 
-/*
-// #13 - transféré dans 2023-02-20-titre-chantier - supprimer si inutile
-func (ch *Chaufer) String() string {
-	if ch.Fermier == nil {
-		panic("Erreur dans le code - Le fermier d'un chantier chauffage fermier doit être calculé avant d'appeler String()")
-	}
-	return ch.Fermier.String() + " " + tiglib.DateFr(ch.DateChantier)
-}
-*/
-
 func (ch *Chaufer) FullString() string {
 	return "Chantier chauffage fermier " + ch.String()
 }

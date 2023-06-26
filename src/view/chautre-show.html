@@ -26,11 +26,14 @@
     <div>Acheteur</div>
     <div>{{.Acheteur}}</div>
     
+    <div class="margin-top05">Date contrat</div>
+    <div class="margin-top05">{{.DateContrat | dateFr}}</div>
+    
     <div class="margin-top05">Valorisation</div>
     <div class="margin-top05">{{.TypeValo | labelValo}}</div>
     
-    <div>Type de vente</div>
-    <div>{{.TypeVente | labelTypeVente}}</div>
+    <div class="margin-top05">Type de vente</div>
+    <div class="margin-top05">{{.TypeVente | labelTypeVente}}</div>
     
     <div class="margin-top05">Volume réalisé</div>
     <div class="margin-top05">{{.VolumeRealise}} {{.Unite | labelUnite}}</div>
