@@ -91,7 +91,10 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Header: ctxt.Header{
 				Title:    "Activités",
 				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
-				JSFiles:  []string{"/static/js/formatNb.js"},
+				JSFiles:  []string{
+				    "/static/js/formatNb.js",
+				    "/static/js/round.js",
+				},
 			},
 			Footer: ctxt.Footer{
 				JSFiles: []string{

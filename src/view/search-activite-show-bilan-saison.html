@@ -59,7 +59,7 @@
                                     </script>
                                     <tr>
                                         <td>{{index $.Details.LabelProprios $idProprio}}</td>
-                                        <td class="padding-left"><script>document.write(formatNb({{$prix}}));</script> &euro;</td>
+                                        <td class="padding-left right"><script>document.write(formatNb(round({{$prix}}, 2)));</script> &euro;</td>
                                     </tr>
                                 {{end}}
                                 </table>
@@ -73,7 +73,9 @@
                             {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
                                 <tr>
                                     <td>{{$labelProprio}}</td>
-                                    <td class="padding-left"><script>document.write(formatNb(totaux.get({{$idProprio}})));</script> &euro;</td>
+                                    <td class="padding-left right">
+                                        <script>document.write(formatNb(round(totaux.get({{$idProprio}}), 2)));</script> &euro;
+                                    </td>
                                 </tr>
                             {{end}}
                             </table>

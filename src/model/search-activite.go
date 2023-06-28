@@ -22,7 +22,7 @@ import (
 )
 
 type Activite struct {
-	Id                int
+	Id                int    // id dans table plaq, chautre ou chaufer
     TypeActivite      string // "plaq", "chautre" ou "chaufer"
     Titre             string
     URL               string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"

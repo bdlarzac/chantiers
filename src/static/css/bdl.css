@@ -118,11 +118,13 @@ h1{padding-left:1rem;}
     display:block;
     border:2px solid grey;
     padding:7px;
+    background:white;
 }
 .bigicon{
     display:block;
     border:2px solid grey;
     padding:3px;
+    background:white;
 }
 .bigicon.inline{display:inline;}
 .bigicon.inline-block{display:inline-block;}
