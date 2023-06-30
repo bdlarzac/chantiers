@@ -10,6 +10,179 @@
     </a>
 </h1>
 
+<details class="margin-left margin-bottom05">
+    <summary>Filtrer par rôle</summary>
+    <div class="margin-left inline-block padding05 margin-top05 border" style="background:#eee;">
+        <table>
+            <tr>
+                <td class="vertical-align-top">
+                    <fieldset class="block bold">
+                        <legend>Clients</legend>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="VPL-CL" onClick="showHideRole('VPL-CL');">
+                            Client plaquettes
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="AVC-PP" onClick="showHideRole('AVC-PP');">
+                            Client pâte à papier
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="AVC-CH" onClick="showHideRole('AVC-CH');">
+                            Client bois de chauffage
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="AVC-PL" onClick="showHideRole('AVC-PL');">
+                            Client palettes
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="AVC-PI" onClick="showHideRole('AVC-PI');">
+                            Client piquets
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="AVC-BO" onClick="showHideRole('AVC-BO');">
+                            Client bois d'oeuvre
+                        </label>
+                        <div class="margin-top05">
+                            <a class="link padding-left2" onclick="showRoles(['VPL-CL', 'AVC-PP', 'AVC-CH', 'AVC-PL', 'AVC-PI', 'AVC-BO']);">Tous</a>
+                            <a class="link padding-left2" onclick="hideRoles(['VPL-CL', 'AVC-PP', 'AVC-CH', 'AVC-PL', 'AVC-PI', 'AVC-BO']);">Aucun</a>
+                        </div>
+                    </fieldset>
+                    <fieldset class="block bold margin-top">
+                        <legend>Divers</legend>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="DIV-MH" onClick="showHideRole('DIV-MH');">
+                            Mesureur d'humidité
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="DIV-PF" onClick="showHideRole('DIV-PF');">
+                            Propriétaire foncier
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="DIV-FO" onClick="showHideRole('DIV-FO');">
+                            Fournisseur de plaquettes
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="FER-BC" onClick="showHideRole('FER-BC');">
+                            Fermier bois de chauffage
+                        </label>
+                        <div class="margin-top05">
+                            <a class="link padding-left2" onclick="showRoles(['DIV-MH', 'DIV-PF', 'DIV-FO', 'FER-BC']);">Tous</a>
+                            <a class="link padding-left2" onclick="hideRoles(['DIV-MH', 'DIV-PF', 'DIV-FO', 'FER-BC']);">Aucun</a>
+                        </div>
+                    </fieldset>
+                </td>
+                <td class="vertical-align-top">
+                    <fieldset class="block bold">
+                        <legend>Chantier plaquettes</legend>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLA-AB" onClick="showHideRole('PLA-AB');">
+                            Abatteur (bûcheron)
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLA-DB" onClick="showHideRole('PLA-DB');">
+                            Débardeur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLA-DC" onClick="showHideRole('PLA-DC');">
+                            Déchiqueteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLA-BR" onClick="showHideRole('PLA-BR');">
+                            Broyeur
+                        </label>
+                        <div class="margin-top05">
+                            <a class="link padding-left2" onclick="showRoles(['PLA-AB', 'PLA-DB', 'PLA-DC', 'PLA-BR']);">Tous</a>
+                            <a class="link padding-left2" onclick="hideRoles(['PLA-AB', 'PLA-DB', 'PLA-DC', 'PLA-BR']);">Aucun</a>
+                        </div>
+                        <div class="bold padding-top05">Transport</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLT-TR" onClick="showHideRole('PLT-TR');">
+                            Transporteur
+                             <span class="small8">(coût global)</span>
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLT-CO" onClick="showHideRole('PLT-CO');">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLT-PO" onClick="showHideRole('PLT-PO');">
+                            Propriétaire outil
+                        </label>
+                        <div class="margin-top05">
+                            <a class="link padding-left2" onclick="showRoles(['PLT-TR', 'PLT-CO', 'PLT-PO']);">Tous</a>
+                            <a class="link padding-left2" onclick="hideRoles(['PLT-TR', 'PLT-CO', 'PLT-PO']);">Aucun</a>
+                        </div>
+                        <div class="bold padding-top05">Rangement</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLR-RG" onClick="showHideRole('PLR-RG');">
+                            Rangeur
+                             <span class="small8">(coût global)</span>
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLR-CO" onClick="showHideRole('PLR-CO');">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="PLR-PO" onClick="showHideRole('PLR-PO');">
+                            Propriétaire outil
+                        </label>
+                        <div class="margin-top05">
+                            <a class="link padding-left2" onclick="showRoles(['PLR-RG', 'PLR-CO', 'PLR-PO']);">Tous</a>
+                            <a class="link padding-left2" onclick="hideRoles(['PLR-RG', 'PLR-CO', 'PLR-PO']);">Aucun</a>
+                        </div>
+                    </fieldset>
+                </td>
+                <td class="vertical-align-top">
+                    <fieldset class="block bold">
+                        <legend>Vente plaquettes</legend>
+                        <div class="bold">Chargement</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="VPC-CH" onClick="showHideRole('VPC-CH');">
+                            Chargeur
+                             <span class="small8">(coût global)</span>
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="VPC-CO" onClick="showHideRole('VPC-CO');">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="VPC-PO" onClick="showHideRole('VPC-PO');">
+                            Propriétaire outil
+                        </label>
+                        <div class="margin-top05">
+                            <a class="link padding-left2" onclick="showRoles(['VPC-CH', 'VPC-CO', 'VPC-PO']);">Tous</a>
+                            <a class="link padding-left2" onclick="hideRoles(['VPC-CH', 'VPC-CO', 'VPC-PO']);">Aucun</a>
+                        </div>
+                        <div class="bold padding-top05">Livraison</div>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="VPL-LI" onClick="showHideRole('VPL-LI');">
+                            Livreur
+                             <span class="small8">(coût global)</span>
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="VPL-CO" onClick="showHideRole('VPL-CO');">
+                            Conducteur
+                        </label>
+                        <label class="normal block left">
+                            <input class="chk-role" type="checkbox" checked id="VPL-PO" onClick="showHideRole('VPL-PO');">
+                            Propriétaire outil
+                        </label>
+                        <div class="margin-top05">
+                            <a class="link padding-left2" onclick="showRoles(['VPL-LI', 'VPL-CO', 'VPL-PO']);">Tous</a>
+                            <a class="link padding-left2" onclick="hideRoles(['VPL-LI', 'VPL-CO', 'VPL-PO']);">Aucun</a>
+                        </div>
+                    </fieldset>
+                </td>
+            </tr>
+        </table>
+        <div class="margin-top05">
+            <a class="link padding-left2 bold" onclick="showRoles(['VPL-CL', 'AVC-PP', 'AVC-CH', 'AVC-PL', 'AVC-PI', 'AVC-BO', 'DIV-MH', 'DIV-PF', 'DIV-FO', 'FER-BC', 'PLA-AB', 'PLA-DB', 'PLA-DC', 'PLA-BR', 'PLT-TR', 'PLT-CO', 'PLT-PO', 'PLR-RG', 'PLR-CO', 'PLR-PO', 'VPC-CH', 'VPC-CO', 'VPC-PO', 'VPL-LI', 'VPL-CO', 'VPL-PO']);">Tous</a>
+            <a class="link padding-left2 bold" onclick="hideRoles(['VPL-CL', 'AVC-PP', 'AVC-CH', 'AVC-PL', 'AVC-PI', 'AVC-BO', 'DIV-MH', 'DIV-PF', 'DIV-FO', 'FER-BC', 'PLA-AB', 'PLA-DB', 'PLA-DC', 'PLA-BR', 'PLT-TR', 'PLT-CO', 'PLT-PO', 'PLR-RG', 'PLR-CO', 'PLR-PO', 'VPC-CH', 'VPC-CO', 'VPC-PO', 'VPL-LI', 'VPL-CO', 'VPL-PO']);">Aucun</a>
+        </div>
+        
+    </div>
+</details>
+
 <div class="big3 padding-left">{{.Details.Count}} acteurs</div>
 
 <table class="entities">
@@ -26,56 +199,60 @@
 
 <tbody>
     {{range .Details.List}}
-    <tr>
-        <td class="whitespace-nowrap">
-            {{/* Exclure acteurs BDL, SCL, GFA */}}
-            {{if(not (le .Id 3))}}
-                <a href="/affacture/form/{{.Id}}">
-                    <span class="icon-euro-small" title="Payer cet acteur">&euro;</span>
-                </a>
-                <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
-                    <img src="../static/img/delete.png" alt="Supprimer cet acteur">
-                </a>
-                <a href="/acteur/update/{{.Id}}">
-                    <img src="../static/img/update.png" alt="Modifier cet acteur">
-                </a>
-            {{end}}
-        </td>
-        <td>
-            {{/* data-nom : hack pour trier par nom, cf table-sort.js */}}
-            <span data-nom="{{.Nom}} {{.Prenom}}">
-                <a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a>
-            </span>
-        </td>
-        <td class="whitespace-nowrap">
-            {{range .CodesRole}}
-                <div>{{. | labelRole}}</div>
-            {{end}}
-        </td>
-        <td>
-            {{/* <details open> */}}
-                {{/* <summary></summary> */}}
-                {{if .Adresse1}}<div class="whitespace-nowrap">{{.Adresse1}}</div>{{end}}
-                {{if .Adresse2}}<div class="whitespace-nowrap">{{.Adresse2}}</div>{{end}}
-                {{if or .Cp .Ville}}<div class="whitespace-nowrap">{{.Cp}} {{.Ville}}</div>{{end}}
-                {{if .Tel}}<div class="whitespace-nowrap">{{.Tel}}</div>{{end}}
-                {{if .Email}}<div class="whitespace-nowrap">{{.Email}}</div>{{end}}
-            {{/* </details> */}}
-        </td>
-        <td>{{.Notes}}</td>
-        {{if .Actif}}
-            <td class="ok center">oui</td>
-        {{else}}
-            <td class="nok center">non</td>
+        {{$classRoles := ""}}
+        {{range .CodesRole}}
+            {{$classRoles = printf "%s %s" $classRoles .}}
         {{end}}
-    </tr>
+        <tr class="{{$classRoles}}">
+            <td class="whitespace-nowrap">
+                {{/* Exclure acteurs BDL, SCL, GFA */}}
+                {{if(not (le .Id 3))}}
+                    <a href="/affacture/form/{{.Id}}">
+                        <span class="icon-euro-small" title="Payer cet acteur">&euro;</span>
+                    </a>
+                    <a href="#" onclick="deleteActeur({{.Id}}, {{.String}}, {{.Deletable}})">
+                        <img src="../static/img/delete.png" alt="Supprimer cet acteur">
+                    </a>
+                    <a href="/acteur/update/{{.Id}}">
+                        <img src="../static/img/update.png" alt="Modifier cet acteur">
+                    </a>
+                {{end}}
+            </td>
+            <td>
+                {{/* data-nom : hack pour trier par nom, cf table-sort.js */}}
+                <span data-nom="{{.Nom}} {{.Prenom}}">
+                    <a href="/acteur/{{.Id}}">{{.Nom}} {{.Prenom}}</a>
+                </span>
+            </td>
+            <td class="whitespace-nowrap">
+                {{range .CodesRole}}
+                    <div>{{. | labelRole}}</div>
+                {{end}}
+            </td>
+            <td>
+                {{/* <details open> */}}
+                    {{/* <summary></summary> */}}
+                    {{if .Adresse1}}<div class="whitespace-nowrap">{{.Adresse1}}</div>{{end}}
+                    {{if .Adresse2}}<div class="whitespace-nowrap">{{.Adresse2}}</div>{{end}}
+                    {{if or .Cp .Ville}}<div class="whitespace-nowrap">{{.Cp}} {{.Ville}}</div>{{end}}
+                    {{if .Tel}}<div class="whitespace-nowrap">{{.Tel}}</div>{{end}}
+                    {{if .Email}}<div class="whitespace-nowrap">{{.Email}}</div>{{end}}
+                {{/* </details> */}}
+            </td>
+            <td>{{.Notes}}</td>
+            {{if .Actif}}
+                <td class="ok center">oui</td>
+            {{else}}
+                <td class="nok center">non</td>
+            {{end}}
+        </tr>
     {{end}}
 </tbody>
 </table>
 
+
 <script>
 
-// *****************************************
 function deleteActeur(idActeur, nomActeur, deletable){
     let msg;
     if(deletable){
@@ -92,4 +269,38 @@ function deleteActeur(idActeur, nomActeur, deletable){
         window.location = "/acteur/delete/" + idActeur;
     }
 }
+
+function showHideRole(role){
+    const inputElt = document.getElementById(role);
+    const trs = document.getElementsByClassName(role);
+    for(const tr of trs) {
+        if(inputElt.checked){
+            tr.style.display = 'table-row';
+        }
+        else{
+            tr.style.display = 'none';
+        }
+    }
+}
+
+function showRoles(roles){
+    for(const role of roles){
+        document.getElementById(role).checked = true;
+        const trs = document.getElementsByClassName(role);
+        for(const tr of trs) {
+            tr.style.display = 'table-row';
+        }
+    }
+}
+
+function hideRoles(roles){
+    for(const role of roles){
+        document.getElementById(role).checked = false;
+        const trs = document.getElementsByClassName(role);
+        for(const tr of trs) {
+            tr.style.display = 'none';
+        }
+    }
+}
+
 </script>
