@@ -73,12 +73,12 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 }
 
 // Affiche à la fois le formulaire et la liste des UGs
-func SearchUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func ListUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	allUgs, err := model.GetUGsSortedByCodeAndSeparated(ctx.DB)
 	if err != nil {
 		return err
 	}
-	ctx.TemplateName = "ug-search.html"
+	ctx.TemplateName = "ug-list.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
 			Title:    "Recherche UG",

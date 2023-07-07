@@ -147,7 +147,7 @@ func main() {
 	r.HandleFunc("/sylviculture/recherche", H(control.SearchSylvi))
 	r.HandleFunc("/sylviculture/recherche/{tab}", H(control.SearchSylvi)) ////// supprimer si finalement pas de tab
 
-	r.HandleFunc("/ug/search", H(control.SearchUG))
+	r.HandleFunc("/ug/liste", H(control.ListUGs))
 	r.HandleFunc("/ug/{id:[0-9]+}", H(control.ShowUG))
 	r.HandleFunc("/ug/{id:[0-9]+}/{tab}", H(control.ShowUG))
 	r.HandleFunc("/commune/liste", H(control.ListCommunes))
