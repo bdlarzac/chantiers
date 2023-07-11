@@ -35,23 +35,7 @@ import (
 )
 
 func QGisUpdate(db *sqlx.DB) (err error) {
-    err = qgisUpdate_plaq(db)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel qgisUpdate_plaq()")
-	}
-    err = qgisUpdate_chautre(db)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel qgisUpdate_chautre()")
-	}
-    err = qgisUpdate_chaufer(db)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur appel qgisUpdate_chaufer()")
-	}
-	return nil
-}
-
-func qgisUpdate_plaq(db *sqlx.DB) (err error) {
-	table := "qgis_plaq"
+	table := "qgis_chantier"
 	query := "drop table if exists " + table
 	if _, err = db.Exec(query); err != nil {
 		return werr.Wrapf(err, "Erreur query: "+query)
@@ -61,6 +45,7 @@ func qgisUpdate_plaq(db *sqlx.DB) (err error) {
         create table ` + table + `(
             code_parcelle11         char(11) not null,
             titre                   varchar(255) not null,
+            typechantier            varchar(7) not null,
             datechantier            date not null,
             essence                 char(2),
             quantite                numeric not null,
@@ -71,11 +56,14 @@ func qgisUpdate_plaq(db *sqlx.DB) (err error) {
 		return werr.Wrapf(err, "Erreur query: "+query)
 	}
 	//
+	// plaq
+	//
 	query = `
-        insert into ` + table + `(code_parcelle11, titre, datechantier, essence, quantite, unite)
+        insert into ` + table + `(code_parcelle11, titre, typechantier, datechantier, essence, quantite, unite)
             select
                 c.codeinsee||p.code,
                 ch.titre,
+                'plaq',
                 ch.datedeb,
                 ch.essence,
                 0,
@@ -93,35 +81,14 @@ func qgisUpdate_plaq(db *sqlx.DB) (err error) {
 		return werr.Wrapf(err, "Erreur query: "+query)
 	}
 	//
-	return nil
-}
-
-func qgisUpdate_chautre(db *sqlx.DB) (err error) {
-	table := "qgis_chautre"
-	query := "drop table if exists " + table
-	if _, err = db.Exec(query); err != nil {
-		return werr.Wrapf(err, "Erreur query: "+query)
-	}
+	// chautre
 	//
 	query = `
-        create table ` + table + `(
-            code_parcelle11         char(11) not null,
-            titre                   varchar(255) not null,
-            datechantier            date not null,
-            essence                 char(2),
-            quantite                numeric not null,
-            unite                   char(2)
-        )
-    `
-	if _, err = db.Exec(query); err != nil {
-		return werr.Wrapf(err, "Erreur query: "+query)
-	}
-	//
-	query = `
-        insert into ` + table + `(code_parcelle11, titre, datechantier, essence, quantite, unite)
+        insert into ` + table + `(code_parcelle11, titre, typechantier, datechantier, essence, quantite, unite)
             select
                 c.codeinsee||p.code,
                 ch.titre,
+                'chautre',
                 ch.datecontrat,
                 ch.essence,
                 ch.volumerealise,
@@ -139,35 +106,14 @@ func qgisUpdate_chautre(db *sqlx.DB) (err error) {
 		return werr.Wrapf(err, "Erreur query: "+query)
 	}
 	//
-	return nil
-}
-
-func qgisUpdate_chaufer(db *sqlx.DB) (err error) {
-	table := "qgis_chaufer"
-	query := "drop table if exists " + table
-	if _, err = db.Exec(query); err != nil {
-		return werr.Wrapf(err, "Erreur query: "+query)
-	}
+	// chaufer
 	//
 	query = `
-        create table ` + table + `(
-            code_parcelle11         char(11) not null,
-            titre                   varchar(255) not null,
-            datechantier            date not null,
-            essence                 char(2),
-            quantite                numeric not null,
-            unite                   char(2)
-        )
-    `
-	if _, err = db.Exec(query); err != nil {
-		return werr.Wrapf(err, "Erreur query: "+query)
-	}
-	//
-	query = `
-        insert into ` + table + `(code_parcelle11, titre, datechantier, essence, quantite, unite)
+        insert into ` + table + `(code_parcelle11, titre, typechantier, datechantier, essence, quantite, unite)
             select
                 c.codeinsee||p.code,
                 ch.titre,
+                'chaufer',
                 ch.datechantier,
                 ch.essence,
                 ch.volume,

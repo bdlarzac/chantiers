@@ -21,10 +21,14 @@ type ActiviteParSaison struct {
 	Activites []*Activite
 }
 
+// Pour les plaquettes,
+// - les plaquettes produites dans la saison sont stockées dans TotalActivitesParValo (PrixHT = 0)
+// - les plaquettes vendues dans la saison sont stockées dans VentePlaquettes
 type BilanActivitesParSaison struct {
 	Datedeb               time.Time
 	Datefin               time.Time
 	TotalActivitesParValo []*TotalActivitesParValo
+	VentePlaquettes       *TotalActivitesParValo
 }
 
 type TotalActivitesParValo struct { // en fait total activites par valo et par proprio
@@ -36,9 +40,9 @@ type TotalActivitesParValo struct { // en fait total activites par valo et par p
 
 func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
     //
-	activitesParSaison, err := ComputeActivitesParSaison(db, debutSaison, activites)
+	activitesParSaison, err := computeActivitesParSaison(db, debutSaison, activites)
 	if err != nil {
-		return result, werr.Wrapf(err, "Erreur appel ComputeActivitesParSaison()")
+		return result, werr.Wrapf(err, "Erreur appel computeActivitesParSaison()")
 	}
 	//
 	result = []*BilanActivitesParSaison{}
@@ -59,8 +63,11 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 				mapValos[valo] = TotalActivitesParValo{TypeValo: valo}
 			}
 			entry := mapValos[valo]
+			/////////////////// ici problème à voir ///////////////////
+			// piquets peuvent être comptés en stères ou en nb de piquets
+			///////////////////////////////////////////////////////////
 			entry.Volume += activite.Volume
-			entry.Unite = activite.Unite /////////////////// ici faire conversion d'unité pour certaines valos ? ///////////////////
+			entry.Unite = activite.Unite
 			entry.PrixHT = make(map[int]float64)
 			//
 			// on répartit systématiquement le prix par proprio
@@ -91,7 +98,8 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 	return result, nil
 }
 
-func ComputeActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*ActiviteParSaison, err error) {
+// Auxiliaire de ComputeBilansActivitesParSaison()
+func computeActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*ActiviteParSaison, err error) {
 	limites, _, err := ComputeLimitesSaisons(db, debutSaison)
 	tiglib.ArrayReverse(limites)
 	if err != nil {
