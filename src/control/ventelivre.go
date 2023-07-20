@@ -1,10 +1,6 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -17,6 +13,7 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	//"fmt"
@@ -46,11 +43,11 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		//
 		vl, err := venteLivreForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		_, err = model.InsertVenteLivre(ctx.DB, vl)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/vente/" + strconv.Itoa(vl.IdVente)
 		return nil
@@ -69,11 +66,11 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		// pour afficher le nom de la vente => besoin du nom client => besoin de GetVentePlaqFull
 		vl.Vente, err = model.GetVentePlaqFull(ctx.DB, idVente)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "ventelivre-form.html"
 		ctx.Page = &ctxt.Page{
@@ -110,15 +107,15 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 		//
 		vl, err := venteLivreForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vl.Id, err = strconv.Atoi(r.PostFormValue("id-ventelivre"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = model.UpdateVenteLivre(ctx.DB, vl)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/vente/" + strconv.Itoa(vl.IdVente)
 		return nil
@@ -129,20 +126,20 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 		vars := mux.Vars(r)
 		idLivraison, err := strconv.Atoi(vars["id-livraison"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vl, err := model.GetVenteLivreFull(ctx.DB, idLivraison)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// pour afficher le nom de la vente => besoin du nom client => besoin de GetVentePlaqFull
 		vl.Vente, err = model.GetVentePlaqFull(ctx.DB, vl.IdVente)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "ventelivre-form.html"
 		ctx.Page = &ctxt.Page{
@@ -175,11 +172,11 @@ func DeleteVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id-livraison"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteVenteLivre(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/vente/" + vars["id-vente"]
 	return nil
@@ -193,7 +190,7 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 	vl := &model.VenteLivre{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return vl, err
+		return vl, werr.Wrap(err)
 	}
 	//
 	if r.PostFormValue("type-cout") == "cout-global" {
@@ -204,12 +201,12 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 	//
 	vl.IdVente, err = strconv.Atoi(r.PostFormValue("id-vente"))
 	if err != nil {
-		return vl, err
+		return vl, werr.Wrap(err)
 	}
 	//
 	vl.DateLivre, err = time.Parse("2006-01-02", r.PostFormValue("datelivre"))
 	if err != nil {
-		return vl, err
+		return vl, werr.Wrap(err)
 	}
 	if vl.TypeCout == "G" {
 		//
@@ -217,25 +214,25 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 		//
 		vl.IdLivreur, err = strconv.Atoi(r.PostFormValue("id-livreur"))
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		//
 		vl.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		vl.GlPrix = tiglib.Round(vl.GlPrix, 2)
 		//
 		vl.GlTVA, err = strconv.ParseFloat(r.PostFormValue("gltva"), 32)
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		vl.GlTVA = tiglib.Round(vl.GlTVA, 2)
 		//
 		if r.PostFormValue("gldatepay") != "" {
 			vl.GlDatePay, err = time.Parse("2006-01-02", r.PostFormValue("gldatepay"))
 			if err != nil {
-				return vl, err
+				return vl, werr.Wrap(err)
 			}
 		}
 	} else {
@@ -244,31 +241,31 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 		//
 		vl.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		//
 		vl.MoNHeure, err = strconv.ParseFloat(r.PostFormValue("monheure"), 32)
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		vl.MoNHeure = tiglib.Round(vl.MoNHeure, 2)
 		//
 		vl.MoPrixH, err = strconv.ParseFloat(r.PostFormValue("moprixh"), 32)
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		vl.MoPrixH = tiglib.Round(vl.MoPrixH, 2)
 		//
 		vl.MoTVA, err = strconv.ParseFloat(r.PostFormValue("motva"), 32)
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		vl.MoTVA = tiglib.Round(vl.MoTVA, 2)
 		//
 		if r.PostFormValue("modatepay") != "" {
 			vl.MoDatePay, err = time.Parse("2006-01-02", r.PostFormValue("modatepay"))
 			if err != nil {
-				return vl, err
+				return vl, werr.Wrap(err)
 			}
 		}
 		//
@@ -276,25 +273,25 @@ func venteLivreForm2var(r *http.Request) (*model.VenteLivre, error) {
 		//
 		vl.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		//
 		vl.OuPrix, err = strconv.ParseFloat(r.PostFormValue("ouprix"), 32)
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		vl.OuPrix = tiglib.Round(vl.OuPrix, 2)
 		//
 		vl.OuTVA, err = strconv.ParseFloat(r.PostFormValue("outva"), 32)
 		if err != nil {
-			return vl, err
+			return vl, werr.Wrap(err)
 		}
 		vl.OuTVA = tiglib.Round(vl.OuTVA, 2)
 		//
 		if r.PostFormValue("oudatepay") != "" {
 			vl.OuDatePay, err = time.Parse("2006-01-02", r.PostFormValue("oudatepay"))
 			if err != nil {
-				return vl, err
+				return vl, werr.Wrap(err)
 			}
 		}
 	}

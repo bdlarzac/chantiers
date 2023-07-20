@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Rôles des acteurs
 
-	Rôles des acteurs
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2023-04-04 16:49:32+02:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2023-04-04 16:49:32+02:00, Thierry Graff : Creation
 */
 package model
 

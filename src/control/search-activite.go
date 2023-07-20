@@ -8,6 +8,7 @@ package control
 
 import (
 	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"golang.org/x/exp/slices"
 	"net/http"
@@ -45,7 +46,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		// Process form et affiche page de résultats
 		//
 		if err = r.ParseForm(); err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		filtres := map[string][]string{}
@@ -59,22 +60,22 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		//
 		activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		bilansActivitesParSaison, err := model.ComputeBilansActivitesParSaison(ctx.DB, ctx.Config.DebutSaison, activites)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		labelProprios, err := model.LabelActeurs(ctx.DB, "DIV-PF")
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// on ne garde dans labelProprios que les propriétaires choisis,
 		// utilisé dans la template pour n'afficher que ces propriétaires.
@@ -120,23 +121,23 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		//
 		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		propriosMap, err := model.GetProprietaires(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allCommunes, err := model.GetSortedCommunes(ctx.DB, "nom")
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.TemplateName = "search-activite-form.html"

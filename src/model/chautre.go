@@ -1,14 +1,10 @@
 /*
-*****************************************************************************
+Chautre = Chantiers Autres valorisations
+Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par BDL
 
-	Chautre = Chantiers Autres valorisations
-	Bois vendu sur pied à des particuliers, faisant l'objet d'une facturation par BDL
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-02-04 19:32:43+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-02-04 19:32:43+01:00, Thierry Graff : Creation
 */
 package model
 
@@ -82,15 +78,13 @@ func GetChautre(db *sqlx.DB, idChantier int) (ch *Chautre, err error) {
 	return ch, nil
 }
 
-/*
-Renvoie un chantier autres valorisations contenant :
-  - les données stockées dans la table
-  - Acheteur
-  - les UGs
-  - les parcelles
-  - les lieux-dits
-  - les fermiers
-*/
+// Renvoie un chantier autres valorisations contenant :
+//   - les données stockées dans la table
+//   - Acheteur
+//   - les UGs
+//   - les parcelles
+//   - les lieux-dits
+//   - les fermiers
 func GetChautreFull(db *sqlx.DB, idChantier int) (ch *Chautre, err error) {
 	ch, err = GetChautre(db, idChantier)
 	if err != nil {
@@ -123,10 +117,8 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (ch *Chautre, err error) {
 	return ch, nil
 }
 
-/*
-Renvoie la liste des années ayant des chantiers autres valorisations,
-@param exclude   Année à exclure du résultat
-*/
+// Renvoie la liste des années ayant des chantiers autres valorisations,
+// @param exclude   Année à exclure du résultat
 func GetChautreDifferentYears(db *sqlx.DB, exclude string) (res []string, err error) {
 	res = []string{}
 	list := []time.Time{}
@@ -144,11 +136,9 @@ func GetChautreDifferentYears(db *sqlx.DB, exclude string) (res []string, err er
 	return res, nil
 }
 
-/*
-Renvoie la liste des chantiers autres valorisations pour une année donnée,
-triés par ordre chronologique inverse.
-Chaque chantier contient les mêmes champs que ceux renvoyés par GetChautreFull()
-*/
+// Renvoie la liste des chantiers autres valorisations pour une année donnée,
+// triés par ordre chronologique inverse.
+// Chaque chantier contient les mêmes champs que ceux renvoyés par GetChautreFull()
 func GetChautresOfYear(db *sqlx.DB, annee string) (res []*Chautre, err error) {
 	res = []*Chautre{}
 	type ligne struct {

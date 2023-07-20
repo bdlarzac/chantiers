@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Enums manipulées par le programme
 
-	Enums manipulées par le programme
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-02-11 17:27:04+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-02-11 17:27:04+01:00, Thierry Graff : Creation
 */
 package model
 

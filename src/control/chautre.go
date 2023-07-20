@@ -1,10 +1,6 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -12,6 +8,7 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
@@ -54,12 +51,12 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	}
 	chantiers, err := model.GetChautresOfYear(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	annees, err := model.GetChautreDifferentYears(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	titrePage := "Chantiers autres valorisations " + annee
@@ -92,11 +89,11 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	vars := mux.Vars(r)
 	idChantier, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	chantier, err := model.GetChautreFull(ctx.DB, idChantier)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.TemplateName = "chautre-show.html"
 	ctx.Page = &ctxt.Page{
@@ -116,7 +113,7 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	url := r.URL.String()
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.FullString()})
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	return nil
 }
@@ -131,12 +128,12 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(ctx, r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		chantier.Id, err = model.InsertChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/chantier/autre/" + strconv.Itoa(chantier.Id)
 		return nil
@@ -148,11 +145,11 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		chantier.Acheteur = &model.Acteur{}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
@@ -193,16 +190,16 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		//
 		chantier, idsUGs, idsLieudits, idsFermiers, err := chautreForm2var(ctx, r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		chantier.Id, err = strconv.Atoi(r.PostFormValue("id-chantier"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		err = model.UpdateChautre(ctx.DB, chantier, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/chantier/autre/" + strconv.Itoa(chantier.Id)
 		// model.AddRecent() inutile puisqu'on est redirigé vers la liste, où AddRecent() est exécuté
@@ -214,19 +211,19 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		vars := mux.Vars(r)
 		idChantier, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		chantier, err := model.GetChautreFull(ctx.DB, idChantier)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "chautre-form.html"
 		ctx.Page = &ctxt.Page{
@@ -264,15 +261,15 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	chantier, err := model.GetChautre(ctx.DB, id) // on retient l'année pour le redirect
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteChautre(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/chantier/autre/liste/" + strconv.Itoa(chantier.DateContrat.Year())
 	return nil
@@ -291,7 +288,7 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	ch = &model.Chautre{}
 	vide := []int{}
 	if err = r.ParseForm(); err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	//
 	ch.Titre = r.PostFormValue("titre")
@@ -306,14 +303,14 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	//
 	ch.IdAcheteur, err = strconv.Atoi(r.PostFormValue("id-acheteur"))
 	if err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	//
 	ch.TypeVente = strings.Replace(r.PostFormValue("typevente"), "typevente-", "", -1)
 	//
 	ch.DateContrat, err = time.Parse("2006-01-02", r.PostFormValue("datecontrat"))
 	if err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	//
 	ch.TypeValo = strings.Replace(r.PostFormValue("typevalo"), "valorisation-", "", -1)
@@ -323,14 +320,14 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	} else {
 		ch.VolumeContrat, err = strconv.ParseFloat(r.PostFormValue("volume-contrat"), 32)
 		if err != nil {
-			return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, werr.Wrap(err)
 		}
 	}
 	ch.VolumeContrat = tiglib.Round(ch.VolumeContrat, 2)
 	//
 	ch.VolumeRealise, err = strconv.ParseFloat(r.PostFormValue("volume-realise"), 32)
 	if err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
 	//
@@ -346,26 +343,26 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	//
 	ch.PUHT, err = strconv.ParseFloat(r.PostFormValue("puht"), 32)
 	if err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	ch.PUHT = tiglib.Round(ch.PUHT, 2)
 	//
 	ch.TVA, err = strconv.ParseFloat(strings.ReplaceAll(r.PostFormValue("tva"), "tva-", ""), 32)
 	if err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	//
 	if r.PostFormValue("datefacture") != "" {
 		ch.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
 		if err != nil {
-			return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, werr.Wrap(err)
 		}
 	}
 	//
 	if r.PostFormValue("datepaiement") != "" {
 		ch.DatePaiement, err = time.Parse("2006-01-02", r.PostFormValue("datepaiement"))
 		if err != nil {
-			return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, werr.Wrap(err)
 		}
 	}
 	//
@@ -373,7 +370,7 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	if r.PostFormValue("numfacture") == "" {
 		ch.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(ch.DateContrat.Year()))
 		if err != nil {
-			return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, werr.Wrap(err)
 		}
 	} else {
 		ch.NumFacture = r.PostFormValue("numfacture")
@@ -389,12 +386,12 @@ func ShowFactureChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reques
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	ch, err := model.GetChautreFull(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	pdf := gofpdf.New("P", "mm", "A4", "")

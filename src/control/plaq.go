@@ -1,10 +1,6 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -12,6 +8,7 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -54,12 +51,12 @@ func ListPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	}
 	chantiers, err := model.GetPlaqsOfYear(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	annees, err := model.GetPlaqDifferentYears(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	ctx.TemplateName = "plaq-list.html"
@@ -90,15 +87,15 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	}
 	idChantier, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	chantier, err := model.GetPlaqFull(ctx.DB, idChantier)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = chantier.ComputeCouts(ctx.DB, ctx.Config)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.TemplateName = "plaq-show.html"
 	ctx.Page = &ctxt.Page{
@@ -133,7 +130,7 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	url = strings.TrimSuffix(url, "/cout")
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.FullString()})
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	return nil
 }
@@ -148,12 +145,12 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		//
 		chantier, idsUGs, idsLieudits, idsFermiers, err := plaqForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// calcul des ids stockage, pour transmettre à InsertPlaq(), qui va créer le(s) tas
 		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		idsStockages := []int{}
 		for _, stockage := range allStockages {
@@ -164,13 +161,13 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		//
 		id, err := model.InsertPlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		redirect := "/chantier/plaquette/" + strconv.Itoa(id) + "/general"
 		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers ShowPlaq(), où AddRecent() est exécuté
 		ctx.Redirect = redirect
@@ -182,11 +179,11 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		chantier := &model.Plaq{}
 		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "plaq-form.html"
 		ctx.Page = &ctxt.Page{
@@ -229,17 +226,17 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		chantier, idsUGs, idsLieudits, idsFermiers, err := plaqForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		chantier.Id, err = strconv.Atoi(r.PostFormValue("id-chantier"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// calcul des ids stockage, pour transmettre à model.UpdatePlaq(),
 		// qui va créer ou supprimer ou ne pas changer le(s) tas
 		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		idsStockages := []int{}
 		for _, stockage := range allStockages {
@@ -250,13 +247,13 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		err = model.UpdatePlaq(ctx.DB, chantier, idsStockages, idsUGs, idsLieudits, idsFermiers)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		redirect := "/chantier/plaquette/" + r.PostFormValue("id-chantier") + "/general"
 		err = chantier.ComputeLieudits(ctx.DB) // nécessaire pour appeler chantier.FullString()
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// model.AddRecent() inutile puisqu'on est redirigé vers ShowPlaq(), où AddRecent() est exécuté
 		ctx.Redirect = redirect
@@ -268,19 +265,19 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		vars := mux.Vars(r)
 		idChantier, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		chantier, err := model.GetPlaqFull(ctx.DB, idChantier)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allStockages, err := model.GetStockages(ctx.DB, true)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allUGs, err := model.GetUGsSortedByCode(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "plaq-form.html"
 		ctx.Page = &ctxt.Page{
@@ -318,12 +315,12 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	chantier, err := model.GetPlaq(ctx.DB, id) // on retient l'année pour le redirect
 	err = model.DeletePlaq(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/chantier/plaquette/liste/" + strconv.Itoa(chantier.DateDebut.Year())
 	return nil
@@ -342,7 +339,7 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	ch = &model.Plaq{}
 	vide := []int{}
 	if err = r.ParseForm(); err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	//
 	ch.Titre = r.PostFormValue("titre")
@@ -357,18 +354,18 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	//
 	ch.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
 	if err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	//
 	ch.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
-		return ch, vide, vide, vide, err
+		return ch, vide, vide, vide, werr.Wrap(err)
 	}
 	//
 	if r.PostFormValue("surface") != "" {
 		ch.Surface, err = strconv.ParseFloat(r.PostFormValue("surface"), 32)
 		if err != nil {
-			return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, werr.Wrap(err)
 		}
 		ch.Surface = tiglib.Round(ch.Surface, 2)
 	}
@@ -382,7 +379,7 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	if r.PostFormValue("frais-repas") != "" {
 		ch.FraisRepas, err = strconv.ParseFloat(r.PostFormValue("frais-repas"), 32)
 		if err != nil {
-			return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, werr.Wrap(err)
 		}
 		ch.FraisRepas = tiglib.Round(ch.FraisRepas, 2)
 	}
@@ -390,7 +387,7 @@ func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermi
 	if r.PostFormValue("frais-reparation") != "" {
 		ch.FraisReparation, err = strconv.ParseFloat(r.PostFormValue("frais-reparation"), 32)
 		if err != nil {
-			return ch, vide, vide, vide, err
+			return ch, vide, vide, vide, werr.Wrap(err)
 		}
 		ch.FraisReparation = tiglib.Round(ch.FraisReparation, 2)
 	}

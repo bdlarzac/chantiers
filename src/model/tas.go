@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Tas de plaquettes dans un hangar
 
-	Tas de plaquettes dans un hangar
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-03-09 17:18:27+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-03-09 17:18:27+01:00, Thierry Graff : Creation
 */
 package model
 

@@ -1,14 +1,10 @@
 /*
-*****************************************************************************
+Fonctions communes à plusieurs factures
 
-	Fonctions communes à plusieurs factures
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-	@history    2020-02-27 13:52:20+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@history    2020-02-27 13:52:20+01:00, Thierry Graff : Creation
 */
 package control
 

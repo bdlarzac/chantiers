@@ -1,25 +1,19 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
 import (
-	"net/http"
-	"strconv"
-	//	"strings"
-	"time"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
-	//"fmt"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 type detailsAffactureForm struct {
@@ -32,11 +26,11 @@ func FormAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	vars := mux.Vars(r)
 	idActeur, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	acteur, err := model.GetActeur(ctx.DB, idActeur)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.TemplateName = "affacture-form.html"
 	ctx.Page = &ctxt.Page{
@@ -62,20 +56,20 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	// 1 - parse form
 	//
 	if err = r.ParseForm(); err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	var aff = model.Affacture{}
 	aff.IdActeur, err = strconv.Atoi(r.PostFormValue("id-acteur"))
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	aff.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	aff.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	if r.PostFormValue("AB") == "on" {
 		aff.TypesActivites = append(aff.TypesActivites, "AB")
@@ -130,11 +124,11 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	//
 	acteur, err := model.GetActeur(ctx.DB, aff.IdActeur)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = aff.ComputeItems(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	// 3 - génère PDF

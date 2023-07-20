@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Lieux-dits
 
-	Lieux-dits
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019-11-07 10:07:45+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019-11-07 10:07:45+01:00, Thierry Graff : Creation
 */
 package model
 
@@ -25,15 +21,9 @@ type Lieudit struct {
 
 // ************************** Get one *******************************
 
-/*
-*
-
-	Renvoie un Lieudit à partir de son id.
-	Contient les champs de la table lieudit.
-	Les autres champs ne sont pas remplis.
-
-*
-*/
+// Renvoie un Lieudit à partir de son id.
+// Contient les champs de la table lieudit.
+// Les autres champs ne sont pas remplis.
 func GetLieudit(db *sqlx.DB, id int) (ld *Lieudit, err error) {
 	ld = &Lieudit{}
 	query := "select * from lieudit where id=$1"
@@ -45,15 +35,9 @@ func GetLieudit(db *sqlx.DB, id int) (ld *Lieudit, err error) {
 	return ld, nil
 }
 
-/*
-*
-
-	Renvoie un Lieudit à partir de son nom.
-	Contient les champs de la table lieudit.
-	Les autres champs ne sont pas remplis.
-
-*
-*/
+// Renvoie un Lieudit à partir de son nom.
+// Contient les champs de la table lieudit.
+// Les autres champs ne sont pas remplis.
 func GetLieuditByNom(db *sqlx.DB, nom string) (ld *Lieudit, err error) {
 	ld = &Lieudit{}
 	query := "select * from lieudit where nom=$1"
@@ -67,14 +51,8 @@ func GetLieuditByNom(db *sqlx.DB, nom string) (ld *Lieudit, err error) {
 
 // ************************** Get many *******************************
 
-/*
-*
-
-	Renvoie des Lieudit à partir du début du nom.
-	Les mots comme LE LA LES DE DU D' ne sont pas pris en compte.
-
-*
-*/
+// Renvoie des Lieudit à partir du début du nom.
+// Les mots comme LE LA LES DE DU D' ne sont pas pris en compte.
 func GetLieuditsAutocomplete(db *sqlx.DB, str string) (lds []*Lieudit, err error) {
 	lds = []*Lieudit{}
 	query := "select id,nom from lieudit_mot where mot ilike '" + str + "%'"
@@ -85,16 +63,10 @@ func GetLieuditsAutocomplete(db *sqlx.DB, str string) (lds []*Lieudit, err error
 	return lds, nil
 }
 
-/*
-*
-
-	Renvoie des Lieudit à partir d'un id UG.
-	Contient les champs de la table lieudit + le champ Communes.
-	Les autres champs ne sont pas remplis.
-	@param      strIdsUGs   Chaîne contenant les ids séparés par des virgules. ex : "1, 34, 87"
-
-*
-*/
+// Renvoie des Lieudit à partir d'un id UG.
+// Contient les champs de la table lieudit + le champ Communes.
+// Les autres champs ne sont pas remplis.
+// @param      strIdsUGs   Chaîne contenant les ids séparés par des virgules. ex : "1, 34, 87"
 func GetLieuditsFromIdsUGs(db *sqlx.DB, strIdsUGs string) (lds []*Lieudit, err error) {
 	lds = []*Lieudit{}
 	query := `
@@ -118,13 +90,7 @@ func GetLieuditsFromIdsUGs(db *sqlx.DB, strIdsUGs string) (lds []*Lieudit, err e
 
 // ************************** Compute *******************************
 
-/*
-*
-
-	Remplit le champ Parcelles d'un Lieudit
-
-*
-*/
+// Remplit le champ Parcelles d'un Lieudit
 func (ld *Lieudit) ComputeParcelles(db *sqlx.DB) (err error) {
 	if len(ld.Parcelles) != 0 {
 		return nil // déjà calculé
@@ -140,13 +106,7 @@ func (ld *Lieudit) ComputeParcelles(db *sqlx.DB) (err error) {
 	return nil
 }
 
-/*
-*
-
-	Remplit le champ Communes d'un Lieudit
-
-*
-*/
+// Remplit le champ Communes d'un Lieudit
 func (ld *Lieudit) ComputeCommune(db *sqlx.DB) (err error) {
 	if len(ld.Communes) != 0 {
 		return nil // déjà calculé

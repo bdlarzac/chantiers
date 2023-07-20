@@ -1,24 +1,20 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
 import (
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
 	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/wilk/webo"
-	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
 	//"fmt"
 )
 
@@ -45,12 +41,12 @@ func ListHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 	}
 	humids, err := model.GetHumidsOfYear(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	annees, err := model.GetHumidDifferentYears(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	ctx.TemplateName = "humid-list.html"
@@ -78,11 +74,11 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		//
 		humid, err := humidForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		_, err = model.InsertHumid(ctx.DB, humid)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/humidite/liste/" + strconv.Itoa(humid.DateMesure.Year())
 		return nil
@@ -93,7 +89,7 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		humid := &model.Humid{}
 		weboTas, err := WeboTas(ctx)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// Ici, cas particulier, si on arrive par la route "/humidite/new/tas/{id-tas:[0-9]+}"
 		// alors le tas est pré-selectionné
@@ -104,7 +100,7 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -139,16 +135,16 @@ func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		//
 		humid, err := humidForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		idMesure, err := strconv.Atoi(r.PostFormValue("id-mesure"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		humid.Id = idMesure
 		err = model.UpdateHumid(ctx.DB, humid)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/humidite/liste/" + strconv.Itoa(humid.DateMesure.Year())
 		return nil
@@ -159,30 +155,30 @@ func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		vars := mux.Vars(r)
 		idMesure, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		humid, err := model.GetHumidFull(ctx.DB, idMesure)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		humid.Tas, err = model.GetTas(ctx.DB, humid.IdTas)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		for _, idMesureur := range humid.IdsMesureurs {
 			mesureur, err := model.GetActeur(ctx.DB, idMesureur)
 			if err != nil {
-				return err
+				return werr.Wrap(err)
 			}
 			humid.Mesureurs = append(humid.Mesureurs, mesureur)
 		}
 		weboTas, err := WeboTas(ctx)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -211,11 +207,11 @@ func DeleteHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteHumid(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/humidite/liste"
 	return nil
@@ -230,7 +226,7 @@ func humidForm2var(r *http.Request) (*model.Humid, error) {
 	humid := &model.Humid{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return humid, err
+		return humid, werr.Wrap(err)
 	}
 	humid.IdTas, _ = strconv.Atoi(strings.TrimLeft(r.PostFormValue("tas"), "tas-"))
 	humid.Valeur, _ = strconv.ParseFloat(r.PostFormValue("valeur-mesure"), 32)

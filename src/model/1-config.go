@@ -1,16 +1,12 @@
 /*
-*****************************************************************************
+Structure de donnée recevant le contenu de config.yml
+Pourrait aussi être dans le package ctxt.
+Mis dans model pour éviter un problème de dépendance circulaire
+lorsqu'elle est utilisée dans model.
 
-	Structure de donnée recevant le contenu de config.yml
-	Pourrait aussi être dans le package ctxt.
-	Mis dans model pour éviter un problème de dépendance circulaire
-	lorsqu'elle est utilisée dans model.
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019-09-26, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019-09-26, Thierry Graff : Creation
 */
 package model
 

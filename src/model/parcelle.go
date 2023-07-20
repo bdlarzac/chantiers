@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Parcelles
 
-	Parcelles
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019-11-07, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019-11-07, Thierry Graff : Creation
 */
 package model
 
@@ -48,9 +44,7 @@ func (p *Parcelle) String() string {
 
 // ************************** Get one *******************************
 
-/*
-Renvoie une Parcelle à partir de son id.
-*/
+// Renvoie une Parcelle à partir de son id.
 func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	p = &Parcelle{}
 	query := "select * from parcelle where id=$1"
@@ -62,11 +56,9 @@ func GetParcelle(db *sqlx.DB, id int) (p *Parcelle, err error) {
 	return p, nil
 }
 
-/*
-Renvoie une Parcelle à partir de son code et de l'id de la commune.
-(id de la commune nécessaire car le code est unique au sein de la commune,
-donc plusieurs parcelles avec le même code existent en base).
-*/
+// Renvoie une Parcelle à partir de son code et de l'id de la commune.
+// (id de la commune nécessaire car le code est unique au sein de la commune,
+// donc plusieurs parcelles avec le même code existent en base).
 func GetParcelleFromCodeAndCommuneId(db *sqlx.DB, codeParcelle string, idCommune int) (p *Parcelle, err error) {
 	p = &Parcelle{}
 	query := "select * from parcelle where code=$1 and id_commune=$2"
@@ -86,10 +78,8 @@ func GetParcelleFromCodeAndCommuneId(db *sqlx.DB, codeParcelle string, idCommune
 
 // ************************** Get many *******************************
 
-/*
-Utilisé par ajax
-@param  idsUG  string, par ex : "12,432,35"
-*/
+// Utilisé par ajax
+// @param  idsUG  string, par ex : "12,432,35"
 func GetParcellesFromIdsUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err error) {
 	query := `select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(` + idsUG + `)) order by code`
 	err = db.Select(&result, query)

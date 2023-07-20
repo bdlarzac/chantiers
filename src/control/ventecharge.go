@@ -1,10 +1,6 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -12,6 +8,7 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -41,20 +38,20 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		//
 		vc, err := venteChargeForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		_, err = model.InsertVenteCharge(ctx.DB, vc)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// Mise à jour du stock du tas
 		err = vc.ComputeTas(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = vc.Tas.ModifierStock(ctx.DB, -vc.Qte) // Retire plaquettes au tas
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.Redirect = "/vente/" + r.PostFormValue("id-vente")
@@ -70,22 +67,22 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		vc.IdLivraison, _ = strconv.Atoi(vars["id-livraison"])
 		vc.Livraison, err = model.GetVenteLivreFull(ctx.DB, vc.IdLivraison)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vc.Livraison.Vente, err = model.GetVentePlaqFull(ctx.DB, vc.IdVente)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vc.Chargeur = &model.Acteur{}
 		vc.Conducteur = &model.Acteur{}
 		vc.Proprioutil = &model.Acteur{}
 		weboTas, err := WeboTas(ctx)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "ventecharge-form.html"
 		ctx.Page = &ctxt.Page{
@@ -124,11 +121,11 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		vars := mux.Vars(r)
 		vc, err := venteChargeForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vc.Id, err = strconv.Atoi(r.PostFormValue("id-chargement"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// Mise à jour du stock du tas
 		// Ajoute la qté du chargement avant update chargement
@@ -137,29 +134,29 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		// (cas où changement de tas lors de update chargement)
 		vcAvant, err := model.GetVenteCharge(ctx.DB, vc.Id)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = vcAvant.ComputeTas(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = vcAvant.Tas.ModifierStock(ctx.DB, vcAvant.Qte) // Ajoute des plaquettes au tas
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		err = vc.ComputeTas(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = vc.Tas.ModifierStock(ctx.DB, -vc.Qte) // Retire des plaquettes au tas
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		err = model.UpdateVenteCharge(ctx.DB, vc)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/vente/" + vars["id-vente"]
 		return nil
@@ -170,12 +167,12 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		vars := mux.Vars(r)
 		idChargement, err := strconv.Atoi(vars["id-chargement"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// full pour avoir les noms du chargeur, conducteur et proprioutil
 		vc, err := model.GetVenteChargeFull(ctx.DB, idChargement)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// Obligé d'initialiser à acteur vide afin de pouvoir utiliser dans le js de la vue
 		// {{.Chargeur.String}} ou ({{.Conducteur.String}} et {{.Proprioutil.String}})
@@ -188,20 +185,20 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 		// full pour avoir la vente et le nom de la livraison
 		vc.Livraison, err = model.GetVenteLivreFull(ctx.DB, vc.IdLivraison)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// full pour avoir le nom de la vente
 		vc.Livraison.Vente, err = model.GetVentePlaqFull(ctx.DB, vc.Livraison.IdVente)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		weboTas, err := WeboTas(ctx)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "ventecharge-form.html"
 		ctx.Page = &ctxt.Page{
@@ -234,11 +231,11 @@ func DeleteVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id-chargement"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteVenteCharge(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/vente/" + vars["id-vente"]
 	return nil
@@ -252,7 +249,7 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 	vc := &model.VenteCharge{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return vc, err
+		return vc, werr.Wrap(err)
 	}
 	//
 	if r.PostFormValue("type-cout") == "cout-global" {
@@ -263,28 +260,28 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 	//
 	vc.IdLivraison, err = strconv.Atoi(r.PostFormValue("id-livraison"))
 	if err != nil {
-		return vc, err
+		return vc, werr.Wrap(err)
 	}
 	//
 	vc.IdVente, err = strconv.Atoi(r.PostFormValue("id-vente"))
 	if err != nil {
-		return vc, err
+		return vc, werr.Wrap(err)
 	}
 	//
 	vc.IdTas, err = strconv.Atoi(strings.TrimLeft(r.PostFormValue("tas"), "tas-"))
 	if err != nil {
-		return vc, err
+		return vc, werr.Wrap(err)
 	}
 	//
 	vc.Qte, err = strconv.ParseFloat(r.PostFormValue("qte"), 32)
 	if err != nil {
-		return vc, err
+		return vc, werr.Wrap(err)
 	}
 	vc.Qte = tiglib.Round(vc.Qte, 2)
 	//
 	vc.DateCharge, err = time.Parse("2006-01-02", r.PostFormValue("datecharge"))
 	if err != nil {
-		return vc, err
+		return vc, werr.Wrap(err)
 	}
 	if vc.TypeCout == "G" {
 		//
@@ -292,25 +289,25 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		//
 		vc.IdChargeur, err = strconv.Atoi(r.PostFormValue("id-chargeur"))
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		//
 		vc.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		vc.GlPrix = tiglib.Round(vc.GlPrix, 2)
 		//
 		vc.GlTVA, err = strconv.ParseFloat(r.PostFormValue("gltva"), 32)
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		vc.GlTVA = tiglib.Round(vc.GlTVA, 2)
 		//
 		if r.PostFormValue("gldatepay") != "" {
 			vc.GlDatePay, err = time.Parse("2006-01-02", r.PostFormValue("gldatepay"))
 			if err != nil {
-				return vc, err
+				return vc, werr.Wrap(err)
 			}
 		}
 	} else {
@@ -319,31 +316,31 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		//
 		vc.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		//
 		vc.MoNHeure, err = strconv.ParseFloat(r.PostFormValue("monheure"), 32)
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		vc.MoNHeure = tiglib.Round(vc.MoNHeure, 2)
 		//
 		vc.MoPrixH, err = strconv.ParseFloat(r.PostFormValue("moprixh"), 32)
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		vc.MoPrixH = tiglib.Round(vc.MoPrixH, 2)
 		//
 		vc.MoTVA, err = strconv.ParseFloat(r.PostFormValue("motva"), 32)
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		vc.MoTVA = tiglib.Round(vc.MoTVA, 2)
 		//
 		if r.PostFormValue("modatepay") != "" {
 			vc.MoDatePay, err = time.Parse("2006-01-02", r.PostFormValue("modatepay"))
 			if err != nil {
-				return vc, err
+				return vc, werr.Wrap(err)
 			}
 		}
 		//
@@ -351,25 +348,25 @@ func venteChargeForm2var(r *http.Request) (*model.VenteCharge, error) {
 		//
 		vc.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		//
 		vc.OuPrix, err = strconv.ParseFloat(r.PostFormValue("ouprix"), 32)
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		vc.OuPrix = tiglib.Round(vc.OuPrix, 2)
 		//
 		vc.OuTVA, err = strconv.ParseFloat(r.PostFormValue("outva"), 32)
 		if err != nil {
-			return vc, err
+			return vc, werr.Wrap(err)
 		}
 		vc.OuTVA = tiglib.Round(vc.OuTVA, 2)
 		//
 		if r.PostFormValue("oudatepay") != "" {
 			vc.OuDatePay, err = time.Parse("2006-01-02", r.PostFormValue("oudatepay"))
 			if err != nil {
-				return vc, err
+				return vc, werr.Wrap(err)
 			}
 		}
 	}

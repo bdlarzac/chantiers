@@ -1,33 +1,28 @@
 /*
-*****************************************************************************
+Vente de plaquettes, depuis un lieu de stockage
+Note: La string stockée dans FactureLivraisonUnite ne vient pas d'une enum.
+Donc les valeurs "km" et "map" sont codées en dur
+- dans le js de venteplaq-form.html
+- dans venteplaq-show.html
+- dans venteplaq-list.html
+La valeur est insérée directement en base dans control.ventePlaqForm2var()
 
-	Vente de plaquettes, depuis un lieu de stockage
-	Note: La string stockée dans FactureLivraisonUnite ne vient pas d'une enum.
-	Donc les valeurs "km" et "map" sont codées en dur
-	- dans le js de venteplaq-form.html
-	- dans venteplaq-show.html
-	- dans venteplaq-list.html
-	La valeur est insérée directement en base dans control.ventePlaqForm2var()
+Pour afficher sur la facture :
+Si FactureLivraisonUnite = map, on utilise Qte
+Si FactureLivraisonUnite = km, on utilise FactureLivraisonNbKm
 
-	Pour afficher sur la facture :
-	Si FactureLivraisonUnite = map, on utilise Qte
-	Si FactureLivraisonUnite = km, on utilise FactureLivraisonNbKm
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-01-22 02:56:23+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-01-22 02:56:23+01:00, Thierry Graff : Creation
 */
 package model
 
 import (
-	"strconv"
-	"time"
-
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"strconv"
+	"time"
 )
 
 type VentePlaq struct {
@@ -334,9 +329,9 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
 		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes).Scan(&id)
-    if err != nil {
-        return id, werr.Wrapf(err, "Erreur query " + query)
-    }
+	if err != nil {
+		return id, werr.Wrapf(err, "Erreur query "+query)
+	}
 	return id, nil
 }
 

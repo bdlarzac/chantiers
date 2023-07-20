@@ -1,23 +1,18 @@
 /*
-*****************************************************************************
+Chantier plaquettes - contient infos générales d'un chantier
 
-	Chantier plaquettes - contient infos générales d'un chantier
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019, Thierry Graff : Creation
 */
 package model
 
 import (
-	"strconv"
-	"time"
-
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"strconv"
+	"time"
 )
 
 // Représente un chantier plaquettes
@@ -592,15 +587,9 @@ func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 
 // ************************** CRUD *******************************
 
-/*
-*
-
-	Insère un chantier plaquette en base
-	+ Crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
-	+ Insère en base les liens UGs, parcelles, lieux-dits, fermiers
-
-*
-*/
+// Insère un chantier plaquette en base
+// + Crée et insère en base le(s) tas (crée un Tas par lieu de stockage)
+// + Insère en base les liens UGs, parcelles, lieux-dits, fermiers
 func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (idChantier int, err error) {
 	query := `insert into plaq(
         titre,
@@ -666,17 +655,11 @@ func InsertPlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermi
 	return idChantier, nil
 }
 
-/*
-*
-
-	MAJ un chantier plaquette en base
-	+ Gère aussi les tas
-	+ MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
-
-	@param idsStockages ids tas APRÈS update
-
-*
-*/
+// MAJ un chantier plaquette en base
+// + Gère aussi les tas
+// + MAJ en base les liens UGs, parcelles, lieux-dits, fermiers
+//
+// @param idsStockages ids tas APRÈS update
 func UpdatePlaq(db *sqlx.DB, ch *Plaq, idsStockages, idsUG, idsLieudit, idsFermier []int) (err error) {
 	query := `update plaq set(
 	    titre,

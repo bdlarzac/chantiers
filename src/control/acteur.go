@@ -5,13 +5,13 @@
 package control
 
 import (
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 	"strings"
-
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
 )
 
 type detailsActeurList struct {
@@ -33,7 +33,7 @@ type detailsActeurShow struct {
 func ListActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	list, err := model.GetSortedActeurs(ctx.DB, "nom")
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	ctx.TemplateName = "acteur-list.html"
@@ -61,19 +61,19 @@ func ShowActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	id1, err := strconv.Atoi(vars["id"])
 	id := int(id1)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	acteur, err := model.GetActeurFull(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	acteur.Deletable, err = acteur.IsDeletable(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	activites, err := acteur.GetActivitesByDate(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	ctx.TemplateName = "acteur-show.html"
@@ -108,12 +108,12 @@ func NewActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 		//
 		acteur, err := acteurForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		acteur.Deletable = true // nouvellement créé, pas SCTL, pas d'activité => effaçable
 		id, err := model.InsertActeur(ctx.DB, acteur)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// pour new, on redirige vers l'acteur nouvellement créé
 		ctx.Redirect = "/acteur/" + strconv.Itoa(id)
@@ -153,17 +153,17 @@ func UpdateActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		//
 		acteur, err := acteurForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		acteur.Id, err = strconv.Atoi(r.PostFormValue("id"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// Actif et Deletable sont gérés lors d'un import SCTL
 		// ou lors de l'effacement d'activités le concernant
 		err = model.UpdateActeur(ctx.DB, acteur)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// pour update, plus pratique de rediriger vers la liste
 		ctx.Redirect = "/acteur/liste"
@@ -176,11 +176,11 @@ func UpdateActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		acteur, err := model.GetActeurFull(ctx.DB, id)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "acteur-form.html"
 		ctx.Page = &ctxt.Page{
@@ -206,11 +206,11 @@ func DeleteActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteActeur(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/acteur/liste"
 	return nil
@@ -224,7 +224,7 @@ func acteurForm2var(r *http.Request) (*model.Acteur, error) {
 	acteur := &model.Acteur{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return acteur, err
+		return acteur, werr.Wrap(err)
 	}
 	acteur.Nom = r.PostFormValue("nom")
 	//

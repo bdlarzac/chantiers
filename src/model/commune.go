@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Communes
 
-	Communes
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019-11-07, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019-11-07, Thierry Graff : Creation
 */
 package model
 
@@ -33,10 +29,8 @@ func (c *Commune) String() string {
 }
 
 // ************************** Get one *******************************
-/*
-   Renvoie une Commune contenant Id et Nom.
-   Les autres champs ne sont pas remplis.
-*/
+// Renvoie une Commune contenant Id et Nom.
+// Les autres champs ne sont pas remplis.
 func GetCommune(db *sqlx.DB, id int) (commune *Commune, err error) {
 	commune = &Commune{}
 	query := "select * from commune where id=$1"

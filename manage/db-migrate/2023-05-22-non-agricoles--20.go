@@ -8,7 +8,7 @@
 	Mais la base n'avait pas été nettoyée.
 
 	Voir https://github.com/bdlarzac/chantiers/issues/11
-	Intégration : commit 
+	Intégration : commit
 
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
@@ -66,33 +66,33 @@ func Migrate_2023_05_22_non_agricoles__20(ctx *ctxt.Context) {
 // avant:  107
 // après:  67
 func clean_fermiers_2023_05_22(ctx *ctxt.Context, idsFermier []int) {
-    strIdsFermiers := tiglib.JoinInt(idsFermier, ",")
+	strIdsFermiers := tiglib.JoinInt(idsFermier, ",")
 	query := "delete from fermier where id in(" + strIdsFermiers + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    n, err := res.RowsAffected()
+	n, err := res.RowsAffected()
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    fmt.Printf("deleted %d rows in fermier\n", n)
+	fmt.Printf("deleted %d rows in fermier\n", n)
 }
 
 // deleted 195 rows in parcelle_fermier
-// avant:  2464 
+// avant:  2464
 // après:  2269
 func clean_parcelle_fermier_2023_05_22(ctx *ctxt.Context, strParcellesToDelete string) {
 	query := "delete from parcelle_fermier where id_parcelle in(" + strParcellesToDelete + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    n, err := res.RowsAffected()
+	n, err := res.RowsAffected()
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    fmt.Printf("deleted %d rows in parcelle_fermier\n", n)
+	fmt.Printf("deleted %d rows in parcelle_fermier\n", n)
 }
 
 // deleted 184 rows in parcelle_lieudit
@@ -102,13 +102,13 @@ func clean_parcelle_lieuDit_2023_05_22(ctx *ctxt.Context, strParcellesToDelete s
 	query := "delete from parcelle_lieudit where id_parcelle in(" + strParcellesToDelete + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    n, err := res.RowsAffected()
+	n, err := res.RowsAffected()
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    fmt.Printf("deleted %d rows in parcelle_lieudit\n", n)
+	fmt.Printf("deleted %d rows in parcelle_lieudit\n", n)
 }
 
 // deleted 53 rows in parcelle_ug
@@ -118,13 +118,13 @@ func clean_parcelle_ug_2023_05_22(ctx *ctxt.Context, strParcellesToDelete string
 	query := "delete from parcelle_ug where id_parcelle in(" + strParcellesToDelete + ")"
 	res, err := ctx.DB.Exec(query)
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    n, err := res.RowsAffected()
+	n, err := res.RowsAffected()
 	if err != nil {
-	    panic(err)
+		panic(err)
 	}
-    fmt.Printf("deleted %d rows in parcelle_ug\n", n)
+	fmt.Printf("deleted %d rows in parcelle_ug\n", n)
 }
 
 // ********************************** check **********************************
@@ -137,23 +137,23 @@ func computeChantiers_2023_05_22(ctx *ctxt.Context, idsParcelle []int) []int {
 	query := "select id_chantier from chantier_parcelle where id_parcelle in(" + inStr + ")"
 	err := ctx.DB.Select(&res, query)
 	if err != nil {
-		fmt.Println("Erreur query : "+query)
-	    panic(err)
+		fmt.Println("Erreur query : " + query)
+		panic(err)
 	}
-    sort.Ints(res)
-    return res
+	sort.Ints(res)
+	return res
 }
 
 // Calcule les ids parcelles présents dans idsParcelle_full mais pas dans idsParcelle_shared
 // Résultat : 184 parcelles
 func computeParcellesToDelete_2023_05_22(ctx *ctxt.Context, idsParcelle_full, idsParcelle_shared []int) []int {
 	res := []int{}
-	for _, elt := range(idsParcelle_full){
-	    if !tiglib.InArray(elt, idsParcelle_shared){
-	        res = append(res, elt)
-	    }
+	for _, elt := range idsParcelle_full {
+		if !tiglib.InArray(elt, idsParcelle_shared) {
+			res = append(res, elt)
+		}
 	}
-    sort.Ints(res)
+	sort.Ints(res)
 	return res
 }
 
@@ -167,11 +167,11 @@ func computeSharedParcelles_2023_05_22(ctx *ctxt.Context, idsFermier, idsParcell
 	query := "select id_parcelle from parcelle_fermier where id_parcelle in(" + strParcelles + ") and id_fermier not in(" + strFermiers + ")"
 	err := ctx.DB.Select(&res, query)
 	if err != nil {
-		fmt.Println("Erreur query : "+query)
-	    panic(err)
+		fmt.Println("Erreur query : " + query)
+		panic(err)
 	}
 	res = tiglib.ArrayUnique(res)
-    sort.Ints(res)
+	sort.Ints(res)
 	return res
 }
 
@@ -182,17 +182,17 @@ func computeParcellesFull_2023_05_22(ctx *ctxt.Context, idsFermier []int) []int 
 	query := "select id_parcelle from parcelle_fermier where id_fermier in(" + inStr + ")"
 	err := ctx.DB.Select(&res, query)
 	if err != nil {
-		fmt.Println("Erreur query : "+query)
-	    panic(err)
+		fmt.Println("Erreur query : " + query)
+		panic(err)
 	}
 	res = tiglib.ArrayUnique(res)
-    sort.Ints(res)
-    return res
+	sort.Ints(res)
+	return res
 }
 
 // Résultat : 44 fermiers
-func computeFermiersNonAgricoles_2023_05_22(ctx *ctxt.Context, versionSCTL string) []int{
-    dirname := install.GetSCTLDataDir(versionSCTL)
+func computeFermiersNonAgricoles_2023_05_22(ctx *ctxt.Context, versionSCTL string) []int {
+	dirname := install.GetSCTLDataDir(versionSCTL)
 	filename := dirname + string(os.PathSeparator) + "Exploita.csv"
 	records, err := tiglib.CsvMap(filename, ';')
 	if err != nil {
@@ -209,9 +209,9 @@ func computeFermiersNonAgricoles_2023_05_22(ctx *ctxt.Context, versionSCTL strin
 
 		}
 		if record["Agricole"] == "0" {
-		    res = append(res, idExploitant)
+			res = append(res, idExploitant)
 		}
-    }
-    sort.Ints(res)
-    return res
+	}
+	sort.Ints(res)
+	return res
 }

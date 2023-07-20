@@ -1,14 +1,10 @@
 /*
-*****************************************************************************
+Code liés aux saisons
 
-	Code liés aux saisons
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2021-01-19 10:09:42+01:00, Thierry Graff : Creation
-	@history    2023-05-17 09:16:48+02:00, Thierry Graff : Refactor, isole le code lié aux saisonx
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2021-01-19 10:09:42+01:00, Thierry Graff : Creation
+@history    2023-05-17 09:16:48+02:00, Thierry Graff : Refactor, isole le code lié aux saisonx
 */
 package model
 
@@ -21,17 +17,15 @@ import (
 	"time"
 )
 
-/*
-Renvoie un tableau contenant les dates de début / fin des "saisons"
-Les saisons encadrent tous les chantiers stockés en base.
-Une saison dure un an.
-
-	@param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
-	@return
-	  - un tableau de 2 time.Time avec les dates limites des saisons
-	  - un bool indiquant s'il existe des chantiers en base
-	  - une erreur éventuelle
-*/
+// Renvoie un tableau contenant les dates de début / fin des "saisons"
+// Les saisons encadrent tous les chantiers stockés en base.
+// Une saison dure un an.
+//
+// @param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
+// @return
+//   - un tableau de 2 time.Time avec les dates limites des saisons
+//   - un bool indiquant s'il existe des chantiers en base
+//   - une erreur éventuelle
 func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bool, error) {
 	// retour
 	var res [][2]time.Time

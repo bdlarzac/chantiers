@@ -1,26 +1,21 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
 import (
-	"html/template"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
 	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
+	"html/template"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type detailsPlaqTransForm struct {
@@ -43,12 +38,12 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		//
 		pt, err := plaqTransForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt.PourcentPerte = ctx.Config.PourcentagePerte
 		_, err = model.InsertPlaqTrans(ctx.DB, pt) // gère la modif du stock du tas
 		if err != nil {
-			//return err
+			//return werr.Wrap(err)
 			return werr.Wrapf(err, "Erreur appel model.InsertPlaqTrans()")
 		}
 		ctx.Redirect = "/chantier/plaquette/" + strconv.Itoa(pt.IdChantier) + "/chantiers"
@@ -61,7 +56,7 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		idChantierStr := vars["id-chantier"]
 		idChantier, err := strconv.Atoi(idChantierStr)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt := &model.PlaqTrans{}
 		pt.TypeCout = "G"
@@ -71,19 +66,19 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		pt.IdChantier = idChantier
 		pt.Chantier, err = model.GetPlaq(ctx.DB, idChantier)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = pt.Chantier.ComputeTas(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = pt.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "plaqtrans-form.html"
 		ctx.Page = &ctxt.Page{
@@ -121,16 +116,16 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		//
 		pt, err := plaqTransForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt.Id, err = strconv.Atoi(r.PostFormValue("id-plaqtrans"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt.PourcentPerte = ctx.Config.PourcentagePerte
 		err = model.UpdatePlaqTrans(ctx.DB, pt) // gère la modif du stock du tas
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.Redirect = "/chantier/plaquette/" + strconv.Itoa(pt.IdChantier) + "/chantiers"
@@ -142,39 +137,39 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		vars := mux.Vars(r)
 		idPt, err := strconv.Atoi(vars["id-pt"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt, err := model.GetPlaqTrans(ctx.DB, idPt)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt.Transporteur, err = model.GetActeur(ctx.DB, pt.IdTransporteur)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt.Conducteur, err = model.GetActeur(ctx.DB, pt.IdConducteur)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt.Proprioutil, err = model.GetActeur(ctx.DB, pt.IdProprioutil)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		pt.Chantier, err = model.GetPlaq(ctx.DB, pt.IdChantier)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = pt.Chantier.ComputeTas(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = pt.Chantier.ComputeLieudits(ctx.DB) // pour le nom du chantier
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "plaqtrans-form.html"
 		ctx.Page = &ctxt.Page{
@@ -207,11 +202,11 @@ func DeletePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	idPt, err := strconv.Atoi(vars["id-pt"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeletePlaqTrans(ctx.DB, idPt) // gère la modif du stock du tas
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/chantier/plaquette/" + vars["id-chantier"] + "/chantiers"
 	return nil
@@ -226,29 +221,29 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 	var err error
 	var tmp string
 	if err = r.ParseForm(); err != nil {
-		return pt, err
+		return pt, werr.Wrap(err)
 	}
 	//
 	// champs généraux
 	//
 	pt.IdChantier, err = strconv.Atoi(r.PostFormValue("id-chantier"))
 	if err != nil {
-		return pt, err
+		return pt, werr.Wrap(err)
 	}
 	//
 	pt.IdTas, err = strconv.Atoi(strings.TrimLeft(r.PostFormValue("tas"), "tas-"))
 	if err != nil {
-		return pt, err
+		return pt, werr.Wrap(err)
 	}
 	//
 	pt.DateTrans, err = time.Parse("2006-01-02", r.PostFormValue("datetrans"))
 	if err != nil {
-		return pt, err
+		return pt, werr.Wrap(err)
 	}
 	//
 	pt.Qte, err = strconv.ParseFloat(r.PostFormValue("qte"), 32)
 	if err != nil {
-		return pt, err
+		return pt, werr.Wrap(err)
 	}
 	pt.Qte = tiglib.Round(pt.Qte, 2)
 	//
@@ -270,24 +265,24 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 		//
 		pt.IdTransporteur, err = strconv.Atoi(r.PostFormValue("id-transporteur"))
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		pt.GlPrix, err = strconv.ParseFloat(r.PostFormValue("glprix"), 32)
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		pt.GlPrix = tiglib.Round(pt.GlPrix, 2)
 		//
 		pt.GlTVA, err = strconv.ParseFloat(r.PostFormValue("gltva"), 32)
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		pt.GlTVA = tiglib.Round(pt.GlTVA, 2)
 		//
 		if r.PostFormValue("gldatepay") != "" {
 			pt.GlDatePay, err = time.Parse("2006-01-02", r.PostFormValue("gldatepay"))
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 		}
 	} else {
@@ -296,38 +291,38 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 		//
 		pt.IdProprioutil, err = strconv.Atoi(r.PostFormValue("id-proprioutil"))
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		//
 		// concerne le conducteur
 		//
 		pt.IdConducteur, err = strconv.Atoi(r.PostFormValue("id-conducteur"))
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		//
 		pt.CoNheure, err = strconv.ParseFloat(r.PostFormValue("conheure"), 32)
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		pt.CoNheure = tiglib.Round(pt.CoNheure, 2)
 		//
 		pt.CoPrixH, err = strconv.ParseFloat(r.PostFormValue("coprixh"), 32)
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		pt.CoPrixH = tiglib.Round(pt.CoPrixH, 2)
 		//
 		pt.CoTVA, err = strconv.ParseFloat(r.PostFormValue("cotva"), 32)
 		if err != nil {
-			return pt, err
+			return pt, werr.Wrap(err)
 		}
 		pt.CoTVA = tiglib.Round(pt.CoTVA, 2)
 		//
 		if r.PostFormValue("codatepay") != "" {
 			pt.CoDatePay, err = time.Parse("2006-01-02", r.PostFormValue("codatepay"))
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 		}
 		if pt.TypeCout == "C" {
@@ -336,26 +331,26 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 			//
 			pt.CaNkm, err = strconv.ParseFloat(r.PostFormValue("cankm"), 32)
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 			pt.CaNkm = tiglib.Round(pt.CaNkm, 2)
 			//
 			pt.CaPrixKm, err = strconv.ParseFloat(r.PostFormValue("caprixkm"), 32)
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 			pt.CaPrixKm = tiglib.Round(pt.CaPrixKm, 2)
 			//
 			pt.CaTVA, err = strconv.ParseFloat(r.PostFormValue("catva"), 32)
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 			pt.CaTVA = tiglib.Round(pt.CaTVA, 2)
 			//
 			if r.PostFormValue("cadatepay") != "" {
 				pt.CaDatePay, err = time.Parse("2006-01-02", r.PostFormValue("cadatepay"))
 				if err != nil {
-					return pt, err
+					return pt, werr.Wrap(err)
 				}
 			}
 		} else {
@@ -364,31 +359,31 @@ func plaqTransForm2var(r *http.Request) (*model.PlaqTrans, error) {
 			//
 			pt.TbNbenne, err = strconv.Atoi(r.PostFormValue("tbnbenne"))
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 			//
 			pt.TbDuree, err = strconv.ParseFloat(r.PostFormValue("tbduree"), 32)
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 			pt.TbDuree = tiglib.Round(pt.TbDuree, 2)
 			//
 			pt.TbPrixH, err = strconv.ParseFloat(r.PostFormValue("tbprixh"), 32)
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 			pt.TbPrixH = tiglib.Round(pt.TbPrixH, 2)
 			//
 			pt.TbTVA, err = strconv.ParseFloat(r.PostFormValue("tbtva"), 32)
 			if err != nil {
-				return pt, err
+				return pt, werr.Wrap(err)
 			}
 			pt.TbTVA = tiglib.Round(pt.TbTVA, 2)
 			//
 			if r.PostFormValue("tbdatepay") != "" {
 				pt.TbDatePay, err = time.Parse("2006-01-02", r.PostFormValue("tbdatepay"))
 				if err != nil {
-					return pt, err
+					return pt, werr.Wrap(err)
 				}
 			}
 		} // end tracteur + benne

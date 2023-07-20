@@ -9,10 +9,9 @@ Soit par camion, soit par tracteur + benne
 package model
 
 import (
-	"time"
-
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type PlaqTrans struct {

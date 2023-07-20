@@ -1,20 +1,16 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
 import (
 	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
-	//"fmt"
 )
 
 type detailsStockageForm struct {
@@ -31,23 +27,23 @@ type detailsStockageList struct {
 func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	actifs, err := model.GetStockagesFull(ctx.DB, true)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	for _, s := range actifs {
 		for _, t := range s.TasActifs {
 			err = t.ComputeMesuresHumidite(ctx.DB)
 			if err != nil {
-				return err
+				return werr.Wrap(err)
 			}
 			err = t.ComputeEvolutionStock(ctx.DB)
 			if err != nil {
-				return err
+				return werr.Wrap(err)
 			}
 		}
 	}
 	archives, err := model.GetStockagesFull(ctx.DB, false)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
@@ -79,11 +75,11 @@ func NewStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		//
 		stockage, err := stockageForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		_, err = model.InsertStockage(ctx.DB, stockage)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/stockage/liste"
 		return nil
@@ -120,11 +116,11 @@ func UpdateStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		// Process form
 		//
 		if err := r.ParseForm(); err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		id, err := strconv.Atoi(r.PostFormValue("id"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		stockage := &model.Stockage{
 			Id:  id,
@@ -132,7 +128,7 @@ func UpdateStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		}
 		err = model.UpdateStockage(ctx.DB, stockage)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/stockage/liste"
 		return nil
@@ -143,11 +139,11 @@ func UpdateStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 		vars := mux.Vars(r)
 		id, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		stockage, err := model.GetStockage(ctx.DB, id)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -174,26 +170,26 @@ func DeleteOrArchiveStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.R
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	stockage, err := model.GetStockage(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = stockage.ComputeDeletableAndArchivable(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	if stockage.Deletable {
 		err = model.DeleteStockage(ctx.DB, id)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 	} else if stockage.Archivable {
 		stockage.Archived = true
 		err = model.UpdateStockage(ctx.DB, stockage)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 	}
 	// Si ni Archivable ni Deletable, on ne fait rien
@@ -209,7 +205,7 @@ func stockageForm2var(r *http.Request) (*model.Stockage, error) {
 	stockage := &model.Stockage{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return stockage, err
+		return stockage, werr.Wrap(err)
 	}
 	stockage.Nom = r.PostFormValue("nom")
 	return stockage, nil

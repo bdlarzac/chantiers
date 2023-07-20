@@ -1,14 +1,10 @@
 /*
-*
+Code commun à plaq.go et chautre.go
+(chantiers utilisant view/comon/chantier-lien.html)
+Pour gérer les liens chanter - UG, Lieudit, Fermier
 
-	Code commun à plaq.go et chautre.go
-	(chantiers utilisant view/comon/chantier-lien.html)
-	Pour gérer les liens chanter - UG, Lieudit, Fermier
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 

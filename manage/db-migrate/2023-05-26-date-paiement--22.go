@@ -1,15 +1,14 @@
 /*
-    Ajouter date paiement dans chautre et venteplaq
-    
-    Bizarre, si on met pas de défaut dans les colone date, le scan donne une erreur
-    "sql: Scan error on column index" (...) "unsupported Scan, storing driver.Value type" (...)
+	    Ajouter date paiement dans chautre et venteplaq
 
-	Voir https://github.com/bdlarzac/chantiers/issues/22
-	Intégration : commit
+	    Bizarre, si on met pas de défaut dans les colone date, le scan donne une erreur
+	    "sql: Scan error on column index" (...) "unsupported Scan, storing driver.Value type" (...)
 
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
+		Voir https://github.com/bdlarzac/chantiers/issues/22
+		Intégration : commit
 
+		@copyright  BDL, Bois du Larzac
+		@license    GPL
 */
 package main
 

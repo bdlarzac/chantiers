@@ -1,10 +1,6 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -12,6 +8,7 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"html/template"
@@ -50,12 +47,12 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	}
 	chantiers, err := model.GetChaufersOfYear(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	annees, err := model.GetChauferDifferentYears(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	titrePage := "Chantiers chauffage fermier " + annee
@@ -88,11 +85,11 @@ func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	vars := mux.Vars(r)
 	idChantier, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	chantier, err := model.GetChauferFull(ctx.DB, idChantier)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.TemplateName = "chaufer-show.html"
 	ctx.Page = &ctxt.Page{
@@ -114,7 +111,7 @@ func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	url := r.URL.String()
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: url, Label: chantier.FullString()})
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	return nil
 }
@@ -129,11 +126,11 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		//
 		chantier, idsUG, err := chantierChauferForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		chantier.Id, err = model.InsertChaufer(ctx.DB, chantier, idsUG)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/chantier/chauffage-fermier/" + strconv.Itoa(chantier.Id)
 		return nil
@@ -147,7 +144,7 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 		chantier.LiensParcelles = []*model.ChantierParcelle{}
 		weboFermier, err := WeboFermier(ctx)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.TemplateName = "chaufer-form.html"
 		ctx.Page = &ctxt.Page{
@@ -184,15 +181,15 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		//
 		chantier, idsUG, err := chantierChauferForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		chantier.Id, err = strconv.Atoi(r.PostFormValue("id-chantier"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = model.UpdateChaufer(ctx.DB, chantier, idsUG)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/chantier/chauffage-fermier/" + strconv.Itoa(chantier.Id)
 		return nil
@@ -203,11 +200,11 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		vars := mux.Vars(r)
 		idChantier, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		chantier, err := model.GetChauferFull(ctx.DB, idChantier)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		weboFermier, err := WeboFermier(ctx)
 		ctx.TemplateName = "chaufer-form.html"
@@ -241,15 +238,15 @@ func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	chantier, err := model.GetChaufer(ctx.DB, id) // chantier sert pour l'année du redirect
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteChaufer(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/chantier/chauffage-fermier/liste/" + strconv.Itoa(chantier.DateChantier.Year())
 	return nil
@@ -268,14 +265,14 @@ func chantierChauferForm2var(r *http.Request) (ch *model.Chaufer, idsUG []int, e
 	ch = &model.Chaufer{}
 	vide := []int{}
 	if err = r.ParseForm(); err != nil {
-		return ch, vide, err
+		return ch, vide, werr.Wrap(err)
 	}
 	//
 	ch.Titre = r.PostFormValue("titre")
 	//
 	ch.IdFermier, err = strconv.Atoi(r.PostFormValue("id-fermier"))
 	if err != nil {
-		return ch, vide, err
+		return ch, vide, werr.Wrap(err)
 	}
 	//
 	idsUG = form2IdsUG(r)
@@ -284,7 +281,7 @@ func chantierChauferForm2var(r *http.Request) (ch *model.Chaufer, idsUG []int, e
 	//
 	ch.DateChantier, err = time.Parse("2006-01-02", r.PostFormValue("datechantier"))
 	if err != nil {
-		return ch, vide, err
+		return ch, vide, werr.Wrap(err)
 	}
 	//
 	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
@@ -293,7 +290,7 @@ func chantierChauferForm2var(r *http.Request) (ch *model.Chaufer, idsUG []int, e
 	//
 	ch.Volume, err = strconv.ParseFloat(r.PostFormValue("volume"), 32)
 	if err != nil {
-		return ch, vide, err
+		return ch, vide, werr.Wrap(err)
 	}
 	ch.Volume = tiglib.Round(ch.Volume, 2)
 	//

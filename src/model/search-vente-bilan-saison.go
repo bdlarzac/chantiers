@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-/* Liste de ventes ayant lieu dans une période donnée */
+// Liste de ventes ayant lieu dans une période donnée
 type VenteParSaison struct {
 	Datedeb time.Time
 	Datefin time.Time

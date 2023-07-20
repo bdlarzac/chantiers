@@ -204,7 +204,7 @@ func WeboTas(ctx *ctxt.Context) (res []webo.OptionString, err error) {
 	res = []webo.OptionString{}
 	tas, err := model.GetAllTasActifsFull(ctx.DB)
 	if err != nil {
-		return res, err
+		return res, werr.Wrap(err)
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_TAS", OptionLabel: "--- Choisir ---"})
 	for _, t := range tas {
@@ -220,7 +220,7 @@ func WeboFermier(ctx *ctxt.Context) (res []webo.OptionString, err error) {
 	res = []webo.OptionString{}
 	fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 	if err != nil {
-		return res, err
+		return res, werr.Wrap(err)
 	}
 	res = append(res, webo.OptionString{OptionValue: "CHOOSE_FERMIER", OptionLabel: "--- Choisir ---"})
 	for _, f := range fermiers {

@@ -10,6 +10,7 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"github.com/jung-kurt/gofpdf"
@@ -45,12 +46,12 @@ func ListVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	}
 	ventes, err := model.GetVentePlaqsOfYear(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	annees, err := model.GetVentePlaqDifferentYears(ctx.DB, annee)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.TemplateName = "venteplaq-list.html"
 	ctx.Page = &ctxt.Page{
@@ -83,7 +84,7 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	idVente, _ := strconv.Atoi(vars["id-vente"])
 	vente, err := model.GetVentePlaqFull(ctx.DB, idVente)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.TemplateName = "venteplaq-show.html"
 	ctx.Page = &ctxt.Page{
@@ -105,7 +106,7 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	}
 	err = model.AddRecent(ctx.DB, ctx.Config, &model.Recent{URL: r.URL.String(), Label: vente.FullString()})
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	return nil
 }
@@ -120,13 +121,13 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		//
 		vente, err := ventePlaqForm2var(ctx, r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vente.TVA = ctx.Config.TVABDL.VentePlaquettes
 		vente.FactureLivraisonTVA = ctx.Config.TVABDL.Livraison
 		idVente, err := model.InsertVentePlaq(ctx.DB, vente)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/vente/" + strconv.Itoa(idVente)
 		// model.AddRecent() inutile puisqu'on est redirigé vers ShowVentePlaq(), où AddRecent() est exécuté
@@ -142,12 +143,12 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		vente.FactureLivraisonTVA = ctx.Config.TVABDL.Livraison
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		weboFournisseur, err := WeboFournisseur(ctx)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.TemplateName = "venteplaq-form.html"
@@ -183,17 +184,17 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		//
 		vente, err := ventePlaqForm2var(ctx, r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vente.Id, err = strconv.Atoi(r.PostFormValue("id-vente"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		vente.TVA = ctx.Config.TVABDL.VentePlaquettes
 		vente.FactureLivraisonTVA = ctx.Config.TVABDL.Livraison
 		err = model.UpdateVentePlaq(ctx.DB, vente)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/vente/" + r.PostFormValue("id-vente")
 		// model.AddRecent() inutile puisqu'on est redirigé vers ShowVentePlaq(), où AddRecent() est exécuté
@@ -205,22 +206,22 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		vars := mux.Vars(r)
 		idVente, err := strconv.Atoi(vars["id-vente"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		vente, err := model.GetVentePlaqFull(ctx.DB, idVente)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		listeActeurs, err := model.GetListeActeurs(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		weboFournisseur, err := WeboFournisseur(ctx)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.TemplateName = "venteplaq-form.html"
@@ -251,15 +252,15 @@ func DeleteVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id-vente"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	vente, err := model.GetVentePlaq(ctx.DB, id) // pour retenir l'année dans le redirect
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteVentePlaq(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/vente/liste/" + strconv.Itoa(vente.DateVente.Year())
 	return nil
@@ -274,28 +275,28 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 	vente := &model.VentePlaq{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return vente, err
+		return vente, werr.Wrap(err)
 	}
 	//
 	vente.IdClient, err = strconv.Atoi(r.PostFormValue("id-client"))
 	if err != nil {
-		return vente, err
+		return vente, werr.Wrap(err)
 	}
 	//
 	vente.IdFournisseur, err = strconv.Atoi(strings.TrimLeft(r.PostFormValue("fournisseur"), "fournisseur-"))
 	if err != nil {
-		return vente, err
+		return vente, werr.Wrap(err)
 	}
 	//
 	vente.PUHT, err = strconv.ParseFloat(r.PostFormValue("puht"), 32)
 	if err != nil {
-		return vente, err
+		return vente, werr.Wrap(err)
 	}
 	vente.PUHT = tiglib.Round(vente.PUHT, 2)
 	//
 	vente.DateVente, err = time.Parse("2006-01-02", r.PostFormValue("datevente"))
 	if err != nil {
-		return vente, err
+		return vente, werr.Wrap(err)
 	}
 	//
 	// Facture
@@ -304,7 +305,7 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 	if r.PostFormValue("numfacture") == "" {
 		vente.NumFacture, err = model.NouveauNumeroFacture(ctx.DB, strconv.Itoa(vente.DateVente.Year()))
 		if err != nil {
-			return vente, err
+			return vente, werr.Wrap(err)
 		}
 	} else {
 		vente.NumFacture = r.PostFormValue("numfacture")
@@ -313,14 +314,14 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 	if r.PostFormValue("datefacture") != "" {
 		vente.DateFacture, err = time.Parse("2006-01-02", r.PostFormValue("datefacture"))
 		if err != nil {
-			return vente, err
+			return vente, werr.Wrap(err)
 		}
 	}
 	//
 	if r.PostFormValue("datepaiement") != "" {
 		vente.DatePaiement, err = time.Parse("2006-01-02", r.PostFormValue("datepaiement"))
 		if err != nil {
-			return vente, err
+			return vente, werr.Wrap(err)
 		}
 	}
 	//
@@ -330,7 +331,7 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 		//
 		vente.FactureLivraisonPUHT, err = strconv.ParseFloat(r.PostFormValue("facturelivraisonpuht"), 32)
 		if err != nil {
-			return vente, err
+			return vente, werr.Wrap(err)
 		}
 		vente.FactureLivraisonPUHT = tiglib.Round(vente.FactureLivraisonPUHT, 2)
 		vente.FactureLivraisonUnite = r.PostFormValue("facturelivraisonunite") // map ou km -cf commentaire de classe model.VentePlaq
@@ -338,7 +339,7 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 			vente.FactureLivraisonNbKm, err = strconv.ParseFloat(r.PostFormValue("facturelivraisonnbkm"), 32)
 		}
 		if err != nil {
-			return vente, err
+			return vente, werr.Wrap(err)
 		}
 	}
 	// sinon
@@ -361,12 +362,12 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	vente, err := model.GetVentePlaqFull(ctx.DB, id)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	pdf := gofpdf.New("P", "mm", "A4", "")

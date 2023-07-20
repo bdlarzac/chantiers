@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Chaufer = Chantier Bois de chauffage fermiers
 
-	Chaufer = Chantier Bois de chauffage fermiers
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-02-04 18:55:10+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-02-04 18:55:10+01:00, Thierry Graff : Creation
 */
 package model
 

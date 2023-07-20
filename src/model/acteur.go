@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Acteurs
 
-	Acteurs
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019-11-08 10:43:40+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019-11-08 10:43:40+01:00, Thierry Graff : Creation
 */
 package model
 
@@ -151,9 +147,7 @@ func GetActeur(db *sqlx.DB, id int) (a *Acteur, err error) {
 	return a, nil
 }
 
-/*
-Renvoie un acteur avec les codes de ses rôles
-*/
+// Renvoie un acteur avec les codes de ses rôles
 func GetActeurFull(db *sqlx.DB, id int) (a *Acteur, err error) {
 	a, err = GetActeur(db, id)
 	if err != nil {
@@ -298,13 +292,11 @@ func (a *Acteur) ComputeCodesRole(db *sqlx.DB) (err error) {
 
 // ************************** Get activité *******************************
 
-/*
-Renvoie les activités auxquelles un acteur a participé.
-Ordre chronologique inverse
-Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
-Distinct de model.Activite car concerne aussi les "petites" activités
-(abattage, débardage ... transport, livraison ...)
-*/
+// Renvoie les activités auxquelles un acteur a participé.
+// Ordre chronologique inverse
+// Ne renvoie que des infos pour afficher la liste, pas les activités réelles.
+// Distinct de model.Activite car concerne aussi les "petites" activités
+// (abattage, débardage ... transport, livraison ...)
 func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err error) {
 	res = []*ActeurActivite{}
 	var query string

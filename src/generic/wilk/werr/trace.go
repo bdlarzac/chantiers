@@ -71,13 +71,12 @@ func tracef(skip int, s string, vals ...any) error {
 // ====== additions Thierry Graff ======
 
 func Print(err error) string {
-    return err.Error()
+	return err.Error()
 }
 
 // SprintHTML returns traceback as string formatted for html display
 func SprintHTML(err error) string {
-	res := ""
-	res += `
+	res := `
 <style>
     table.werr{
         border-collapse:collapse;
@@ -97,35 +96,28 @@ func SprintHTML(err error) string {
         font-weight:bold;
     }
 </style>
-    `
+`
 	res += "<table class=\"werr\">\n"
-	lines := strings.Split(err.Error(), "\n")
+	lines := strings.Split(strings.TrimSpace(err.Error()), "\n")
 	// Each error takes 2 lines
 	// - first line contains '> ' followed by function, filename and line number
 	// - second line contains the error message
-	msg := "<div class=\"werr\">"
 	for i, line := range lines {
-	    if line == "" {
-	        continue
-	    }
-	    if i%2 == 1 {
+		if i%2 == 0 {
 			res += "    <tr>\n"
 			line, _ = strings.CutPrefix(line, "> ")
 			parts := strings.Split(line, " ")
 			res += "        <td>" + parts[0] + "</td>\n"
 			res += "        <td>" + parts[1] + "</td>\n"
-	    } else {
-	        line = strings.TrimSpace(line)
+		} else {
+			line = strings.TrimSpace(line)
 			line, _ = strings.CutSuffix(line, ":")
 			res += "        <td>" + line + "</td>\n"
 			res += "    </tr>\n"
-	    }
+		}
 	}
 	res += "</table>\n"
-	msg += "</div>\n"
-	res += msg
 	return res
 }
 
 // ====== end additions Thierry Graff ======
-

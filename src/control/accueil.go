@@ -1,22 +1,21 @@
 /*
-	    Contrôle l'affichage de la page d'accueil et des pages générales (menu accueil).
+Contrôle l'affichage de la page d'accueil et des pages générales (menu accueil).
 
-		@copyright  BDL, Bois du Larzac.
-		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
 import (
 	"archive/zip"
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/model"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
 	"time"
-
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/wilk/werr"
-	"bdl.local/bdl/model"
 )
 
 type detailsAccueil struct {
@@ -28,7 +27,7 @@ func Accueil(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.TemplateName = "accueil.html"
 	recents, err := model.GetRecents(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 
 	ctx.Page = &ctxt.Page{
@@ -86,28 +85,28 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	zipfilename := filename + ".zip"
 	zipfile, err := os.Create(zipfilepath)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	zipwriter := zip.NewWriter(zipfile)
 	defer zipwriter.Close()
 	f, err := zipwriter.Create(filename)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	b, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	_, err = f.Write(b)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	// 3 - clean
 	//
 	err = os.Remove(filepath)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	// 4 - affiche
@@ -127,7 +126,7 @@ func BackupDB(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 func MajQGis(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	err := model.QGisUpdate(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	//
 	ctx.TemplateName = "qgis-update.html"

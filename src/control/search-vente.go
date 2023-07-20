@@ -8,6 +8,7 @@ package control
 
 import (
 	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"net/http"
 	"time"
@@ -38,7 +39,7 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		// Process form et affiche page de résultats
 		//
 		if err = r.ParseForm(); err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		filtres := map[string][]string{}
@@ -48,17 +49,17 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		filtres["proprio"] = computeFiltreProprio(r)
 		ventes, err := model.ComputeVentesFromFiltres(ctx.DB, filtres)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		bilansVentesParSaison, err := model.ComputeBilansVentesParSaison(ctx.DB, ctx.Config.DebutSaison, ventes)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.TemplateName = "search-vente-show.html"
@@ -94,16 +95,16 @@ func SearchVente(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		//
 		periods, _, err := model.ComputeLimitesSaisons(ctx.DB, ctx.Config.DebutSaison)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		clients, err := model.GetClients(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		propriosMap, err := model.GetProprietaires(ctx.DB)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.TemplateName = "search-vente-form.html"

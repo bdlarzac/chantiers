@@ -5,13 +5,12 @@
 package control
 
 import (
-	"net/http"
-	"strconv"
-
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
+	"net/http"
+	"strconv"
 )
 
 type detailsUGShow struct {
@@ -76,7 +75,7 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 func ListUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	allUgs, err := model.GetUGsSortedByCodeAndSeparated(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.TemplateName = "ug-list.html"
 	ctx.Page = &ctxt.Page{

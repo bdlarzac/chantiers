@@ -1,10 +1,6 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -31,7 +27,7 @@ func ShowParcelle(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 
 	err = parcelle.ComputeLieudits(ctx.DB)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 
 	for i, _ := range parcelle.Lieudits {

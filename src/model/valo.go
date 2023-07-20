@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Valorisations
 
-	Valorisations
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2023-05-17 08:35:58+02:00, Thierry Graff : Creation à partir de code existant, refactoring #19
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2023-05-17 08:35:58+02:00, Thierry Graff : Creation à partir de code existant, refactoring #19
 */
 package model
 

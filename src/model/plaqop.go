@@ -1,22 +1,17 @@
 /*
-*****************************************************************************
+Opération simple associée à un chantier plaquette
+Peut être abattage, débardage, déchiquetage, broyage
 
-	Opération simple associée à un chantier plaquette
-	Peut être abattage, débardage, déchiquetage, broyage
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-01-15 02:37:25+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-01-15 02:37:25+01:00, Thierry Graff : Creation
 */
 package model
 
 import (
-	"time"
-
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
+	"time"
 )
 
 type PlaqOp struct {

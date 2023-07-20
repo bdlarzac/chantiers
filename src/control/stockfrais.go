@@ -1,24 +1,20 @@
 /*
-*
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-*
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
 import (
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/webo"
+	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
 	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/wilk/webo"
-	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
 )
 
 type detailsStockFraisForm struct {
@@ -38,11 +34,11 @@ func NewStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		//
 		frais, err := stockFraisForm2var(r)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		_, err = model.InsertStockFrais(ctx.DB, frais)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/stockage/liste"
 		return nil
@@ -53,12 +49,12 @@ func NewStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 		vars := mux.Vars(r)
 		idStockage, err := strconv.Atoi(vars["id-stockage"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		stockage, err := model.GetStockage(ctx.DB, idStockage)
 		frais := &model.StockFrais{}
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -90,11 +86,11 @@ func UpdateStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 		frais, err := stockFraisForm2var(r)
 		frais.Id, err = strconv.Atoi(r.PostFormValue("id-frais"))
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		err = model.UpdateStockFrais(ctx.DB, frais)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Redirect = "/stockage/liste"
 		return nil
@@ -105,16 +101,16 @@ func UpdateStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 		vars := mux.Vars(r)
 		idFrais, err := strconv.Atoi(vars["id"])
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		frais, err := model.GetStockFrais(ctx.DB, idFrais)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		// Le stockage sert à afficher son nom dans le form
 		stockage, err := model.GetStockage(ctx.DB, frais.IdStockage)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
@@ -139,11 +135,11 @@ func DeleteStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 	vars := mux.Vars(r)
 	idFrais, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	err = model.DeleteStockFrais(ctx.DB, idFrais)
 	if err != nil {
-		return err
+		return werr.Wrap(err)
 	}
 	ctx.Redirect = "/stockage/liste"
 	return nil
@@ -157,26 +153,26 @@ func stockFraisForm2var(r *http.Request) (*model.StockFrais, error) {
 	frais := &model.StockFrais{}
 	var err error
 	if err = r.ParseForm(); err != nil {
-		return frais, err
+		return frais, werr.Wrap(err)
 	}
 	frais.IdStockage, err = strconv.Atoi(r.PostFormValue("id-stockage"))
 	if err != nil {
-		return frais, err
+		return frais, werr.Wrap(err)
 	}
 	//
 	frais.TypeFrais = strings.Replace(r.PostFormValue("typefrais"), "stockfrais-", "", -1)
 	//
 	frais.Montant, err = strconv.ParseFloat(r.PostFormValue("montant"), 32)
 	if err != nil {
-		return frais, err
+		return frais, werr.Wrap(err)
 	}
 	frais.DateDebut, err = time.Parse("2006-01-02", r.PostFormValue("date-debut"))
 	if err != nil {
-		return frais, err
+		return frais, werr.Wrap(err)
 	}
 	frais.DateFin, err = time.Parse("2006-01-02", r.PostFormValue("date-fin"))
 	if err != nil {
-		return frais, err
+		return frais, werr.Wrap(err)
 	}
 	frais.Notes = r.PostFormValue("notes")
 	return frais, nil

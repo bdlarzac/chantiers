@@ -1,24 +1,16 @@
 /*
-*****************************************************************************
+Chargement pour une livraison de plaquettes
 
-	Chargement pour une livraison de plaquettes
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-03-13 11:10:29+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-03-13 11:10:29+01:00, Thierry Graff : Creation
 */
 package model
 
 import (
-	"time"
-	//	"strconv"
-
-	//	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
-	//"fmt"
+	"time"
 )
 
 type VenteCharge struct {

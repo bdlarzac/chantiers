@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Mesures d'humidité effectuées sur les tas de plaquettes
 
-	Mesures d'humidité effectuées sur les tas de plaquettes
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019-12-20 16:30:41+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019-12-20 16:30:41+01:00, Thierry Graff : Creation
 */
 package model
 
@@ -17,7 +13,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	//"fmt"
 )
 
 type Humid struct {

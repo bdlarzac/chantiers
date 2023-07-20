@@ -1,15 +1,11 @@
 /*
-*****************************************************************************
+Vente générique
+- vente de plaquettes forestières
+- vente issue d'un chantier autres valorisations
 
-		Vente générique
-	    - vente de plaquettes forestières
-	    - vente issue d'un chantier autres valorisations
-
-		@copyright  BDL, Bois du Larzac.
-		@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-		@history    2023-05-03 08:14:58+02:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2023-05-03 08:14:58+02:00, Thierry Graff : Creation
 */
 package model
 
@@ -121,7 +117,7 @@ func (p venteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
 // ************************** Selection par période et client et valo *******************************
 
-/*  Fabrique des Ventes à partir de la table venteplaq */
+// Fabrique des Ventes à partir de la table venteplaq
 func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode, filtreClient []string) (res []*Vente, err error) {
 	ventePlaqs := []*VentePlaq{}
 	and := []string{}
@@ -155,7 +151,7 @@ func computeVentePlaqVenteFromFiltresPeriodeEtClient(db *sqlx.DB, filtrePeriode,
 	return res, nil
 }
 
-/*  Fabrique des Ventes à partir de la table chautre */
+// Fabrique des Ventes à partir de la table chautre
 func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePeriode, filtreClient, filtreValo []string) (res []*Vente, err error) {
 	chantiers := []*Chautre{}
 	and := []string{}

@@ -8,6 +8,7 @@ package control
 
 import (
 	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -37,7 +38,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		// Process form et affiche page de résultats
 		//
 		if err = r.ParseForm(); err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		////// supprimer si finalement pas de tab
 		vars := mux.Vars(r)
@@ -52,12 +53,12 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		filtres["commune"] = computeFiltreCommune(r)
 		ugs, err := model.ComputeUGsFromFiltres(ctx.DB, filtres)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres)
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.TemplateName = "search-sylvi-show.html"
@@ -94,11 +95,11 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		//
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		allCommunes, err := model.GetSortedCommunes(ctx.DB, "nom")
 		if err != nil {
-			return err
+			return werr.Wrap(err)
 		}
 		//
 		ctx.TemplateName = "search-sylvi-form.html"

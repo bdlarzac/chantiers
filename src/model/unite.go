@@ -1,13 +1,9 @@
 /*
-*****************************************************************************
+Code lié aux unites.
 
-	Code lié aux unites.
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2023-05-17 09:46:52+02:00, Thierry Graff : Creation à partir de code existant, refactoring #19
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2023-05-17 09:46:52+02:00, Thierry Graff : Creation à partir de code existant, refactoring #19
 */
 package model
 

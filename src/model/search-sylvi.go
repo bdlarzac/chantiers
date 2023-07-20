@@ -1,24 +1,19 @@
 /*
-*****************************************************************************
+Code relatif à la recherche sylviculture.
+Manipule des UGs.
 
-	Code relatif à la recherche sylviculture.
-	Manipule des UGs.
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2023-05-12 17:56:06+02:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2023-05-12 17:56:06+02:00, Thierry Graff : Creation
 */
 package model
 
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strconv"
-	//"strings"
-	"fmt"
 )
 
 // ************************** Get many *******************************
