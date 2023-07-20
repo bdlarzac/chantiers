@@ -1,36 +1,37 @@
 /*
-    Activité générique - Représente toute activité = entité avec une date et souvent un prix.
-    Stocké dans les tables = types d'activité concernée
-        chaufer
-        chautre
-        plaq
+Activité générique - Représente toute activité = entité avec une date et souvent un prix.
+Stocké dans les tables = types d'activité concernée
 
-    @copyright  BDL, Bois du Larzac.
-    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-    @history    2023-03-09 14:54:36+01:00, Thierry Graff : Creation
+	chaufer
+	chautre
+	plaq
+
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2023-03-09 14:54:36+01:00, Thierry Graff : Creation
 */
 package model
 
 import (
-	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/wilk/werr"
+	"fmt"
 	"github.com/jmoiron/sqlx"
 	"sort"
 	"strconv"
 	"time"
-"fmt"
 )
 
 type Activite struct {
 	Id                int    // id dans table plaq, chautre ou chaufer
-    TypeActivite      string // "plaq", "chautre" ou "chaufer"
-    Titre             string
-    URL               string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
-    DateActivite      time.Time
-    TypeValo          string
-    CodeEssence       string
-    Volume            float64
-    Unite             string // pour le volume
+	TypeActivite      string // "plaq", "chautre" ou "chaufer"
+	Titre             string
+	URL               string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
+	DateActivite      time.Time
+	TypeValo          string
+	CodeEssence       string
+	Volume            float64
+	Unite             string // pour le volume
 	PUHT              float64
 	PrixHT            float64
 	SurfaceParProprio map[int]float64 // key = id proprio ; cf ComputeSurfaceParProprio()
@@ -59,86 +60,86 @@ func (a *Activite) String() string {
 // ************************** Instance methods *******************************
 
 func (a *Activite) ComputeLiensParcelles(db *sqlx.DB) (err error) {
-    if len(a.LiensParcelles) != 0 {
-        return nil // déjà calculé
-    }
-    a.LiensParcelles, err = computeLiensParcellesOfChantier(db, a.TypeActivite, a.Id)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
-    }
-    return nil
+	if len(a.LiensParcelles) != 0 {
+		return nil // déjà calculé
+	}
+	a.LiensParcelles, err = computeLiensParcellesOfChantier(db, a.TypeActivite, a.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+	}
+	return nil
 }
 
 func (a *Activite) ComputeFermiers(db *sqlx.DB) (err error) {
-    if len(a.Fermiers) != 0 {
-        return nil // déjà calculé
-    }
-    a.Fermiers, err = computeFermiersOfChantier(db, a.TypeActivite, a.Id)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel computeFermiersOfChantier()")
-    }
-    return nil
+	if len(a.Fermiers) != 0 {
+		return nil // déjà calculé
+	}
+	a.Fermiers, err = computeFermiersOfChantier(db, a.TypeActivite, a.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel computeFermiersOfChantier()")
+	}
+	return nil
 }
 
 func (a *Activite) ComputeUGs(db *sqlx.DB) (err error) {
-    if len(a.UGs) != 0 {
-        return nil // déjà calculé
-    }
-    a.UGs, err = computeUGsOfChantier(db, a.TypeActivite, a.Id)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel computeUGsOfChantier()")
-    }
-    return nil
+	if len(a.UGs) != 0 {
+		return nil // déjà calculé
+	}
+	a.UGs, err = computeUGsOfChantier(db, a.TypeActivite, a.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel computeUGsOfChantier()")
+	}
+	return nil
 }
 
 // Calcule a.SurfaceParProprio et a.SurfaceTotale
 func (a *Activite) ComputeSurfaceParProprio(db *sqlx.DB) (err error) {
-    err = a.ComputeLiensParcelles(db)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel ComputeLiensParcelles()")
-    }
-    // initialise
-    a.SurfaceParProprio = make(map[int]float64)
-    proprios, err := GetActeursByRole(db, "DIV-PF")
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel GetActeursByRole()")
-    }
-    // initialise pour tous les proprios pour être sûr d'avoir les clés (utilisé par ComputeBilansActivitesParSaison())
-    for _, proprio := range(proprios){
-        a.SurfaceParProprio[proprio.Id] = 0.0
-    }
-    // remplit
-    for _, lienParcelle := range(a.LiensParcelles) {
-        idProprio := lienParcelle.Parcelle.IdProprietaire
-        var surface float64
-        if lienParcelle.Entiere {
-            surface = lienParcelle.Parcelle.Surface
-        } else {
-            surface = lienParcelle.Surface
-        }
-        a.SurfaceTotale += surface
-        a.SurfaceParProprio[idProprio] += surface
-    }
-    return nil
+	err = a.ComputeLiensParcelles(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel ComputeLiensParcelles()")
+	}
+	// initialise
+	a.SurfaceParProprio = make(map[int]float64)
+	proprios, err := GetActeursByRole(db, "DIV-PF")
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeursByRole()")
+	}
+	// initialise pour tous les proprios pour être sûr d'avoir les clés (utilisé par ComputeBilansActivitesParSaison())
+	for _, proprio := range proprios {
+		a.SurfaceParProprio[proprio.Id] = 0.0
+	}
+	// remplit
+	for _, lienParcelle := range a.LiensParcelles {
+		idProprio := lienParcelle.Parcelle.IdProprietaire
+		var surface float64
+		if lienParcelle.Entiere {
+			surface = lienParcelle.Parcelle.Surface
+		} else {
+			surface = lienParcelle.Surface
+		}
+		a.SurfaceTotale += surface
+		a.SurfaceParProprio[idProprio] += surface
+	}
+	return nil
 }
 
 // ************************** Get many *******************************
 
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*Activite, err error) {
-fmt.Printf("search-activite.go - filtres = %+v\n",filtres)
+	fmt.Printf("search-activite.go - filtres = %+v\n", filtres) //////////////////////////////////////////
 	res = []*Activite{}
 	//
 	// Première sélection, par filtre période
 	//
 	var tmp []*Activite
 	//
-	if len(filtres["valo"]) == 0 || tiglib.InArray("PQ", filtres["valo"]){
-        tmp, err = computePlaqActivitesFromFiltrePeriode(db, filtres["periode"])
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel computePlaqActivitesFromFiltrePeriode()")
-        }
-        res = append(res, tmp...)
-    }
+	if len(filtres["valo"]) == 0 || tiglib.InArray("PQ", filtres["valo"]) {
+		tmp, err = computePlaqActivitesFromFiltrePeriode(db, filtres["periode"])
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel computePlaqActivitesFromFiltrePeriode()")
+		}
+		res = append(res, tmp...)
+	}
 	//
 	// todo: calculer chautre que si len(filtre valo) == 0 ou contient une ou + valo parmi BO PL CH PP PI
 	tmp, err = computeChautreActivitesFromFiltrePeriode(db, filtres["periode"])
@@ -147,13 +148,13 @@ fmt.Printf("search-activite.go - filtres = %+v\n",filtres)
 	}
 	res = append(res, tmp...)
 	//
-	if len(filtres["valo"]) == 0 || tiglib.InArray("CF", filtres["valo"]){
-        tmp, err = computeChauferActivitesFromFiltrePeriode(db, filtres["periode"])
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel computeChauferActivitesFromFiltrePeriode()")
-        }
-        res = append(res, tmp...)
-    }
+	if len(filtres["valo"]) == 0 || tiglib.InArray("CF", filtres["valo"]) {
+		tmp, err = computeChauferActivitesFromFiltrePeriode(db, filtres["periode"])
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel computeChauferActivitesFromFiltrePeriode()")
+		}
+		res = append(res, tmp...)
+	}
 	//
 	// Filtres suivants
 	//
@@ -218,10 +219,10 @@ fmt.Printf("search-activite.go - filtres = %+v\n",filtres)
 // ************************** Auxiliaire pour trier par date *******************************
 
 type activiteSlice []*Activite
+
 func (p activiteSlice) Len() int           { return len(p) }
 func (p activiteSlice) Less(i, j int) bool { return p[i].DateActivite.Before(p[j].DateActivite) }
 func (p activiteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-
 
 // ************************** Selection initiale, par période *******************************
 // Fabriquent des activités
@@ -398,18 +399,18 @@ func filtreActivite_ug(db *sqlx.DB, input []*Activite, filtre []string) (res []*
 	// Se produit si on demande des ugs voisines,
 	// avec des activités communes à plusieurs ugs demandées
 	m := map[int]bool{}
-    ActiviteLoop:
+ActiviteLoop:
 	for _, a := range input {
-	    idActivite := a.Id
+		idActivite := a.Id
 		for _, f := range filtre {
 			idFiltre, _ := strconv.Atoi(f)
 			for _, ug := range a.UGs {
 				if ug.Id == idFiltre {
-				    if _, ok := m[idFiltre]; !ok {
-                        res = append(res, a)
-                        m[idActivite] = true
-                        continue ActiviteLoop
-                    }
+					if _, ok := m[idFiltre]; !ok {
+						res = append(res, a)
+						m[idActivite] = true
+						continue ActiviteLoop
+					}
 				}
 			}
 		}

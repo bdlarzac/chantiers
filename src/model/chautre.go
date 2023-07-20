@@ -238,15 +238,15 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 	}
 	idsProprios := []int{}
 	for _, lien := range ch.LiensParcelles {
-	    idProprio := lien.Parcelle.IdProprietaire
-        if !tiglib.InArray(idProprio, idsProprios) {
-            idsProprios = append(idsProprios, idProprio)
-            err = lien.Parcelle.ComputeProprietaire(db)
-            if err != nil {
-                return werr.Wrapf(err, "Erreur appel lien.Parcelle.ComputeProprietaire()")
-            }
-            ch.Proprietaires = append(ch.Proprietaires, lien.Parcelle.Proprietaire)
-        }
+		idProprio := lien.Parcelle.IdProprietaire
+		if !tiglib.InArray(idProprio, idsProprios) {
+			idsProprios = append(idsProprios, idProprio)
+			err = lien.Parcelle.ComputeProprietaire(db)
+			if err != nil {
+				return werr.Wrapf(err, "Erreur appel lien.Parcelle.ComputeProprietaire()")
+			}
+			ch.Proprietaires = append(ch.Proprietaires, lien.Parcelle.Proprietaire)
+		}
 	}
 	return nil
 }

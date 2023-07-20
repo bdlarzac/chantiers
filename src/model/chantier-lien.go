@@ -18,11 +18,11 @@ import (
 )
 
 /*
-	Lien entre une parcelle et un chantier (table chantier_parcelle)
-	Utilisé par plaq, chautre, chaufer
-	Pour chaque parcelle, on doit préciser s'il s'agit d'une parcelle entière ou pas.
-	S'il ne s'agit pas d'une parcelle entière, il faut préciser la surface concernée par la coupe.
- */
+Lien entre une parcelle et un chantier (table chantier_parcelle)
+Utilisé par plaq, chautre, chaufer
+Pour chaque parcelle, on doit préciser s'il s'agit d'une parcelle entière ou pas.
+S'il ne s'agit pas d'une parcelle entière, il faut préciser la surface concernée par la coupe.
+*/
 type ChantierParcelle struct {
 	TypeChantier string `db:"type_chantier"`
 	IdChantier   int    `db:"id_chantier"`

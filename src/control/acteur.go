@@ -5,12 +5,13 @@
 package control
 
 import (
-	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/model"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"bdl.local/bdl/ctxt"
+	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
 )
 
 type detailsActeurList struct {

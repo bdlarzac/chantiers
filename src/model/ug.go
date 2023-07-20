@@ -1,21 +1,21 @@
 /*
-	Unités de gestion
+Unités de gestion
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2019-11-14 23:36:13+01:00, Thierry Graff : Creation
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2019-11-14 23:36:13+01:00, Thierry Graff : Creation
 */
 package model
 
 import (
+	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/wilk/werr"
+	"github.com/jmoiron/sqlx"
+	"golang.org/x/exp/slices"
 	"sort"
 	"strconv"
 	"strings"
-	"bdl.local/bdl/generic/tiglib"
-	"bdl.local/bdl/generic/wilk/werr"
-    "golang.org/x/exp/slices"
-	"github.com/jmoiron/sqlx"
-//"fmt"
+	// "fmt"
 )
 
 type UG struct {
@@ -68,45 +68,45 @@ func (ug *UG) String() string {
 // ************************ Codes UG *********************************
 
 // Nombres romains utilisés dans le code des UGs
-var	romans = []string{
-    "I",
-    "II",
-    "III",
-    "IV",
-    "V",
-    "VI",
-    "VII",
-    "VIII",
-    "IX",
-    "X",
-    "XI",
-    "XII",
-    "XIII",
-    "XIV",
-    "XV",
-    "XVI",
-    "XVII",
-    "XVIII",
-    "XIX",
+var romans = []string{
+	"I",
+	"II",
+	"III",
+	"IV",
+	"V",
+	"VI",
+	"VII",
+	"VIII",
+	"IX",
+	"X",
+	"XI",
+	"XII",
+	"XIII",
+	"XIV",
+	"XV",
+	"XVI",
+	"XVII",
+	"XVIII",
+	"XIX",
 }
 
 // Roman2Arab Convertit un nombre romain en nombre arabe.
 // Uniquement pour les nombres romains utilisés dans les codes UG
 func roman2Arab(roman string) int {
-    idx := slices.Index(romans, roman)
-    if idx == -1 {
-        return -1
-    }
-    return idx + 1
+	idx := slices.Index(romans, roman)
+	if idx == -1 {
+		return -1
+	}
+	return idx + 1
 }
 
 // SortableCode traduit un code UG en string qui peut être numériquement triée.
 // ex: XVI-4 est converti en 1604 (= 1600 + 4)
 func SortableUGCode(code string) string {
-    tmp := strings.Split(code, "-")
-    n1 := roman2Arab(tmp[0])
-    n2, _ := strconv.Atoi(tmp[1])
-    return strconv.FormatInt(int64(100 * n1 + n2), 10)
+	tmp := strings.Split(code, "-")
+	n1 := roman2Arab(tmp[0])
+	n2, _ := strconv.Atoi(tmp[1])
+	return strconv.FormatInt(int64(100*n1+n2), 10)
 }
 
 // ************************ Get one *********************************
@@ -305,7 +305,7 @@ func GetUGsSortedByCodeAndSeparated(db *sqlx.DB) ([][]*UG, error) {
 		}
 	}
 	res = append(res, cur)
-	return res, err
+	return res, nil
 }
 
 // ************************** Compute *******************************
@@ -387,13 +387,13 @@ func (ug *UG) ComputeEssences(db *sqlx.DB) (err error) {
 
 // Pas inclus dans GetUGFull()
 func (ug *UG) ComputeActivites(db *sqlx.DB) (err error) {
-    // code possible - mais pas optimisé
+	// code possible - mais pas optimisé
 	//filtres := map[string][]string{"ug":[]string{strconv.Itoa(ug.Id)}}
 	//activites, err := model.ComputeActivitesFromFiltres(ctx.DB, filtres)
 	var query string
 	chantiers1 := []*Plaq{}
 	query = "select * from plaq where id in(select id_chantier from chantier_ug where type_chantier='plaq' and id_ug=$1)"
-    err = db.Select(&chantiers1, query, ug.Id)
+	err = db.Select(&chantiers1, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -407,7 +407,7 @@ func (ug *UG) ComputeActivites(db *sqlx.DB) (err error) {
 	//
 	chantiers2 := []*Chautre{}
 	query = "select * from chautre where id in(select id_chantier from chantier_ug where type_chantier='chautre' and id_ug=$1)"
-    err = db.Select(&chantiers2, query, ug.Id)
+	err = db.Select(&chantiers2, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -421,7 +421,7 @@ func (ug *UG) ComputeActivites(db *sqlx.DB) (err error) {
 	//
 	chantiers3 := []*Chaufer{}
 	query = "select * from chaufer where id in(select id_chantier from chantier_ug where type_chantier='chaufer' and id_ug=$1)"
-    err = db.Select(&chantiers3, query, ug.Id)
+	err = db.Select(&chantiers3, query, ug.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query DB : "+query)
 	}
@@ -433,7 +433,7 @@ func (ug *UG) ComputeActivites(db *sqlx.DB) (err error) {
 		ug.Activites = append(ug.Activites, tmp)
 	}
 	//
-    return nil
+	return nil
 }
 
 // ************************** Recap *******************************
@@ -508,7 +508,7 @@ func (ug *UG) ComputeRecap(db *sqlx.DB) error {
 			myrecap.Chauffage.Quantite += chantier.VolumeRealise
 			myrecap.Chauffage.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "PI":
-		    // ICI PROBLEME, car piquets en stères ou en nb de piquets => calcul faux
+			// ICI PROBLEME, car piquets en stères ou en nb de piquets => calcul faux
 			myrecap.Piquets.Quantite += chantier.VolumeRealise
 			myrecap.Piquets.Benefice += chantier.VolumeRealise * chantier.PUHT
 		case "PL":

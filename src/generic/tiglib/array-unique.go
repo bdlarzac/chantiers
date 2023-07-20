@@ -1,10 +1,10 @@
 /*
-    Function equivalent to php function array_unique().
+Function equivalent to php function array_unique().
 
-    Note: depends on in-array.go
-    
-    @copyright  Thierry Graff
-    @license    GPL - conforms to file LICENCE located in root directory of current repository.
+Note: depends on in-array.go
+
+@copyright  Thierry Graff
+@license    GPL - conforms to file LICENCE located in root directory of current repository.
 */
 package tiglib
 

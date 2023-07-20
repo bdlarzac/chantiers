@@ -32,14 +32,14 @@ type BilanActivitesParSaison struct {
 }
 
 type TotalActivitesParValo struct { // en fait total activites par valo et par proprio
-	TypeValo  string
-	Volume    float64
-	Unite     string
-	PrixHT    map[int]float64 // key = id proprio
+	TypeValo string
+	Volume   float64
+	Unite    string
+	PrixHT   map[int]float64 // key = id proprio
 }
 
 func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
-    //
+	//
 	activitesParSaison, err := computeActivitesParSaison(db, debutSaison, activites)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur appel computeActivitesParSaison()")
@@ -73,23 +73,23 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			// on répartit systématiquement le prix par proprio
 			// (pourrait être évité quand on veut un bilan pour tous les proprios - tant pis)
 			err = activite.ComputeSurfaceParProprio(db)
-            if err != nil {
-                return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
-            }
-            for idProprio, surface := range(activite.SurfaceParProprio){
-                // ici, prix par proprio proportionnel à la surface
-                entry.PrixHT[idProprio] = activite.PrixHT * surface / activite.SurfaceTotale
-            }
-            //
+			if err != nil {
+				return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
+			}
+			for idProprio, surface := range activite.SurfaceParProprio {
+				// ici, prix par proprio proportionnel à la surface
+				entry.PrixHT[idProprio] = activite.PrixHT * surface / activite.SurfaceTotale
+			}
+			//
 			mapValos[valo] = entry
 		}
 		// utilise map intermédiaire pour remplir currentRes
 		for valo, total := range mapValos {
 			newRes := TotalActivitesParValo{
-				TypeValo:  valo,
-				Volume:    total.Volume,
-				Unite:     total.Unite,
-				PrixHT:    total.PrixHT,
+				TypeValo: valo,
+				Volume:   total.Volume,
+				Unite:    total.Unite,
+				PrixHT:   total.PrixHT,
 			}
 			currentRes.TotalActivitesParValo = append(currentRes.TotalActivitesParValo, &newRes)
 		}

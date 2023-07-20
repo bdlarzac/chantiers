@@ -1,15 +1,11 @@
 /*
-*****************************************************************************
+Rangement de plaquettes dans un hangar à plaquettes
+= Déchargement, accompagne les transports de plaquettes
+Se fait avec un télescopique
 
-	Rangement de plaquettes dans un hangar à plaquettes
-	= Déchargement, accompagne les transports de plaquettes
-	Se fait avec un télescopique
-
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2020-01-22 02:19:38+01:00+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2020-01-22 02:19:38+01:00+01:00, Thierry Graff : Creation
 */
 package model
 
@@ -69,31 +65,31 @@ func GetPlaqRange(db *sqlx.DB, id int) (pr *PlaqRange, err error) {
 func GetPlaqRangeFull(db *sqlx.DB, id int) (pr *PlaqRange, err error) {
 	pr, err = GetPlaqRange(db, id)
 	if err != nil {
-		return nil, err
+		return nil, werr.Wrapf(err, "Erreur appel GetPlaqRange()")
 	}
 	pr.Rangeur, err = GetActeur(db, pr.IdRangeur)
 	if err != nil {
-		return nil, err
+		return nil, werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
 	pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
 	if err != nil {
-		return nil, err
+		return nil, werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
 	pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
 	if err != nil {
-		return nil, err
+		return nil, werr.Wrapf(err, "Erreur appel GetActeur()")
 	}
 	pr.Chantier, err = GetPlaq(db, pr.IdChantier)
 	if err != nil {
-		return nil, err
+		return nil, werr.Wrapf(err, "Erreur appel GetPlaq()")
 	}
 	err = pr.Chantier.ComputeTas(db)
 	if err != nil {
-		return nil, err
+		return nil, werr.Wrapf(err, "Erreur appel ComputeTas()")
 	}
 	err = pr.Chantier.ComputeLieudits(db) // pour le nom du chantier
 	if err != nil {
-		return nil, err
+		return nil, werr.Wrapf(err, "Erreur appel ComputeLieudits()")
 	}
 	return pr, nil
 }
@@ -133,7 +129,10 @@ func (pr *PlaqRange) ComputeConducteur(db *sqlx.DB) (err error) {
 		return nil // déjà calculé
 	}
 	pr.Conducteur, err = GetActeur(db, pr.IdConducteur)
-	return err
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
 }
 
 func (pr *PlaqRange) ComputeProprioutil(db *sqlx.DB) (err error) {
@@ -144,7 +143,10 @@ func (pr *PlaqRange) ComputeProprioutil(db *sqlx.DB) (err error) {
 		return nil // déjà calculé
 	}
 	pr.Proprioutil, err = GetActeur(db, pr.IdProprioutil)
-	return err
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetActeur()")
+	}
+	return nil
 }
 
 // ************************** CRUD *******************************

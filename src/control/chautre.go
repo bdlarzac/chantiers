@@ -41,7 +41,7 @@ type detailsChautreList struct {
 }
 
 type detailsChautreShow struct {
-	Chantier         *model.Chautre
+	Chantier *model.Chautre
 }
 
 // *********************************************************
@@ -101,17 +101,16 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	ctx.TemplateName = "chautre-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    chantier.FullString(),
+			Title: chantier.FullString(),
 			JSFiles: []string{
 				"/static/js/round.js",
 				"/view/common/prix.js",
 			},
 		},
-		Menu: "production",
-		Footer: ctxt.Footer{
-		},
+		Menu:   "production",
+		Footer: ctxt.Footer{},
 		Details: detailsChautreShow{
-			Chantier:         chantier,
+			Chantier: chantier,
 		},
 	}
 	url := r.URL.String()

@@ -114,10 +114,10 @@ func ComputeVentesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*
 // ************************** Auxiliaire pour trier par date *******************************
 
 type venteSlice []*Vente
+
 func (p venteSlice) Len() int           { return len(p) }
 func (p venteSlice) Less(i, j int) bool { return p[i].DateVente.Before(p[j].DateVente) }
 func (p venteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-
 
 // ************************** Selection par période et client et valo *******************************
 

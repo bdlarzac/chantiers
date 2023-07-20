@@ -9,7 +9,6 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-//	"github.com/gorilla/mux"
 	"net/http"
 	"time"
 )

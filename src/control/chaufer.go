@@ -37,7 +37,7 @@ type detailsChauferList struct {
 }
 
 type detailsChauferShow struct {
-	Chantier         *model.Chaufer
+	Chantier *model.Chaufer
 }
 
 // *********************************************************
@@ -97,7 +97,7 @@ func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	ctx.TemplateName = "chaufer-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    chantier.FullString(),
+			Title: chantier.FullString(),
 			JSFiles: []string{
 				"/static/js/round.js",
 				"/view/common/prix.js",
@@ -108,7 +108,7 @@ func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			JSFiles: []string{},
 		},
 		Details: detailsChauferShow{
-			Chantier:         chantier,
+			Chantier: chantier,
 		},
 	}
 	url := r.URL.String()

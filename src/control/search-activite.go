@@ -9,10 +9,10 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
-	"net/http"
-	"time"
-	"strconv"
 	"golang.org/x/exp/slices"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 type detailsActiviteSearchForm struct {
@@ -78,12 +78,12 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		}
 		// on ne garde dans labelProprios que les propriétaires choisis,
 		// utilisé dans la template pour n'afficher que ces propriétaires.
-		if len(filtres["proprio"]) != 0{
-		    for idProprio, _ := range(labelProprios){
-		        if !slices.Contains(filtres["proprio"], strconv.Itoa(idProprio)) {
-		            delete(labelProprios, idProprio)
-                }
-		    }
+		if len(filtres["proprio"]) != 0 {
+			for idProprio, _ := range labelProprios {
+				if !slices.Contains(filtres["proprio"], strconv.Itoa(idProprio)) {
+					delete(labelProprios, idProprio)
+				}
+			}
 		}
 		//
 		ctx.TemplateName = "search-activite-show.html"
@@ -91,9 +91,9 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			Header: ctxt.Header{
 				Title:    "Activités",
 				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
-				JSFiles:  []string{
-				    "/static/js/formatNb.js",
-				    "/static/js/round.js",
+				JSFiles: []string{
+					"/static/js/formatNb.js",
+					"/static/js/round.js",
 				},
 			},
 			Footer: ctxt.Footer{

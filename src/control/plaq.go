@@ -103,9 +103,9 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	ctx.TemplateName = "plaq-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{
-			Title:    chantier.FullString(),
+			Title: chantier.FullString(),
 			CSSFiles: []string{
-                "/static/lib/tabstrip/tabstrip.css",
+				"/static/lib/tabstrip/tabstrip.css",
 			},
 			JSFiles: []string{
 				"/static/js/round.js",

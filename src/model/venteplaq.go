@@ -334,7 +334,10 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
 		vp.FactureLivraisonTVA,
 		vp.FactureNotes,
 		vp.Notes).Scan(&id)
-	return id, err
+    if err != nil {
+        return id, werr.Wrapf(err, "Erreur query " + query)
+    }
+	return id, nil
 }
 
 func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {

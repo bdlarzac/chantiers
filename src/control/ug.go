@@ -1,6 +1,6 @@
 /*
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */
 package control
 
@@ -15,8 +15,8 @@ import (
 )
 
 type detailsUGShow struct {
-	UG        *model.UG
-	Tab       string
+	UG  *model.UG
+	Tab string
 }
 
 type detailsUGSearch struct {
@@ -59,15 +59,15 @@ func ShowUG(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		},
 		Menu: "accueil",
 		Details: detailsUGShow{
-			UG:        ug,
-			Tab:       tab,
+			UG:  ug,
+			Tab: tab,
 		},
-        Footer: ctxt.Footer{
-            JSFiles: []string{
-                "/static/lib/tabstrip/tabstrip.js",
-                "/static/lib/table-sort/table-sort.js",
-            },
-        },
+		Footer: ctxt.Footer{
+			JSFiles: []string{
+				"/static/lib/tabstrip/tabstrip.js",
+				"/static/lib/table-sort/table-sort.js",
+			},
+		},
 	}
 	return nil
 }

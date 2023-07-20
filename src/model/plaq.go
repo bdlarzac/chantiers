@@ -257,7 +257,7 @@ func GetAllPlaqsVides(db *sqlx.DB) ([]*Plaq, error) {
 		}
 		res = append(res, ch)
 	}
-	return res, err
+	return res, nil
 }
 
 // ************************** Compute *******************************

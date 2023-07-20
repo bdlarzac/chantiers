@@ -13,8 +13,8 @@ package model
 
 import (
 	"bdl.local/bdl/generic/wilk/werr"
-	"github.com/jmoiron/sqlx"
 	"fmt"
+	"github.com/jmoiron/sqlx"
 	"sort"
 	"strconv"
 	"strings"
@@ -60,10 +60,10 @@ type Acteur struct {
 type ActeurActivite struct {
 	Date        time.Time
 	Role        string
-	URL         string    // URL de la page de l'activité concernée
+	URL         string // URL de la page de l'activité concernée
 	NomActivite string
 	Quantite    float64
-	Unite       string    // pour Quantite
+	Unite       string // pour Quantite
 }
 
 // ************************** Structure *******************************
@@ -71,42 +71,42 @@ type ActeurActivite struct {
 // IsDeletable indique si un acteur peut être supprimé, ou s'il doit être marqué comme inactif
 // cf règles de gestion dans cahier des charges
 func (a *Acteur) IsDeletable(db *sqlx.DB) (res bool, err error) {
-    queries := []string{
-        // mis en premier car le plus fréquent
-        "select count(*) from chautre where id_acheteur=$1",
-        "select count(*) from venteplaq where id_client=$1",
-        //
-        "select count(*) from plaqop where id_acteur=$1",
-        //
-        "select count(*) from plaqtrans where id_transporteur=$1",
-        "select count(*) from plaqtrans where id_conducteur=$1",
-        "select count(*) from plaqtrans where id_proprioutil=$1",
-        //
-        "select count(*) from plaqrange where id_rangeur=$1",
-        "select count(*) from plaqrange where id_conducteur=$1",
-        "select count(*) from plaqrange where id_proprioutil=$1",
-        //
-        "select count(*) from ventelivre where id_livreur=$1",
-        "select count(*) from ventelivre where id_conducteur=$1",
-        "select count(*) from ventelivre where id_proprioutil=$1",
-        //
-        "select count(*) from ventecharge where id_chargeur=$1",
-        "select count(*) from ventecharge where id_conducteur=$1",
-        "select count(*) from ventecharge where id_proprioutil=$1",
-        //
-        "select count(*) from humid_acteur where id_acteur=$1",
-    }
-    var count int
-    for _, query := range(queries){
-        err = db.QueryRow(query, a.Id).Scan(&count)
-        if err != nil {
-            return false, werr.Wrapf(err, fmt.Sprint("Erreur query: %s\n Acteur %d: %s", query, a.Id, a.String()))
-        }
-        if count != 0 {
-            return false, nil
-        }
-    }
-    return true, nil
+	queries := []string{
+		// mis en premier car le plus fréquent
+		"select count(*) from chautre where id_acheteur=$1",
+		"select count(*) from venteplaq where id_client=$1",
+		//
+		"select count(*) from plaqop where id_acteur=$1",
+		//
+		"select count(*) from plaqtrans where id_transporteur=$1",
+		"select count(*) from plaqtrans where id_conducteur=$1",
+		"select count(*) from plaqtrans where id_proprioutil=$1",
+		//
+		"select count(*) from plaqrange where id_rangeur=$1",
+		"select count(*) from plaqrange where id_conducteur=$1",
+		"select count(*) from plaqrange where id_proprioutil=$1",
+		//
+		"select count(*) from ventelivre where id_livreur=$1",
+		"select count(*) from ventelivre where id_conducteur=$1",
+		"select count(*) from ventelivre where id_proprioutil=$1",
+		//
+		"select count(*) from ventecharge where id_chargeur=$1",
+		"select count(*) from ventecharge where id_conducteur=$1",
+		"select count(*) from ventecharge where id_proprioutil=$1",
+		//
+		"select count(*) from humid_acteur where id_acteur=$1",
+	}
+	var count int
+	for _, query := range queries {
+		err = db.QueryRow(query, a.Id).Scan(&count)
+		if err != nil {
+			return false, werr.Wrapf(err, fmt.Sprint("Erreur query: %s\n Acteur %d: %s", query, a.Id, a.String()))
+		}
+		if count != 0 {
+			return false, nil
+		}
+	}
+	return true, nil
 }
 
 // ************************** Nom *******************************
@@ -117,15 +117,15 @@ func (a *Acteur) String() string {
 
 // Renvoie une map id acteur => nom, pour un rôle donné
 func LabelActeurs(db *sqlx.DB, role string) (res map[int]string, err error) {
-    res = map[int]string{}
-    acteurs, err := GetActeursByRole(db, role)
+	res = map[int]string{}
+	acteurs, err := GetActeursByRole(db, role)
 	if err != nil {
 		return res, werr.Wrapf(err, "Erreur appel GetActeursByRole()")
 	}
-	for _, acteur := range(acteurs){
-	    res[acteur.Id] = acteur.String()
+	for _, acteur := range acteurs {
+		res[acteur.Id] = acteur.String()
 	}
-    return res, nil
+	return res, nil
 }
 
 // ************************** Divers *******************************
@@ -134,7 +134,6 @@ func CountActeurs(db *sqlx.DB) (count int) {
 	_ = db.QueryRow("select count(*) from acteur").Scan(&count)
 	return count
 }
-
 
 // ************************** Get one *******************************
 
@@ -149,7 +148,7 @@ func GetActeur(db *sqlx.DB, id int) (a *Acteur, err error) {
 	if err != nil {
 		return a, werr.Wrapf(err, "Erreur query : "+query)
 	}
-	return a, err
+	return a, nil
 }
 
 /*
@@ -238,7 +237,7 @@ func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 // Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
-////////////// remplacer par GetSortedActeursByRole() //////////////
+// //////////// remplacer par GetSortedActeursByRole() //////////////
 func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := `select * from acteur where id in(
@@ -267,7 +266,7 @@ func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 }
 
 // Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
-////////////// remplacer par GetSortedActeursByRole() //////////////
+// //////////// remplacer par GetSortedActeursByRole() //////////////
 func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}
 	acteurs := []*Acteur{}
@@ -332,8 +331,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        elt.RoleName(),
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: plaq.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       elt.Unite,
+			Quantite:    elt.Qte,
+			Unite:       elt.Unite,
 		}
 		res = append(res, new)
 	}
@@ -360,8 +359,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "transporteur",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: plaq.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -388,8 +387,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "conducteur (transport)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: plaq.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -416,8 +415,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "propriétaire outil (transport)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: plaq.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -444,8 +443,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "rangeur",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: plaq.FullString(),
-            // Quantite:    ,
-            // Unite:       ,
+			// Quantite:    ,
+			// Unite:       ,
 		}
 		res = append(res, new)
 	}
@@ -472,8 +471,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "conducteur (rangement)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: plaq.FullString(),
-            // Quantite:    ,
-            // Unite:       ,
+			// Quantite:    ,
+			// Unite:       ,
 		}
 		res = append(res, new)
 	}
@@ -500,8 +499,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "propriétaire outil (rangement)",
 			URL:         "/chantier/plaquette/" + strconv.Itoa(elt.IdChantier) + "/chantiers",
 			NomActivite: plaq.FullString(),
-            // Quantite:    ,
-            // Unite:       ,
+			// Quantite:    ,
+			// Unite:       ,
 		}
 		res = append(res, new)
 	}
@@ -532,8 +531,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "livreur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -564,8 +563,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "conducteur (livraison)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -596,8 +595,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "propriétaire outil (livraison)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -629,8 +628,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "chargeur",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -665,8 +664,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "conducteur (chargement)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -701,8 +700,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "propriétaire outil (chargement)",
 			URL:         "/vente/" + strconv.Itoa(elt.IdVente),
 			NomActivite: vp.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -720,17 +719,17 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 		if err != nil {
 			return res, werr.Wrapf(err, "Erreur appel GetActeur()")
 		}
-        err = elt.ComputeQte(db)
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
-        }
+		err = elt.ComputeQte(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
+		}
 		new := &ActeurActivite{
 			Date:        elt.DateVente,
 			Role:        "client plaquettes",
 			URL:         "/vente/" + strconv.Itoa(elt.Id),
 			NomActivite: elt.FullString(),
-            Quantite:    elt.Qte,
-            Unite:       "MA",
+			Quantite:    elt.Qte,
+			Unite:       "MA",
 		}
 		res = append(res, new)
 	}
@@ -754,8 +753,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "acheteur chantier autres valorisations",
 			URL:         "/chantier/autre/liste/" + strconv.Itoa(elt.DateContrat.Year()),
 			NomActivite: elt.FullString(),
-            Quantite:    elt.VolumeRealise,
-            Unite:       elt.Unite,
+			Quantite:    elt.VolumeRealise,
+			Unite:       elt.Unite,
 		}
 		res = append(res, new)
 	}
@@ -771,8 +770,8 @@ func (a *Acteur) GetActivitesByDate(db *sqlx.DB) (res []*ActeurActivite, err err
 			Role:        "mesureur",
 			URL:         "/humidite/liste/" + strconv.Itoa(elt.DateMesure.Year()),
 			NomActivite: "Mesure humidité",
-            // Quantite:    ,
-            // Unite:       ,
+			// Quantite:    ,
+			// Unite:       ,
 		}
 		res = append(res, new)
 	}

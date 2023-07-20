@@ -107,7 +107,7 @@ func computeMigrations() (res []string) {
 	r := regexp.MustCompile(`func (Migrate_.*?)\s*\(`)
 	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
 		m := r.FindStringSubmatch(line)
-		if !strings.Contains(m[1], "Output") { // virer la ligne avec exec.Command du grep !!!
+		if !strings.Contains(m[1], "Output") { // virer la ligne avec exec.Command du grep
 			res = append(res, m[1])
 		}
 	}

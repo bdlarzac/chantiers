@@ -23,8 +23,8 @@ type detailsSylviForm struct {
 type detailsSylviResults struct {
 	UGs          []*model.UG
 	RecapFiltres string
-////// supprimer si finalement pas de tab
-	Tab          string
+	////// supprimer si finalement pas de tab
+	Tab string
 }
 
 /*
@@ -39,11 +39,11 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		if err = r.ParseForm(); err != nil {
 			return err
 		}
-////// supprimer si finalement pas de tab
+		////// supprimer si finalement pas de tab
 		vars := mux.Vars(r)
 		tab := vars["tab"]
 		if tab == "" {
-            tab = "liste"
+			tab = "liste"
 		}
 		//
 		filtres := map[string][]string{}
@@ -63,7 +63,7 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		ctx.TemplateName = "search-sylvi-show.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{
-				Title: "Sylviculture",
+				Title:    "Sylviculture",
 				CSSFiles: []string{"/static/lib/tabstrip/tabstrip.css"},
 				// JSFiles: []string{"/static/js/formatNb.js"},
 			},
@@ -76,8 +76,8 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 			Details: detailsSylviResults{
 				UGs:          ugs,
 				RecapFiltres: recapFiltres,
-////// supprimer si finalement pas de tab
-				Tab:                      tab,
+				////// supprimer si finalement pas de tab
+				Tab: tab,
 			},
 		}
 		return nil
@@ -85,11 +85,11 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 		//
 		// Affiche form
 		//
-////// supprimer si finalement pas de tab
+		////// supprimer si finalement pas de tab
 		vars := mux.Vars(r)
 		tab := vars["tab"]
 		if tab == "" {
-            tab = "liste"
+			tab = "liste"
 		}
 		//
 		fermiers, err := model.GetSortedFermiers(ctx.DB, "nom")
@@ -114,8 +114,8 @@ func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err
 				EssenceCodes: model.EssenceCodes,
 				Fermiers:     fermiers,
 				AllCommunes:  allCommunes,
-////// supprimer si finalement pas de tab
-				UrlAction:   "/sylviculture/recherche/" + tab,
+				////// supprimer si finalement pas de tab
+				UrlAction: "/sylviculture/recherche/" + tab,
 				//UrlAction: "/sylviculture/recherche",
 			},
 		}
