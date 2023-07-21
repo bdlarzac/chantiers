@@ -118,7 +118,6 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -157,13 +156,15 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 				Title: "Nouveau chantier autres valorisations",
 				CSSFiles: []string{
 					"/static/css/form.css",
-					"/static/css/modal.css"},
+					"/static/css/modal.css",
+				},
 			},
 			Menu: "production",
 			Footer: ctxt.Footer{
 				JSFiles: []string{
 					"/static/js/round.js",
-					"/static/js/toogle.js"},
+					"/static/js/toogle.js",
+				},
 			},
 			Details: detailsChautreForm{
 				Chantier:            chantier,
@@ -180,7 +181,6 @@ func NewChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -256,7 +256,6 @@ func UpdateChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	}
 }
 
-// *********************************************************
 func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -275,15 +274,12 @@ func DeleteChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-// *********************************************************
-/**
-    Fabrique un Chautre à partir des valeurs d'un formulaire.
-    Auxiliaire de NewChautre() et UpdateChautre()
-    Ne gère pas le champ Id
-    Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
-    Renvoie idsUG, idsLieudits, idsFermiers car ils ne sont pas stockés dans model.chautre
-    Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
-**/
+// Fabrique un Chautre à partir des valeurs d'un formulaire.
+// Auxiliaire de NewChautre() et UpdateChautre()
+// Ne gère pas le champ Id
+// Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+// Renvoie idsUG, idsLieudits, idsFermiers car ils ne sont pas stockés dans model.chautre
+// Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
 func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, idsUG, idsLieudits, idsFermiers []int, err error) {
 	ch = &model.Chautre{}
 	vide := []int{}

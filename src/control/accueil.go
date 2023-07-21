@@ -11,6 +11,7 @@ import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -137,4 +138,55 @@ func MajQGis(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 		Menu: "accueil",
 	}
 	return nil
+}
+
+type detailsBlocNotes struct {
+    OK        bool
+    Contenu   string
+	UrlAction string
+}
+
+func UpdateBlocnotes(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
+	switch r.Method {
+	case "POST":
+		//
+		// Process form
+		//
+        if err = r.ParseForm(); err != nil {
+            return werr.Wrap(err)
+        }
+        contenu := r.PostFormValue("contenu")
+        err = model.UpdateBlocnotes(ctx.DB, contenu)
+        if err != nil {
+            return werr.Wrap(err)
+        }
+		ctx.Redirect = "/bloc-notes/update/ok"
+		return nil
+	default:
+		//
+		// Affiche form
+		//
+		vars := mux.Vars(r)
+        _, ok := vars["ok"]
+		contenu, err := model.GetBlocnotes(ctx.DB)
+        if err != nil {
+            return werr.Wrap(err)
+        }
+		ctx.TemplateName = "bloc-notes-form.html"
+		ctx.Page = &ctxt.Page{
+			Header: ctxt.Header{
+				Title: "Modifier le bloc-notes",
+				CSSFiles: []string{
+					"/static/css/form.css",
+				},
+			},
+			Menu: "accueil",
+			Details: detailsBlocNotes{
+				Contenu:   contenu,
+				UrlAction: "/bloc-notes/update/ok",
+				OK:        ok,
+			},
+		}
+		return nil
+	}
 }

@@ -95,7 +95,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
     const nCol = 3; // nb de colonne pour l'affichage des parcelles
     const strIdsUG = idsUGs.join(',');
     const url = "/ajax/get/parcelles-from-ids-ugs/" + strIdsUG;
-    // Ajax pour écup parcelles correspondant aux UGs
+    // Ajax pour récup parcelles correspondant aux UGs
     let response = await fetch(url);
     if(response == null){
         alert("ERREUR - Transmettez ce message l'administrateur du site :\n"

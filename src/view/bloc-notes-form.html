@@ -1,0 +1,49 @@
+{{/*
+    @copyright  BDL, Bois du Larzac.
+    @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+*/}}
+
+<style>
+    .blocnotes-page{
+        width:100vw;
+        height:90vh;
+    }
+    .blocnotes-form{
+        background:none;
+        border:none;
+        margin-top:0;
+        padding-top:0;
+    }
+    .blocnotes-textarea{
+        background:#bbb;
+        font-size:1.2rem;
+        width:90vw;
+        height:75vh;
+    }
+    #blocnotes-message-ok{
+        padding:.2rem;
+        background:lightyellow;
+        border:1px solid grey;
+        display:inline-block;
+        margin-left:2rem;
+        position:relative; top:-4px;
+    }
+</style>
+
+<div class="blocnotes-page">
+    <h1>Modifier le bloc-notes</h1>
+    <form class="form blocnotes-form" action="{{$.Details.UrlAction}}" method="post">
+        <textarea class="blocnotes-textarea" name="contenu" id="contenu">{{$.Details.Contenu}}</textarea>
+        <div>
+            <input type="submit" class="big-button margin-left" value="Valider">
+            {{if $.Details.OK}}
+                <div id="blocnotes-message-ok">Les modifications du bloc-notes ont été enrigistrées en base</div>
+                <script>
+                    setTimeout(function(){
+                        document.getElementById("blocnotes-message-ok").style.display='none';
+                    },3000);
+                </script>
+            {{end}}
+        </div>
+    </form>
+</div>

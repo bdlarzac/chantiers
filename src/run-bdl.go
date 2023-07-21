@@ -12,6 +12,13 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"mime"
+	"net/http"
+	"path/filepath"
+	"time"
+
 	"bdl.local/bdl/control"
 	"bdl.local/bdl/control/ajax"
 	"bdl.local/bdl/ctxt"
@@ -19,13 +26,7 @@ import (
 	"bdl.local/bdl/model"
 	"bdl.local/bdl/static"
 	"bdl.local/bdl/view"
-	"fmt"
 	"github.com/gorilla/mux"
-	"log"
-	"mime"
-	"net/http"
-	"path/filepath"
-	"time"
 )
 
 // *********************************************************
@@ -51,11 +52,14 @@ func main() {
 	r.HandleFunc("/ajax/get/parcelle-from-code-et-commune/{code-parcelle:[A-Z0-9]{6}}/{id-commune:[0-9]+}", Hajax(ajax.GetParcelleFromCodeAndCommuneId))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
+	r.HandleFunc("/ajax/get/bloc-notes", Hajax(ajax.GetBlocnotes))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))
 	r.HandleFunc("/backup", H(control.BackupDB))
 	r.HandleFunc("/maj-qgis", H(control.MajQGis))
+	r.HandleFunc("/bloc-notes/update", H(control.UpdateBlocnotes))
+	r.HandleFunc("/bloc-notes/update/{ok}", H(control.UpdateBlocnotes))
 
 	r.HandleFunc("/activite/recherche", H(control.SearchActivite))
 	r.HandleFunc("/activite/recherche/{tab}", H(control.SearchActivite))
