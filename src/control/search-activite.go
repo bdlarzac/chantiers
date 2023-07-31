@@ -73,7 +73,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return werr.Wrap(err)
 		}
 		//
-		labelProprios, err := model.LabelActeurs(ctx.DB, "DIV-PF")
+		labelProprios, err := model.LabelActeurs(ctx.DB, "DIV-PF") // "DIV-PF" = "divers - propriétaire foncier"
 		if err != nil {
 			return werr.Wrap(err)
 		}

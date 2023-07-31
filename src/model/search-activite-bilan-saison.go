@@ -28,13 +28,14 @@ type BilanActivitesParSaison struct {
 	Datedeb               time.Time
 	Datefin               time.Time
 	TotalActivitesParValo []*TotalActivitesParValo
+/////////////// pas encore géré
 	VentePlaquettes       *TotalActivitesParValo
 }
 
 type TotalActivitesParValo struct { // en fait total activites par valo et par proprio
 	TypeValo string
-	Volume   float64
 	Unite    string
+	Volume   map[int]float64 // key = id proprio
 	PrixHT   map[int]float64 // key = id proprio
 }
 
@@ -54,6 +55,7 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			Datedeb:               activiteParSaison.Datedeb,
 			Datefin:               activiteParSaison.Datefin,
 			TotalActivitesParValo: []*TotalActivitesParValo{},
+			// todo VentePlaquettes
 		}
 		// compute map intermédiaire
 		mapValos := map[string]TotalActivitesParValo{}
@@ -63,22 +65,19 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 				mapValos[valo] = TotalActivitesParValo{TypeValo: valo}
 			}
 			entry := mapValos[valo]
-			/////////////////// ici problème à voir ///////////////////
-			// piquets peuvent être comptés en stères ou en nb de piquets
-			///////////////////////////////////////////////////////////
-			entry.Volume += activite.Volume
 			entry.Unite = activite.Unite
+			entry.Volume = make(map[int]float64)
 			entry.PrixHT = make(map[int]float64)
 			//
-			// on répartit systématiquement le prix par proprio
-			// (pourrait être évité quand on veut un bilan pour tous les proprios - tant pis)
+			// on répartit systématiquement le prix et le volume par proprio
 			err = activite.ComputeSurfaceParProprio(db)
 			if err != nil {
 				return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
 			}
 			for idProprio, surface := range activite.SurfaceParProprio {
-				// ici, prix par proprio proportionnel à la surface
+				// ici, prix par proprio et volume par proprio proportionnels à la surface
 				entry.PrixHT[idProprio] = activite.PrixHT * surface / activite.SurfaceTotale
+				entry.Volume[idProprio] = activite.Volume * surface / activite.SurfaceTotale
 			}
 			//
 			mapValos[valo] = entry

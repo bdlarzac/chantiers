@@ -20,15 +20,9 @@
 {{with .Details}}
     {{with .BilansActivitesParSaison}}
         <table id="bilan-saison" class="entities">
-            <thead>
-                <tr>
-                    <th class="padding-left4 right">Valorisation</th>
-                    <th>Volume</th>
-                    <th>Revenus HT</th>
-                </tr>
-            </thead>
             <tbody>
                 {{/* loop sur les saisons */}}
+                {{$nbProprios := len $.Details.LabelProprios}}
                 {{range .}}
                     <script>
                         {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
@@ -36,38 +30,37 @@
                         {{end}}
                     </script>
                     <tr class="titre-saison">
-                        <td colspan="3" class="bold padding-top">
+                        <td colspan="4" class="bold padding-top">
                             <br>
                             {{.Datedeb | dateFr}} - {{.Datefin | dateFr}}
                         </td>
                     </tr>
                     {{range .TotalActivitesParValo}}
                         <tr>
-                            <td class="right">
+                            <td rowspan="{{$nbProprios}}" class="right">
                                 {{.TypeValo | labelValo}}
                             </td>
-                            <td class="padding-left2">
-                                {{.Volume}} {{.Unite | labelUnite}}
-                            </td>
-                            <td class="padding-left2">
-                                <table>
-                                {{$prixHT := .PrixHT}} {{/* Sans cette affectation .PrixHT n'est plus accessible dans le range */}}
-                                {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
-                                    {{$prix := index $prixHT $idProprio}}
-                                    <script>
-                                        totaux.set({{$idProprio}}, totaux.get({{$idProprio}}) + {{$prix}});
-                                    </script>
-                                    <tr>
-                                        <td>{{index $.Details.LabelProprios $idProprio}}</td>
-                                        <td class="padding-left right"><script>document.write(formatNb(round({{$prix}}, 2)));</script> &euro;</td>
-                                    </tr>
-                                {{end}}
-                                </table>
-                            </td>
-                        </tr>
+                            {{/* Sans ces 3 affectations .PrixHT, .Unite et .Volume ne sont plus accessibles dans le range */}}
+                            {{$prixHT := .PrixHT}}
+                            {{$volume := .Volume}}
+                            {{$unite := .Unite}}
+                            {{$i := 0}}
+                            {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
+                                {{if ne $i 0}}<tr>{{end}}
+                                {{$i = plus $i 1}}
+                                {{$prixPourCeProprio := index $prixHT $idProprio}}
+                                {{$volumePourCeProprio := index $volume $idProprio}}
+                                <script>
+                                    totaux.set({{$idProprio}}, totaux.get({{$idProprio}}) + {{$prixPourCeProprio}});
+                                </script>
+                                    <td>{{index $.Details.LabelProprios $idProprio}}</td>
+                                    <td class="padding-left right"><script>document.write(formatNb(round({{$volumePourCeProprio}}, 2)));</script> {{$unite | labelUnite}}</td>
+                                    <td class="padding-left right"><script>document.write(formatNb(round({{$prixPourCeProprio}}, 2)));</script> &euro;</td>
+                                </tr>
+                            {{end}}
                     {{end}}
                     <tr class="total-saison">
-                        <td colspan="2">Total</td>
+                        <td colspan="3">Total</td>
                         <td class="padding-left2">
                             <table>
                             {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
