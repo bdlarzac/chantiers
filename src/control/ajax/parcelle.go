@@ -9,11 +9,9 @@ import (
 	"strconv"
 )
 
-/*
-	    Renvoie les parcelles correspondant à plusieurs UGs.
-	    @param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
-		        ex : 12,35,87
-*/
+// Renvoie les parcelles correspondant à plusieurs UGs.
+// @param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
+//         ex : 12,35,87
 func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	parcelles, err := model.GetParcellesFromIdsUGs(ctx.DB, vars["ids"])

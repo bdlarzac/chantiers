@@ -28,9 +28,7 @@ type detailsSylviResults struct {
 	Tab string
 }
 
-/*
-Affiche / process le formulaire de recherche
-*/
+// Affiche / process le formulaire de recherche
 func SearchSylvi(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	switch r.Method {
 	case "POST":

@@ -18,7 +18,6 @@ type detailsTasVidesShow struct {
 	Chantiers []*model.Plaq
 }
 
-// *********************************************************
 func ShowTasVides(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	chantiers, err := model.GetAllPlaqsVides(ctx.DB)
 	if err != nil {
@@ -41,7 +40,6 @@ func ShowTasVides(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	return nil
 }
 
-// *********************************************************
 func SignalerTasVide(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

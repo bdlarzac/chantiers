@@ -27,7 +27,6 @@ type detailsPlaqRangeForm struct {
 	UrlAction    string
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -100,7 +99,6 @@ func NewPlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -164,7 +162,6 @@ func UpdatePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-// *********************************************************
 func DeletePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idPr, err := strconv.Atoi(vars["id-pr"])
@@ -179,7 +176,6 @@ func DeletePlaqRange(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-// *********************************************************
 // Fabrique une PlaqRange à partir des valeurs d'un formulaire.
 // Auxiliaire de NewPlaqRange() et UpdatePlaqRange()
 // Ne gère pas le champ Id

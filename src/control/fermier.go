@@ -22,7 +22,6 @@ type detailsFermierShow struct {
 	Fermier *model.Fermier
 }
 
-// *********************************************************
 func ListFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	list, err := model.GetSortedFermiers(ctx.DB, "nom")
 	if err != nil {
@@ -52,7 +51,6 @@ func ListFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-// *********************************************************
 func ShowFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id1, err := strconv.Atoi(vars["id"])
@@ -79,7 +77,6 @@ func ShowFermier(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			return werr.Wrap(err)
 		}
 	}
-
 	ctx.TemplateName = "fermier-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{

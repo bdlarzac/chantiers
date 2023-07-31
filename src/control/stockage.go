@@ -23,7 +23,6 @@ type detailsStockageList struct {
 	Archives []*model.Stockage
 }
 
-// *********************************************************
 func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	actifs, err := model.GetStockagesFull(ctx.DB, true)
 	if err != nil {
@@ -65,7 +64,6 @@ func ListStockages(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -107,7 +105,6 @@ func NewStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdateStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -164,7 +161,6 @@ func UpdateStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 	}
 }
 
-// *********************************************************
 // Delete ou archive
 func DeleteOrArchiveStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
@@ -197,7 +193,6 @@ func DeleteOrArchiveStockage(ctx *ctxt.Context, w http.ResponseWriter, r *http.R
 	return nil
 }
 
-// *********************************************************
 // Fabrique un Stockage à partir des valeurs d'un formulaire.
 // Auxiliaire de NewStockage() et UpdateStockage()
 // Ne gère pas le champ Id

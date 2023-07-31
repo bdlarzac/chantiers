@@ -56,9 +56,8 @@ func CodeValo2CodeUnite(codeValo string) string {
 		return "ST"
 	case "PL":
 		return "ST"
-		// devenu inutile suite à demande BDL de pouvoir choisir stères ou nb de piquets
-	//case "PI":
-	//	return "ST"
+	case "PI":
+		return "ST"
 	case "BO":
 		return "M3"
 	case "PQ":

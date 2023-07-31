@@ -17,7 +17,6 @@ var UniteMap = map[string]string{
 	"JO": "jours",
 	"M3": "m<sup>3</sup>",
 	"MA": "maps",
-	"NP": "piquets", // nb de piquets
 	"ST": "stères",
 	"TO": "tonnes",
 }

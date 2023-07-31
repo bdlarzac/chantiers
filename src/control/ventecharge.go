@@ -28,7 +28,6 @@ type detailsVenteChargeForm struct {
 	UrlAction    string
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -110,7 +109,6 @@ func NewVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) e
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -226,7 +224,6 @@ func UpdateVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	}
 }
 
-// *********************************************************
 func DeleteVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id-chargement"])
@@ -241,7 +238,6 @@ func DeleteVenteCharge(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request
 	return nil
 }
 
-// *********************************************************
 // Fabrique une VenteCharge à partir des valeurs d'un formulaire.
 // Auxiliaire de NewVenteCharge() et UpdateVenteCharge()
 // Ne gère pas le champ Id

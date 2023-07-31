@@ -36,7 +36,6 @@ type detailsVentePlaqShow struct {
 	Vente *model.VentePlaq
 }
 
-// *********************************************************
 func ListVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	annee := vars["annee"]
@@ -78,7 +77,6 @@ func ListVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-// *********************************************************
 func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idVente, _ := strconv.Atoi(vars["id-vente"])
@@ -111,7 +109,6 @@ func ShowVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -174,7 +171,6 @@ func NewVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -247,7 +243,6 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// *********************************************************
 func DeleteVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id-vente"])
@@ -266,7 +261,6 @@ func DeleteVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-// *********************************************************
 // Fabrique une VentePlaq à partir des valeurs d'un formulaire.
 // Auxiliaire de NewVentePlaq() et UpdateVentePlaq()
 // Ne gère pas le champ Id
@@ -357,7 +351,6 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 	return vente, nil
 }
 
-// *********************************************************
 func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

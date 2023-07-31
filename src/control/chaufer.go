@@ -116,7 +116,6 @@ func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -172,7 +171,6 @@ func NewChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	}
 }
 
-// *********************************************************
 func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
 	case "POST":
@@ -233,7 +231,6 @@ func UpdateChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	}
 }
 
-// *********************************************************
 func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -252,15 +249,12 @@ func DeleteChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-// *********************************************************
-/**
-    Fabrique un Chaufer à partir des valeurs d'un formulaire.
-    Auxiliaire de NewChaufer() et UpdateChaufer()
-    Ne gère pas le champ Id
-    Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
-    Renvoie idsUG car ils ne sont pas stockés dans model.chaufer
-    Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
-**/
+// Fabrique un Chaufer à partir des valeurs d'un formulaire.
+// Auxiliaire de NewChaufer() et UpdateChaufer()
+// Ne gère pas le champ Id
+// Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+// Renvoie idsUG car ils ne sont pas stockés dans model.chaufer
+// Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
 func chantierChauferForm2var(r *http.Request) (ch *model.Chaufer, idsUG []int, err error) {
 	ch = &model.Chaufer{}
 	vide := []int{}

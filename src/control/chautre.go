@@ -41,7 +41,6 @@ type detailsChautreShow struct {
 	Chantier *model.Chautre
 }
 
-// *********************************************************
 func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	annee := vars["annee"]
@@ -83,7 +82,6 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-// *********************************************************
 // Affichage d'un chantier autres valorisations
 func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
@@ -327,11 +325,7 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	}
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
 	//
-	if ch.TypeValo == "PI" {
-		ch.Unite = r.PostFormValue("unite-pi")
-	} else {
-		ch.Unite = model.CodeValo2CodeUnite(ch.TypeValo)
-	}
+    ch.Unite = model.CodeValo2CodeUnite(ch.TypeValo)
 	//
 	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//

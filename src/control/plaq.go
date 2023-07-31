@@ -41,7 +41,6 @@ type detailsPlaqShow struct {
 	Tab              string
 }
 
-// *********************************************************
 func ListPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	annee := vars["annee"]
@@ -77,7 +76,6 @@ func ListPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// *********************************************************
 // Affichage d'un chantier plaquettes
 func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
@@ -135,7 +133,6 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -216,7 +213,6 @@ func NewPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -310,7 +306,6 @@ func UpdatePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	}
 }
 
-// *********************************************************
 func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -326,15 +321,12 @@ func DeletePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error
 	return nil
 }
 
-// *********************************************************
-/**
-    Fabrique un Plaq à partir des valeurs d'un formulaire.
-    Auxiliaire de NewPlaq() et UpdatePlaq()
-    Ne gère pas le champ Id
-    Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
-    Renvoie idsUG, idsLieudits, idsFermiers car ils ne sont pas stockés dans model.plaq
-    Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
-**/
+// Fabrique un Plaq à partir des valeurs d'un formulaire.
+// Auxiliaire de NewPlaq() et UpdatePlaq()
+// Ne gère pas le champ Id
+// Pour form new, IdChantier = 0 ; pour form update, IdChantier a la bonne valeur
+// Renvoie idsUG, idsLieudits, idsFermiers car ils ne sont pas stockés dans model.plaq
+// Mais les liens avec les parcelles sont stockés dans ch.ChantierParcelle
 func plaqForm2var(r *http.Request) (ch *model.Plaq, idsUG, idsLieudits, idsFermiers []int, err error) {
 	ch = &model.Plaq{}
 	vide := []int{}

@@ -84,7 +84,7 @@
             <label class="optional padding-left" for="volume">Contrat</label> :
             <input type="number" name="volume-contrat" id="volume-contrat" step="0.01" min="0" value="{{.VolumeContrat | zero2empty}}" class="width5">
             <div class="margin-top05">
-                <label for="unite-volume">Unité</label> : <span id="unite-volume" class="padding-left05"></span>
+                <label for="unite-volume">Unité</label> : <span id="unite-volume" class="padding-left05">{{/* rempli par js */}}</span>
             </div>
         </div>
         
@@ -217,14 +217,6 @@ async function initialize(){
         document.getElementById("tva-{{.TVA}}").selected = true;
         actionAfterChangeValorisation();
         document.getElementById("typevente-{{.TypeVente}}").checked = true;
-        if(document.getElementById("valorisation-PI").selected){
-            if('{{.Unite}}' == 'NP'){
-                document.getElementById("unite-pi-np").checked = true;
-            }
-            else{
-                document.getElementById("unite-pi-st").checked = true;
-            }
-        }
     }
 }
 
@@ -250,14 +242,7 @@ function actionAfterChangeValorisation(){
         document.getElementById("unite-volume").innerHTML = "{{"PP" | valo2uniteLabel}}";
     }
     else if(document.getElementById("valorisation-PI").selected){
-        document.getElementById("unite-volume").innerHTML = `
-        <input type="radio" name="unite-pi" id="unite-pi-np" value="NP" checked>
-        <label class="normal" for="unite-pi-np">Nb de piquets</label>
-        <span class="padding-left">
-            <input type="radio" name="unite-pi" id="unite-pi-st" value="ST">
-            <label class="normal" for="unite-pi-st">stères</label>
-        </span>
-        `;
+        document.getElementById("unite-volume").innerHTML = "{{"PI" | valo2uniteLabel}}";
     }
 }
 

@@ -1,6 +1,6 @@
 /*
 Ajoute table blocnotes
-Intégration: commit 
+Intégration: commit 474e894
 
 @copyright  BDL, Bois du Larzac
 @license    GPL

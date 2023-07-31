@@ -31,7 +31,6 @@ type detailsHumidList struct {
 	Annees []string // toutes les années avec chantier
 }
 
-// *********************************************************
 func ListHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	annee := vars["annee"]
@@ -64,7 +63,6 @@ func ListHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche formulaire new mesure d'humidité
 func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -125,7 +123,6 @@ func NewHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche formulaire update mesure d'humidité
 func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -202,7 +199,6 @@ func UpdateHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	}
 }
 
-// *********************************************************
 func DeleteHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -217,7 +213,6 @@ func DeleteHumid(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-// *********************************************************
 // Fabrique un Humid à partir des valeurs d'un formulaire.
 // Auxiliaire de NewHumid() et UpdateHumid()
 // Ne gère pas le champ Id

@@ -22,7 +22,7 @@ type detailsVenteSearchForm struct {
 	UrlAction   string
 }
 
-// ventes de tous les clients
+// Ventes de tous les clients
 type detailsVenteSearchResults struct {
 	Ventes                []*model.Vente
 	RecapFiltres          string

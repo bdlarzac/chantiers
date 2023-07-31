@@ -33,7 +33,6 @@ type detailsVenteLivreList struct {
 	Annees []string // toutes les années avec chantier
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -97,7 +96,6 @@ func NewVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -167,7 +165,6 @@ func UpdateVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// *********************************************************
 func DeleteVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id-livraison"])
@@ -182,7 +179,6 @@ func DeleteVenteLivre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 	return nil
 }
 
-// *********************************************************
 // Fabrique une VenteLivre à partir des valeurs d'un formulaire.
 // Auxiliaire de NewVenteLivre() et UpdateVenteLivre()
 // Ne gère pas le champ Id

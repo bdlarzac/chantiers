@@ -13,7 +13,6 @@ import (
 	"strconv"
 )
 
-// *********************************************************
 func ShowParcelle(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -24,34 +23,28 @@ func ShowParcelle(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel GetParcelle()")
 	}
-
 	err = parcelle.ComputeLieudits(ctx.DB)
 	if err != nil {
 		return werr.Wrap(err)
 	}
-
 	for i, _ := range parcelle.Lieudits {
 		err = parcelle.Lieudits[i].ComputeCommune(ctx.DB)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel LieuDit.ComputeCommune()")
 		}
 	}
-
 	err = parcelle.ComputeProprietaire(ctx.DB)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ComputeProprietaire()")
 	}
-
 	err = parcelle.ComputeFermiers(ctx.DB)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ComputeFermiers()")
 	}
-
 	err = parcelle.ComputeUGs(ctx.DB)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel ComputeUGs()")
 	}
-
 	ctx.TemplateName = "parcelle-show.html"
 	ctx.Page = &ctxt.Page{
 		Header: ctxt.Header{

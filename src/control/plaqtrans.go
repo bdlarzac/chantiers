@@ -28,7 +28,6 @@ type detailsPlaqTransForm struct {
 	UrlAction    string
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -106,7 +105,6 @@ func NewPlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -197,7 +195,6 @@ func UpdatePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// *********************************************************
 func DeletePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idPt, err := strconv.Atoi(vars["id-pt"])
@@ -212,7 +209,6 @@ func DeletePlaqTrans(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	return nil
 }
 
-// *********************************************************
 // Fabrique un PlaqTrans à partir des valeurs d'un formulaire.
 // Auxiliaire de NewPlaqTrans() et UpdatePlaqTrans()
 // Ne gère pas le champ Id

@@ -16,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	//"fmt"
 )
 
 type detailsPlaqOpForm struct {
@@ -28,7 +27,6 @@ type detailsPlaqOpForm struct {
 	UrlAction     string
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -96,7 +94,6 @@ func NewPlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 	}
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -172,7 +169,6 @@ func UpdatePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	}
 }
 
-// *********************************************************
 func DeletePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idOp, err := strconv.Atoi(vars["id-op"])
@@ -187,7 +183,6 @@ func DeletePlaqOp(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 	return nil
 }
 
-// *********************************************************
 // Fabrique une PlaqOp à partir des valeurs d'un formulaire.
 // Auxiliaire de NewPlaqOp() et UpdatePlaqOp()
 // Ne gère pas le champ Id
@@ -249,6 +244,5 @@ func plaqOpForm2var(r *http.Request) (*model.PlaqOp, error) {
 	}
 	//
 	op.Notes = r.PostFormValue("notes")
-
 	return op, nil
 }

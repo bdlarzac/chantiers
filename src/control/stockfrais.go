@@ -24,7 +24,6 @@ type detailsStockFraisForm struct {
 	Frais            *model.StockFrais
 }
 
-// *********************************************************
 // Process ou affiche form new
 func NewStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -75,7 +74,6 @@ func NewStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	return nil
 }
 
-// *********************************************************
 // Process ou affiche form update
 func UpdateStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -130,7 +128,6 @@ func UpdateStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// *********************************************************
 func DeleteStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	idFrais, err := strconv.Atoi(vars["id"])
@@ -145,7 +142,6 @@ func DeleteStockFrais(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request)
 	return nil
 }
 
-// *********************************************************
 // Fabrique un StockFrais à partir des valeurs d'un formulaire.
 // Auxiliaire de NewStockFrais() et UpdateStockFrais()
 // Ne gère pas le champ Id
