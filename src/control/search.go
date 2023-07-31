@@ -125,7 +125,7 @@ func computeFiltreParcelle(r *http.Request) (result []string) {
 
 // Filtre valorisations : renvoie un tableau de strings.
 //   - Si pas de filtre, contient un tableau vide.
-//   - Sinon contient une liste de codes essence.
+//   - Sinon contient une liste de codes valorisation.
 func computeFiltreValo(r *http.Request) (result []string) {
 	if r.PostFormValue("choix-ALL-valo") == "true" {
 		return []string{}

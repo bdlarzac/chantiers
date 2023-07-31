@@ -6,6 +6,11 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 --------------------------------------------------------------------------------------------------
 - Nettoyer la table des fermiers non agricoles ; voir les associations parcelle_fermier qui restent.
 
+- recherche sylvi - dans js:
+Uncaught ReferenceError: choixPeriode_validateForm is not defined
+    validateForm http://localhost:8012/sylviculture/recherche:676
+    onsubmit http://localhost:8012/sylviculture/recherche:1
+
 
 #9 lien chantier parcelle
 --------------------------------------------------------------------------------------------------

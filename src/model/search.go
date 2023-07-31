@@ -10,7 +10,6 @@ package model
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"strings"
@@ -20,7 +19,6 @@ import (
 // Calcule un récapitulatif des choix effetués dans un formulaires contenant des filtres.
 // Pour affichage dans la page de résultat.
 func ComputeRecapFiltres(db *sqlx.DB, filtres map[string][]string) (result string, err error) {
-	fmt.Printf("search.go - filtres = %+v\n", filtres) /////////////////////////////////////
 	result = ""
 	// Si aucun filtre
 	aucun := true

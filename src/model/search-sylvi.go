@@ -11,7 +11,6 @@ package model
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 )
@@ -21,7 +20,6 @@ import (
 // fonction à optimiser pour n'appeler filtreUG_sansfiltre() que s'il n'y a aucun filtre
 // mais attendre que la demande de BDL soit stabilisée
 func ComputeUGsFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*UG, err error) {
-	fmt.Printf("search-sylvi.go - filtres = %+v\n", filtres) /////////////////////////////////////////////
 	result = []*UG{}
 	// Booléens indiquant si les Compute*() ont été appelés (pas si les filtres ont été appliqués)
 	essenceDone := false
@@ -98,7 +96,6 @@ func ComputeUGsFromFiltres(db *sqlx.DB, filtres map[string][]string) (result []*
 			return result, werr.Wrapf(err, "Erreur appel UG.ComputeActivites()")
 		}
 	}
-	//fmt.Printf("result = %+v\n",result)
 	return result, nil
 }
 

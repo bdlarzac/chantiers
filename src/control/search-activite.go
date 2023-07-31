@@ -9,6 +9,7 @@ package control
 import (
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/generic/wilk/werr"
+	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/model"
 	"golang.org/x/exp/slices"
 	"net/http"
@@ -33,6 +34,7 @@ type detailsActiviteSearchResults struct {
 	RecapFiltres             string
 	ActiviteMap              map[string]string
 	BilansActivitesParSaison []*model.BilanActivitesParSaison
+	HasPlaquettes            bool // est-ce que les plaquettes sont demandées ? (facilite l'affichage de la template)
 	ActivitesParUG           []*model.ActivitesParUG
 	LabelProprios            map[int]string
 	Tab                      string
@@ -63,9 +65,18 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 			return werr.Wrap(err)
 		}
 		//
-		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres)
+		recapFiltres, err := model.ComputeRecapFiltres(ctx.DB, filtres) // pour l'affichage
 		if err != nil {
 			return werr.Wrap(err)
+		}
+		//
+		hasPlaquettes := false
+		if len(filtres["valo"]) == 0 {
+		    hasPlaquettes = true
+		} else {
+            if tiglib.InArray("PQ", filtres["valo"]) {
+                hasPlaquettes = true
+            }
 		}
 		//
 		bilansActivitesParSaison, err := model.ComputeBilansActivitesParSaison(ctx.DB, ctx.Config.DebutSaison, activites)
@@ -109,6 +120,7 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 				RecapFiltres:             recapFiltres,
 				ActiviteMap:              model.GetActivitesMap(),
 				BilansActivitesParSaison: bilansActivitesParSaison,
+				HasPlaquettes:            hasPlaquettes,
 				ActivitesParUG:           model.ComputeActivitesParUG(activites),
 				LabelProprios:            labelProprios,
 				Tab:                      r.PostFormValue("type-resultat"),

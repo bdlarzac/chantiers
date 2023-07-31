@@ -282,6 +282,7 @@ func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 			return werr.Wrapf(err, "Erreur appel GetPlaq()")
 		}
 		// Ajoute lieu-dit pour avoir le nom du chantier
+		//////////////////////// TODO remove - devenu inutile suite à issue 13 /////////////////////////
 		err = chantier.ComputeLieudits(db)
 		if err != nil {
 			return werr.Wrapf(err, "Erreur appel Plaq.ComputeLieudits()")
@@ -289,6 +290,54 @@ func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 		vp.Chantiers = append(vp.Chantiers, chantier)
 	}
 	return nil
+}
+
+// ************************** Totaux *******************************
+
+// Pour une période donnée, calcule la quantité de plaquettes (en maps) vendues
+// en répartissant par propriétaire des parcelles où ont eu lieu les chantiers
+func ComputeQuantiteVenteParProprio(db *sqlx.DB, date1, date2 time.Time) (res map[int]float64, err error){
+    res = map[int]float64{}
+    ventes, err := GetVentePlaqsOfPeriod(db, date1, date2)
+    if err != nil {
+        return res, werr.Wrapf(err, "Erreur appel GetVentePlaqsOfPeriod()")
+    }
+    for _, vente := range(ventes){
+        err = vente.ComputeQte(db)
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
+        }
+        err = vente.ComputeChantiers(db)
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChantiers()")
+        }
+        for _, chantier := range(vente.Chantiers){ 
+            liensParcelles, err := computeLiensParcellesOfChantier(db, "plaq", chantier.Id)
+            if err != nil {
+                return res, werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+            }
+            for _, lienParcelle := range(liensParcelles){
+                parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
+                surfaceParcelle := parcelle.Surface
+                if err != nil {
+                    return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
+                }
+                idProprio := parcelle.IdProprietaire
+                if _, ok := res[idProprio]; !ok {
+                    res[idProprio] = 0
+                }
+                surface := float64(0)
+                if lienParcelle.Entiere {
+                    surface = surfaceParcelle
+                } else {
+                    surface = lienParcelle.Surface
+                }
+                // ICI règle de 3
+                res[idProprio] += vente.Qte * surface / surfaceParcelle
+            }
+        }
+    }
+    return res, nil
 }
 
 // ************************** CRUD *******************************

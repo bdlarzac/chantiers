@@ -25,14 +25,13 @@ type ActiviteParSaison struct {
 // - les plaquettes produites dans la saison sont stockées dans TotalActivitesParValo (PrixHT = 0)
 // - les plaquettes vendues dans la saison sont stockées dans VentePlaquettes
 type BilanActivitesParSaison struct {
-	Datedeb               time.Time
-	Datefin               time.Time
-	TotalActivitesParValo []*TotalActivitesParValo
-/////////////// pas encore géré
-	VentePlaquettes       *TotalActivitesParValo
+	Datedeb                        time.Time
+	Datefin                        time.Time
+	TotalActivitesParValoEtProprio []*TotalActivitesParValoEtProprio
+	VentePlaquettesParProprio      map[int]float64
 }
 
-type TotalActivitesParValo struct { // en fait total activites par valo et par proprio
+type TotalActivitesParValoEtProprio struct {
 	TypeValo string
 	Unite    string
 	Volume   map[int]float64 // key = id proprio
@@ -52,17 +51,17 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			continue // exclut les saisons sans activités des bilans
 		}
 		currentRes := BilanActivitesParSaison{
-			Datedeb:               activiteParSaison.Datedeb,
-			Datefin:               activiteParSaison.Datefin,
-			TotalActivitesParValo: []*TotalActivitesParValo{},
-			// todo VentePlaquettes
+			Datedeb:                        activiteParSaison.Datedeb,
+			Datefin:                        activiteParSaison.Datefin,
+			TotalActivitesParValoEtProprio: []*TotalActivitesParValoEtProprio{},
+			VentePlaquettesParProprio:      map[int]float64{},
 		}
 		// compute map intermédiaire
-		mapValos := map[string]TotalActivitesParValo{}
+		mapValos := map[string]TotalActivitesParValoEtProprio{}
 		for _, activite := range activiteParSaison.Activites {
 			valo := activite.TypeValo
 			if _, ok := mapValos[valo]; !ok {
-				mapValos[valo] = TotalActivitesParValo{TypeValo: valo}
+				mapValos[valo] = TotalActivitesParValoEtProprio{TypeValo: valo}
 			}
 			entry := mapValos[valo]
 			entry.Unite = activite.Unite
@@ -84,13 +83,19 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 		}
 		// utilise map intermédiaire pour remplir currentRes
 		for valo, total := range mapValos {
-			newRes := TotalActivitesParValo{
+			newRes := TotalActivitesParValoEtProprio{
 				TypeValo: valo,
 				Volume:   total.Volume,
 				Unite:    total.Unite,
 				PrixHT:   total.PrixHT,
 			}
-			currentRes.TotalActivitesParValo = append(currentRes.TotalActivitesParValo, &newRes)
+			currentRes.TotalActivitesParValoEtProprio = append(currentRes.TotalActivitesParValoEtProprio, &newRes)
+			/* if valo == "PQ" {
+			    //currentRes.VentePlaquettesParProprio, err = ComputeQuantiteVenteParProprio(db, activiteParSaison.Datedeb, activiteParSaison.Datefin)
+                if err != nil {
+                    return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
+                }
+			} */
 		}
 		result = append(result, &currentRes)
 	}

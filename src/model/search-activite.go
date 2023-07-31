@@ -15,7 +15,6 @@ package model
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"sort"
 	"strconv"
@@ -126,7 +125,6 @@ func (a *Activite) ComputeSurfaceParProprio(db *sqlx.DB) (err error) {
 // ************************** Get many *******************************
 
 func ComputeActivitesFromFiltres(db *sqlx.DB, filtres map[string][]string) (res []*Activite, err error) {
-	fmt.Printf("search-activite.go - filtres = %+v\n", filtres) //////////////////////////////////////////
 	res = []*Activite{}
 	//
 	// Première sélection, par filtre période
