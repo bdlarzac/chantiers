@@ -28,7 +28,7 @@ type BilanActivitesParSaison struct {
 	Datedeb                        time.Time
 	Datefin                        time.Time
 	TotalActivitesParValoEtProprio []*TotalActivitesParValoEtProprio
-	VentePlaquettesParProprio      map[int]float64
+	VentePlaquettesParProprio      map[int]float64 // key = id proprio
 }
 
 type TotalActivitesParValoEtProprio struct {
