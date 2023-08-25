@@ -136,7 +136,7 @@ async function afficheParcelles(idsUGs, liensParcelles){
         curdiv.classList.add("parcelle-form"); // pour le css
         //
         curdiv.innerHTML = '<a class="bold" href="/parcelle/' + item.id + '" target="_blank">' + item.name + '</a>';
-        curdiv.innerHTML += " <b>" + item.commune.NomCourt + "</b>";
+        curdiv.innerHTML += " <b>" + item.commune.NomCourt + " - " + item.proprietaire.Nom + "</b>";
         //
         surfaceInputNameId = "parcelle-surface-" + item.id;
         radioName = "radio-parcelle-" + item.id;

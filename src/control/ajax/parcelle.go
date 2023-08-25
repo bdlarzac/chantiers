@@ -19,10 +19,11 @@ func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 	type respElement struct {
-		Id      int            `json:"id"`
-		Name    string         `json:"name"`
-		Commune *model.Commune `json:"commune"`
-		Surface float64        `json:"surface"`
+		Id      int                `json:"id"`
+		Name    string             `json:"name"`
+		Commune *model.Commune     `json:"commune"`
+		Surface float64            `json:"surface"`
+		Proprietaire *model.Acteur `json:"proprietaire"`
 	}
 	var resp []respElement
 	for _, p := range parcelles {
@@ -30,7 +31,11 @@ func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
 		if err != nil {
 			return err
 		}
-		resp = append(resp, respElement{p.Id, p.Code, p.Commune, p.Surface})
+		err = p.ComputeProprietaire(ctx.DB)
+		if err != nil {
+			return err
+		}
+		resp = append(resp, respElement{p.Id, p.Code, p.Commune, p.Surface, p.Proprietaire})
 	}
 	json, err := json.Marshal(resp)
 	if err != nil {

@@ -57,9 +57,6 @@
     </div>
     
     <div class="margin-top">
-        <div class="float-left">
-            <a href="#help" id="toogle-help" class="help-button" title="Afficher l'aide de ce formulaire" onClick="toogle('help');">?</a>
-        </div>
         <div class="float-right">
             <input type="button" name="cancel" value="Annuler" onClick="window.history.back();">
             <input type="submit" class="margin-left" value="Valider">
@@ -72,17 +69,6 @@
     <input type="hidden" name="liens-parcelles" id="liens-parcelles" value="">
     
 </form>
-
-<a name="help"></a>
-<div id="help" class="margin display-none">
-    <div class="help-content">
-        <div class="help-title">Aide</div>
-        <div class="section">
-            <b>Fermier</b> : il faut saisir le nom d'un fermier, puis cliquer sur <img class="inline vertical-align-middle bigicon" src="/static/img/validate.png"> afin de faire apparaître la liste des UGs possibles.
-            <br>Il faut ensuite sélectionner une UG pour faire apparaître la liste des parcelles possibles.
-        </div>
-    </div>
-</div>
 
 <script>
 window.addEventListener("load", function(){
