@@ -34,8 +34,15 @@
         <td>
         {{range .LiensParcelles}}
             <div>
-                <a href="/parcelle/{{.IdParcelle}}">{{.Parcelle.Code}}</a>
-                ({{if .Entiere}}Entière{{else}}{{.Surface}} ha{{end}})
+                <a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a>
+                ({{.Parcelle.Proprietaire.Nom}})
+                :
+                {{if .Entiere}}
+                    Entière
+                    ({{round .Parcelle.Surface 2}} ha)
+                {{else}}
+                    {{round .Surface 2}} ha
+                {{end}}
             </div>
         {{end}}
         </td>
@@ -52,7 +59,7 @@
     
     <tr>
         <th>Surface concernée</th>
-        <td>{{.Surface}} ha</td>
+        <td>{{round .Surface 2}} ha</td>
     </tr>
     
     <tr>

@@ -4,7 +4,6 @@ grep -rn func model/ | grep '\[\]' | grep -v '\[\]\*' | grep -v '\[\]string' | g
 
 2023
 --------------------------------------------------------------------------------------------------
-- Nettoyer la table des fermiers non agricoles ; voir les associations parcelle_fermier qui restent.
 
 - recherche sylvi - dans js:
 Uncaught ReferenceError: choixPeriode_validateForm is not defined

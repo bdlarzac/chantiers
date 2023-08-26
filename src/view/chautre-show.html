@@ -52,8 +52,10 @@
     <div class="margin-top05">Parcelles</div>
     <div class="margin-top05 grid2-pres">
     {{range .LiensParcelles}}
-        <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
         <div>
+            <a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a>
+            ({{.Parcelle.Proprietaire.Nom}})
+            :
             {{if .Entiere}}
                 Entière
                 ({{round .Parcelle.Surface 2}} ha)

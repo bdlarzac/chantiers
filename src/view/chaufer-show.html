@@ -50,7 +50,14 @@
         {{range .LiensParcelles}}
             <div>
                 <a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a>
-                ({{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}})
+                ({{.Parcelle.Proprietaire.Nom}})
+                :
+                {{if .Entiere}}
+                    Entière
+                    ({{round .Parcelle.Surface 2}} ha)
+                {{else}}
+                    {{round .Surface 2}} ha
+                {{end}}
             </div>
         {{end}}
     </div>

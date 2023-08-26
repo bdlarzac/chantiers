@@ -37,7 +37,7 @@ type detailsChauferShow struct {
 	Chantier *model.Chaufer
 }
 
-// *********************************************************
+// Liste des chaffages fermiers pour une saison donnée
 func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	annee := vars["annee"]
@@ -79,7 +79,6 @@ func ListChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-// *********************************************************
 // Affichage d'un chantier chauffage fermier
 func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
@@ -90,6 +89,12 @@ func ShowChaufer(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	chantier, err := model.GetChauferFull(ctx.DB, idChantier)
 	if err != nil {
 		return werr.Wrap(err)
+	}
+	for _, lp := range(chantier.LiensParcelles) {
+	    err = lp.Parcelle.ComputeProprietaire(ctx.DB)
+        if err != nil {
+            return werr.Wrap(err)
+        }
 	}
 	ctx.TemplateName = "chaufer-show.html"
 	ctx.Page = &ctxt.Page{
