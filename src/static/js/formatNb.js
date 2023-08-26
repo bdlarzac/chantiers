@@ -1,7 +1,7 @@
 /******************************************************************************
     Formats a number with grouped thousands.
     Useless in theory, as toLocaleString() is supposed to do the job
-    - but didn't succeed to toLocaleString() correctly.
+    - but didn't succeed to use toLocaleString() correctly.
     Ex: 
         formatNb(2000) = "2 000"
         formatNb(2000.12) = "2 000.12"

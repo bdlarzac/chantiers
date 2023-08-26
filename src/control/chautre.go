@@ -105,6 +105,7 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 			Title: chantier.FullString(),
 			JSFiles: []string{
 				"/static/js/round.js",
+				"/static/js/formatNb.js",
 				"/view/common/prix.js",
 			},
 		},

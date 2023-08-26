@@ -21,14 +21,14 @@ type ActiviteParSaison struct {
 	Activites []*Activite
 }
 
-// Pour les plaquettes,
-// - les plaquettes produites dans la saison sont stockées dans TotalActivitesParValo (PrixHT = 0)
-// - les plaquettes vendues dans la saison sont stockées dans VentePlaquettes
+// Pour simplifier l'affichage, les activités plaquettes ne sont pas stockées
+// dans TotalActivitesParValoEtProprio mais dans TotalActivitesPlaquettesParProprio
 type BilanActivitesParSaison struct {
-	Datedeb                        time.Time
-	Datefin                        time.Time
-	TotalActivitesParValoEtProprio []*TotalActivitesParValoEtProprio
-	VentePlaquettesParProprio      map[int]float64 // key = id proprio
+	Datedeb                            time.Time
+	Datefin                            time.Time
+	TotalActivitesParValoEtProprio     []*TotalActivitesParValoEtProprio    // toutes activités sauf plaquettes
+	TotalActivitesPlaquettesParProprio *TotalActivitesParValoEtProprio      // uniquement plaquettes
+	VentePlaquettesParProprio          map[int]float64 // key = id proprio
 }
 
 type TotalActivitesParValoEtProprio struct {
@@ -51,10 +51,10 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			continue // exclut les saisons sans activités des bilans
 		}
 		currentRes := BilanActivitesParSaison{
-			Datedeb:                        activiteParSaison.Datedeb,
-			Datefin:                        activiteParSaison.Datefin,
-			TotalActivitesParValoEtProprio: []*TotalActivitesParValoEtProprio{},
-			VentePlaquettesParProprio:      map[int]float64{},
+			Datedeb:                            activiteParSaison.Datedeb,
+			Datefin:                            activiteParSaison.Datefin,
+			TotalActivitesParValoEtProprio:     []*TotalActivitesParValoEtProprio{},
+			VentePlaquettesParProprio:          map[int]float64{},
 		}
 		// compute map intermédiaire
 		mapValos := map[string]TotalActivitesParValoEtProprio{}
@@ -68,7 +68,7 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			entry.Volume = make(map[int]float64)
 			entry.PrixHT = make(map[int]float64)
 			//
-			// on répartit systématiquement le prix et le volume par proprio
+			// on répartit systématiquement le prix et le volume par proprio (pourrait être évité si un seul proprio)
 			err = activite.ComputeSurfaceParProprio(db)
 			if err != nil {
 				return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
@@ -83,19 +83,27 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 		}
 		// utilise map intermédiaire pour remplir currentRes
 		for valo, total := range mapValos {
-			newRes := TotalActivitesParValoEtProprio{
+			if valo == "PQ" {
+                newTotal := TotalActivitesParValoEtProprio{
+                    TypeValo: valo,
+                    Volume:   total.Volume,
+                    Unite:    total.Unite,
+                    PrixHT:   total.PrixHT,
+                }
+			    currentRes.TotalActivitesPlaquettesParProprio = &newTotal
+			    currentRes.VentePlaquettesParProprio, err = ComputeQuantiteVenteParProprio(db, activiteParSaison.Datedeb, activiteParSaison.Datefin)
+                if err != nil {
+                    return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
+                }
+			    continue
+			}
+			newTotal := TotalActivitesParValoEtProprio{
 				TypeValo: valo,
 				Volume:   total.Volume,
 				Unite:    total.Unite,
 				PrixHT:   total.PrixHT,
 			}
-			currentRes.TotalActivitesParValoEtProprio = append(currentRes.TotalActivitesParValoEtProprio, &newRes)
-			/* if valo == "PQ" {
-			    //currentRes.VentePlaquettesParProprio, err = ComputeQuantiteVenteParProprio(db, activiteParSaison.Datedeb, activiteParSaison.Datefin)
-                if err != nil {
-                    return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
-                }
-			} */
+			currentRes.TotalActivitesParValoEtProprio = append(currentRes.TotalActivitesParValoEtProprio, &newTotal)
 		}
 		result = append(result, &currentRes)
 	}
@@ -103,12 +111,13 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 }
 
 // Auxiliaire de ComputeBilansActivitesParSaison()
+// Parmi les activités passées en paramètre, ne retient que les activités ayant lieu dans une saison donnée.
 func computeActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*ActiviteParSaison, err error) {
 	limites, _, err := ComputeLimitesSaisons(db, debutSaison)
-	tiglib.ArrayReverse(limites)
 	if err != nil {
 		return result, werr.Wrapf(err, "Erreur appel ComputeLimitesSaisons()")
 	}
+	tiglib.ArrayReverse(limites)
 	result = []*ActiviteParSaison{}
 	for _, limite := range limites {
 		newRes := ActiviteParSaison{Datedeb: limite[0], Datefin: limite[1], Activites: []*Activite{}}

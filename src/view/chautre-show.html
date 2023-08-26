@@ -43,11 +43,14 @@
         <div>{{.VolumeContrat}} {{.Unite | labelUnite}}</div>
     {{end}}
     
+    <div class="margin-top05">Essence</div>
+    <div class="margin-top05">{{.Essence | labelEssence}}</div>
+    
+    <div class="margin-top05">Exploitation</div>
+    <div class="margin-top05">{{.Exploitation | labelExploitation}}</div>
+    
     <div class="margin-top05">UGs</div>
     <div class="margin-top05">{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
-    
-    <div>Exploitation</div>
-    <div>{{.Exploitation | labelExploitation}}</div>
     
     <div class="margin-top05">Parcelles</div>
     <div class="margin-top05 grid2-pres">
@@ -66,8 +69,8 @@
     {{end}}
     </div>
     
-    <div>Lieux-dits</div>
-    <div>{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
+    <div class="margin-top05">Lieux-dits</div>
+    <div class="margin-top05">{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
     
     <div>Fermiers</div>
     <div>{{range .Fermiers}}<a href="/fermier/{{.Id}}">{{.String}}</a><br>{{end}}</div>
@@ -79,13 +82,13 @@
     <div class="margin-top05"><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>
     
     <div>Total HT</div>
-    <div><script>document.write(round(prixHT({{.PUHT}}, {{.VolumeRealise}}), 2));</script></span> &euro;</div>
+    <div><script>document.write(formatNb(round(prixHT({{.PUHT}}, {{.VolumeRealise}}), 2)));</script></span> &euro;</div>
     
     <div>TVA</div>
     <div>{{.TVA}}</span> %</div>
     
     <div>Total TTC</div>
-    <div><script>document.write(round(prixTTC(prixHT({{.PUHT}}, {{.VolumeRealise}}), {{.TVA}}), 2));</script></span> &euro;</div>
+    <div><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.VolumeRealise}}), {{.TVA}}), 2)));</script></span> &euro;</div>
     
     <div class="padding-top05"><b>Facture</b></div>
     <div></div>

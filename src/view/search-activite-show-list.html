@@ -15,6 +15,7 @@
         <th class="order">Valorisation</th>
         <th class="order">Essence</th>
         <th>Volume</th>
+        <th>Prix HT</th>
     </tr>
 </thead>
 
@@ -36,6 +37,11 @@
         </td>
         <td>
             {{.Volume}} {{.Unite | labelUnite}}
+        </td>
+        <td class="right">
+            {{if .PrixHT}}
+                <script>document.write(formatNb({{.PrixHT}}));</script> &euro;
+            {{end}}
         </td>
     </tr>
     {{end}}
