@@ -4,24 +4,33 @@
 */}}
 
 <style>
-    #table-bilan-saison td{
-        padding:3px;
-    }
     #table-bilan-saison{
         margin-left:1rem;
+        border-collapse:collapse;
     }
-    #table-bilan-saison .titre-saison{
+    #table-bilan-saison td{
+        padding:3px;
+        white-space:nowrap;
+    }
+    #table-bilan-saison .ligne-titre-saison{
         background:none;
-    }
-    #table-bilan-saison .total-saison{
-        background:#dbe599;
         font-weight:bold;
     }
-    #table-bilan-saison .pair{
-        background-color:lightyellow;
+    #table-bilan-saison td.titre-saison{
+        padding-bottom:5px;
     }
-    #table-bilan-saison .impair{
-        background-color:lightgrey;
+    #table-bilan-saison tr.ligne-bilan{
+        outline:1px solid grey;
+    }
+    #table-bilan-saison td.valo{
+        font-weight:bold;
+        text-align:right;
+        padding-right:1rem;
+    }
+    #table-bilan-saison td.volume{
+        color:red;
+    }
+    #table-bilan-saison td.prix{
     }
 </style>
 
@@ -32,7 +41,7 @@
 {{with .Details}}
     {{$nbProprios := len .LabelProprios}}
     {{with .BilansActivitesParSaison}}
-        <table id="table-bilan-saison">
+        <table id="table-bilan-saison" class="entities">
             <tbody>
                 {{/* loop sur les saisons */}}
                 {{range .}}
@@ -41,113 +50,85 @@
                             totaux.set({{$idProprio}}, 0);
                         </script>
                     {{end}}
-                    <tr class="titre-saison">
-                        <td colspan="4" class="bold padding-top">
-                            <br>
+                    <tr class="ligne-titre-saison">
+                        <td class="titre-saison" colspan="3">
                             {{.Datedeb | dateFr}} - {{.Datefin | dateFr}}
                         </td>
                     </tr>
-                    {{/* $idxRow et $rowClass nécessaires à cause de rowspan */}}
-                    {{$idxRow := 0}}
-                    {{$rowClass := "impair"}}
                     
                     {{if $.Details.HasPlaquettes}}
-                        <tr class="{{$rowClass}}">
-                            <td rowspan="{{$nbProprios}}" class="right">
-                                <b>Plaquettes vendues</b>
-                                <br>(bois sec)
-                            </td>
-                            {{/* Sans cette affectation .VentePlaquettesParProprio n'est plus accessibles dans le range */}}
-                            {{$ventes := .VentePlaquettesParProprio}}
-                            {{$i := 0}}
-                            {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
-                                {{if ne $i 0}}<tr class="{{$rowClass}}">{{end}}
-                                {{$i = plus $i 1}}
-                                <td>{{index $.Details.LabelProprios $idProprio}}</td>
-                                <td class="padding-left right">
-                                    <script>document.write(formatNb(round({{index $ventes $idProprio}}, 2)));</script> maps
-                                </td>
-                                <td class="padding-left right">
-                                </td>
-                        </tr>
-                            {{end}}
-                            
-                        {{$idxRow = plus $idxRow 1}}
-                        {{if eq 0 (modulo $idxRow 2) }} {{$rowClass = "impair"}} {{else}} {{$rowClass = "pair"}} {{end}}
-                        <tr class="{{$rowClass}}">
-                            <td rowspan="{{$nbProprios}}" class="right">
-                                <b>Plaquettes coupées</b>
-                                <br>(bois vert)
-                            </td>
-                            {{/* Sans ces 3 affectations .TotalActivitesPlaquettesParProprio.PrixHT, .Unite et .Volume ne sont plus accessibles dans le range */}}
-                            {{$prixHT := .TotalActivitesPlaquettesParProprio.PrixHT}}
-                            {{$volume := .TotalActivitesPlaquettesParProprio.Volume}}
-                            {{$unite := .TotalActivitesPlaquettesParProprio.Unite}}
-                            {{$i := 0}}
-                            {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
-                                {{if ne $i 0}}<tr class="{{$rowClass}}">{{end}}
-                                {{$i = plus $i 1}}
-                                {{$prixPourCeProprio := index $prixHT $idProprio}}
-                                {{$volumePourCeProprio := index $volume $idProprio}}
-                                <script>
-                                    totaux.set({{$idProprio}}, totaux.get({{$idProprio}}) + {{$prixPourCeProprio}});
-                                </script>
-                                    <td>{{index $.Details.LabelProprios $idProprio}}</td>
-                                    <td class="padding-left right">
-                                        <script>document.write(formatNb(round({{$volumePourCeProprio}}, 2)));</script> {{$unite | labelUnite}}
-                                    </td>
-                                    <td class="padding-left right">
-                                    </td>
-                        </tr>
-                            {{end}}
-                    {{end}}{{/* end if $.Details.HasPlaquettes */}}
-                    
-                    {{/* Afficher les autres valos (pas les plaquettes) */}}
-                    {{range .TotalActivitesParValoEtProprio}}
-                        {{$idxRow = plus $idxRow 1}}
-                        {{if eq 0 (modulo $idxRow 2) }} {{$rowClass = "impair"}} {{else}} {{$rowClass = "pair"}} {{end}}
-                        <tr class="{{$rowClass}}">
-                            <td rowspan="{{$nbProprios}}" class="right">
-                                {{.TypeValo | labelValo}}
-                            </td>
-                            {{/* Sans ces 3 affectations .PrixHT, .Unite et .Volume ne sont plus accessibles dans le range */}}
-                            {{$prixHT := .PrixHT}}
-                            {{$volume := .Volume}}
-                            {{$unite := .Unite}}
-                            {{$i := 0}}
-                            {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
-                                {{if ne $i 0}}<tr class="{{$rowClass}}">{{end}}
-                                {{$i = plus $i 1}}
-                                {{$prixPourCeProprio := index $prixHT $idProprio}}
-                                {{$volumePourCeProprio := index $volume $idProprio}}
-                                <script>
-                                    totaux.set({{$idProprio}}, totaux.get({{$idProprio}}) + {{$prixPourCeProprio}});
-                                </script>
-                                    <td>{{index $.Details.LabelProprios $idProprio}}</td>
-                                    <td class="padding-left right">
-                                        <script>document.write(formatNb(round({{$volumePourCeProprio}}, 2)));</script> {{$unite | labelUnite}}
-                                    </td>
-                                    <td class="padding-left right">
-                                        <script>document.write(formatNb(round({{$prixPourCeProprio}}, 2)));</script> &euro;
-                                    </td>
-                        </tr>
-                            {{end}}
-                    {{end}}
-                    <tr class="total-saison">
-                        <td colspan="3">Total</td>
-                        <td class="padding-left2">
+                    <tr class="ligne-bilan">
+                        <td class="valo">
+                            Plaquettes vendues
+                        </td>
+                        <td>
                             <table>
+                            {{$totalVentes := .TotalVentePlaquettesParProprio}}
                             {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
                                 <tr>
-                                    <td>{{$labelProprio}}</td>
+                                    <td>
+                                        {{index $.Details.LabelProprios $idProprio}}
+                                    </td>
                                     <td class="padding-left right">
-                                        <script>document.write(formatNb(round(totaux.get({{$idProprio}}), 2)));</script> &euro;
+                                        <script>document.write(formatNb(round({{index $totalVentes $idProprio}}, 2)));</script> maps
                                     </td>
                                 </tr>
                             {{end}}
                             </table>
                         </td>
                     </tr>
+                    <tr class="ligne-bilan">
+                        <td class="valo">
+                            Plaquettes coupées
+                        </td>
+                        <td>
+                            <table>
+                            {{$totalPlaquettes := .TotalActivitesPlaquettesParProprio}}
+                            {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
+                                <tr>
+                                    <td>
+                                        {{index $.Details.LabelProprios $idProprio}}
+                                    </td>
+                                    <td class="padding-left right">
+                                        {{$totalCourant := index $totalPlaquettes $idProprio}}
+                                        <script>document.write(formatNb(round({{$totalCourant.Volume}}, 2)));</script> maps
+                                    </td>
+                                </tr>
+                            {{end}}
+                            </table>
+                        </td>
+                    </tr>
+                    {{end}}{{/* fin plaquettes */}}
+                    
+                    {{range $valo, $totalActivite := .TotalActivitesParValoEtProprio}}
+                    <tr class="ligne-bilan">
+                        <td class="valo">
+                            {{$valo | labelValo}}
+                        </td>
+                        <td>
+                            <table style="width:100%;">
+                            {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
+                                <tr>
+                                {{$totalCourant := index $totalActivite $idProprio}}
+                                    <td style="width:25%;">
+                                        {{index $.Details.LabelProprios $idProprio}}
+                                    </td>
+                                    <td class="padding-left right" style="width:45%;">
+                                        <script>document.write(formatNb(round({{$totalCourant.Volume}}, 2)));</script>
+                                        {{$valo | valo2uniteLabel}}
+                                    </td>
+                                    <td class="padding-left right" style="width:30%;">
+                                        <script>document.write(formatNb(round({{$totalCourant.PrixHT}}, 2)));</script>
+                                        &euro;
+                                    </td>
+                                </tr>
+                            {{end}}
+                            </table>
+                        </td>
+                    </tr>
+                    {{end}}{{/* fin loop .TotalActivitesParValoEtProprio */}}
+                    
+                    
                 {{end}}{{/* fin loop sur les saisons */}}
             </tbody>
         </table>
