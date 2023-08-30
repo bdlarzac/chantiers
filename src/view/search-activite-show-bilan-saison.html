@@ -136,8 +136,10 @@
                                         {{$valo | valo2uniteLabel}}
                                     </td>
                                     <td class="prix">
-                                        <script>document.write(formatNb(round({{$totalCourant.PrixHT}}, 2)));</script>
-                                        &euro;
+                                        {{if ne $valo "CF"}}
+                                            <script>document.write(formatNb(round({{$totalCourant.PrixHT}}, 2)));</script>
+                                            &euro;
+                                        {{end}}
                                     </td>
                                 </tr>
                             {{end}}

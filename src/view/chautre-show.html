@@ -50,23 +50,27 @@
     <div class="margin-top05">{{.Exploitation | labelExploitation}}</div>
     
     <div class="margin-top05">UGs</div>
-    <div class="margin-top05">{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
+    <div class="margin-top05">
+        {{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}
+    </div>
     
     <div class="margin-top05">Parcelles</div>
     <div class="margin-top05 grid2-pres">
-    {{range .LiensParcelles}}
-        <div>
-            <a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a>
-            ({{.Parcelle.Proprietaire.Nom}})
-            :
-            {{if .Entiere}}
-                Entière
-                ({{round .Parcelle.Surface 2}} ha)
-            {{else}}
-                {{round .Surface 2}} ha
-            {{end}}
-        </div>
-    {{end}}
+        <table>
+        {{range .LiensParcelles}}
+            <tr>
+                <td><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></td>
+                <td class="left padding-left05">{{.Parcelle.Proprietaire.Nom}}</td>
+                {{if .Entiere}}
+                    <td class="left padding-left05">Entière</td>
+                    <td class="left padding-left05">{{round .Parcelle.Surface 2}} ha</td>
+                {{else}}
+                    <td class="left padding-left05">Partielle</td>
+                    <td class="left padding-left05">{{round .Surface 2}} / {{round .Parcelle.Surface 2}} ha</td>
+                {{end}}
+            </tr>
+        {{end}}
+        </table>
     </div>
     
     <div class="margin-top05">Lieux-dits</div>

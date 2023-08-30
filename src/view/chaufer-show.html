@@ -47,19 +47,21 @@
 
     <div class="margin-top05">Parcelles</div>
     <div class="margin-top05">
+        <table>
         {{range .LiensParcelles}}
-            <div>
-                <a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a>
-                ({{.Parcelle.Proprietaire.Nom}})
-                :
+            <tr>
+                <td><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></td>
+                <td class="left padding-left05">{{.Parcelle.Proprietaire.Nom}}</td>
                 {{if .Entiere}}
-                    Entière
-                    ({{round .Parcelle.Surface 2}} ha)
+                    <td class="left padding-left05">Entière</td>
+                    <td class="left padding-left05">{{round .Parcelle.Surface 2}} ha</td>
                 {{else}}
-                    {{round .Surface 2}} ha
+                    <td class="left padding-left05">Partielle</td>
+                    <td class="left padding-left05">{{round .Surface 2}} / {{round .Parcelle.Surface 2}} ha</td>
                 {{end}}
-            </div>
+            </tr>
         {{end}}
+        </table>
     </div>
     
     {{if .Notes}}
