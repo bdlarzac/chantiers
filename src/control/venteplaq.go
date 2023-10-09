@@ -390,7 +390,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	//
 	pdf.SetFont("Arial", "B", 10)
 	pdf.SetXY(x, y)
-	pdf.MultiCell(wi, he, "Date", "1", "C", false)
+	pdf.MultiCell(wi, he, "Date de facturation", "1", "C", false)
 	//
 	x += wi
 	pdf.SetXY(x, y)
@@ -597,7 +597,7 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x = x0
 	y += 2 * he
 	pdf.SetXY(x, y)
-	pdf.Write(he, tr("Livraison effectuée par :"))
+	pdf.Write(he, tr("Livraison effectuée par"))
 	y += he
 	for _, livraison := range vente.Livraisons {
 		pdf.SetXY(x, y)
@@ -606,6 +606,8 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 		} else { // coût détaillé
 			pdf.Write(he, "- "+tr(livraison.Conducteur.String()))
 		}
+        pdf.Write(he, ", le "+tr(tiglib.DateFr(livraison.DateLivre)))
+		
 		y += he
 	}
 	//
