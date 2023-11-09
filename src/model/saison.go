@@ -18,20 +18,20 @@ import (
 )
 
 // Renvoie un tableau contenant les dates de début / fin des "saisons"
-// Les saisons encadrent tous les chantiers stockés en base.
+// Les saisons encadrent tous les chantiers et ventes stockés en base.
 // Une saison dure un an.
 //
 // @param limiteSaison string au format JJ/MM (tiré de 'debut-saison' en conf)
 // @return
 //   - un tableau de 2 time.Time avec les dates limites des saisons
-//   - un bool indiquant s'il existe des chantiers en base
+//   - un bool indiquant s'il existe des chantiers ou des ventes en base
 //   - une erreur éventuelle
 func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bool, error) {
 	// retour
 	var res [][2]time.Time
 	var err error
 	//
-	// first, last = date du premier et dernier chantier plaquettes en base
+	// first, last = dates du premier et dernier chantier ou vente en base
 	//
 	var first, last time.Time
 	var query string
@@ -59,23 +59,35 @@ func ComputeLimitesSaisons(db *sqlx.DB, limiteSaison string) ([][2]time.Time, bo
 	if err != nil {
 		ok3 = false
 	}
+	// ventes plaquettes
+	ok4 := true
+	var first4, last4 time.Time
+	query = "select min(datevente), max(datevente) from venteplaq"
+	err = db.QueryRow(query).Scan(&first4, &last4)
+	if err != nil {
+		ok4 = false
+	}
 	//
-	if !ok1 && !ok2 && !ok3 {
+	if !ok1 && !ok2 && !ok3 && !ok4 {
 		return res, false, nil
 	}
-	if tiglib.IsBefore(first1, first2) && tiglib.IsBefore(first1, first3) {
+	if tiglib.IsBefore(first1, first2) && tiglib.IsBefore(first1, first3) && tiglib.IsBefore(first1, first4) {
 		first = first1
-	} else if tiglib.IsBefore(first2, first1) && tiglib.IsBefore(first2, first3) {
+	} else if tiglib.IsBefore(first2, first1) && tiglib.IsBefore(first2, first3) && tiglib.IsBefore(first2, first4) {
 		first = first2
-	} else if tiglib.IsBefore(first3, first1) && tiglib.IsBefore(first3, first2) {
+	} else if tiglib.IsBefore(first3, first1) && tiglib.IsBefore(first3, first2) && tiglib.IsBefore(first3, first4) {
 		first = first3
+	} else if tiglib.IsBefore(first4, first1) && tiglib.IsBefore(first4, first2) && tiglib.IsBefore(first4, first3) {
+		first = first4
 	}
-	if last1.After(last2) && last1.After(last3) {
+	if last1.After(last2) && last1.After(last3) && last1.After(last4) {
 		last = last1
-	} else if last2.After(last1) && last2.After(last3) {
+	} else if last2.After(last1) && last2.After(last3) && last2.After(last4) {
 		last = last2
-	} else if last3.After(last1) && last3.After(last2) {
+	} else if last3.After(last1) && last3.After(last2) && last3.After(last4) {
 		last = last3
+	} else if last4.After(last1) && last4.After(last2) && last4.After(last3) {
+		last = last4
 	}
 	//
 	// jLim, mLim = limites de saison (jour et mois), stockées en conf
