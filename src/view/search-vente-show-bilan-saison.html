@@ -13,7 +13,6 @@
     </thead>
     <tbody>
         {{range .BilansVentesParSaison}}
-{{/*  {{printf "%+v" .}} */}}
             <tr>
                 <td colspan="4" class="bold padding-top">
                     {{.Datedeb | dateFr}} - {{.Datefin | dateFr}}
@@ -25,7 +24,7 @@
                         {{.TypeValo | labelValo}}
                     </td>
                     <td class="padding-left2">
-                        {{.Volume}} {{.Unite | labelUnite}}
+                        <script>document.write(formatNb(round({{.Volume}}, 2)));</script> {{.Unite | labelUnite}}
                     </td>
                     <td class="padding-left2">
                         <script>document.write(formatNb({{.PrixHT}}));</script> &euro;

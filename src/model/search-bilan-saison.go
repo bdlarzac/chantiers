@@ -12,7 +12,6 @@ import (
 	"bdl.local/bdl/generic/wilk/werr"
 	"github.com/jmoiron/sqlx"
 	"time"
-//	"fmt"
 )
 
 // Liste d'activités ayant lieu dans une période donnée
@@ -34,11 +33,6 @@ type BilanActivitesParSaison struct {
 	TotalVentePlaquettesParProprio     map[int]float64     // key = id proprio - value = total vendu
 }
 
-type VolumePrixHT struct {
-    Volume float64
-    PrixHT float64
-}
-
 func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
 	//
 	activitesParSaison, err := computeActivitesParSaison(db, debutSaison, activites)
@@ -52,8 +46,8 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			continue // exclut les saisons sans activités des bilans
 		}
         newRes := BilanActivitesParSaison{
-            Datedeb:                            activiteParSaison.Datedeb,
-            Datefin:                            activiteParSaison.Datefin,
+            Datedeb: activiteParSaison.Datedeb,
+            Datefin: activiteParSaison.Datefin,
         }
         newRes.TotalActivitesParValoEtProprio = make(map[string]map[int]VolumePrixHT)
         newRes.TotalActivitesPlaquettesParProprio = make(map[int]VolumePrixHT)

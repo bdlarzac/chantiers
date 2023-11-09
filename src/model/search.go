@@ -1,5 +1,5 @@
 /*
-Fonctions liées à la recherche, communes à plusieurs recherches.
+Structures et fonctions liées à la recherche, communes à plusieurs recherches.
 
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
@@ -15,6 +15,11 @@ import (
 	"strings"
 	"time"
 )
+
+type VolumePrixHT struct {
+    Volume float64
+    PrixHT float64
+}
 
 // Calcule un récapitulatif des choix effetués dans un formulaires contenant des filtres.
 // Pour affichage dans la page de résultat.

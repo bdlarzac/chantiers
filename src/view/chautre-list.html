@@ -89,19 +89,13 @@
                         <div class="padding-top05">UGs</div>
                         <div class="padding-top05">{{range .UGs}}<a href="/ug/{{.Id}}">{{.Code}}</a><br>{{end}}</div>
                         
-                        <div>Parcelles</div>
-                        <div class="grid2-pres">
+                        <div class="padding-top05">Parcelles</div>
+                        <div class="padding-top05 grid2-pres">
                         {{range .LiensParcelles}}
                             <div><a href="/parcelle/{{.Parcelle.Id}}">{{.Parcelle.Code}}</a></div>
                             <div>{{if .Entiere}}Entière{{else}}{{round .Surface 2}} ha{{end}}</div>
                         {{end}}
                         </div>
-                        
-                        <div>Lieux-dits</div>
-                        <div>{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
-                        
-                        <div>Fermiers</div>
-                        <div>{{range .Fermiers}}<a href="/fermier/{{.Id}}">{{.String}}</a><br>{{end}}</div>
                         
                         <div>Propriétaires</div>
                         <div>{{range .Proprietaires}}<a href="/acteur/{{.Id}}">{{.String}}</a><br>{{end}}</div>
@@ -109,6 +103,12 @@
                             <div>Volume contrat</div>
                             <div>{{.VolumeContrat}} {{.Unite | labelUnite}}</div>
                         {{end}}
+                        
+                        <div class="padding-top05">Lieux-dits</div>
+                        <div class="padding-top05">{{range .Lieudits}}<a href="/ug/{{.Id}}">{{.Nom}}</a><br>{{end}}</div>
+                        
+                        <div>Fermiers</div>
+                        <div>{{range .Fermiers}}<a href="/fermier/{{.Id}}">{{.String}}</a><br>{{end}}</div>
                         
                         <div class="padding-top05">Exploitation</div>
                         <div class="padding-top05">{{.Exploitation | labelExploitation}}</div>

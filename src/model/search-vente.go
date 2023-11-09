@@ -37,12 +37,51 @@ type Vente struct {
 	Notes       string
 	//
 	Details interface{}
+	// relations n-n - utiles pour l'application de certains filtres
+	LiensParcelles []*ChantierParcelle
 }
 
 // ************************** Nom *******************************
 
 func (v *Vente) String() string {
 	return v.Titre
+}
+
+// ************************** Instance methods *******************************
+
+// Rajouté pour issue #24 (implémenter filtre proprio dans bilans vente)
+// Un peu bidouille pour utiliser le code de bilan activité
+func (v *Vente) ComputeLiensParcelles(db *sqlx.DB) (err error) {
+	if len(v.LiensParcelles) != 0 {
+		return nil // déjà calculé
+	}
+	// Cas simple, une vente "autre" est forcément un chantier autre valorisation
+	if v.TypeVente == "autre" {
+        v.LiensParcelles, err = computeLiensParcellesOfChantier(db, "chautre", v.Id)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+        }
+        return nil
+	}
+	// Pour les ventes plaquettes, il faut calculer les liens parcelles de tous les chantiers
+	// liés à cette vente (plusieurs possibles si la vente correspond à des chargements sur
+	// différents tas venant de différents chantiers).
+	vp, err := GetVentePlaq(db, v.Id)
+    if err != nil {
+        return werr.Wrapf(err, "Erreur appel GetVentePlaq")
+    }
+	err = vp.ComputeChantiers(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChantiers()")
+	}
+    for _, ch := range vp.Chantiers {
+        liensParcelles, err := computeLiensParcellesOfChantier(db, "plaq", ch.Id)
+        if err != nil {
+            return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+        }
+        v.LiensParcelles = append(v.LiensParcelles, liensParcelles...)
+    }    
+	return nil
 }
 
 // ************************** Get many *******************************
@@ -194,26 +233,27 @@ func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePer
 // En entrée : liste de ventes
 // En sortie : liste de ventes qui satisfont au filtre
 
-// TODO implement
 func filtreVente_proprio(db *sqlx.DB, input []*Vente, filtre []string) (res []*Vente, err error) {
 	res = []*Vente{}
-	/*
-		for _, a := range input {
-			for _, f := range filtre {
-				id, _ := strconv.Atoi(f)
-				for _, lienParcelle := range a.LiensParcelles {
-					parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
-					if err != nil {
-						return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
-					}
-					if parcelle.IdProprietaire == id {
-						res = append(res, a)
-						break
-					}
-				}
-			}
-		}
-	*/
+    for _, vente := range input {
+        err = vente.ComputeLiensParcelles(db)
+        if err != nil {
+            return res, werr.Wrapf(err, "Erreur appel vente.ComputeLiensParcelles()")
+        }
+        for _, f := range filtre {
+            idProprio, _ := strconv.Atoi(f)
+            for _, lienParcelle := range vente.LiensParcelles {
+                parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
+                if err != nil {
+                    return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
+                }
+                if parcelle.IdProprietaire == idProprio {
+                    res = append(res, vente)
+                    break
+                }
+            }
+        }
+    }
 	return res, nil
 }
 
@@ -252,7 +292,7 @@ func chautre2Vente(db *sqlx.DB, ch *Chautre) (v *Vente, err error) {
 	v.Id = ch.Id
 	v.TypeVente = "autre"
 	v.Titre = ch.Titre
-	//	v.URL = "/chantier/autre/" + strconv.Itoa(idChautre)
+	v.URL = "/chantier/autre/" + strconv.Itoa(ch.Id)
 	v.DateVente = ch.DateContrat
 	v.TypeValo = ch.TypeValo
 	v.Volume = ch.VolumeRealise

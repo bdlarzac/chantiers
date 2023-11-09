@@ -58,7 +58,7 @@ func ComputeBilansVentesParSaison(db *sqlx.DB, debutSaison string, ventes []*Ven
 			}
 			entry := mapValos[valo]
 			entry.Volume += vente.Volume
-			entry.Unite = vente.Unite /////////////////// ici faire conversion d'unité pour certaines valos ? ///////////////////
+			entry.Unite = vente.Unite
 			entry.PrixHT += vente.PrixHT
 			mapValos[valo] = entry
 		}

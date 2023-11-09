@@ -1,10 +1,11 @@
 /*
 Vente de plaquettes, depuis un lieu de stockage
+
 Note: La string stockée dans FactureLivraisonUnite ne vient pas d'une enum.
 Donc les valeurs "km" et "map" sont codées en dur
-- dans le js de venteplaq-form.html
-- dans venteplaq-show.html
-- dans venteplaq-list.html
+    - dans le js de venteplaq-form.html
+    - dans venteplaq-show.html
+    - dans venteplaq-list.html
 La valeur est insérée directement en base dans control.ventePlaqForm2var()
 
 Pour afficher sur la facture :
@@ -45,7 +46,7 @@ type VentePlaq struct {
 	//
 	Notes string
 	// Pas stocké en base
-	Qte         float64 // maps
+	Qte         float64 // en maps = somme des quantités des différentes livraisons
 	Client      *Acteur
 	Fournisseur *Acteur
 	Livraisons  []*VenteLivre
@@ -296,6 +297,10 @@ func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 
 // Pour une période donnée, calcule la quantité de plaquettes (en maps) vendues
 // en répartissant par propriétaire des parcelles où ont eu lieu les chantiers
+// La répartition utilise la surface des parcelles
+// @return 
+//      key = id proprio
+//      value = quantité vendue sur les parcelles de ce proprio, pour toutes les ventes de la période
 func ComputeQuantiteVenteParProprio(db *sqlx.DB, date1, date2 time.Time) (res map[int]float64, err error){
     res = map[int]float64{}
     ventes, err := GetVentePlaqsOfPeriod(db, date1, date2)

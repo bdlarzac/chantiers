@@ -1,7 +1,5 @@
 /*
-Activité générique - Représente toute activité = entité avec une date et souvent un prix.
-Stocké dans les tables = types d'activité concernée
-
+une Activite représente un chantier
 	chaufer
 	chautre
 	plaq
@@ -25,9 +23,10 @@ type Activite struct {
 	Id                int    // id dans table plaq, chautre ou chaufer
 	TypeActivite      string // "plaq", "chautre" ou "chaufer"
 	Titre             string
-	URL               string // Chaîne vide ou URL du détail de l'entité, ex "/plaq/32"
+	URL               string // ex "/plaq/32"
 	DateActivite      time.Time
-	TypeValo          string
+	IdClient          int    // que pour chautre et chaufer
+	TypeValo          string // "BO", "CH", "CF", "PP", "PL", "PI", "PQ" - cf model.ValoMap
 	CodeEssence       string
 	Volume            float64
 	Unite             string // pour le volume
