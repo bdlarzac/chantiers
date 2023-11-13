@@ -267,11 +267,11 @@
         </td>
         {{end}} {{/* end cout != G */}}
 
-        <td class="bold center">
+        <td class="bold center whitespace-nowrap">
             <script>document.write(formatNb(round(totalLigne / {{.Qte}}, 2)));</script> &euro;
         </td>
         
-        <td class="bold center">
+        <td class="bold center whitespace-nowrap">
             <script>document.write(formatNb(round(totalLigne, 2)));</script> &euro;
         </td>
         
@@ -284,7 +284,7 @@
     {{if .Transports}}
     <tr>
         <td colspan="5" class="bold right">Total transport HT</td>
-        <td class="bold center">
+        <td class="bold center whitespace-nowrap">
             <script>document.write(formatNb(round(totalTransport, 2)));</script> &euro;
         </td>
     </tr>
@@ -435,7 +435,7 @@
         </td>
         {{end}} {{/* end cout != G */}}
         
-        <td class="bold center">
+        <td class="bold center whitespace-nowrap">
             <script>document.write(round(totalLigne, 2));</script> &euro;
         </td>
         
@@ -448,7 +448,7 @@
 {{if .Rangements}}
     <tr>
         <td colspan="4" class="bold right">Total rangement HT</td>
-        <td class="bold center">
+        <td class="bold center whitespace-nowrap">
             <script>document.write(formatNb(round(totalRangement, 2)));</script> &euro;
         </td>
     </tr>

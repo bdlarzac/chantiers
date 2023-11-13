@@ -42,6 +42,11 @@ paths:
   
 # Pourcentage arbitraire de perte
 # appliqué sur le bois vert lors d'un chantier plaquette.
+# Au début, ce pourcentage était à 10%
+# Mais BDL s'est rendu compte qu'il n'y avait pas de perte de volume
+# (il y a une perte de masse)
+# Donc pourcentage mis à 0 le 13 nov 2023
+# Cette variable pourrait être supprimée, mais il faudrait adapter le code qui l'utilise
 pourcentage-perte: 10
 
 # Date utilisée comme début de saison pour les bilans
