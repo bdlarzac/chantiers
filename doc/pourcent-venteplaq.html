@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Frais stockage | BDL</title>
+    <link rel="stylesheet" href="/static/css/bdl.css" type="text/css">
+    <style>
+body{
+    font-family:Verdana, Geneva, sans-serif;
+}
+h1{
+    text-align:center;
+}
+    </style>
+</head>
+
+<body>
+
+<h1>Pourcentage SCTL / GFA dans les ventes de plaquettes</h1>
+
+La structure des données est la suivante : 
+
+<ul>
+    <li>Une vente de plaquettes donne lieu à une ou plusieurs livraisons.</li>
+    <li>Chaque livraison donne lieu à un ou plusieurs chargements.</li>
+    <li>Un chargement se fait sur un seul tas.</li>
+    <li>Un tas est relié à un seul chantier plaquettes.</li>
+    <li>Un chantier est relié à des parcelles ; la surface de chaque parcelle concernée par le chantier est saisie dans le logiciel.</li>
+</ul>
+
+On utilise la surface des parcelles pour calculer la proportion SCTL / GFA dans chaque tas.
+
+<!-- ********************************************************************************* -->
+<h2>Exemple</h2>
+
+<!-- ************************************* -->
+<h3>Chantiers</h3>
+On a 2 chantiers plaquettes qui ont été saisis de cette manière :
+
+<br><br><b>Chantier 1</b>
+<br>Associé à 3 parcelles :
+<ul>
+    <li>Parcelle 1 - surface totale = 10 ha ; propriétaire = GFA ; le chantier concerne 2 ha</li>
+    <li>Parcelle 2 - surface totale = 3 ha ; propriétaire = SCTL ; le chantier concerne toute la parcelle</li>
+    <li>Parcelle 3 - surface totale = 15 ha ; propriétaire = SCTL ; le chantier concerne 5 ha</li>
+</ul>
+
+Ce chantier a permis de broyer 1000 maps, qui ont été stockées dans 2 tas :
+<ul>
+    <li>200 maps dans le Tas 1 au hangar des Baumes</li>
+    <li>800 maps dans le Tas 2 au hangar des Liquisses</li>
+</ul>
+
+Les parcelles permettent de calculer la proportion SCTL / GFA de ce chantier (et donc des tas):
+<br>Surface totale = 2 + 3 + 5 = 10 ha
+<br>Surface SCTL = 3 + 5 = 8 ha => pourcentage = 8 / 10 = 80 %
+<br>Surface GFA = 2 ha => pourcentage = 2 / 10 = 20 %
+
+<br><br><b>Chantier 2</b>
+<br>Associé à 2 parcelles :
+<ul>
+    <li>Parcelle 4 - surface totale = 8 ha ; propriétaire = SCTL ; le chantier concerne 2 ha</li>
+    <li>Parcelle 5 - surface totale = 4 ha ; propriétaire = SCTL ; le chantier concerne toute la parcelle</li>
+</ul>
+
+De la même manière, on calcule les pourcentages SCTL / GFA :
+<br>SCTL = 100 %
+<br>GFA = 0 %
+
+<br><br>Ce chantier a permis de broyer 500 maps, qui ont été stockées dans 2 tas :
+<ul>
+    <li>100 maps dans le Tas 3 au hangar des Baumes</li>
+    <li>400 maps dans le Tas 4 au hangar des Liquisses</li>
+</ul>
+
+Pour récapituler, on a :
+
+<table class="entities bordered">
+    <tr><th>Tas</th><th>% SCTL</th><th>% GFA</th></tr>
+    <tr>
+        <td>Tas 1</td>
+        <td>80</td>
+        <td>20</td>
+    </tr>
+    <tr>
+        <td>Tas 2</td>
+        <td>80</td>
+        <td>20</td>
+    </tr>
+    <tr>
+        <td>Tas 3</td>
+        <td>100</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <td>Tas 4</td>
+        <td>100</td>
+        <td>0</td>
+    </tr>
+</table>
+
+<!-- ************************************* -->
+<h3>Vente</h3>
+
+On fait une vente de 100 maps, composée de 2 livraisons de 50 maps.
+
+<br><br><b>Livraison 1</b>, pour laquelle on fait 2 chargements au hangar des Baumes :
+<ul class="simple">
+    <li>20 maps sur le tas 1</li>
+    <li>30 maps sur le tas 3</li>
+</ul>
+
+<b>Livraison 2</b>, pour laquelle on fait 2 chargements au hangar des Liquisses :
+<ul class="simple">
+    <li>10 maps sur le tas 2</li>
+    <li>40 maps sur le tas 4</li>
+</ul>
+
+Pour cette vente, la provenance des plaquettes suit donc les proportions suivantes :
+
+<table class="bordered entities">
+    <tr>
+        <td>Tas 1</td>
+        <td>20 %</td>
+    </tr>
+    <tr>
+        <td>Tas 2</td>
+        <td>10 %</td>
+    </tr>
+    <tr>
+        <td>Tas 3</td>
+        <td>30 %</td>
+    </tr>
+    <tr>
+        <td>Tas 4</td>
+        <td>40 %</td>
+    </tr>
+</table>
+
+En combinant ces deux tableaux, on peut calculer les pourcentages SCTL / GFA de cette vente.
+
+<pre>
+             tas 1            tas 2          tas 3            tas 4
+% SCTL = (20 % x 80 %) + (10 % x 80 %) + (30 % x 100 %) + (40 % x 100 %) = <b>94 %</b>
+% GFA  = (20 % x 20 %) + (10 % x 20 %) + (30 % x 0 %)   + (40 % x 0 %)   = <b>6 %</b>
+</pre>
+
+<div class="inline-block border padding05 bold">
+Si la vente fait 1000 &euro;, on comptera donc 940 &euro; pour la SCTL et 60 &euro; pour le GFA.
+</div>
+</body>
+</html>
