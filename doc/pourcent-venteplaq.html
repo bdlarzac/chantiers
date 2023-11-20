@@ -10,7 +10,10 @@ body{
 }
 h1{
     text-align:center;
+    margin:2rem;
+    margin-bottom:3rem;
 }
+.border-black{border:1px solid black;}
     </style>
 </head>
 
@@ -25,10 +28,11 @@ La structure des données est la suivante :
     <li>Chaque livraison donne lieu à un ou plusieurs chargements.</li>
     <li>Un chargement se fait sur un seul tas.</li>
     <li>Un tas est relié à un seul chantier plaquettes.</li>
-    <li>Un chantier est relié à des parcelles ; la surface de chaque parcelle concernée par le chantier est saisie dans le logiciel.</li>
+    <li>Un chantier est relié à des parcelles.</li>
 </ul>
+La surface de chaque parcelle concernée par le chantier est saisie dans le logiciel.
 
-On utilise la surface des parcelles pour calculer la proportion SCTL / GFA dans chaque tas.
+<br><br>On utilise la surface des parcelles pour calculer la proportion SCTL / GFA dans chaque tas.
 
 <!-- ********************************************************************************* -->
 <h2>Exemple</h2>
@@ -76,26 +80,30 @@ De la même manière, on calcule les pourcentages SCTL / GFA :
 Pour récapituler, on a :
 
 <table class="entities bordered">
-    <tr><th>Tas</th><th>% SCTL</th><th>% GFA</th></tr>
+    <tr><th colspan="2"></th><th>% SCTL</th><th>% GFA</th></tr>
     <tr>
         <td>Tas 1</td>
-        <td>80</td>
-        <td>20</td>
+        <td>200 maps</td>
+        <td>80 %</td>
+        <td>20 %</td>
     </tr>
     <tr>
         <td>Tas 2</td>
-        <td>80</td>
-        <td>20</td>
+        <td>800 maps</td>
+        <td>80 %</td>
+        <td>20 %</td>
     </tr>
     <tr>
         <td>Tas 3</td>
-        <td>100</td>
-        <td>0</td>
+        <td>100 maps</td>
+        <td>100 %</td>
+        <td>0 %</td>
     </tr>
     <tr>
         <td>Tas 4</td>
-        <td>100</td>
-        <td>0</td>
+        <td>400 maps</td>
+        <td>100 %</td>
+        <td>0 %</td>
     </tr>
 </table>
 
@@ -116,37 +124,98 @@ On fait une vente de 100 maps, composée de 2 livraisons de 50 maps.
     <li>40 maps sur le tas 4</li>
 </ul>
 
-Pour cette vente, la provenance des plaquettes suit donc les proportions suivantes :
+On peut maintenant calculer les parts SCTL / GFA dans la vente.
 
-<table class="bordered entities">
+<style>
+table.recap>thead{
+    background:lightblue;
+    text-align:center;
+    font-weight:bold;
+}
+table.recap>tbody>tr>td:nth-child(n+1){
+    text-align:right;
+}
+</style>
+<table class="recap bordered entities">
+<thead>
+    <tr>
+        <th colspan="3" rowspan="2">Vente</th>
+        <th colspan="2">
+            Chantiers
+            <br>% dans les tas
+        </th>
+        <th colspan="2">
+            Résultat
+            <br>% dans la vente
+        </th>
+    </tr>
+    <tr>
+        <th>SCTL</th>
+        <th>GFA</th>
+        <th>SCTL</th>
+        <th>GFA</th>
+    </tr>
+</thead>
+<tbody>
     <tr>
         <td>Tas 1</td>
+        <td>20 maps</td>
         <td>20 %</td>
+        <td>80 %</td>
+        <td>20 %</td>
+        <td>16 %</td>
+        <td>4 %</td>
     </tr>
     <tr>
         <td>Tas 2</td>
+        <td>10 maps</td>
         <td>10 %</td>
+        <td>80 %</td>
+        <td>20 %</td>
+        <td>8 %</td>
+        <td>2 %</td>
     </tr>
     <tr>
         <td>Tas 3</td>
+        <td>30 maps</td>
         <td>30 %</td>
+        <td>100 %</td>
+        <td>0 %</td>
+        <td>30 %</td>
+        <td>0 %</td>
     </tr>
     <tr>
         <td>Tas 4</td>
+        <td>40 maps</td>
         <td>40 %</td>
+        <td>100 %</td>
+        <td>0 %</td>
+        <td>40 %</td>
+        <td>0 %</td>
     </tr>
+    <tr class="bold">
+        <td>Total</td>
+        <td>100 maps</td>
+        <td>100 %</td>
+        <td colspan="2"></td>
+        <td>94 %</td>
+        <td>6 %</td>
+    </tr>
+</tbody>
 </table>
 
-En combinant ces deux tableaux, on peut calculer les pourcentages SCTL / GFA de cette vente.
+Par ex, pour le tas 1 :
+<br>% SCTL dans la vente = 20 % x 80 % = 20/100 x 80/100 = 0.2 * 0.8 = 0.16 = 16 %
+<br>% GFA dans la vente = 20 % x 20 % = 20/100 x 20/100 = 0.2 * 0.2 = 0.04 = 4 %
 
-<pre>
+<!-- <br><pre class="margin padding inline-block big1" style="background:lightgrey; line-height:1.4em;">
              tas 1            tas 2          tas 3            tas 4
 % SCTL = (20 % x 80 %) + (10 % x 80 %) + (30 % x 100 %) + (40 % x 100 %) = <b>94 %</b>
 % GFA  = (20 % x 20 %) + (10 % x 20 %) + (30 % x 0 %)   + (40 % x 0 %)   = <b>6 %</b>
-</pre>
+</pre><br> -->
 
-<div class="inline-block border padding05 bold">
+<br><div class="inline-block border-black padding05 bold margin margin-bottom2">
 Si la vente fait 1000 &euro;, on comptera donc 940 &euro; pour la SCTL et 60 &euro; pour le GFA.
-</div>
+</div><br>
 </body>
 </html>

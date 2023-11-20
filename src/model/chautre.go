@@ -11,7 +11,6 @@ package model
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
@@ -287,7 +286,6 @@ func InsertChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 	//
 	// insert associations avec UGs, Parcelles, Lieudits, Fermiers
 	//
-	fmt.Printf("InsertChautre() - idsUG = %+v\n", idsUG)
 	err = insertLiensChantierUG(db, "chautre", idChantier, idsUG)
 	if err != nil {
 		return idChantier, werr.Wrapf(err, "Erreur appel insertLiensChantierUG()")
