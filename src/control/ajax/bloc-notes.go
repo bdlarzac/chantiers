@@ -9,7 +9,8 @@ import (
 
 // Renvoie les parcelles correspondant à plusieurs UGs.
 // @param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
-//     ex : 12,35,87
+//
+//	ex : 12,35,87
 func GetBlocnotes(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	contenu, err := model.GetBlocnotes(ctx.DB)
 	if err != nil {
