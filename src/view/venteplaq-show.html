@@ -10,7 +10,7 @@
     let prixLivraisonHT = 0;
     let prixTotalHT = prixPlaquettesHT;
     {{if .FactureLivraison}}
-        prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.Qte}});
+        prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.FactureLivraisonNbKm}});
         prixTotalHT += prixLivraisonHT;
     {{end}}
     const prixPlaquettesTTC = prixTTC(prixPlaquettesHT, {{.TVA}});
@@ -95,7 +95,7 @@
 <div class="margin-bottom bold">Prix Livraison</div>
 <div class="grid2-pres">
     <span>Quantité</span>
-    <span class="bold"><script>document.write(formatNb({{.Qte}}));</script> {{.FactureLivraisonUnite}}</span>
+    <span class="bold"><script>document.write(formatNb({{.FactureLivraisonNbKm}}));</script> {{.FactureLivraisonUnite}}</span>
     
     <span>PU HT</span>
     <span class="bold">{{.FactureLivraisonPUHT | twoDigits}} &euro;</span>
