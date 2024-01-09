@@ -22,6 +22,8 @@ type Chautre struct {
 	Titre         string
 	TypeVente     string
 	TypeValo      string
+	// ATTENTION : dans les vues, DateContrat est appelé "date chantier" - Demande de Philémon, 2024-01-09
+	// (un contrat peut durer des années et concerner plusieurs chantiers avec des avenants, n'a pas vraiment de sens)
 	DateContrat   time.Time
 	DatePaiement  time.Time
 	Exploitation  string
