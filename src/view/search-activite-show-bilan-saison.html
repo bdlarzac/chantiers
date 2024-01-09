@@ -3,50 +3,8 @@
     @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 */}}
 
-<style>
-    #table-bilan-saison{
-        margin-left:1.5rem;
-        border-collapse:collapse;
-    }
-    #table-bilan-saison td{
-        padding:3px;
-        white-space:nowrap;
-    }
-    #table-bilan-saison .ligne-titre-saison{
-        background:none;
-        font-weight:bold;
-    }
-    #table-bilan-saison td.titre-saison{
-        padding-top:2rem;
-        padding-bottom:5px;
-    }
-    #table-bilan-saison tr.ligne-bilan{
-        outline:1px solid grey;
-    }
-    #table-bilan-saison td.valo{
-        font-weight:bold;
-        text-align:right;
-        padding-right:1rem;
-    }
-    #table-bilan-saison td.proprio{
-    }
-    #table-bilan-saison td.volume{
-        text-align:right;
-        width:10rem;
-    }
-    #table-bilan-saison td.prix{
-        text-align:right;
-        width:10rem;
-    }
-    #table-bilan-saison .total-saison{
-        outline:1px solid grey;
-        background:#dbe599;
-        font-weight:bold;
-    }
-</style>
-
 <script>
-    const totaux = new Map();
+    const totaux = new Map(); // key = id proprio
 </script>
 
 {{with .Details}}
@@ -154,15 +112,31 @@
                         </td>
                         <td>
                             <table>
+                            <script>
+                                let totalGeneral = 0;
+                            </script>
                             {{range $idProprio, $labelProprio := $.Details.LabelProprios}}
+                                <script>
+                                    totalGeneral += totaux.get({{$idProprio}});
+                                </script>
                                 <tr>
                                     <td class="proprio">{{$labelProprio}}</td>
                                     <td class="volume"></td>
                                     <td class="prix">
                                         <script>document.write(formatNb(round(totaux.get({{$idProprio}}), 2)));</script>
-                                        &euro;&nbsp;
+                                        &euro;
                                     </td>
                                 </tr>
+                            {{end}}
+                            {{if gt (len $.Details.LabelProprios) 1}}
+                            <tr>
+                                <td class="proprio border-top" style="padding-top:1rem;">TOTAL GENERAL</td>
+                                <td class="volume border-top" style="padding-top:1rem;"></td>
+                                <td class="prix border-top" style="padding-top:1rem;">
+                                    <script>document.write(formatNb(round(totalGeneral, 2)));</script>
+                                    &euro;
+                                </td>
+                            </tr>
                             {{end}}
                             </table>
                         </td>
