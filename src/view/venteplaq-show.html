@@ -162,7 +162,7 @@
                     <div>Nb {{.FactureLivraisonUnite}}s</div>
                     <div class="bold">{{if eq .FactureLivraisonUnite "km"}}{{.FactureLivraisonNbKm}}{{else}}{{.Qte}}{{end}}</div>
                     
-                    <div>Prix affiché sur la facture</div>
+                    <div>Prix de la livraison affiché sur la facture</div>
                     <div class="bold">
                     <script>
                         let prixFacture;
@@ -171,7 +171,7 @@
                         {{else}}
                             prixFacture = {{.FactureLivraisonPUHT}} * {{.Qte}};
                         {{end}}
-                        document.write(prixFacture); 
+                        document.write(round(prixFacture, 2)); 
                     </script>
                     &euro;
                     </div>

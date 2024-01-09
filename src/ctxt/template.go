@@ -1,15 +1,10 @@
 /*
-*****************************************************************************
-
-	Fonctions utilisée dans les templates HTML.
+Fonctions utilisée dans les templates HTML.
 
 	@copyright  Les fonctions spécifiques au programme BDL sont la propriété intellectuelle de BDL, Bois du Larzac.
 	            Les fonctions génériques sont la propriété intellectuelle de Thierry Graff.
 	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
 	@history    2019-12-11 14:49:10+01:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package ctxt
 
