@@ -18,7 +18,7 @@ import (
 // Pour chaque parcelle, on doit préciser s'il s'agit d'une parcelle entière ou pas.
 // S'il ne s'agit pas d'une parcelle entière, il faut préciser la surface concernée par l'opération.
 type ChantierParcelle struct {
-	TypeChantier string `db:"type_chantier"`    // "plaq", "chautre" ou "chaufer"
+	TypeChantier string `db:"type_chantier"` // "plaq", "chautre" ou "chaufer"
 	IdChantier   int    `db:"id_chantier"`
 	IdParcelle   int    `db:"id_parcelle"`
 	Entiere      bool

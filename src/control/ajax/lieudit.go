@@ -32,7 +32,8 @@ func AutocompleteLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Reque
 }
 
 // @return  Json contenant id du lieu-dit correspondant à str,
-// 	        ou 0 si lieu-dit pas trouvé.
+//
+//	ou 0 si lieu-dit pas trouvé.
 func CheckNomLieudit(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	str := vars["str"]

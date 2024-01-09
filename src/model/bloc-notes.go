@@ -19,7 +19,7 @@ func UpdateBlocnotes(db *sqlx.DB, contenu string) (err error) {
 
 func GetBlocnotes(db *sqlx.DB) (contenu string, err error) {
 	query := "select contenu from blocnotes"
-    err = db.QueryRow(query).Scan(&contenu)
+	err = db.QueryRow(query).Scan(&contenu)
 	if err != nil {
 		return contenu, werr.Wrapf(err, "Erreur query DB : "+query)
 	}

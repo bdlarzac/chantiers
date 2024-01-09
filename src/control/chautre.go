@@ -93,11 +93,11 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 	if err != nil {
 		return werr.Wrap(err)
 	}
-	for _, lp := range(chantier.LiensParcelles) {
-	    err = lp.Parcelle.ComputeProprietaire(ctx.DB)
-        if err != nil {
-            return werr.Wrap(err)
-        }
+	for _, lp := range chantier.LiensParcelles {
+		err = lp.Parcelle.ComputeProprietaire(ctx.DB)
+		if err != nil {
+			return werr.Wrap(err)
+		}
 	}
 	ctx.TemplateName = "chautre-show.html"
 	ctx.Page = &ctxt.Page{
@@ -332,7 +332,7 @@ func chautreForm2var(ctx *ctxt.Context, r *http.Request) (ch *model.Chautre, ids
 	}
 	ch.VolumeRealise = tiglib.Round(ch.VolumeRealise, 2)
 	//
-    ch.Unite = model.CodeValo2CodeUnite(ch.TypeValo)
+	ch.Unite = model.CodeValo2CodeUnite(ch.TypeValo)
 	//
 	ch.Exploitation = strings.ReplaceAll(r.PostFormValue("exploitation"), "exploitation-", "")
 	//

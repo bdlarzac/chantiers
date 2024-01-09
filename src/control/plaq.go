@@ -95,11 +95,11 @@ func ShowPlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return werr.Wrap(err)
 	}
-	for _, lp := range(chantier.LiensParcelles) {
-	    err = lp.Parcelle.ComputeProprietaire(ctx.DB)
-        if err != nil {
-            return werr.Wrap(err)
-        }
+	for _, lp := range chantier.LiensParcelles {
+		err = lp.Parcelle.ComputeProprietaire(ctx.DB)
+		if err != nil {
+			return werr.Wrap(err)
+		}
 	}
 	ctx.TemplateName = "plaq-show.html"
 	ctx.Page = &ctxt.Page{

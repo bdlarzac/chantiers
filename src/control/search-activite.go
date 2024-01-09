@@ -8,8 +8,8 @@ package control
 
 import (
 	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/generic/tiglib"
+	"bdl.local/bdl/generic/wilk/werr"
 	"bdl.local/bdl/model"
 	"golang.org/x/exp/slices"
 	"net/http"
@@ -72,11 +72,11 @@ func SearchActivite(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (
 		//
 		hasPlaquettes := false
 		if len(filtres["valo"]) == 0 {
-		    hasPlaquettes = true
+			hasPlaquettes = true
 		} else {
-            if tiglib.InArray("PQ", filtres["valo"]) {
-                hasPlaquettes = true
-            }
+			if tiglib.InArray("PQ", filtres["valo"]) {
+				hasPlaquettes = true
+			}
 		}
 		//
 		bilansActivitesParSaison, err := model.ComputeBilansActivitesParSaison(ctx.DB, ctx.Config.DebutSaison, activites)

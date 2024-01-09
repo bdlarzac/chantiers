@@ -17,8 +17,8 @@ import (
 )
 
 type VolumePrixHT struct {
-    Volume float64
-    PrixHT float64
+	Volume float64
+	PrixHT float64
 }
 
 // Calcule un récapitulatif des choix effetués dans un formulaires contenant des filtres.

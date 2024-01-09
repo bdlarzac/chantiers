@@ -141,8 +141,8 @@ func MajQGis(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 }
 
 type detailsBlocNotes struct {
-    OK        bool
-    Contenu   string
+	OK        bool
+	Contenu   string
 	UrlAction string
 }
 
@@ -152,14 +152,14 @@ func UpdateBlocnotes(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		//
 		// Process form
 		//
-        if err = r.ParseForm(); err != nil {
-            return werr.Wrap(err)
-        }
-        contenu := r.PostFormValue("contenu")
-        err = model.UpdateBlocnotes(ctx.DB, contenu)
-        if err != nil {
-            return werr.Wrap(err)
-        }
+		if err = r.ParseForm(); err != nil {
+			return werr.Wrap(err)
+		}
+		contenu := r.PostFormValue("contenu")
+		err = model.UpdateBlocnotes(ctx.DB, contenu)
+		if err != nil {
+			return werr.Wrap(err)
+		}
 		ctx.Redirect = "/bloc-notes/update/ok"
 		return nil
 	default:
@@ -167,11 +167,11 @@ func UpdateBlocnotes(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 		// Affiche form
 		//
 		vars := mux.Vars(r)
-        _, ok := vars["ok"]
+		_, ok := vars["ok"]
 		contenu, err := model.GetBlocnotes(ctx.DB)
-        if err != nil {
-            return werr.Wrap(err)
-        }
+		if err != nil {
+			return werr.Wrap(err)
+		}
 		ctx.TemplateName = "bloc-notes-form.html"
 		ctx.Page = &ctxt.Page{
 			Header: ctxt.Header{

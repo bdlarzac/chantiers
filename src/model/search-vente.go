@@ -57,30 +57,30 @@ func (v *Vente) ComputeLiensParcelles(db *sqlx.DB) (err error) {
 	}
 	// Cas simple, une vente "autre" est forcément un chantier autre valorisation
 	if v.TypeVente == "autre" {
-        v.LiensParcelles, err = computeLiensParcellesOfChantier(db, "chautre", v.Id)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
-        }
-        return nil
+		v.LiensParcelles, err = computeLiensParcellesOfChantier(db, "chautre", v.Id)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+		}
+		return nil
 	}
 	// Pour les ventes plaquettes, il faut calculer les liens parcelles de tous les chantiers
 	// liés à cette vente (plusieurs possibles si la vente correspond à des chargements sur
 	// différents tas venant de différents chantiers).
 	vp, err := GetVentePlaq(db, v.Id)
-    if err != nil {
-        return werr.Wrapf(err, "Erreur appel GetVentePlaq")
-    }
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel GetVentePlaq")
+	}
 	err = vp.ComputeChantiers(db)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChantiers()")
 	}
-    for _, ch := range vp.Chantiers {
-        liensParcelles, err := computeLiensParcellesOfChantier(db, "plaq", ch.Id)
-        if err != nil {
-            return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
-        }
-        v.LiensParcelles = append(v.LiensParcelles, liensParcelles...)
-    }    
+	for _, ch := range vp.Chantiers {
+		liensParcelles, err := computeLiensParcellesOfChantier(db, "plaq", ch.Id)
+		if err != nil {
+			return werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+		}
+		v.LiensParcelles = append(v.LiensParcelles, liensParcelles...)
+	}
 	return nil
 }
 
@@ -235,25 +235,25 @@ func computeChautreVentreFromFiltresPeriodeEtClientEtValo(db *sqlx.DB, filtrePer
 
 func filtreVente_proprio(db *sqlx.DB, input []*Vente, filtre []string) (res []*Vente, err error) {
 	res = []*Vente{}
-    for _, vente := range input {
-        err = vente.ComputeLiensParcelles(db)
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel vente.ComputeLiensParcelles()")
-        }
-        for _, f := range filtre {
-            idProprio, _ := strconv.Atoi(f)
-            for _, lienParcelle := range vente.LiensParcelles {
-                parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
-                if err != nil {
-                    return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
-                }
-                if parcelle.IdProprietaire == idProprio {
-                    res = append(res, vente)
-                    break
-                }
-            }
-        }
-    }
+	for _, vente := range input {
+		err = vente.ComputeLiensParcelles(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel vente.ComputeLiensParcelles()")
+		}
+		for _, f := range filtre {
+			idProprio, _ := strconv.Atoi(f)
+			for _, lienParcelle := range vente.LiensParcelles {
+				parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
+				if err != nil {
+					return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
+				}
+				if parcelle.IdProprietaire == idProprio {
+					res = append(res, vente)
+					break
+				}
+			}
+		}
+	}
 	return res, nil
 }
 

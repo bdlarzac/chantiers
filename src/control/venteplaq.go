@@ -606,8 +606,8 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 		} else { // coût détaillé
 			pdf.Write(he, "- "+tr(livraison.Conducteur.String()))
 		}
-        pdf.Write(he, ", le "+tr(tiglib.DateFr(livraison.DateLivre)))
-		
+		pdf.Write(he, ", le "+tr(tiglib.DateFr(livraison.DateLivre)))
+
 		y += he
 	}
 	//

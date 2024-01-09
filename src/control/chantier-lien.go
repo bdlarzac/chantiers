@@ -18,6 +18,7 @@ import (
 
 // Calcule les ids ug à partir des champs d'un formulaire chantier
 // Utilisé par
+//
 //	NewPlaq()    UpdatePlaq()
 //	NewChautre() UpdateChautre()
 //	NewChaufer() UpdateChaufer()
@@ -36,6 +37,7 @@ func form2IdsUG(r *http.Request) (ids []int) {
 
 // Calcule les ids lieudit à partir des champs d'un formulaire chantier
 // Utilisé par
+//
 //	NewPlaq()    UpdatePlaq()
 //	NewChautre() UpdateChautre()
 //	NewChaufer() UpdateChaufer()
@@ -54,6 +56,7 @@ func form2IdsLieudit(r *http.Request) (ids []int) {
 
 // Calcule les ids fermier à partir des champs d'un formulaire chantier
 // Utilisé par
+//
 //	NewPlaq()    UpdatePlaq()
 //	NewChautre() UpdateChautre()
 func form2IdsFermier(r *http.Request) (ids []int) {

@@ -3,9 +3,10 @@ Vente de plaquettes, depuis un lieu de stockage
 
 Note: La string stockée dans FactureLivraisonUnite ne vient pas d'une enum.
 Donc les valeurs "km" et "map" sont codées en dur
-    - dans le js de venteplaq-form.html
-    - dans venteplaq-show.html
-    - dans venteplaq-list.html
+  - dans le js de venteplaq-form.html
+  - dans venteplaq-show.html
+  - dans venteplaq-list.html
+
 La valeur est insérée directement en base dans control.ventePlaqForm2var()
 
 Pour afficher sur la facture :
@@ -298,51 +299,52 @@ func (vp *VentePlaq) ComputeChantiers(db *sqlx.DB) error {
 // Pour une période donnée, calcule la quantité de plaquettes (en maps) vendues
 // en répartissant par propriétaire des parcelles où ont eu lieu les chantiers
 // La répartition utilise la surface des parcelles
-// @return 
-//      key = id proprio
-//      value = quantité vendue sur les parcelles de ce proprio, pour toutes les ventes de la période
-func ComputeQuantiteVenteParProprio(db *sqlx.DB, date1, date2 time.Time) (res map[int]float64, err error){
-    res = map[int]float64{}
-    ventes, err := GetVentePlaqsOfPeriod(db, date1, date2)
-    if err != nil {
-        return res, werr.Wrapf(err, "Erreur appel GetVentePlaqsOfPeriod()")
-    }
-    for _, vente := range(ventes){
-        err = vente.ComputeQte(db)
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
-        }
-        err = vente.ComputeChantiers(db)
-        if err != nil {
-            return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChantiers()")
-        }
-        for _, chantier := range(vente.Chantiers){ 
-            liensParcelles, err := computeLiensParcellesOfChantier(db, "plaq", chantier.Id)
-            if err != nil {
-                return res, werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
-            }
-            for _, lienParcelle := range(liensParcelles){
-                parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
-                surfaceParcelle := parcelle.Surface
-                if err != nil {
-                    return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
-                }
-                idProprio := parcelle.IdProprietaire
-                if _, ok := res[idProprio]; !ok {
-                    res[idProprio] = 0
-                }
-                surface := float64(0)
-                if lienParcelle.Entiere {
-                    surface = surfaceParcelle
-                } else {
-                    surface = lienParcelle.Surface
-                }
-                // ICI règle de 3
-                res[idProprio] += vente.Qte * surface / surfaceParcelle
-            }
-        }
-    }
-    return res, nil
+// @return
+//
+//	key = id proprio
+//	value = quantité vendue sur les parcelles de ce proprio, pour toutes les ventes de la période
+func ComputeQuantiteVenteParProprio(db *sqlx.DB, date1, date2 time.Time) (res map[int]float64, err error) {
+	res = map[int]float64{}
+	ventes, err := GetVentePlaqsOfPeriod(db, date1, date2)
+	if err != nil {
+		return res, werr.Wrapf(err, "Erreur appel GetVentePlaqsOfPeriod()")
+	}
+	for _, vente := range ventes {
+		err = vente.ComputeQte(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeQte()")
+		}
+		err = vente.ComputeChantiers(db)
+		if err != nil {
+			return res, werr.Wrapf(err, "Erreur appel VentePlaq.ComputeChantiers()")
+		}
+		for _, chantier := range vente.Chantiers {
+			liensParcelles, err := computeLiensParcellesOfChantier(db, "plaq", chantier.Id)
+			if err != nil {
+				return res, werr.Wrapf(err, "Erreur appel computeLiensParcellesOfChantier()")
+			}
+			for _, lienParcelle := range liensParcelles {
+				parcelle, err := GetParcelle(db, lienParcelle.IdParcelle)
+				surfaceParcelle := parcelle.Surface
+				if err != nil {
+					return res, werr.Wrapf(err, "Erreur appel GetParcelle()")
+				}
+				idProprio := parcelle.IdProprietaire
+				if _, ok := res[idProprio]; !ok {
+					res[idProprio] = 0
+				}
+				surface := float64(0)
+				if lienParcelle.Entiere {
+					surface = surfaceParcelle
+				} else {
+					surface = lienParcelle.Surface
+				}
+				// ICI règle de 3
+				res[idProprio] += vente.Qte * surface / surfaceParcelle
+			}
+		}
+	}
+	return res, nil
 }
 
 // ************************** CRUD *******************************

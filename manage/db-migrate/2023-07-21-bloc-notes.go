@@ -23,8 +23,8 @@ func Migrate_2023_07_21_bloc_notes(ctx *ctxt.Context) {
 	if err != nil {
 		panic(err)
 	}
-    stmt, err := db.Prepare("insert into blocnotes(contenu) VALUES($1)")
-    _, err = stmt.Exec("")
+	stmt, err := db.Prepare("insert into blocnotes(contenu) VALUES($1)")
+	_, err = stmt.Exec("")
 	if err != nil {
 		panic(err)
 	}

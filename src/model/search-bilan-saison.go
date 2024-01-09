@@ -24,13 +24,13 @@ type ActiviteParSaison struct {
 // Contient les bilans pour une saison donnée
 // Pour simplifier l'affichage, les activités plaquettes sont stockées séparément
 type BilanActivitesParSaison struct {
-	Datedeb                            time.Time
-	Datefin                            time.Time
+	Datedeb time.Time
+	Datefin time.Time
 	// toutes activités sauf plaquettes
-	TotalActivitesParValoEtProprio     map[string]map[int]VolumePrixHT // map[code valo][id proprio]
+	TotalActivitesParValoEtProprio map[string]map[int]VolumePrixHT // map[code valo][id proprio]
 	// uniquement plaquettes
 	TotalActivitesPlaquettesParProprio map[int]VolumePrixHT // key = id proprio
-	TotalVentePlaquettesParProprio     map[int]float64     // key = id proprio - value = total vendu
+	TotalVentePlaquettesParProprio     map[int]float64      // key = id proprio - value = total vendu
 }
 
 func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites []*Activite) (result []*BilanActivitesParSaison, err error) {
@@ -45,14 +45,14 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 		if len(activiteParSaison.Activites) == 0 {
 			continue // exclut les saisons sans activités des bilans
 		}
-        newRes := BilanActivitesParSaison{
-            Datedeb: activiteParSaison.Datedeb,
-            Datefin: activiteParSaison.Datefin,
-        }
-        newRes.TotalActivitesParValoEtProprio = make(map[string]map[int]VolumePrixHT)
-        newRes.TotalActivitesPlaquettesParProprio = make(map[int]VolumePrixHT)
-        newRes.TotalVentePlaquettesParProprio = make(map[int]float64)
-        //
+		newRes := BilanActivitesParSaison{
+			Datedeb: activiteParSaison.Datedeb,
+			Datefin: activiteParSaison.Datefin,
+		}
+		newRes.TotalActivitesParValoEtProprio = make(map[string]map[int]VolumePrixHT)
+		newRes.TotalActivitesPlaquettesParProprio = make(map[int]VolumePrixHT)
+		newRes.TotalVentePlaquettesParProprio = make(map[int]float64)
+		//
 		for _, activite := range activiteParSaison.Activites {
 			valo := activite.TypeValo
 			// initialisation
@@ -65,10 +65,10 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 				return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
 			}
 			for idProprio, surface := range activite.SurfaceParProprio {
-			    // initialisation
-                if _, ok := newRes.TotalActivitesParValoEtProprio[valo][idProprio]; !ok {
-                    newRes.TotalActivitesParValoEtProprio[valo][idProprio] = VolumePrixHT{}
-                }
+				// initialisation
+				if _, ok := newRes.TotalActivitesParValoEtProprio[valo][idProprio]; !ok {
+					newRes.TotalActivitesParValoEtProprio[valo][idProprio] = VolumePrixHT{}
+				}
 				// ici, prix par proprio et volume par proprio proportionnels à la surface
 				entry := newRes.TotalActivitesParValoEtProprio[valo][idProprio]
 				entry.PrixHT += activite.PrixHT * surface / activite.SurfaceTotale
@@ -77,16 +77,16 @@ func ComputeBilansActivitesParSaison(db *sqlx.DB, debutSaison string, activites 
 			}
 		} // end loop sur activiteParSaison.Activites
 		// si besoin, trasfère les activités plaquettes dans le bon champ
-        if _, ok := newRes.TotalActivitesParValoEtProprio["PQ"]; ok {
-            newRes.TotalActivitesPlaquettesParProprio = newRes.TotalActivitesParValoEtProprio["PQ"]
-            delete(newRes.TotalActivitesParValoEtProprio, "PQ")
-        }
-        // ventes
-        newRes.TotalVentePlaquettesParProprio, err = ComputeQuantiteVenteParProprio(db, activiteParSaison.Datedeb, activiteParSaison.Datefin)
-        if err != nil {
-            return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
-        }
-        //
+		if _, ok := newRes.TotalActivitesParValoEtProprio["PQ"]; ok {
+			newRes.TotalActivitesPlaquettesParProprio = newRes.TotalActivitesParValoEtProprio["PQ"]
+			delete(newRes.TotalActivitesParValoEtProprio, "PQ")
+		}
+		// ventes
+		newRes.TotalVentePlaquettesParProprio, err = ComputeQuantiteVenteParProprio(db, activiteParSaison.Datedeb, activiteParSaison.Datefin)
+		if err != nil {
+			return result, werr.Wrapf(err, "Erreur appel activite.ComputeSurfaceParProprio()")
+		}
+		//
 		result = append(result, &newRes)
 	} // end loop sur activitesParSaison
 	return result, nil

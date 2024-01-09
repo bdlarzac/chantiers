@@ -11,7 +11,8 @@ import (
 
 // Renvoie les parcelles correspondant à plusieurs UGs.
 // @param  vars["ids"] string contenant les ids numériques des UGs, séparés par des virgules.0
-//         ex : 12,35,87
+//
+//	ex : 12,35,87
 func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	parcelles, err := model.GetParcellesFromIdsUGs(ctx.DB, vars["ids"])
@@ -19,11 +20,11 @@ func GetParcellesFromIdsUGs(ctx *ctxt.Context, w http.ResponseWriter, r *http.Re
 		return err
 	}
 	type respElement struct {
-		Id      int                `json:"id"`
-		Name    string             `json:"name"`
-		Commune *model.Commune     `json:"commune"`
-		Surface float64            `json:"surface"`
-		Proprietaire *model.Acteur `json:"proprietaire"`
+		Id           int            `json:"id"`
+		Name         string         `json:"name"`
+		Commune      *model.Commune `json:"commune"`
+		Surface      float64        `json:"surface"`
+		Proprietaire *model.Acteur  `json:"proprietaire"`
 	}
 	var resp []respElement
 	for _, p := range parcelles {
