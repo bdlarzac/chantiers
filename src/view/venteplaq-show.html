@@ -61,17 +61,11 @@
         </div>
     {{end}}
     
-    <span class="padding-top">Prix total HT</span>
-    <span class="padding-top bold"><script>document.write(formatNb(round(prixTotalHT, 2)));</script></span>
-    
-    <span>Prix total TTC</span>
-    <span class="bold"><script>document.write(formatNb(round(prixTotalTTC, 2)));</script></span>
-    
 </div>
 </div>
 
 <div class="padding-left padding-right border-right">
-<div class="margin-bottom bold">Prix plaquettes</div>
+<div class="margin-bottom bold center">Prix plaquettes</div>
 <div class="grid2-pres">
     <span>Quantité</span>
     <span class="bold"><script>document.write(formatNb({{.Qte}}));</script> maps</span>
@@ -92,7 +86,7 @@
 
 {{if .FactureLivraison}}
 <div class="padding-left padding-right border-right">
-<div class="margin-bottom bold">Prix Livraison</div>
+<div class="margin-bottom bold center">Prix Livraison</div>
 <div class="grid2-pres">
     <span>Quantité</span>
     <span class="bold"><script>document.write(formatNb({{.FactureLivraisonNbKm}}));</script> {{.FactureLivraisonUnite}}</span>
@@ -111,6 +105,26 @@
 </div>
 </div>
 {{end}}
+
+<div class="padding-left padding-right border-right">
+<div class="margin-bottom bold center">Prix Total</div>
+<div class="grid2-pres">
+    <span>&nbsp;</span>
+    <span>&nbsp;</span>
+    
+    <span>&nbsp;</span>
+    <span>&nbsp;</span>
+    
+    <span>Prix total HT</span>
+    <span class="bold"><script>document.write(formatNb(round(prixTotalHT, 2)));</script></span>
+    
+    <span>&nbsp;</span>
+    <span>&nbsp;</span>
+    
+    <span>Prix total TTC</span>
+    <span class="bold"><script>document.write(formatNb(round(prixTotalTTC, 2)));</script></span>
+</div>
+</div>
 
 </div><!-- end class="flex-wrap" -->
 
