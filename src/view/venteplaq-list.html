@@ -46,18 +46,18 @@
 {{end}}
 {{range .Details.Ventes}}
         <tr>
-            <td>
             <script>
                 prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
                 prixLivraisonHT = 0;
                 prixTotalHT = prixPlaquettesHT;
                 {{if .FactureLivraison}}
-                    prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.Qte}});
+                    prixLivraisonHT += prixHT({{.FactureLivraisonPUHT}}, {{.FactureLivraisonNbKm}});
                 {{end}}
                 prixPlaquettesTTC = prixTTC(prixPlaquettesHT, {{.TVA}});
                 prixLivraisonTTC = prixTTC(prixLivraisonHT, {{.FactureLivraisonTVA}});
                 prixTotalTTC = prixPlaquettesTTC + prixLivraisonTTC;
             </script>
+            <td>
                 <a href="#" onclick='showVentePlaqFacture({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
                     <img src="/static/img/facture.png" title="Voir la facture" />
                 </a>
@@ -76,8 +76,12 @@
                 {{/* data-titre : hack pour trier par titre, cf table-sort.js */}}
                 <span data-titre="{{.StringSansDate}}"><a href="/vente/{{.Id}}">{{.StringSansDate}}</a></span>
             </td>
-            <td class="right"><script>document.write(formatNb({{.Qte}}));</script> maps</td>
-            <td class="right"><script>document.write(formatNb(round(prixTotalTTC, 2)));</script> &euro;</td>
+            <td class="right">
+                <script>document.write(formatNb({{.Qte}}));</script> maps
+            </td>
+            <td class="right">
+                <script>document.write(formatNb(round(prixTotalTTC, 2)));</script> &euro;
+            </td>
             <td>{{.FactureLivraisonUnite}}</td>
             <td>{{.NumFacture}}</td>
             <td>{{.DateFacture | dateFr}}</td>

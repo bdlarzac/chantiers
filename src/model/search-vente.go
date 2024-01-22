@@ -31,7 +31,6 @@ type Vente struct {
 	CodeEssence string
 	PrixHT      float64
 	PUHT        float64
-	TVA         float64
 	NumFacture  string
 	DateFacture time.Time
 	Notes       string
@@ -280,7 +279,6 @@ func ventePlaq2Vente(db *sqlx.DB, vp *VentePlaq) (v *Vente, err error) {
 	v.CodeEssence = "PS"
 	v.PrixHT = vp.PUHT * vp.Qte
 	v.PUHT = vp.PUHT
-	v.TVA = vp.TVA
 	v.NumFacture = vp.NumFacture
 	v.DateFacture = vp.DateFacture
 	v.Notes = vp.Notes
@@ -300,7 +298,6 @@ func chautre2Vente(db *sqlx.DB, ch *Chautre) (v *Vente, err error) {
 	v.CodeEssence = ch.Essence
 	v.PrixHT = ch.PUHT * ch.VolumeRealise
 	v.PUHT = ch.PUHT
-	v.TVA = ch.TVA
 	v.NumFacture = ch.NumFacture
 	v.DateFacture = ch.DateFacture
 	v.Notes = ch.Notes

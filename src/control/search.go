@@ -1,7 +1,7 @@
 /*
 Fonctions auxiliaires liées à la recherche au niveau controller.
-Fonctions communes à la recherche d'activités et de à la recherche de ventes.
-Voir activite-search.go, vente-search.go pour le contrôle des formulaires de recherche.
+Fonctions communes à la recherche d'activités et à la recherche de ventes.
+Voir search-activite.go, search-vente.go pour le contrôle des formulaires de recherche.
 
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
