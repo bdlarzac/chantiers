@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Leaflet.js test</title>
+    <link rel="copyright" href="http://www.gnu.org/copyleft/gpl.html">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    </script>
+    <script src="geojson/typo_psg.geojson.js" type="text/javascript"></script>
+    <style>
+        #mapid{width:1000px; height:800px;}
+    </style>
+</head>
+
+<!-- 
+https://leafletjs.com/examples/geojson/
+https://leafletjs.com/reference.html#geojson
+-->
+<body>
+<div id="mapid"></div>
+<div id="debug"></div>
+<script>
+    //const mymap = L.map('mapid').setView([51.505, -0.09], 13);         // Londres
+    //const mymap = L.map('mapid').setView([44.09987, 3.2425], 11);      // La Resse 
+	const mymap = L.map('mapid').setView([44.0058045, 3.223307], 13);    // Centre zone BDL
+	//
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(mymap);
+    /* 
+    //
+	const circle = L.circle([44.09987, 3.2425], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 500
+    }).addTo(mymap);
+    circle.bindPopup("Here is La Resse.");
+    */
+    //
+    const dopopup = false;
+    if(dopopup){
+        const popup = L.popup();
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent(e.latlng.toString())
+                .openOn(mymap);
+        }
+        mymap.on('click', onMapClick);
+    }
+    //
+    const typo_psg_layer = L.geoJSON().addTo(mymap);
+    typo_psg_layer.addData(typo_psg_geojson);
+    //
+    function onEachFeature(feature, layer) {
+        if (feature.properties && feature.properties.Surf_SIG) {
+            layer.bindPopup(feature.properties.Surf_SIG);
+        }
+    }
+    const N = typo_psg_geojson.features.length; // 720
+    // ne marche pas
+    for(let i = 0; i < N; i++){
+        L.geoJSON(typo_psg_geojson.features[i], {
+            onEachFeature: onEachFeature
+        }).addTo(mymap);
+    }
+</script>
+
+<script>
+//document.getElementById('debug').innerHTML = 'Pas de limite';
+</script>
+
+</body>
+</html>
