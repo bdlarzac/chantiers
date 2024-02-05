@@ -13,6 +13,9 @@ manage/sctl-data
 
 # convention, files marked for deletion
 z.*
+# convention, files for local usage only
+y.*
+1.*
 
 #
 # editor and temporary stuff

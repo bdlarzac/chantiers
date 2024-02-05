@@ -14,13 +14,21 @@
     >
     
     {{if .Details.Recents}}
-    <div class="margin-left">
+    <div class="margin-left2">
         <h2>Activité récente</h2>
         <ul class="naked">
         {{range .Details.Recents}}
             <li class="padding-bottom02"><a href="{{.URL}}">{{.Label}}</a></li>
         {{end}}
         </ul>
+        
+        <a href="/doc/leaflet.js/leaflet-test.html"><h2>Test Cartographie</h2></a>
+        <div class="margin-top center">
+            <a href="/doc/leaflet.js/leaflet-test.html">
+                <img src="/doc/leaflet.js/doc/screenshot1.jpg" class="border" title="Test cartographie" alt="Test cartographie">
+            </a>
+        </div>
+        
     </div>
     {{end}}
     
