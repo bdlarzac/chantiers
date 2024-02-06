@@ -18,8 +18,8 @@ CREATE USER bdl;
 ALTER ROLE bdl WITH CREATEDB;
 ALTER USER bdl WITH ENCRYPTED PASSWORD 'mon_mot_de_passe';
 CREATE DATABASE bdlchantiers OWNER bdl;
--- si besoin de créer un schéma différent de public :
-CREATE SCHEMA mon_schema;
+CREATE SCHEMA bdlprod AUTHORIZATION bdl;
+CREATE SCHEMA bdlbeta AUTHORIZATION bdl;
 \q
 exit
 
@@ -112,6 +112,20 @@ Install version de test sur le server
 sudo -H certbot-auto --rsa-key-size 4096 --apache -d bdl.larzac.info
 
 
+Docker
+---------------------------------------------------------------------------------------------------
+cd /path/to/bdl (directory containing Dockerfile)
+docker build --tag bdl .
+
+docker run --rm -it -p 8013:8012  bdl
+
+Visit
+http://localhost:8013/
+
+# pour aller voir dans le docker :
+docker run -i -t bdl /bin/bash
+
+---------------------------------------------------------------------------------------------------
 Obslolete, refaire avec go.mod
 ---------------------------------------------------------------------------------------------------
 go get github.com/lib/pq
