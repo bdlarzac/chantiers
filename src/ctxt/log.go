@@ -11,9 +11,15 @@
 package ctxt
 
 import (
+    "log"
 	"bdl.local/bdl/generic/wilk/werr"
+	"net/http"
 )
 
 func LogError(err error) {
 	werr.Print(err)
+}
+
+func LogRequest(r *http.Request) {
+    log.Printf("%s", r.URL)
 }

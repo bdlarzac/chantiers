@@ -13,6 +13,7 @@ import (
 	"mime"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"bdl.local/bdl/control"
@@ -164,6 +165,7 @@ func main() {
 	r.NotFoundHandler = http.HandlerFunc(notFound)
 
 	r.Use(contentTypeMiddleware)
+	r.Use(logRequestMiddleware)
 
 	addr := model.SERVER_ENV.RUN_SERVER_ADDR + ":" + model.SERVER_ENV.PORT
 	srv := &http.Server{
@@ -186,6 +188,8 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		ctx := ctxt.NewContext()
+		//
+//		ctxt.LogRequest(r)
 		//
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		//
@@ -311,13 +315,7 @@ func showErrorPage(theErr error, ctx *ctxt.Context, w http.ResponseWriter, r *ht
 	}
 }
 
-/*
-*
-
-	Adds a "Content-Type" header to the response
-
-*
-*/
+// Adds a "Content-Type" header to the response
 func contentTypeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ext := filepath.Ext(r.URL.String())
@@ -337,6 +335,17 @@ func contentTypeMiddleware(next http.Handler) http.Handler {
 			contentType = mime.TypeByExtension(ext)
 		}
 		w.Header().Add("Content-Type", contentType+";charset=utf-8")
+		// Call the next handler, which can be another middleware in the chain, or the final handler.
+		next.ServeHTTP(w, r)
+	})
+}
+
+// Logs the request 
+func logRequestMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if !strings.HasPrefix(r.RequestURI, "/static") && !strings.HasPrefix(r.RequestURI, "/view"){
+            ctxt.LogRequest(r)
+        }
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		next.ServeHTTP(w, r)
 	})

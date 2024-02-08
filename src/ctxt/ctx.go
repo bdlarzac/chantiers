@@ -1,14 +1,10 @@
 /*
-*****************************************************************************
+Contexte, contient les variables utiles à toutes les pages
 
-	Contexte, contient les variables utiles à toutes les pages
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-	@history    2019-12-11 14:42:24+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@history    2019-12-11 14:42:24+01:00, Thierry Graff : Creation
 */
 package ctxt
 
