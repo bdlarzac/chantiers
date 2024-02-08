@@ -343,7 +343,7 @@ func contentTypeMiddleware(next http.Handler) http.Handler {
 // Logs the request 
 func logRequestMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        if !strings.HasPrefix(r.RequestURI, "/static") && !strings.HasPrefix(r.RequestURI, "/view"){
+        if !strings.HasPrefix(r.RequestURI, "/static") && !strings.HasPrefix(r.RequestURI, "/view") && !strings.HasPrefix(r.RequestURI, "/favicon"){
             ctxt.LogRequest(r)
         }
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
