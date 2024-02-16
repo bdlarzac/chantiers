@@ -31,13 +31,21 @@
             --- DEV ---
         </div>
     {{end}}
-    <div style="position:fixed; top:4px; right:4px; z-index:1000;">
+    <div style="
+        position:fixed;
+        top:2px; right:4px;
+        z-index:1200;"
+    >
         <img 
             src="/static/img/blocnotes.jpg"
-            alt="Voir le bloc-notes"
+            onclick="showBlocnotes()"
+            alt="Bloc-notes"
             title="Voir le bloc-notes"
             class="cursor-pointer"
-            onclick="showBlocnotes()"
+            style="
+                border:2px solid black;
+                border-radius: 6px;
+            "
         >
     </div>
 <div class="content">

@@ -57,6 +57,7 @@ func main() {
 	r.HandleFunc("/maj-qgis", H(control.MajQGis))
 	r.HandleFunc("/bloc-notes/update", H(control.UpdateBlocnotes))
 	r.HandleFunc("/bloc-notes/update/{ok}", H(control.UpdateBlocnotes))
+	r.HandleFunc("/carte", H(control.ShowCarte))
 
 	r.HandleFunc("/activite/recherche", H(control.SearchActivite))
 	r.HandleFunc("/activite/recherche/{tab}", H(control.SearchActivite))

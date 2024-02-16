@@ -3,7 +3,7 @@
     position: fixed;
     top: -16px;
     width: 100%;
-    z-index: 12;
+    z-index: 1000;
     background:var(--main-bg-color); /* définie en début de style.css */
 }
 

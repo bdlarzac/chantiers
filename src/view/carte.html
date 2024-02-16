@@ -1,0 +1,87 @@
+{{/* 
+https://leafletjs.com/examples/geojson/
+https://leafletjs.com/reference.html#geojson
+https://leafletjs.com/reference.html#path-option
+*/}}
+
+<style>
+#mapid{
+    position:absolute;
+    top:48px;
+    bottom:0;
+    /* width:calc(100% - 15rem); */
+    width:100%;
+    z-index:0;
+}
+</style>
+<div id="mapid"></div>
+<script>
+	const mymap = L.map('mapid').setView([44.005805, 3.223307], 13);    // Centre zone BDL
+	//
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(mymap);
+    // Ajout des données venant de QGis
+    const typo_psg_style = {
+        'color': '#000000',
+//        'stroke': false,
+        'weight': 2,
+//        'fill': false,
+//        'fillColor': '#ff7800',
+    };
+    const typo_psg_layer = L.geoJSON(
+        typo_psg_geojson, {
+            'style': typo_psg_style
+        }
+    ).addTo(mymap);
+//    typo_psg_layer.addData(typo_psg_geojson);
+    //
+//    const parcelle_layer = L.geoJSON().addTo(mymap);
+//    parcelle_layer.addData(parcelle_geojson);
+    //
+/* 
+    function onEachFeature(feature, layer) {
+        if (feature.properties && feature.properties.Surf_SIG) {
+            layer.bindPopup(feature.properties.Surf_SIG);
+        }
+    }
+    const N = typo_psg_geojson.features.length; // 720
+    // ne marche pas
+    for(let i = 0; i < N; i++){
+        L.geoJSON(typo_psg_geojson.features[i], {
+            onEachFeature: onEachFeature
+        }).addTo(mymap);
+    }
+*/
+</script>
+
+<style>
+    #form-carte{
+        z-index:100;
+        position:absolute;
+        right:10px;
+        top:55px;
+        border-radius:5px;
+    }
+</style>
+<form class="form" id="form-carte" novalidate>
+    <div>
+        <input type="checkbox" name="show-ugs" id="show-ugs" checked onchange="showHideUGs();">
+        <label class="" for="show-ugs">UGs</label>
+    </div>
+    <div>
+        <input type="checkbox" name="show-parcelles" id="show-parcelles" onchange="showHideParcelles();">
+        <label class="" for="show-parcelles">Parcelles</label>
+    </div>
+</form>
+
+
+<script>
+
+function showHideUGs(){
+}
+function showHideParcelles(){
+}
+
+</script>
