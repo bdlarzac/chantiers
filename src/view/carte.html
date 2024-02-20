@@ -16,12 +16,59 @@ https://leafletjs.com/reference.html#path-option
 </style>
 <div id="mapid"></div>
 <script>
-	const mymap = L.map('mapid').setView([44.005805, 3.223307], 13);    // Centre zone BDL
+//    const showHideable_group = L.layerGroup();
+
+    // Layers
+    const osm_layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	});
+	//
+    const typo_psg_style = {
+        'color': '#000000',
+        'weight': 2,
+    };
+    const typo_psg_layer = L.geoJSON(
+        typo_psg_geojson, { // typo_psg_geojson défini dans static/data-carto/typo_psg.geojson.js
+            'style': typo_psg_style
+        }
+    );
+	//
+/* 
+    const parcelle_style = {
+        'weight': 1,
+    };
+    const parcelle_layer = L.geoJSON(
+        parcelle_geojson, { // parcelle_geojson défini dans static/data-carto/parcelle.geojson.js
+            'style': parcelle_style
+        }
+    );
+*/
+	// map
+    const bdlMap = L.map('mapid', {
+        center: [44.005, 3.223],
+        zoom: 13,
+//        layers: [osm_layer, typo_psg_layer, parcelle_layer]
+        layers: [osm_layer, typo_psg_layer]
+    });
+    // control, pour showHide
+	const baseLayers = {
+	    'Fond OpenStreetMap': osm_layer
+	};
+	const overlayLayers = {
+	    'UGs': typo_psg_layer,
+//	    'Parcelles': parcelle_layer
+	};
+    const layerControl = L.control.layers(baseLayers, overlayLayers).addTo(bdlMap);
+    
+/* 
+///////////// Version op
+	const bdlMap = L.map('mapid').setView([44.005805, 3.223307], 13);    // Centre zone BDL
 	//
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(mymap);
+    }).addTo(bdlMap);
     // Ajout des données venant de QGis
     const typo_psg_style = {
         'color': '#000000',
@@ -34,12 +81,15 @@ https://leafletjs.com/reference.html#path-option
         typo_psg_geojson, {
             'style': typo_psg_style
         }
-    ).addTo(mymap);
+    ).addTo(bdlMap);
 //    typo_psg_layer.addData(typo_psg_geojson);
     //
-//    const parcelle_layer = L.geoJSON().addTo(mymap);
+//    const parcelle_layer = L.geoJSON().addTo(bdlMap);
 //    parcelle_layer.addData(parcelle_geojson);
     //
+*/
+
+
 /* 
     function onEachFeature(feature, layer) {
         if (feature.properties && feature.properties.Surf_SIG) {
@@ -51,7 +101,7 @@ https://leafletjs.com/reference.html#path-option
     for(let i = 0; i < N; i++){
         L.geoJSON(typo_psg_geojson.features[i], {
             onEachFeature: onEachFeature
-        }).addTo(mymap);
+        }).addTo(bdlMap);
     }
 */
 </script>
@@ -61,7 +111,7 @@ https://leafletjs.com/reference.html#path-option
         z-index:100;
         position:absolute;
         right:10px;
-        top:55px;
+        top:355px;
         border-radius:5px;
     }
 </style>
@@ -81,6 +131,7 @@ https://leafletjs.com/reference.html#path-option
 
 function showHideUGs(){
 }
+
 function showHideParcelles(){
 }
 
