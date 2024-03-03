@@ -13,24 +13,68 @@ https://leafletjs.com/reference.html#path-option
     width:100%;
     z-index:0;
 }
+#mapid .labelUG{
+  width:0
+  height:0;
+  border: 0;
+  padding: 0;
+}
+#mapid .labelUG span{
+    font-weight:bold;
+    color:yellow;
+    display:inline-block;
+    padding:3px;
+    transform:translate(-50%, -50%);
+}
 </style>
 <div id="mapid"></div>
 <script>
-//    const showHideable_group = L.layerGroup();
+    //
+    // Listeners
+    //
+    function highlightUG(e) {
+        const layer = e.target;
+        layer.setStyle({
+            weight: 5,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7,
+        });
+        layer.bringToFront();
+        const label = 'UG ' + pg2codeUG(e.target.feature.properties.PG);
+        document.getElementById('details-selected').innerHTML = label;
+    }
+    function resetHighlightUG(e) {
+        ug_layer.resetStyle(e.target);
+        document.getElementById('details-selected').innerHTML = '';
+    }
+    
+    //
+    // onEachFeature
+    //
+    function onEachFeature_ug(feature, layer) {
+        layer.on({
+            mouseover: highlightUG,
+            mouseout: resetHighlightUG,
+        });
+    }
 
+    //
     // Layers
+    //
     const osm_layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	});
 	//
-    const typo_psg_style = {
-        'color': '#000000',
-        'weight': 2,
+    const ug_style = {
+        color: '#000000',
+        weight: 2,
     };
-    const typo_psg_layer = L.geoJSON(
-        typo_psg_geojson, { // typo_psg_geojson défini dans static/data-carto/typo_psg.geojson.js
-            'style': typo_psg_style
+    const ug_layer = L.geoJSON(
+        ug_geojson, { // ug_geojson défini dans static/data-carto/ug.geojson.js
+            style: ug_style,
+            onEachFeature: onEachFeature_ug,
         }
     );
 	//
@@ -44,95 +88,81 @@ https://leafletjs.com/reference.html#path-option
         }
     );
 */
+    //
 	// map
+	//
     const bdlMap = L.map('mapid', {
         center: [44.005, 3.223],
         zoom: 13,
-//        layers: [osm_layer, typo_psg_layer, parcelle_layer]
-        layers: [osm_layer, typo_psg_layer]
+//        layers: [osm_layer, ug_layer, parcelle_layer]
+        layers: [osm_layer, ug_layer]
     });
-    // control, pour showHide
+    
+    //
+    // control, pour showHide layers
+    //
 	const baseLayers = {
 	    'Fond OpenStreetMap': osm_layer
 	};
 	const overlayLayers = {
-	    'UGs': typo_psg_layer,
+	    'UGs': ug_layer,
 //	    'Parcelles': parcelle_layer
 	};
-    const layerControl = L.control.layers(baseLayers, overlayLayers).addTo(bdlMap);
+    const layerControl = L.control.layers(baseLayers, overlayLayers,{collapsed:false}).addTo(bdlMap);
     
-/* 
-///////////// Version op
-	const bdlMap = L.map('mapid').setView([44.005805, 3.223307], 13);    // Centre zone BDL
-	//
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(bdlMap);
-    // Ajout des données venant de QGis
-    const typo_psg_style = {
-        'color': '#000000',
-//        'stroke': false,
-        'weight': 2,
-//        'fill': false,
-//        'fillColor': '#ff7800',
-    };
-    const typo_psg_layer = L.geoJSON(
-        typo_psg_geojson, {
-            'style': typo_psg_style
-        }
-    ).addTo(bdlMap);
-//    typo_psg_layer.addData(typo_psg_geojson);
     //
-//    const parcelle_layer = L.geoJSON().addTo(bdlMap);
-//    parcelle_layer.addData(parcelle_geojson);
+    // Labels
     //
-*/
-
-
-/* 
-    function onEachFeature(feature, layer) {
-        if (feature.properties && feature.properties.Surf_SIG) {
-            layer.bindPopup(feature.properties.Surf_SIG);
+    const ugLabels = new L.FeatureGroup();
+    const nUgs = ug_geojson.features.length; // 720
+    let myLabel, myCoords;
+    for(let i = 0; i < nUgs; i++){
+        myLabel = pg2codeUG(ug_geojson.features[i].properties.PG);
+        const myDivIcon = L.divIcon({
+            className: 'labelUG',
+            html: '<span>' + myLabel + '</span>',
+        });
+        myCoords = L.polygon(ug_geojson.features[i].geometry.coordinates).getBounds().getCenter();
+        const myMarker = L.marker([myCoords['lng'], myCoords['lat']], {icon: myDivIcon}).addTo(bdlMap);
+        ugLabels.addLayer(myMarker);
+    }
+    bdlMap.on('zoomend', function(){
+        if (bdlMap.getZoom() < 15){
+            bdlMap.removeLayer(ugLabels);
         }
+        else{
+            bdlMap.addLayer(ugLabels);
+        }
+    });
+    // Ne pas afficher les labels lors de l'affichage initial
+    bdlMap.addLayer(ugLabels);
+    bdlMap.removeLayer(ugLabels);
+    
+    //
+    // Fonctions auxiliaires
+    //
+    
+    /**
+        Calcule le code UG à partir de la propriété
+        PG d'une feature de la couche des UGs.
+    **/
+    function pg2codeUG(pg){
+        return pg === null ? '' : pg;
     }
-    const N = typo_psg_geojson.features.length; // 720
-    // ne marche pas
-    for(let i = 0; i < N; i++){
-        L.geoJSON(typo_psg_geojson.features[i], {
-            onEachFeature: onEachFeature
-        }).addTo(bdlMap);
-    }
-*/
 </script>
 
+<!-- Affichage des détails de l'élément sélectionné -->
 <style>
     #form-carte{
         z-index:100;
         position:absolute;
-        right:10px;
-        top:355px;
+        right:3px;
+        top:155px;
         border-radius:5px;
+        min-width:10.5rem;
     }
 </style>
 <form class="form" id="form-carte" novalidate>
-    <div>
-        <input type="checkbox" name="show-ugs" id="show-ugs" checked onchange="showHideUGs();">
-        <label class="" for="show-ugs">UGs</label>
-    </div>
-    <div>
-        <input type="checkbox" name="show-parcelles" id="show-parcelles" onchange="showHideParcelles();">
-        <label class="" for="show-parcelles">Parcelles</label>
-    </div>
+    <div class="bold big2 center">Détails</div>
+    <div id="details-selected"></div>
 </form>
-
-
-<script>
-
-function showHideUGs(){
-}
-
-function showHideParcelles(){
-}
-
-</script>

@@ -8,9 +8,10 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/lib/pq v1.3.0
-	golang.org/x/text v0.3.3
-	google.golang.org/appengine v1.6.7
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 )
 
-require golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
+require (
+	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
+	google.golang.org/appengine v1.6.7 // indirect
+)

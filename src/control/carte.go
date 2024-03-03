@@ -18,7 +18,7 @@ func ShowCarte(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error 
 			Title: "Cartographie",
 			JSFiles: []string{
 				"/static/lib/leaflet/leaflet.js",
-				"/static/data-carto/typo_psg.geojson.js",
+				"/static/data-carto/ug.geojson.js",
 //				"/static/data-carto/parcelle.geojson.js",
 			},
 			CSSFiles: []string{

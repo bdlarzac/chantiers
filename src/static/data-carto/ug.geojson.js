@@ -1,4 +1,4 @@
-const typo_psg_geojson = {
+const ug_geojson = {
 "type": "FeatureCollection",
 "name": "typo_psg",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
