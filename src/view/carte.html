@@ -32,7 +32,7 @@ https://leafletjs.com/reference.html#path-option
     //
     // Listeners
     //
-    function highlightUG(e) {
+    async function highlightUG(e) {
         const layer = e.target;
         layer.setStyle({
             weight: 5,
@@ -41,12 +41,13 @@ https://leafletjs.com/reference.html#path-option
             fillOpacity: 0.7,
         });
         layer.bringToFront();
-        const label = 'UG ' + pg2codeUG(e.target.feature.properties.PG);
-        document.getElementById('details-selected').innerHTML = label;
+        const codeUG = pg2codeUG(e.target.feature.properties.PG);
+        const idUG = await getIdUGFromCode(codeUG);
+        document.getElementById('details-selected').innerHTML = '<a href="/ug/' + idUG + '">UG ' + codeUG + '</a>';
     }
     function resetHighlightUG(e) {
         ug_layer.resetStyle(e.target);
-        document.getElementById('details-selected').innerHTML = '';
+        //document.getElementById('details-selected').innerHTML = '';
     }
     
     //
@@ -148,6 +149,21 @@ https://leafletjs.com/reference.html#path-option
     **/
     function pg2codeUG(pg){
         return pg === null ? '' : pg;
+    }
+    
+    /** 
+        Récupère en ajax l'id UG correspondant à un code UG.
+        Si le code ne correspond pas à une UG, renvoie 0.
+    **/
+    async function getIdUGFromCode(code){
+        let result = 0;
+        const url = "/ajax/get/id-ug-from-code/" + code;
+        const response = await fetch(url);
+        if(response == null){
+            return result;
+        }
+        result = await response.json();
+        return result;
     }
 </script>
 

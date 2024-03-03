@@ -11,7 +11,7 @@ import (
 
 // Renvoie l'id de l'UG correspondant au code,
 // ou 0 si aucune UG ne correspond
-func GetUGFromCode(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
+func GetIdUGFromCode(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	var resp int
 	ug, err := model.GetUGFromCode(ctx.DB, vars["code"])

@@ -48,7 +48,7 @@ func main() {
 	r.HandleFunc("/ajax/get/parcelles-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetParcellesFromIdsUGs))
 	r.HandleFunc("/ajax/get/parcelle-from-code-et-commune/{code-parcelle:[A-Z0-9]{6}}/{id-commune:[0-9]+}", Hajax(ajax.GetParcelleFromCodeAndCommuneId))
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
-	r.HandleFunc("/ajax/get/ug-from-code/{code}", Hajax(ajax.GetUGFromCode))
+	r.HandleFunc("/ajax/get/id-ug-from-code/{code}", Hajax(ajax.GetIdUGFromCode))
 	r.HandleFunc("/ajax/get/bloc-notes", Hajax(ajax.GetBlocnotes))
 
 	r.HandleFunc("/", H(control.Accueil))

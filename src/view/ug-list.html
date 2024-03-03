@@ -62,7 +62,7 @@ async function validateForm(event){
 async function getIdUG(){
     let result = 0;
     const code = document.getElementById("code").value;
-    const url = "/ajax/get/ug-from-code/" + code;
+    const url = "/ajax/get/id-ug-from-code/" + code;
     const response = await fetch(url);
     if(response == null){
         window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
