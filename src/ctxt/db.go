@@ -10,8 +10,6 @@ package ctxt
 
 import (
 	"log"
-	"strings"
-
 	"bdl.local/bdl/model"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
