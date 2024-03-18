@@ -26,19 +26,20 @@ func AjusteDbURL(url string, schema string) string {
 	if strings.HasPrefix(dbURL, "postgres") && !strings.Contains(dbURL, "search_path") {
 		if !strings.Contains(dbURL, "?") {
 			dbURL += "?"
-		} /* else {
+		} else {
 			dbURL += "&"
-		} */
+		}
 		dbURL += "search_path=" + schema
+//		dbURL += "&sslmode=disable"
 	}
 	return dbURL
 }
 
 func MustInitDB() {
 	var err error
-	dbURL := AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
-	db, err = sqlx.Open("postgres", dbURL)
-	/* db, err = sqlx.Open(
+//	dbURL := AjusteDbURL(model.SERVER_ENV.DATABASE_URL, model.SERVER_ENV.DATABASE_SCHEMA)
+//	db, err = sqlx.Open("postgres", dbURL)
+	db, err = sqlx.Open(
 	    "postgres",
 	    "dbname="+model.SERVER_ENV.DATABASE_DBNAME+
 	    " user="+model.SERVER_ENV.DATABASE_USER+
@@ -46,8 +47,8 @@ func MustInitDB() {
 	    " host="+model.SERVER_ENV.DATABASE_HOST+
 	    " port="+model.SERVER_ENV.DATABASE_PORT+
 	    " search_path="+model.SERVER_ENV.DATABASE_SCHEMA+
-	    " sslmode=disable",
-	) */
+	    " sslmode="+model.SERVER_ENV.DATABASE_SSLMODE,
+	)
 	if err != nil {
 		log.Fatalf("Connexion DB impossible : %v", err)
 	}
