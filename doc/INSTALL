@@ -5,28 +5,25 @@ INSTALLATION ACTUELLE
 
 Créer une base postgresql
 ---------------------------------------------------------------------------------------------------
-# dev version :
-# psql --version
-# psql (PostgreSQL) 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1)
-# psql (PostgreSQL) 14.3 (Debian 14.3-1.pgdg110+1)
-
 sudo apt install postgres
 sudo -s -u postgres
 psql
 
-CREATE USER bdl;
-ALTER ROLE bdl WITH CREATEDB;
-ALTER USER bdl WITH ENCRYPTED PASSWORD 'mon_mot_de_passe';
-CREATE DATABASE bdlchantiers OWNER bdl;
-CREATE SCHEMA bdlprod AUTHORIZATION bdl;
-CREATE SCHEMA bdlbeta AUTHORIZATION bdl;
+Remplacer <*> avec les valeurs utilisées
+
+CREATE USER <pg_user>;
+ALTER ROLE <pg_user> WITH CREATEDB;
+ALTER USER <pg_user> WITH ENCRYPTED PASSWORD '<pg_password>';
+CREATE DATABASE <pg_dbname> OWNER <pg_user>;
+CREATE SCHEMA bdlprod AUTHORIZATION <pg_user>;
+CREATE SCHEMA bdlbeta AUTHORIZATION <pg_user>;
 \q
 exit
 
 # Pour se connecter à la base :
-psql -U bdl -W -h localhost -d bdlchantiers
+psql -U <pg_user> -W -h <pg_host> -d <pg_dbname>
 
-Ensuite, importer un dump dans postgres - voir script 1.local/import-db-prod
+Ensuite, importer un dump dans postgres - voir script manage/import-db-prod
 
 ---------------------------------------------------------------------------------------------------
 RUN
@@ -38,100 +35,15 @@ RUN
 - Modifier les valeurs dans config.env
 - go run run-bdl.go
 
-2) Variables d'environnement
-DATABASE_URL=postgresql://bdl:pg_password@localhost:5432/bdlchantiers \
-DATABASE_SCHEMA=bdlprod \
-RUN_SERVER_ADDR=localhost \
-PORT=8012 \
-RUN_MODE=dev \
+2) Variables d'environnement définies à la volée
+DATABASE_URL=postgresql://bdl:<pg_password>@<pg_host>:<pg_port>/<pg_dbname> \
+RUN_SERVER_ADDR=<pg_host> \
+PORT=<http_port> \
+RUN_MODE=<run_mode> \
 CMD_PGDUMP=pg_dump \
 BACKUP_DIR=/path/to/directory/containing/dbdumps/ \
+DATABASE_SCHEMA=<pg_schema> \
+DATABASE_SSLMODE=<pg_sslmode> \
 go run run-bdl.go
 
-Puis visiter http://localhost:8012
-
-
----------------------------------------------------------------------------------------------------
-INSTALLATION INITIALE - obsolete
----------------------------------------------------------------------------------------------------
-
-
-go
----------------------------------------------------------------------------------------------------
-# dev version :
-# go version
-# go version go1.18 linux/amd64
-
-# todo install go
-
-Initialisation des tables
----------------------------------------------------------------------------------------------------
-cd /path/to/bdl/
-cd install/
-go run install-bdl.go -i all
-
-
-Lancement du programme en local
----------------------------------------------------------------------------------------------------
-En mode dev, utilise        github.com/codegangsta/gin
-Nouvel outil :              github.com/cosmtrek/air
-
-cd /path/to/bdl/
-cd src/
-gin -i --all -a 8000 -p 3012 run run-bdl.go
-
-# 8000 défini dans config.yml, dans Run / Port
-# dans un navigateur web
-http://localhost:8012/
-
-
-Install version de test sur serveur
----------------------------------------------------------------------------------------------------
-go run install-bdl.go -i all
-go run install-bdl.go -f acteur
-go run install-bdl.go -f stockage
-
-Notes :
-- besoin d'avoir private/Exploita.csv sur le serveur
-pour remplir acteurs
-- go run install-bdl.go -f acteur
-sert à anonymiser les acteurs
-- une fois l'install terminée, supprimer private/Exploita.csv
-
-
-Compilation version de prod
----------------------------------------------------------------------------------------------------
-todo
-
-Déploiement sur machine windows
----------------------------------------------------------------------------------------------------
-todo
-
-Install version de test sur le server
----------------------------------------------------------------------------------------------------
-sudo -H certbot-auto --rsa-key-size 4096 --apache -d bdl.larzac.info
-
-
-Docker
----------------------------------------------------------------------------------------------------
-cd /path/to/bdl (directory containing Dockerfile)
-docker build --tag bdl .
-
-docker run --rm -it -p 8013:8012  bdl
-
-Visit
-http://localhost:8013/
-
-# pour aller voir dans le docker :
-docker run -i -t bdl /bin/bash
-
----------------------------------------------------------------------------------------------------
-Obslolete, refaire avec go.mod
----------------------------------------------------------------------------------------------------
-go get github.com/lib/pq
-go get gopkg.in/yaml.v3
-
-Unix ODBC, pour lire les bases access
----------------------------------------------------------------------------------------------------
-https://github.com/alexbrainman/odbc/wiki/InstallingUnixODBC
-https://github.com/alexbrainman/odbc/wiki/InstallingFreeTDS
+Puis visiter http://<http_host>:<http_port>

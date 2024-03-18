@@ -71,8 +71,8 @@ var SERVER_ENV serverEnv
 // Dans l'ordre :
 // - si CONFIG_FILE existe dans l'environnement : lecture du fichier en question
 // - sinon lecture config.env s'il existe
-// Pas d'erreur s'il n'y a pas de fichier de conf
-// - les variables d'environnement : elles sont prioritaires !
+// - sinon utilise les variables d'environnement courantes (définies au lancment de l'application, voir doc/INSTALL)
+// Ne génère pas d'erreur s'il n'y a pas de fichier de conf
 func MustLoadEnv() {
 	configFile := os.Getenv("ENV_CONFIG_FILE")
 	if configFile == "" {
