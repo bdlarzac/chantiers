@@ -42,6 +42,8 @@ func main() {
 	ctxt.MustInitTemplates()
 
 	r := mux.NewRouter()
+	
+	patternDate := "[0-9]{4}-[0-9]{2}-[0-9]{2}"
 
 	r.HandleFunc("/ajax/get/lieudits-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetLieuditsFromIdsUGs))
 	r.HandleFunc("/ajax/get/fermiers-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetFermiersFromIdsUGs))
@@ -50,6 +52,7 @@ func main() {
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/id-ug-from-code/{code}", Hajax(ajax.GetIdUGFromCode))
 	r.HandleFunc("/ajax/get/bloc-notes", Hajax(ajax.GetBlocnotes))
+	r.HandleFunc("/ajax/update/date-venteplaq/{id:[0-9]+}/{date:" + patternDate + "}", Hajax(ajax.UpdateVentePlaq))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))
@@ -133,6 +136,7 @@ func main() {
 	r.HandleFunc("/stockage/delete/{id:[0-9]+}", H(control.DeleteOrArchiveStockage))
 
 	r.HandleFunc("/tas-vides", H(control.ShowTasVides))
+// utiliser pattern date et tester
 	r.HandleFunc("/tas/vider/{id:[0-9]+}/{date:[0-9]{4}-[0-9]{2}-[0-9]{2}}", H(control.SignalerTasVide))
 
 	r.HandleFunc("/frais-stockage/new/{id-stockage:[0-9]+}", H(control.NewStockFrais))

@@ -10,6 +10,10 @@
     --main-bg-color:lightyellow;
     */
     --main-bg-color:radial-gradient(circle, rgba(181,139,50,1) 23%, rgba(164,203,58,1) 100%);
+    --menu-height:4em;
+    --background-ok:lightgreen;
+    --background-error:lightsalmon;
+
 }
 
 /* en test - pour anchor qui se décale de la hauteur du menu */
@@ -35,9 +39,8 @@ body{
 
 a{text-decoration:none;}
 
-/* Space for menu */
 .content{
-    margin-top:4em;
+    margin-top:var(--menu-height); /* Space for menu */
 }
 
 summary, .link{
@@ -134,22 +137,22 @@ h1{padding-left:1rem;}
     padding:3px;
 }
 
+.response{
+    display:none;
+    border:1px solid grey;
+    padding:1em;
+    margin:1em;
+    background:var(--background-ok);
+    border-radius:10px;
+}
+
 .error{
     display:inline-block;
     border:1px solid grey;
     border-radius:3px;
     padding:1em;
     margin:1em;
-    background:lightsalmon;
-}
-
-.response{
-    display:none;
-    border:1px solid grey;
-    padding:1em;
-    margin:1em;
-    background:lightgreen;
-    border-radius:10px;
+    background:var(--background-error);
 }
 
 .note{

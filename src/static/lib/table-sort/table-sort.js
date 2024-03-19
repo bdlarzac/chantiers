@@ -6,7 +6,11 @@
     Answer of pomo
     
     Usage : include in html page <script src="table_sort.js"></script> AFTER the tables (or use defer).
-    The call to table_sort() (see end of current file) must be done after the tables are displayed.
+    The call to table_sort() (see end of current file) must be done AFTER the tables are displayed.
+    
+    In the html :
+    - table must have a structure with thead and tbody
+    - the th of sortable columns must have a class "order"
     
 **/
 function table_sort() {
@@ -14,6 +18,7 @@ function table_sort() {
   styleSheet.innerHTML = `
         .order{
             color:blue;
+            cursor:pointer;
         }
         .order-inactive span {
             visibility:hidden;
@@ -22,10 +27,7 @@ function table_sort() {
             visibility:visible;
         }
         .order-active span {
-            visibility: visible;
-        }
-        .order{
-            cursor: pointer;
+            visibility:visible;
         }
     `
   document.head.appendChild(styleSheet);
@@ -57,8 +59,8 @@ function table_sort() {
       arr.sort((a, b) => {
         // const a_val = a.children[index].innerText;
         // const b_val = b.children[index].innerText;
-        // note Thierry : changé innerText en innerHTML de manière à pouvoir trier par date
-        // avec un hack du style : <span data-date="{{.DateActivite}}">{{.DateActivite | dateFr}}</span>
+        // note Thierry Graff : changé innerText to innerHTML to be able to sort by date
+        // with a hack like : <span data-date="2023-05-26">26/05/2023</span>
         const a_val = a.children[index].innerHTML;
         const b_val = b.children[index].innerHTML;
         return (asc) ? a_val.localeCompare(b_val, undefined, {'numeric': true}) : b_val.localeCompare(a_val, undefined, {'numeric': true});

@@ -33,13 +33,13 @@
         <tr>
             <th></th>
             <th class="order">Date vente</th>
-            <th class="order">Titre</th>
+            <th>Titre</th>
             <th class="order">Qté</th>
             <th>Prix TTC</th>
             <th title="Comment la livraison apparaît sur la facture" class="cursor-help">Livr.</th>
             <th>Num facture</th>
             <th>Date facture</th>
-            <th class="order">Date paiement</th>
+            <th>Date paiement</th>
         </tr>
     </thead>
     <tbody>
@@ -73,21 +73,40 @@
                 <span data-date="{{.DateVente}}">{{.DateVente | dateFr}}</span>
             </td>
             <td>
-                {{/* data-titre : hack pour trier par titre, cf table-sort.js */}}
-                <span data-titre="{{.StringSansDate}}"><a href="/vente/{{.Id}}">{{.StringSansDate}}</a></span>
+                <a href="/vente/{{.Id}}">{{.StringSansDate}}</a>
             </td>
             <td class="right">
-                <script>document.write(formatNb({{.Qte}}));</script> maps
+                {{/* data-qte : hack pour trier par quantité, cf table-sort.js */}}
+                {{/* 
+                <span data-qte="{{printf "%09.0f" .Qte}}">
+                */}}
+                <span data-qte="{{.Qte}}">
+                    <script>document.write(formatNb({{.Qte}}));</script> maps
+                </span>
             </td>
             <td class="right">
                 <script>document.write(formatNb(round(prixTotalTTC, 2)));</script> &euro;
             </td>
-            <td>{{.FactureLivraisonUnite}}</td>
-            <td>{{.NumFacture}}</td>
-            <td>{{.DateFacture | dateFr}}</td>
             <td>
-                {{/* data-date : hack pour trier par date, cf table-sort.js */}}
-                <span data-date="{{.DatePaiement}}">{{.DatePaiement | dateFr}}</span>
+                {{.FactureLivraisonUnite}}
+            </td>
+            <td>
+                {{.NumFacture}}
+            </td>
+            <td>
+                {{.DateFacture | dateFr}}
+            </td>
+            {{/* 
+            <td>
+                <span>{{.DatePaiement | dateFr}}</span>
+            </td>
+            */}}
+            <td>
+                <input type="date" name="datepaiement"
+                       id="update-paiement-{{.Id}}"
+                       value="{{.DatePaiement | dateIso}}"
+                       onchange="updateDatePaiement({{.Id}}, {{.String}});"
+               >
             </td>
         </tr>
 {{end}}
@@ -96,6 +115,81 @@
 </table>
 {{end}}
 
+{{/* Message affiché après modification d'une date de vente */}}
+<style>
+    #message-modif-vente{
+        position:absolute;
+        top:var(--menu-height);
+        right:1rem;
+        padding:.2rem;
+        border:1px solid grey;
+        display:none;
+    }
+</style>
+<div id="message-modif-vente"></div>
+
 {{/* 
     Voir scripts dans view/common/venteplaq.js
+*/}}
+
+<script>
+
+// background du message affiché dans updateDatePaiement()
+const rootVars = getComputedStyle(document.querySelector(':root'));
+const bgOk =  rootVars.getPropertyValue('--background-ok');
+const bgError =  rootVars.getPropertyValue('--background-error');
+
+async function updateDatePaiement(idVente, titreVente){
+    const newDate = document.getElementById('update-paiement-' + idVente).value;
+    const url = '/ajax/update/date-venteplaq/' + idVente + '/' + newDate;
+    let msg;
+    let ok; // 'ok' ou 'nok'
+    const response = await fetch(url);
+    if(response == null){
+        msg = "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+            + "Problème de récupération " + url + " dans venteplaq-list.html";
+        ok = 'nok';
+    }
+    else{
+        result = await response.json();
+        ok = result['ok']; 
+        if(ok == 'ok'){
+            msg = `Modification enregistrée en base pour la vente '${titreVente}'`;
+        }
+        else{
+            msg = "PROBLEME, modification non effectuée : \n"
+                + result['message'];
+        }
+    }
+console.log('msg =', msg);
+    const elt = document.getElementById('message-modif-vente');
+    elt.innerHTML = msg;
+    elt.style.display='inline-block';
+    elt.style.background = (ok == 'ok' ? bgOk : bgError);
+    // faire disparaître le message au bout d'un moment
+    setTimeout(function(){
+        document.getElementById('message-modif-vente').style.display='none';
+    },3000);
+}
+</script>
+
+{{/* 
+ <script>
+// Get the root element
+var r = document.querySelector(':root');
+
+// Create a function for getting a variable value
+function myFunction_get() {
+  // Get the styles (properties and values) for the root
+  var rs = getComputedStyle(r);
+  // Alert the value of the --blue variable
+  alert("The value of --blue is: " + rs.getPropertyValue('--blue'));
+}
+
+// Create a function for setting a variable value
+function myFunction_set() {
+  // Set the value of variable --blue to another value (in this case "lightblue")
+  r.style.setProperty('--blue', 'lightblue');
+}
+</script>
 */}}

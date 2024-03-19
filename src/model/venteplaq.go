@@ -25,6 +25,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
+	"errors"
+"fmt"
 )
 
 type VentePlaq struct {
@@ -429,6 +431,22 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 		vp.Id)
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
+}
+
+// Utilisé par ajax
+func UpdateVentePlaq_datePaiement(db *sqlx.DB, id int, datePaiement string) (err error) {
+	query := `update venteplaq set datepaiement = $1 where id=$2`
+	res, err := db.Exec(query, datePaiement, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+    rowCount, _ := res.RowsAffected()
+fmt.Println("rowCount", rowCount)
+	if rowCount != 1 {
+fmt.Println("ICI dans erreur")
+		return errors.New("Erreur lors de la modification de la vente " + strconv.Itoa(id))
 	}
 	return nil
 }
