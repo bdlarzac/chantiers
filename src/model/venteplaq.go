@@ -26,7 +26,6 @@ import (
 	"strconv"
 	"time"
 	"errors"
-"fmt"
 )
 
 type VentePlaq struct {
@@ -443,10 +442,8 @@ func UpdateVentePlaq_datePaiement(db *sqlx.DB, id int, datePaiement string) (err
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
     rowCount, _ := res.RowsAffected()
-fmt.Println("rowCount", rowCount)
 	if rowCount != 1 {
-fmt.Println("ICI dans erreur")
-		return errors.New("Erreur lors de la modification de la vente " + strconv.Itoa(id))
+		return errors.New("La vente <b>" + strconv.Itoa(id) + "</b> n'a pas pu être modifiée")
 	}
 	return nil
 }

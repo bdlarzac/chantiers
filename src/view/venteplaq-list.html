@@ -134,13 +134,14 @@
 
 <script>
 
-// background du message affiché dans updateDatePaiement()
+// background du message affiché par updateDatePaiement()
 const rootVars = getComputedStyle(document.querySelector(':root'));
 const bgOk =  rootVars.getPropertyValue('--background-ok');
 const bgError =  rootVars.getPropertyValue('--background-error');
 
 async function updateDatePaiement(idVente, titreVente){
-    const newDate = document.getElementById('update-paiement-' + idVente).value;
+    const dateElt = document.getElementById('update-paiement-' + idVente);
+    const newDate = dateElt.value;
     const url = '/ajax/update/date-venteplaq/' + idVente + '/' + newDate;
     let msg;
     let ok; // 'ok' ou 'nok'
@@ -154,42 +155,32 @@ async function updateDatePaiement(idVente, titreVente){
         result = await response.json();
         ok = result['ok']; 
         if(ok == 'ok'){
-            msg = `Modification enregistrée en base pour la vente '${titreVente}'`;
+            msg = `<b>Modification enregistrée</b> pour la vente '${titreVente}'`;
         }
         else{
-            msg = "PROBLEME, modification non effectuée : \n"
+            msg = "<b>PROBLEME</b>, modification non effectuée : \n"
                 + result['message'];
         }
     }
-console.log('msg =', msg);
     const elt = document.getElementById('message-modif-vente');
     elt.innerHTML = msg;
     elt.style.display='inline-block';
-    elt.style.background = (ok == 'ok' ? bgOk : bgError);
+    let timeout;
+    if(ok == 'ok'){
+        elt.style.background = bgOk;
+        dateElt.style.background = bgOk;
+        timeout = 3000;
+    }
+    else {
+        elt.style.background = bgError;
+        dateElt.style.background = bgError;
+        timeout = 6000;
+    }
     // faire disparaître le message au bout d'un moment
     setTimeout(function(){
-        document.getElementById('message-modif-vente').style.display='none';
-    },3000);
+        document.getElementById('message-modif-vente').style.display = 'none';
+        dateElt.style.background = 'white';
+    }, timeout);
+                     
 }
 </script>
-
-{{/* 
- <script>
-// Get the root element
-var r = document.querySelector(':root');
-
-// Create a function for getting a variable value
-function myFunction_get() {
-  // Get the styles (properties and values) for the root
-  var rs = getComputedStyle(r);
-  // Alert the value of the --blue variable
-  alert("The value of --blue is: " + rs.getPropertyValue('--blue'));
-}
-
-// Create a function for setting a variable value
-function myFunction_set() {
-  // Set the value of variable --blue to another value (in this case "lightblue")
-  r.style.setProperty('--blue', 'lightblue');
-}
-</script>
-*/}}
