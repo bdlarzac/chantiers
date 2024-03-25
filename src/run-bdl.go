@@ -272,7 +272,7 @@ func HPDF(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(
 // A mettre ailleurs, mais où ?
 
 func notFound(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("NOT FOUND")
+	fmt.Println("=== ERROR 404 === notFound handler ===")
 	fmt.Printf("Request r = %+v\n", r)
 	ctx := ctxt.NewContext()
 	err := fmt.Errorf("Page inexistante :<br><code><b>%s</b></code>", r.URL)

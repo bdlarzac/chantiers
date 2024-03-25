@@ -435,6 +435,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 }
 
 // Utilisé par ajax
+// Si datePaiement n'est pas renseignée, elle est transmise ici sous la forme "0001-01-01"
 func UpdateVentePlaq_datePaiement(db *sqlx.DB, id int, datePaiement string) (err error) {
 	query := `update venteplaq set datepaiement = $1 where id=$2`
 	res, err := db.Exec(query, datePaiement, id)

@@ -6,14 +6,10 @@
 @import url("style.css");
 
 :root {
-    /* 
-    --main-bg-color:lightyellow;
-    */
     --main-bg-color:radial-gradient(circle, rgba(181,139,50,1) 23%, rgba(164,203,58,1) 100%);
     --menu-height:4em;
     --background-ok:lightgreen;
     --background-error:lightsalmon;
-
 }
 
 /* en test - pour anchor qui se décale de la hauteur du menu */

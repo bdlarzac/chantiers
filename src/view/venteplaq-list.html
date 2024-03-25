@@ -44,6 +44,7 @@
     </thead>
     <tbody>
 {{end}}
+
 {{range .Details.Ventes}}
         <tr>
             <script>
@@ -96,16 +97,14 @@
             <td>
                 {{.DateFacture | dateFr}}
             </td>
-            {{/* 
-            <td>
-                <span>{{.DatePaiement | dateFr}}</span>
-            </td>
-            */}}
             <td>
                 <input type="date" name="datepaiement"
                        id="update-paiement-{{.Id}}"
                        value="{{.DatePaiement | dateIso}}"
-                       onchange="updateDatePaiement({{.Id}}, {{.String}});"
+                       onchange="updateDatePaiement({{.Id}}, {{.StringSansDate}});"
+                       {{if not .DatePaiement.IsZero}}
+                           class="ok"
+                       {{end}}
                >
             </td>
         </tr>
@@ -115,12 +114,15 @@
 </table>
 {{end}}
 
-{{/* Message affiché après modification d'une date de vente */}}
+{{/*
+    Message affiché après modification d'une date de vente
+*/}}
 <style>
     #message-modif-vente{
-        position:absolute;
-        top:var(--menu-height);
-        right:1rem;
+        z-index:1000;
+        position:fixed;
+        right:4rem;
+        top:5px;
         padding:.2rem;
         border:1px solid grey;
         display:none;
@@ -139,12 +141,21 @@ const rootVars = getComputedStyle(document.querySelector(':root'));
 const bgOk =  rootVars.getPropertyValue('--background-ok');
 const bgError =  rootVars.getPropertyValue('--background-error');
 
+/** 
+    @param  titreVente Ne sert que pour les messages
+**/
 async function updateDatePaiement(idVente, titreVente){
-    const dateElt = document.getElementById('update-paiement-' + idVente);
-    const newDate = dateElt.value;
-    const url = '/ajax/update/date-venteplaq/' + idVente + '/' + newDate;
     let msg;
     let ok; // 'ok' ou 'nok'
+    const dateElt = document.getElementById('update-paiement-' + idVente);
+    let newDate = dateElt.value;
+    const DATE_NULLE = '0001-01-01'; // date nulle pour postgres - TODO ne devrait pas être en dur comme ça
+    if(newDate == ""){
+        // Se produit lorsque l'utilisateur modifie une date renseignée
+        // pour la passer à non renseignée (clic sur le bouton "clear" du calendrier)
+        newDate = DATE_NULLE;
+    }
+    const url = '/ajax/update/date-venteplaq/' + idVente + '/' + newDate;
     const response = await fetch(url);
     if(response == null){
         msg = "- ERREUR - Transmettez ce message l'administrateur du site :\n"
@@ -155,31 +166,40 @@ async function updateDatePaiement(idVente, titreVente){
         result = await response.json();
         ok = result['ok']; 
         if(ok == 'ok'){
-            msg = `<b>Modification enregistrée</b> pour la vente '${titreVente}'`;
+            if(newDate != DATE_NULLE){
+                msg = `<b>Modification enregistrée</b> pour la vente ${idVente} '${titreVente}'`;
+            }
+            else {
+                msg = `<b>Date de paiement effacée</b> pour la vente ${idVente} '${titreVente}'`;
+            }
         }
         else{
             msg = "<b>PROBLEME</b>, modification non effectuée : \n"
                 + result['message'];
         }
     }
-    const elt = document.getElementById('message-modif-vente');
-    elt.innerHTML = msg;
-    elt.style.display='inline-block';
+    const msgElt = document.getElementById('message-modif-vente');
+    msgElt.innerHTML = msg;
+    msgElt.style.display='inline-block';
     let timeout;
     if(ok == 'ok'){
-        elt.style.background = bgOk;
-        dateElt.style.background = bgOk;
+        msgElt.style.background = bgOk;
+        if(newDate != DATE_NULLE){
+            dateElt.style.background = bgOk;
+        }
+        else {
+            dateElt.style.background = 'white'; // bof, le background par défaut devrait pouvoir être calculé
+        }
         timeout = 3000;
     }
     else {
-        elt.style.background = bgError;
+        msgElt.style.background = bgError;
         dateElt.style.background = bgError;
         timeout = 6000;
     }
     // faire disparaître le message au bout d'un moment
     setTimeout(function(){
         document.getElementById('message-modif-vente').style.display = 'none';
-        dateElt.style.background = 'white';
     }, timeout);
                      
 }
