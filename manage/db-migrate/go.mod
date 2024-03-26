@@ -1,17 +1,15 @@
 module bdl.dbmigrate/bdl
 
-go 1.19
+go 1.22
 
 // replace bdl.local/bdl => ../../src/
 // replace bdl.dbinstall/bdl => ../dbinstall
 
-require (
 //	bdl.local/bdl v0.0.0-00010101000000-000000000000
-	github.com/jmoiron/sqlx v1.3.5
-)
+require github.com/jmoiron/sqlx v1.3.5
 
 require (
-//	bdl.dbinstall/bdl v0.0.0-00010101000000-000000000000 // indirect
+	//	bdl.dbinstall/bdl v0.0.0-00010101000000-000000000000 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/lib/pq v1.3.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
