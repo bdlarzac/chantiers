@@ -1,12 +1,10 @@
 /*
-	Répare les codes ug mal formattés.
+Répare les codes ug mal formattés.
 
 bdlchantiers=> select code from ug where code like '%.%' order by code;
 
 	code
-
 ----------
-
 	 XIX.5
 	 XIX.77
 	 XIX.78

@@ -1,6 +1,4 @@
 /*
-*****************************************************************************
-
 	Modifications (migrations) de la base BDL
 	Code pas utilisé en fonctionnement normal.
 
@@ -9,8 +7,6 @@
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
 	@history    2019-09-26 17:41:35+02:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package main
 
@@ -28,7 +24,6 @@ import (
 
 var possibleMigrations []string
 
-// *********************************************************
 func main() {
 	possibleMigrations = computeMigrations()
 	msgPossibles := "Migrations possibles : \n    " + strings.Join(possibleMigrations, "\n    ")
@@ -97,7 +92,6 @@ func main() {
 	}
 }
 
-// *********************************************************
 // Renvoie la liste des migrations possibles
 // = liste des fonctions du répertoire courant commençant par Migrate_
 // Ça n'a pas l'air possible avec reflect => bidouille avec regex

@@ -1,0 +1,8 @@
+
+Contient divers scripts qui peuvent utiliser du code dans src/
+Ne font pas partie du code exécuté dans l'appli web.
+
+Pour exécuter main() :
+
+ENV_CONFIG_FILE='../../config.env' APPLI_CONFIG_FILE='../../config.yml' go run *.go
+

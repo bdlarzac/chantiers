@@ -420,12 +420,12 @@ func (ch *Plaq) ComputeVentes(db *sqlx.DB) error {
 // Calcule les différents coûts d'exploitation
 // Doit être effectué sur un chantier obtenu par GetPlaqFull() - pas de vérification d'erreur
 func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
+	ch.CoutParMap = &CoutPlaq{}
+	ch.CoutTotal = &CoutPlaq{}
 	if ch.Volume == 0 {
 		// valeurs par défaut, tous les coûts restent à 0
 		return nil
 	}
-	ch.CoutParMap = &CoutPlaq{}
-	ch.CoutTotal = &CoutPlaq{}
 	nMapSec := ch.Volume * (1 - config.PourcentagePerte/100)
 	var cout float64
 	//

@@ -4,4 +4,5 @@ use (
 	./src
 	./manage/db-install
 	./manage/db-migrate
+	./manage/divers
 )

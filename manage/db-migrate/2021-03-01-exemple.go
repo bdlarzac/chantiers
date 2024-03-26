@@ -1,6 +1,4 @@
 /*
-*****************************************************************************
-
 	Ajout de plaqtrans.pourcentperte
 
 	Gardé à titre d'exemple mais inutile car incorporé directement dans le code de create-table
@@ -8,8 +6,6 @@
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
 	@history    2021-03-01 10:08:18+01:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package main
 

@@ -1,6 +1,4 @@
 /*
-*****************************************************************************
-
 	Ajout de venteplaq.facturelivraisonunite
 	Peut prendre les valeurs 'km', 'map', ''
 
@@ -9,8 +7,6 @@
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
 	@history    2022-01-10 14:02:05+01:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package main
 

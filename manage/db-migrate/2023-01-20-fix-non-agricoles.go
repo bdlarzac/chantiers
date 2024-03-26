@@ -1,6 +1,4 @@
 /*
-*****************************************************************************
-
 	Supprime les fermiers non-agricoles, importés par erreur lors des maj SCTL précédentes
 	Note: marqué le 2023-01-20 pour apparaître avant la migration 2023-01-23-chantier-parcelle
 	Mais en fait écrite le 2023-02-04 alors que la migration 2023-01-23-chantier-parcelle était en cours de développement.
@@ -11,8 +9,6 @@
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
 	@history    2023-02-04 08:41:58+01:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package main
 

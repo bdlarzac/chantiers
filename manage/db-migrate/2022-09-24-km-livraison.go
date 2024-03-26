@@ -1,6 +1,4 @@
 /*
-*****************************************************************************
-
 	Ajout de venteplaq.facturelivraisonnbkm
 
 	Intégration : commit
@@ -8,8 +6,6 @@
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
 	@history    2022-09-24 19:15:20+02:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package main
 
