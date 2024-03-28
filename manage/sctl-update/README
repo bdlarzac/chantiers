@@ -14,11 +14,11 @@ sudo apt install mdbtools
 
 - Mettre le fichier renommé dans le répertoire appli/manage/sctl-data/
 
-- Créer un répertoire AAAA-MM-JJ dans appli/manage/sctl-data/
-ex : appli/manage/sctl-data/2020-02-27/
+- Créer un répertoire csv-AAAA-MM-JJ dans appli/manage/sctl-data/
+ex : appli/manage/sctl-data/csv-2020-02-27/
 
 - Exécuter sctl-mdb2csv en mettant la date AAAA-MM-JJ en paramètre.
-ex : sctl-mdb2csv 2020-02-27
+ex : ./sctl-mdb2csv 2020-02-27
 
 Les fichiers générés se trouvent dans le répertoire appli/manage/sctl-data/AAAA-MM-JJ
 
