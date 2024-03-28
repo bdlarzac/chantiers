@@ -18,10 +18,11 @@ import (
 type Parcelle struct {
 	Id             int // IdParcelle de la base SCTL
 	IdProprietaire int `db:"id_proprietaire"`
-	Code           string
+	Code           string    // code à 6 chiffres
 	Surface        float64
 	IdCommune      int `db:"id_commune"`
 	// Pas en base
+	Code11       string      // code à 11 chiffres
 	Proprietaire *Acteur
 	Commune      *Commune
 	Lieudits     []*Lieudit
@@ -87,6 +88,19 @@ func GetParcellesFromIdsUGs(db *sqlx.DB, idsUG string) (result []*Parcelle, err 
 }
 
 // ************************** Compute *******************************
+
+// Utilisé par appli/manage/divers/liste-parcelles.go
+func (p *Parcelle) ComputeCode11(db *sqlx.DB) (err error) {
+	if p.Code11 != "" {
+		return nil // déjà calculé
+	}
+	err = p.ComputeCommune(db)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur appel Parcelle.ComputeCommune()")
+	}
+    p.Code11 = p.Commune.CodeInsee + p.Code
+	return nil
+}
 
 func (p *Parcelle) ComputeProprietaire(db *sqlx.DB) (err error) {
 	p.Proprietaire, err = GetActeur(db, p.IdProprietaire)

@@ -32,28 +32,26 @@ func (f *Fermier) String() string {
 	return strings.TrimSpace(f.Prenom + " " + f.Nom)
 }
 
+// Utilisé par appli/manage/divers/liste-parcelles.go
+func NomEtAdresseFermier(f *Fermier) string {
+	res := f.String()
+	if f.Adresse != "" {
+	    res += " " + f.Adresse
+	}
+	if f.Cp != "" {
+	    res += " " + f.Cp
+	}
+	if f.Ville != "" {
+	    res += " " + f.Ville
+	}
+	return res
+}
+
 // ************************** Divers *******************************
 
 func CountFermiers(db *sqlx.DB) (count int) {
 	_ = db.QueryRow("select count(*) from fermier").Scan(&count)
 	return count
-}
-
-// ************************** Compute *******************************
-
-// Calcule le champ Parcelles d'un fermier
-func (f *Fermier) ComputeParcelles(db *sqlx.DB) (err error) {
-	if len(f.Parcelles) != 0 {
-		return nil // déjà calculé
-	}
-	query := `select * from parcelle where id in(
-            select id_parcelle from parcelle_fermier where id_fermier=$1
-	    ) order by code`
-	err = db.Select(&f.Parcelles, query, f.Id)
-	if err != nil {
-		return werr.Wrapf(err, "Erreur query : "+query)
-	}
-	return nil
 }
 
 // ************************** Get one *******************************
@@ -146,6 +144,23 @@ func GetFermiersFromIdUG(db *sqlx.DB, idUG int) ([]*Fermier, error) {
 		return fermiers, werr.Wrapf(err, "Erreur query : "+query)
 	}
 	return fermiers, nil
+}
+
+// ************************** Compute *******************************
+
+// Calcule le champ Parcelles d'un fermier
+func (f *Fermier) ComputeParcelles(db *sqlx.DB) (err error) {
+	if len(f.Parcelles) != 0 {
+		return nil // déjà calculé
+	}
+	query := `select * from parcelle where id in(
+            select id_parcelle from parcelle_fermier where id_fermier=$1
+	    ) order by code`
+	err = db.Select(&f.Parcelles, query, f.Id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	return nil
 }
 
 // ************************** CRUD *******************************
