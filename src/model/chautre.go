@@ -43,6 +43,7 @@ type Chautre struct {
 	Fermiers       []*Fermier
 	Proprietaires  []*Acteur
 	Acheteur       *Acteur
+	PrixTotalHT    float64
 }
 
 // Association code type vente => label
@@ -64,7 +65,7 @@ func (ch *Chautre) FullString() string {
 	return "Chantier " + ValoMap[ch.TypeValo] + " " + ch.String()
 }
 
-// ************************** Get *******************************
+// ************************** Get one *******************************
 
 // Renvoie un chantier autres valorisations
 // contenant uniquement les données stockées en base
@@ -115,8 +116,11 @@ func GetChautreFull(db *sqlx.DB, idChantier int) (ch *Chautre, err error) {
 	if err != nil {
 		return ch, werr.Wrapf(err, "Erreur appel Chautre.ComputeProprietaires()")
 	}
+	ch.ComputePrixTotalHT()
 	return ch, nil
 }
+
+// ************************** Get many *******************************
 
 // Renvoie la liste des années ayant des chantiers autres valorisations,
 // @param exclude   Année à exclure du résultat
@@ -240,6 +244,10 @@ func (ch *Chautre) ComputeProprietaires(db *sqlx.DB) (err error) {
 		}
 	}
 	return nil
+}
+
+func (ch *Chautre) ComputePrixTotalHT() {
+    ch.PrixTotalHT = ch.VolumeRealise * ch.PUHT
 }
 
 // ************************** CRUD *******************************

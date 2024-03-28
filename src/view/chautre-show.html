@@ -86,13 +86,13 @@
     <div class="margin-top05"><script>document.write(round({{.PUHT}}, 2));</script></span> &euro;</div>
     
     <div>Total HT</div>
-    <div><script>document.write(formatNb(round(prixHT({{.PUHT}}, {{.VolumeRealise}}), 2)));</script></span> &euro;</div>
+    <div><script>document.write(formatNb(round({{.PrixTotalHT}}, 2)));</script></span> &euro;</div>
     
     <div>TVA</div>
     <div>{{.TVA}}</span> %</div>
     
     <div>Total TTC</div>
-    <div><script>document.write(formatNb(round(prixTTC(prixHT({{.PUHT}}, {{.VolumeRealise}}), {{.TVA}}), 2)));</script></span> &euro;</div>
+    <div><script>document.write(formatNb(round(prixTTC({{.PrixTotalHT}}, {{.TVA}}), 2)));</script></span> &euro;</div>
     
     <div class="padding-top05"><b>Facture</b></div>
     <div></div>

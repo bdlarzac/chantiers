@@ -18,11 +18,14 @@ Génère un fichier CSV avec la liste des ugs et leurs chantiers.
 package main
 
 import (
+    "cmp"
 	"fmt"
-	"io/ioutil"
+//	"sort"
 	"strings"
 	"strconv"
+	"slices"
 	"time"
+	"io/ioutil"
 	"bdl.local/bdl/ctxt"
 	"bdl.local/bdl/model"
 	"bdl.local/bdl/generic/tiglib"
@@ -43,17 +46,17 @@ type ligneUG struct {
 }
 
 func liste_ugs(ctx *ctxt.Context){
-    
-    lines := []ligneUG{}
+    res := []ligneUG{}
 	db := ctx.DB
 	stmt, _ := db.Prepare(`select * from chantier_ug order by id_ug`)
 	defer stmt.Close()
-    
 	rows, _ := stmt.Query()
 	defer rows.Close()
+    
 	var type_chantier string
 	var id_chantier, id_ug int
 	var ug *model.UG
+	
 	for rows.Next() {
 	    var newLine ligneUG
 		_ = rows.Scan(&type_chantier, &id_chantier, &id_ug)
@@ -67,13 +70,14 @@ func liste_ugs(ctx *ctxt.Context){
 		case "chautre":
 		    var ch *model.Chautre
 		    ch, _ = model.GetChautre(db, id_chantier)
+		    ch.ComputePrixTotalHT()
 		    newLine.Valo = ch.TypeValo
 		    newLine.TitreChantier = ch.String()
 		    newLine.DateChantier = ch.DateContrat
 		    newLine.Essence = ch.Essence
 		    newLine.Volume = ch.VolumeRealise
 		    newLine.Unite = ch.Unite
-		    newLine.Prix = ch.PUHT
+		    newLine.Prix = ch.PrixTotalHT
 		    newLine.Exploitation = ch.Exploitation
 		case "chaufer":
 		    var ch *model.Chaufer
@@ -88,7 +92,7 @@ func liste_ugs(ctx *ctxt.Context){
 		    newLine.Exploitation = ch.Exploitation
 		case "plaq":
 		    var ch *model.Plaq
-		    ch, _ = model.GetPlaq(db, id_chantier)
+		    ch, _ = model.GetPlaqFull(db, id_chantier)
 		    _ = ch.ComputeVolume(db)
 		    _ = ch.ComputeCouts(db, ctx.Config)
 		    newLine.Valo = "PQ"
@@ -97,24 +101,38 @@ func liste_ugs(ctx *ctxt.Context){
 		    newLine.Essence = "PS"
 		    newLine.Volume = ch.Volume
 		    newLine.Unite = "MA"
-		    //newLine.Prix = ch.CoutTotal.Total
+		    newLine.Prix = ch.CoutTotal.Total
 		    newLine.Exploitation = ch.Exploitation
 		}
-		lines = append(lines, newLine)
-//break
-/* 
-calcul prix total pour chautre
-trier ugs
-*/
+		res = append(res, newLine)
 	}
 	
+	// Tri par code UG
+    slices.SortFunc[[]ligneUG, ligneUG](res, func(a, b ligneUG) int {
+		tmpA := strings.Split(a.CodeUG, "-")
+		tmpB := strings.Split(b.CodeUG, "-")
+		// teste chiffres romains
+		idxA := tiglib.ArraySearch(model.RomanNumbers, tmpA[0])
+		idxB := tiglib.ArraySearch(model.RomanNumbers, tmpB[0])
+		if idxA < idxB {
+			return -1
+		}
+		if idxA > idxB {
+			return 1
+		}
+		// idxA = idxB => chiffres romains identiques
+		nA, _ := strconv.Atoi(tmpA[1])
+		nB, _ := strconv.Atoi(tmpB[1])
+        return cmp.Compare(nA, nB)
+    })
+    
+    // Génère fichier CSV
     SEP := ";"
     OUTFILE := "../../tmp/ug-chantier.csv"
-//    OUTFILE := "ug-chantier.csv"
 
-	res := strings.Join([]string{"UG", "TYPO", "COUPE", "VALO", "CHANTIER", "DATE", "ESS", "VOLUME", "UNITE", "PRIX", "EX"}, SEP) + "\n"
-	for _, line := range(lines){
-	    res += strings.Join([]string{
+	csv := strings.Join([]string{"UG", "TYPO", "COUPE", "VALO", "TITRE CHANTIER", "DATE", "ESS", "VOLUME", "UNITE", "PRIX", "EX"}, SEP) + "\n"
+	for _, line := range(res){
+	    csv += strings.Join([]string{
             line.CodeUG,
             line.CodeTypo,
             line.Coupe,
@@ -128,8 +146,6 @@ trier ugs
             line.Exploitation,
 	    }, SEP) + "\n"
 	}
-//fmt.Println(res)
-//	fmt.Printf("%+v\n",lines)
-    _ = ioutil.WriteFile(OUTFILE, []byte(res), 0755)
+    _ = ioutil.WriteFile(OUTFILE, []byte(csv), 0755)
 	fmt.Println("Fichier csv généré : " + OUTFILE)
 }

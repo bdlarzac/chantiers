@@ -542,6 +542,7 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
 
 // Calcule ch.CoutParMap.Stockage
 // Auxiliaire de ComputeCouts(), donc ch est obtenu par GetPlaqFull()
+// PAS IMPLEMENTE - en attente de confirmation de BDL pour le mode de calcul (qui a oublié depuis longtemps cette histoire...)
 func (ch *Plaq) computeCoutStockage(db *sqlx.DB) (err error) {
 	//
 	// Calcule tous les hangars (Stockage) contenant des tas liés à ce chantier

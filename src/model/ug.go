@@ -67,7 +67,7 @@ func (ug *UG) String() string {
 // ************************ Codes UG *********************************
 
 // Nombres romains utilisés dans le code des UGs
-var romans = []string{
+var RomanNumbers = []string{
 	"I",
 	"II",
 	"III",
@@ -91,8 +91,8 @@ var romans = []string{
 
 // Roman2Arab Convertit un nombre romain en nombre arabe.
 // Uniquement pour les nombres romains utilisés dans les codes UG
-func roman2Arab(roman string) int {
-	idx := slices.Index(romans, roman)
+func Roman2Arab(roman string) int {
+	idx := slices.Index(RomanNumbers, roman)
 	if idx == -1 {
 		return -1
 	}
@@ -103,7 +103,7 @@ func roman2Arab(roman string) int {
 // ex: XVI-4 est converti en 1604 (= 1600 + 4)
 func SortableUGCode(code string) string {
 	tmp := strings.Split(code, "-")
-	n1 := roman2Arab(tmp[0])
+	n1 := Roman2Arab(tmp[0])
 	n2, _ := strconv.Atoi(tmp[1])
 	return strconv.FormatInt(int64(100*n1+n2), 10)
 }
@@ -261,8 +261,8 @@ func GetUGsSortedByCode(db *sqlx.DB) (ugs []*UG, err error) {
 		code2 := strings.Replace(ug2.Code, ".", "-", -1) // fix typo dans un code (XIX.5)
 		tmp2 := strings.Split(code2, "-")
 		// teste chiffres romains
-		idx1 := tiglib.ArraySearch(romans, tmp1[0])
-		idx2 := tiglib.ArraySearch(romans, tmp2[0])
+		idx1 := tiglib.ArraySearch(RomanNumbers, tmp1[0])
+		idx2 := tiglib.ArraySearch(RomanNumbers, tmp2[0])
 		if idx1 < idx2 {
 			return true
 		}
