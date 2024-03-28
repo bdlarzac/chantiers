@@ -80,11 +80,11 @@ func liste_parcelles(ctx *ctxt.Context) {
 		} else {
 		    newLine.Surface = surface
 		}
-		adresses := []string{}
+		fermiers := []string{}
 		for _, f := range parcelle.Fermiers {
-			adresses = append(adresses, model.NomEtAdresseFermier(f))
+			fermiers = append(fermiers, "[" + strconv.Itoa(f.Id) + "] " + model.NomEtAdresseFermier(f))
 		}
-		newLine.Fermiers = strings.Join(adresses, " + ")
+		newLine.Fermiers = strings.Join(fermiers, " + ")
 		//
 		switch type_chantier {
 		case "chautre":
