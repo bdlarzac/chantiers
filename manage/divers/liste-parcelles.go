@@ -76,13 +76,13 @@ func liste_parcelles(ctx *ctxt.Context) {
 		newLine.CodeParcelle11 = parcelle.Code11
 		newLine.Proprietaire = parcelle.Proprietaire.Nom
 		if entiere {
-		    newLine.Surface = parcelle.Surface
+			newLine.Surface = parcelle.Surface
 		} else {
-		    newLine.Surface = surface
+			newLine.Surface = surface
 		}
 		fermiers := []string{}
 		for _, f := range parcelle.Fermiers {
-			fermiers = append(fermiers, "[" + strconv.Itoa(f.Id) + "] " + model.NomEtAdresseFermier(f))
+			fermiers = append(fermiers, "["+strconv.Itoa(f.Id)+"] "+model.NomEtAdresseFermier(f))
 		}
 		newLine.Fermiers = strings.Join(fermiers, " + ")
 		//

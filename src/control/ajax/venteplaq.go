@@ -17,8 +17,8 @@ func UpdateVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) 
 	msg := ""
 	err = model.UpdateVentePlaq_datePaiement(ctx.DB, id, vars["date"])
 	if err != nil {
-	    ok = "nok"
-	    msg = err.Error()
+		ok = "nok"
+		msg = err.Error()
 	}
 	json, _ := json.Marshal(map[string]string{"ok": ok, "message": msg})
 	w.Write(json)

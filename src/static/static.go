@@ -1,14 +1,10 @@
 /*
-*****************************************************************************
+Fichier servant à embarquer les fichiers de static/ dans l'exécutable compilé
 
-	Fichier servant à embarquer les fichiers de static/ dans l'exécutable compilé
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-
-	@history    2021-05-11 15:31:29+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@history    2021-05-11 15:31:29+01:00, Thierry Graff : Creation
 */
 package static
 

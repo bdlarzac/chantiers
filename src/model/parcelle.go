@@ -16,13 +16,13 @@ import (
 )
 
 type Parcelle struct {
-	Id             int // IdParcelle de la base SCTL
-	IdProprietaire int `db:"id_proprietaire"`
-	Code           string    // code à 6 chiffres
+	Id             int    // IdParcelle de la base SCTL
+	IdProprietaire int    `db:"id_proprietaire"`
+	Code           string // code à 6 chiffres
 	Surface        float64
 	IdCommune      int `db:"id_commune"`
 	// Pas en base
-	Code11       string      // code à 11 chiffres
+	Code11       string // code à 11 chiffres
 	Proprietaire *Acteur
 	Commune      *Commune
 	Lieudits     []*Lieudit
@@ -98,7 +98,7 @@ func (p *Parcelle) ComputeCode11(db *sqlx.DB) (err error) {
 	if err != nil {
 		return werr.Wrapf(err, "Erreur appel Parcelle.ComputeCommune()")
 	}
-    p.Code11 = p.Commune.CodeInsee + p.Code
+	p.Code11 = p.Commune.CodeInsee + p.Code
 	return nil
 }
 

@@ -22,10 +22,10 @@ package model
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
-	"errors"
 )
 
 type VentePlaq struct {
@@ -442,7 +442,7 @@ func UpdateVentePlaq_datePaiement(db *sqlx.DB, id int, datePaiement string) (err
 	if err != nil {
 		return werr.Wrapf(err, "Erreur query : "+query)
 	}
-    rowCount, _ := res.RowsAffected()
+	rowCount, _ := res.RowsAffected()
 	if rowCount != 1 {
 		return errors.New("La vente <b>" + strconv.Itoa(id) + "</b> n'a pas pu être modifiée")
 	}

@@ -1,12 +1,12 @@
 /*
-	Modifications (migrations) de la base BDL
-	Code pas utilisé en fonctionnement normal.
+Modifications (migrations) de la base BDL
+Code pas utilisé en fonctionnement normal.
 
-	Voir fichier README pour ajouter ou exécuter une migration
+# Voir fichier README pour ajouter ou exécuter une migration
 
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
-	@history    2019-09-26 17:41:35+02:00, Thierry Graff : Creation
+@copyright  BDL, Bois du Larzac
+@license    GPL
+@history    2019-09-26 17:41:35+02:00, Thierry Graff : Creation
 */
 package main
 

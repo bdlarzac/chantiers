@@ -36,13 +36,13 @@ func (f *Fermier) String() string {
 func NomEtAdresseFermier(f *Fermier) string {
 	res := f.String()
 	if f.Adresse != "" {
-	    res += " " + f.Adresse
+		res += " " + f.Adresse
 	}
 	if f.Cp != "" {
-	    res += " " + f.Cp
+		res += " " + f.Cp
 	}
 	if f.Ville != "" {
-	    res += " " + f.Ville
+		res += " " + f.Ville
 	}
 	return res
 }

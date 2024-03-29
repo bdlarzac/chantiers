@@ -1,9 +1,9 @@
 /*
 Point d'entrée unique de l'application
 
-	@copyright  BDL, Bois du Larzac.
-	@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
-	@history    2018-04, Thierry Graff : Creation
+@copyright  BDL, Bois du Larzac.
+@licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
+@history    2018-04, Thierry Graff : Creation
 */
 package main
 
@@ -42,7 +42,7 @@ func main() {
 	ctxt.MustInitTemplates()
 
 	r := mux.NewRouter()
-	
+
 	patternDate := "[0-9]{4}-[0-9]{2}-[0-9]{2}"
 
 	r.HandleFunc("/ajax/get/lieudits-from-ids-ugs/{ids:[0-9,]+}", Hajax(ajax.GetLieuditsFromIdsUGs))
@@ -52,7 +52,7 @@ func main() {
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/id-ug-from-code/{code}", Hajax(ajax.GetIdUGFromCode))
 	r.HandleFunc("/ajax/get/bloc-notes", Hajax(ajax.GetBlocnotes))
-	r.HandleFunc("/ajax/update/date-venteplaq/{id:[0-9]+}/{date:" + patternDate + "}", Hajax(ajax.UpdateVentePlaq))
+	r.HandleFunc("/ajax/update/date-venteplaq/{id:[0-9]+}/{date:"+patternDate+"}", Hajax(ajax.UpdateVentePlaq))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))
@@ -136,7 +136,7 @@ func main() {
 	r.HandleFunc("/stockage/delete/{id:[0-9]+}", H(control.DeleteOrArchiveStockage))
 
 	r.HandleFunc("/tas-vides", H(control.ShowTasVides))
-// utiliser pattern date et tester
+	// utiliser pattern date et tester
 	r.HandleFunc("/tas/vider/{id:[0-9]+}/{date:[0-9]{4}-[0-9]{2}-[0-9]{2}}", H(control.SignalerTasVide))
 
 	r.HandleFunc("/frais-stockage/new/{id-stockage:[0-9]+}", H(control.NewStockFrais))
@@ -194,7 +194,7 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 		var err error
 		ctx := ctxt.NewContext()
 		//
-//		ctxt.LogRequest(r)
+		//		ctxt.LogRequest(r)
 		//
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		//
@@ -345,12 +345,12 @@ func contentTypeMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// Logs the request 
+// Logs the request
 func logRequestMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        if !strings.HasPrefix(r.RequestURI, "/static") && !strings.HasPrefix(r.RequestURI, "/view") && !strings.HasPrefix(r.RequestURI, "/favicon"){
-            ctxt.LogRequest(r)
-        }
+		if !strings.HasPrefix(r.RequestURI, "/static") && !strings.HasPrefix(r.RequestURI, "/view") && !strings.HasPrefix(r.RequestURI, "/favicon") {
+			ctxt.LogRequest(r)
+		}
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		next.ServeHTTP(w, r)
 	})

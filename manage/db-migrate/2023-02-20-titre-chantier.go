@@ -1,11 +1,11 @@
 /*
-	Pour les chantiers, remplace les titres créés par le programme par des titres saisis par l'utilisateur.
+Pour les chantiers, remplace les titres créés par le programme par des titres saisis par l'utilisateur.
 
-	Intégration : commit
+Intégration : commit
 
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
-	@history    2023-02-20 05:43:23+01:00, Thierry Graff : Creation
+@copyright  BDL, Bois du Larzac
+@license    GPL
+@history    2023-02-20 05:43:23+01:00, Thierry Graff : Creation
 */
 package main
 

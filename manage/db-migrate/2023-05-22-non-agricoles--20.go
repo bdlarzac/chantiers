@@ -1,15 +1,15 @@
 /*
-	Supprime les fermiers non-agricoles de la base.
-	L'import SCTL a été modifié par Migrate_2023_01_20_fix_non_agricoles
-	pour ne plus importer les non-agricoles.
-	Mais la base n'avait pas été nettoyée.
+Supprime les fermiers non-agricoles de la base.
+L'import SCTL a été modifié par Migrate_2023_01_20_fix_non_agricoles
+pour ne plus importer les non-agricoles.
+Mais la base n'avait pas été nettoyée.
 
-	Voir https://github.com/bdlarzac/chantiers/issues/11
-	Intégration : commit
+Voir https://github.com/bdlarzac/chantiers/issues/11
+Intégration : commit
 
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
-	@history    2023-01-16 15:47:07+01:00, Thierry Graff : Creation
+@copyright  BDL, Bois du Larzac
+@license    GPL
+@history    2023-01-16 15:47:07+01:00, Thierry Graff : Creation
 */
 package main
 
