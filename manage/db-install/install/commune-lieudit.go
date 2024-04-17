@@ -1,14 +1,10 @@
 /*
-*****************************************************************************
+Initialisation commune et lieudit.
+Code servant à initialiser la base, pas utilisé en fonctionnement normal.
 
-	Initialisation commune et lieudit.
-	Code servant à initialiser la base, pas utilisé en fonctionnement normal.
-
-	@copyright  BDL, Bois du
-	@license    GPL
-	@history    2019-11-05 06:06:04+01:00, Thierry Graff : Creation from a split
-
-*******************************************************************************
+@copyright  BDL, Bois du
+@license    GPL
+@history    2019-11-05 06:06:04+01:00, Thierry Graff : Creation from a split
 */
 package install
 

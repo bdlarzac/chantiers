@@ -23,5 +23,5 @@ func main() {
 	ctx := ctxt.NewContext()
 
 	//liste_ugs(ctx)
-	liste_parcelles(ctx)
+	//liste_parcelles(ctx)
 }

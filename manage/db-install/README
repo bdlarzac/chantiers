@@ -3,3 +3,8 @@ Code servant à initialiser la base de prod.
 Pas utilisé en fonctionnement normal
 
 Va chercher des données à différents endroits (voir install/paths.go)
+
+Utiliser en précisant certaines variables d'environnement :
+
+ENV_CONFIG_FILE=../../config.env APPLI_CONFIG_FILE=../../config.yml go run 1-main.go -i ug
+

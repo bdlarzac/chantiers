@@ -194,8 +194,6 @@ func H(h func(*ctxt.Context, http.ResponseWriter, *http.Request) error) func(htt
 		var err error
 		ctx := ctxt.NewContext()
 		//
-		//		ctxt.LogRequest(r)
-		//
 		err = h(ctx, w, r) // Call controller h ; fills ctx.TemplateName
 		//
 		if ctx.Page != nil {

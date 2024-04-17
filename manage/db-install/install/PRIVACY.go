@@ -1,11 +1,7 @@
 /*
-*****************************************************************************
-
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
-	@history    2021-02-09 09:38:14+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac
+@license    GPL
+@history    2021-02-09 09:38:14+01:00, Thierry Graff : Creation
 */
 package install
 

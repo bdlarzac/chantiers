@@ -1,14 +1,14 @@
 /*
-*****************************************************************************
+Mise à jour des données SCTL (uniquement les fermiers)
+MAJ les tables
+- fermier
+- parcelle_fermier
 
-	Mise à jour des données SCTL (uniquement les fermiers)
-	Exemple d'utilisation : voir README
+Exemple d'utilisation : voir README
 
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
-	@history    2023-01-11 05:04:02+01:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac
+@license    GPL
+@history    2023-01-11 05:04:02+01:00, Thierry Graff : Creation
 */
 package main
 
@@ -67,6 +67,7 @@ func updateFermiers(ctx *ctxt.Context, dirname string) (report string) {
 		}
 		if record["Agricole"] == "0" {
 			//fmt.Printf("%d,",idExploitant)
+			// pour vérifier qu'il n'y a pas de chantier associé à des fermiers non agricoles
 			// select * from chantier_fermier where id_fermier in(28,37,42,43,46,48,52,53,54,58,59,63,64,66,69,70,128,129,130,73,74,77,79,85,86,90,91,92,96,97,100,102,103,105,110,113,115,116,117,119,120,121,122,134);
 			//select * from parcelle_fermier where id_fermier in(28,37,42,43,46,48,52,53,54,58,59,63,64,66,69,70,128,129,130,73,74,77,79,85,86,90,91,92,96,97,100,102,103,105,110,113,115,116,117,119,120,121,122,134);
 			continue // Ne garder que les agricoles

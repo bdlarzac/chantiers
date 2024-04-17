@@ -1,5 +1,6 @@
 /*
 Génère un fichier CSV avec la liste des parcelles et leurs chantiers.
+A la demande de Maël, stagiaire Forêt Evolution.
 
 Voir https://github.com/bdlarzac/chantiers/issues/26
 - code parcelle 11

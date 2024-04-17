@@ -1,14 +1,10 @@
 /*
-*****************************************************************************
+Initialisation parcelle.
+Code servant à initialiser la base, pas utilisé en fonctionnement normal.
 
-	Initialisation parcelle.
-	Code servant à initialiser la base, pas utilisé en fonctionnement normal.
-
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
-	@history    2019-11-07 07:54:17+01:00, Thierry Graff : Creation from a split
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac
+@license    GPL
+@history    2019-11-07 07:54:17+01:00, Thierry Graff : Creation from a split
 */
 package install
 

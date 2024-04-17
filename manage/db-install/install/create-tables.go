@@ -1,11 +1,7 @@
 /*
-*****************************************************************************
-
-	@copyright  BDL, Bois du Larzac
-	@license    GPL
-	@history    2019-09-26 16:04:00+02:00, Thierry Graff : Creation
-
-*******************************************************************************
+@copyright  BDL, Bois du Larzac
+@license    GPL
+@history    2019-09-26 16:04:00+02:00, Thierry Graff : Creation
 */
 package install
 
