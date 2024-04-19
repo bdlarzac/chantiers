@@ -11,6 +11,7 @@ package model
 import (
 	"bdl.local/bdl/generic/tiglib"
 	"bdl.local/bdl/generic/wilk/werr"
+	"errors"
 	"github.com/jmoiron/sqlx"
 	"strconv"
 	"time"
@@ -383,6 +384,21 @@ func UpdateChautre(db *sqlx.DB, ch *Chautre, idsUG, idsLieudit, idsFermier []int
 		return werr.Wrapf(err, "Erreur appel updateLiensChantierFermier()")
 	}
 	//
+	return nil
+}
+
+// Utilisé par ajax
+// Si datePaiement n'est pas renseignée, elle est transmise ici sous la forme "0001-01-01"
+func UpdateChautre_datePaiement(db *sqlx.DB, id int, datePaiement string) (err error) {
+	query := `update chautre set datepaiement = $1 where id=$2`
+	res, err := db.Exec(query, datePaiement, id)
+	if err != nil {
+		return werr.Wrapf(err, "Erreur query : "+query)
+	}
+	rowCount, _ := res.RowsAffected()
+	if rowCount != 1 {
+		return errors.New("Le chantier <b>" + strconv.Itoa(id) + "</b> n'a pas pu être modifié")
+	}
 	return nil
 }
 

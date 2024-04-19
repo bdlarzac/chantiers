@@ -136,17 +136,17 @@ func handleInstall(ctx *ctxt.Context) {
 
 	if *flagInstall == "all" {
 		/*
-        db := ctx.DB
-        var err error
-        _, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
-        if err != nil {
-            panic(err)
-        }
-        _, err = db.Exec(fmt.Sprintf("create schema %s", ctx.Config.Database.Schema))
-        if err != nil {
-            panic(err)
-        }
-        _, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
+		   db := ctx.DB
+		   var err error
+		   _, err = db.Exec(fmt.Sprintf("drop schema if exists %s cascade", ctx.Config.Database.Schema))
+		   if err != nil {
+		       panic(err)
+		   }
+		   _, err = db.Exec(fmt.Sprintf("create schema %s", ctx.Config.Database.Schema))
+		   if err != nil {
+		       panic(err)
+		   }
+		   _, err = db.Exec(fmt.Sprintf(`set search_path='%s'`, ctx.Config.Database.Schema))
 		*/
 		installTypes(ctx)
 		installCommune(ctx)

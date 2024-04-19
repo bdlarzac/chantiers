@@ -9,13 +9,13 @@ import (
 	"strconv"
 )
 
-// Pour la modification de la date dans la liste des ventes
-func UpdateVentePlaq_datePaiement(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
+// Pour la modification de la date dans la liste des chantiers autres valorisations
+func UpdateChautre_datePaiement(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) (err error) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	ok := "ok"
 	msg := ""
-	err = model.UpdateVentePlaq_datePaiement(ctx.DB, id, vars["date"])
+	err = model.UpdateChautre_datePaiement(ctx.DB, id, vars["date"])
 	if err != nil {
 		ok = "nok"
 		msg = err.Error()

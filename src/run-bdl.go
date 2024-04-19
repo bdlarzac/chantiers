@@ -52,7 +52,8 @@ func main() {
 	r.HandleFunc("/ajax/get/ugs-from-fermier/{id:[0-9]+}", Hajax(ajax.GetUGsFromFermier))
 	r.HandleFunc("/ajax/get/id-ug-from-code/{code}", Hajax(ajax.GetIdUGFromCode))
 	r.HandleFunc("/ajax/get/bloc-notes", Hajax(ajax.GetBlocnotes))
-	r.HandleFunc("/ajax/update/date-venteplaq/{id:[0-9]+}/{date:"+patternDate+"}", Hajax(ajax.UpdateVentePlaq))
+	r.HandleFunc("/ajax/update/venteplaq-date-paiement/{id:[0-9]+}/{date:"+patternDate+"}", Hajax(ajax.UpdateVentePlaq_datePaiement))
+	r.HandleFunc("/ajax/update/chautre-date-paiement/{id:[0-9]+}/{date:"+patternDate+"}", Hajax(ajax.UpdateChautre_datePaiement))
 
 	r.HandleFunc("/", H(control.Accueil))
 	r.HandleFunc("/doc", H(control.ShowDoc))

@@ -36,7 +36,7 @@
             <th class="order">Valorisation</th>
             <th class="order">Essence</th>
             <th class="order">Volume</th>
-            <th class="order">Paiement</th>
+            <th>Paiement</th>
             <th class="no-print">Details</th>
         </tr>
     </thead>
@@ -75,8 +75,14 @@
                 {{.VolumeRealise}} {{.Unite | labelUnite}}
             </td>
             <td>
-                {{/* data-date : hack pour trier par date fr, cf table-sort.js */}}
-                <span data-date="{{.DatePaiement}}">{{.DatePaiement | dateFr}}</span>
+                <input type="date" name="datepaiement"
+                       id="update-paiement-{{.Id}}"
+                       value="{{.DatePaiement | dateIso}}"
+                       onchange="updateDatePaiement('/ajax/update/chautre-date-paiement', {{.Id}}, {{.String}}, 'le chantier');"
+                       {{if not .DatePaiement.IsZero}}
+                           class="ok"
+                       {{end}}
+               >
             </td>
             <td class="no-print">
                 <details class="details-entite">{{/* class pour tout voir / tout cacher */}}
@@ -154,6 +160,11 @@
 </table>
 
 {{end}} {{/* end if .Details.Chantiers */}}
+
+{{/*
+    Message affiché après modification d'une date de vente
+*/}}
+<div id="message-modif-date-paiement"></div>
 
 <script>
 

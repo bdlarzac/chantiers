@@ -46,10 +46,10 @@ summary, .link{
 
 /* ================ Colors ================ */
 .ok{
-    background:lightgreen;
+    background:var(--background-ok);
 }
 .nok{
-    background:lightsalmon;
+    background:var(--background-error);
 }
 
 .menu-recherche{
@@ -97,7 +97,6 @@ h1{padding-left:1rem;}
     margin-bottom:1rem;
 }
 
-/* bold big2 border2 padding-left02 padding-right02 */
 .icon-euro{
     font-size:1.5rem;
     padding: 1px .5rem;
@@ -157,7 +156,6 @@ h1{padding-left:1rem;}
     background-image: linear-gradient(140deg, #BFD641 0%, #EADEDB 75%);
 }
 
-
 .parcelle-form{
     padding:.3rem;
     border:1px solid darkgrey;
@@ -168,6 +166,17 @@ h1{padding-left:1rem;}
 .parcelle-form-selected{
     background:lightgreen;
 }
+
+#message-modif-date-paiement{
+    z-index:1000;
+    position:fixed;
+    right:4rem;
+    top:5px;
+    padding:.2rem;
+    border:1px solid grey;
+    display:none;
+}
+
 
 /* ================ Particular pages ================ */
 .recap-filtres{

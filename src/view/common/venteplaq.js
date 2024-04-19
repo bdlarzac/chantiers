@@ -8,8 +8,6 @@
     @history    2020-03-20 10:59:03+01:00, Thierry Graff : Creation
 ********************************************************************************/
 
-
-// *****************************************
 function deleteVentePlaquette(idVente, nomClient, dateVente){
     let msg = "En cliquant sur OK,"
             + "\nla vente \"" + nomClient + " " + dateVente + "\" sera définitivement supprimée."
@@ -24,7 +22,6 @@ function deleteVentePlaquette(idVente, nomClient, dateVente){
 }
 
 
-// *****************************************
 /** 
     Sert de filtre pour afficher uniquement les factures contenant suffisamment d'information.
 **/

@@ -64,6 +64,7 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		Header: ctxt.Header{
 			Title: titrePage,
 			JSFiles: []string{
+				"/view/common/date-paiement.js",
 				"/static/lib/table-sort/table-sort.js",
 				"/static/js/round.js",
 				"/view/common/prix.js"},
