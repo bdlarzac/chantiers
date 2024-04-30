@@ -64,10 +64,12 @@ func ListChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		Header: ctxt.Header{
 			Title: titrePage,
 			JSFiles: []string{
+				"/view/common/chautre.js",
 				"/view/common/date-paiement.js",
+				"/view/common/prix.js",
 				"/static/lib/table-sort/table-sort.js",
 				"/static/js/round.js",
-				"/view/common/prix.js"},
+			},
 		},
 		Menu: "production",
 		Details: detailsChautreList{
@@ -105,9 +107,10 @@ func ShowChautre(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) erro
 		Header: ctxt.Header{
 			Title: chantier.FullString(),
 			JSFiles: []string{
+				"/view/common/chautre.js",
+				"/view/common/prix.js",
 				"/static/js/round.js",
 				"/static/js/formatNb.js",
-				"/view/common/prix.js",
 			},
 		},
 		Menu:   "production",

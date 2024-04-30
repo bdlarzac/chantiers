@@ -18,7 +18,6 @@ dumpfile=$1
 zipfile=$dumpfile.zip
 
 # $RESTORE_DIR vient de config.env
-
 if [ ! -f $RESTORE_DIR/$zipfile ]; then
     echo "Fichier inexistant: $RESTORE_DIR/$zipfile"
     exit

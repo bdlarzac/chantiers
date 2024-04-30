@@ -10,6 +10,9 @@
 </div>
 
 <div class="inline-block">
+    <a href="#" onclick='ShowFactureChautre({{.Id}}, "{{.NumFacture}}", "{{.DateFacture | dateFr}}");'>
+        <img class="bigicon inline-block" src="/static/img/facture.png" title="Voir la facture" />
+    </a>
     <a href="/chantier/autre/update/{{.Id}}">
         <img class="bigicon inline-block" src="/static/img/update.png" alt="Modifier ce chantier" title="Modifier ce chantier" >
     </a>

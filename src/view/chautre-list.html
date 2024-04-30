@@ -166,6 +166,9 @@
 */}}
 <div id="message-modif-date-paiement"></div>
 
+{{/* 
+    Voir aussi dans src/view/common/chautre.js
+*/}}
 <script>
 
 function deleteChantier(idChantier, acheteur, date){
@@ -175,22 +178,6 @@ function deleteChantier(idChantier, acheteur, date){
     if (r == true) {
         window.location = "/chantier/autre/delete/" + idChantier;
     }
-}
-
-/** 
-    Sert de filtre pour afficher uniquement les factures contenant suffisamment d'information.
-**/
-function ShowFactureChautre(idChantier, numFacture, dateFacture) {
-    if(numFacture == "" || dateFacture == ""){
-        alert(
-            "Pour voir la facture, il faut d'abord renseigner :"
-            + "\n- le numéro de facture"
-            + "\n- la date de facture"
-            + "\nModifiez le chantier et renseignez ces 2 champs."
-        );
-        return;
-    }
-    window.location = "/facture/autre/" + idChantier;
 }
 
 // répétition de code avec chaufer-list.html
