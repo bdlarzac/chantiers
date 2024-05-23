@@ -98,13 +98,13 @@ async function afficheParcelles(idsUGs, liensParcelles){
     // Ajax pour récup parcelles correspondant aux UGs
     let response = await fetch(url);
     if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Problème de récupération " + url);
         return;                                                                     
     }
     response = await response.json();
     if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Mauvais format de retour de " + url);
         return;
     }

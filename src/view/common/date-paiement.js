@@ -33,7 +33,7 @@ async function updateDatePaiement(urlAjax, idEntity, titreEntity, labelEntity){
     const url = urlAjax + '/' + idEntity + '/' + newDate;
     const response = await fetch(url);
     if(response == null){
-        msg = "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+        msg = "- ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Problème de récupération " + url;
         ok = 'nok';
     }

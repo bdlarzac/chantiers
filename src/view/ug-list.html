@@ -65,7 +65,7 @@ async function getIdUG(){
     const url = "/ajax/get/id-ug-from-code/" + code;
     const response = await fetch(url);
     if(response == null){
-        window.lienChantierMsg += "- ERREUR - Transmettez ce message l'administrateur du site :\n"
+        window.lienChantierMsg += "- ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Problème de récupération " + url + " dans ug-search.html\n";
         return result;
     }

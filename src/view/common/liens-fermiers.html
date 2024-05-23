@@ -58,13 +58,13 @@ async function afficheFermiers(idsUGs, idsFermiers){
     const url = "/ajax/get/fermiers-from-ids-ugs/" + strIdsUG;
     let response = await fetch(url);
     if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Problème de récupération " + url);
         return;                                                                     
     }
     response = await response.json();
     if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Mauvais format de retour de " + url);
         return;
     }

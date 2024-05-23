@@ -55,13 +55,13 @@ async function showBlocnotes(){
     // Ajax pour récup le contenu du bloc-notes
     let response = await fetch('/ajax/get/bloc-notes');
     if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Problème de récupération " + url);
         return;                                                                     
     }
     response = await response.json();
     if(response == null){
-        alert("ERREUR - Transmettez ce message l'administrateur du site :\n"
+        alert("ERREUR - Transmettez ce message à l'administrateur du site :\n"
             + "Mauvais format de retour de " + url);
         return;
     }
