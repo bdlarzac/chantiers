@@ -1,44 +1,90 @@
 /*
-Fixe certains codes UG pas reliés à des parcelles
-Voir https://github.com/bdlarzac/chantiers/issues/27
+Fixe certains parcelle manquante et associations avec UGs
 
-# Ce fix est effectéué sur les ugs du PSG1
+Ce fix est effectué sur les ugs du PSG1
 
-Intégration: commit
+Copie de l'analyse du problème sur https://github.com/bdlarzac/chantiers/issues/27 :
 
-Voir :
-- appli/manage/db-install/install/ug
-- appli/manage/data/ug.csv
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Lors de la création d'un nouveau chantier plaquettes, message reçu
 
-1 - Vérification table ug
+ERREUR - Transmettez ce message l'administrateur du site :
+Mauvais format de retour de /ajax/get/parcelles-from-ids-ugs/282,513
 
-Attention à issue #21 (correction de codes ugs invalides) : nb des ugs en base différent du nb juste après la construction ?
-NON car sur la base actuelle : select count(*) from ug;                                 => 659
-En réexécutant un version modifiée de appli/manage/db-install/install/ug.FillUG()       => len(records2) = 659
-==> OK, aucune migration n'a modifié le nb d'ugs depuis le départ
-==> on peut compter sur la stabilité des ids ug.
+Retour ajax envoyé par afficheParcelles() dans src/view/common/liens-parcelles.html
 
-2 - Vérification table parcelle_ug
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
-Sur la base actuelle : select count(*) from parcelle_ug;                                        => 1516
+Les UGs existent bien :
 
-En réexécutant une version modifiée de appli/manage/db-install/install/ug.FillLiensParcelleUG()
-et en comptant le nb de fois que stmt.Exec(id_parcelle, id_ug) est exécuté                      => 1784
+bdlchantiers=> select id,code from ug where id in(282,513);
+ id  |  code  
+-----+--------
+ 282 | VII-8
+ 513 | VII-22   
 
-DONC PROBLEME : ne pas comparer avec le code de création
-mais voir issue #11 appli/manage/db-migrate/2023-01-16-fix-parcelle.go
-En réexécutant une version modifiée de fillLiensParcelleUG_2023_01_16()
-et en comptant le nb de fois que stmt.Exec(idParcelle, idUG) est exécuté                        => 1528
+Mais elles ne sont asssociées à aucune parcelle :
 
-Mais voir issue #11
-parcelle_ug est aussi modifiée par 2023-05-22-non-agricoles--20.go
-Dans commentaire de clean_parcelle_ug_2023_05_22()
-// deleted 53 rows in parcelle_ug
-// avant:   1516
-// après:   1463
-==> ???
-- pourquoi la base actuelle a 1516 et pas 1463 ?
-- pourquoi le commentaire de clean_parcelle_ug_2023_05_22() indique "avant = 1516 "et pas "avant = 1784" ?
+bdlchantiers=> select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(282,513)) order by code;
+ id | id_proprietaire | code | surface | id_commune 
+----+-----------------+------+---------+------------
+(0 rows)
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Les UGs existent bien :
+
+bdlchantiers=> select id,code from ug where id in(282,513);
+ id  |  code  
+-----+--------
+ 282 | VII-8
+ 513 | VII-22   
+
+Mais elles ne sont asssociées à aucune parcelle :
+
+bdlchantiers=> select * from parcelle where id in(select id_parcelle from parcelle_ug where id_ug in(282,513)) order by code;
+ id | id_proprietaire | code | surface | id_commune 
+----+-----------------+------+---------+------------
+(0 rows)
+
+Ce problème concerne 5 UGs :
+
+bdlchantiers=> select id,code from ug where id not in(select id_ug from parcelle_ug); 
+ id  |  code  
+-----+--------
+  33 | VII-27
+ 282 | VII-8
+ 624 | VII-16
+ 513 | VII-22
+ 563 | I-53
+
+Heureusement, ces parcelles ne sont associées à aucun chantier :
+
+bdlchantiers=> select * from chantier_ug where id_ug in (select id from ug where id not in(select id_ug from parcelle_ug)); 
+ type_chantier | id_chantier | id_ug 
+---------------+-------------+-------
+(0 rows)
+
+En vérifiant dans le fichier manage/data/ug.csv ayant servi à la création de la base, on peut voir que ces UGs sont pourtant liées à des parcelles, à part l'UG I-53 :
+
+id_ug | code_ug     | parcelles correspondantes
+------+-------------+--------------------------
+563   | I-53        0
+282   | VII-8       121450M0168
+624   | VII-16      121450M0168
+513   | VII-22      121450M0168
+ 33   | VII-27      121450M0168
+
+Donc bug datant de la création de la base, passé inaperçu jusqu'à maintenant car ces UGs ne sont impliquées dans aucun chantier.    
+Tous les liens manquant concernent la même parcelle : 121450M0168
+Parcelle présente dans la base SCTL de 2018 mais pas dans les versions suivantes (à partir de 2020-02-27)
+
+-------------------------------------------------------------------------------
+Solution retenue
+-------------------------------------------------------------------------------
+Ajout de la parcelle et de ses liens - pas réussi à savoir pourquoi cette parcelle était absente
 
 @copyright  BDL, Bois du Larzac
 @license    GPL
@@ -47,35 +93,61 @@ Dans commentaire de clean_parcelle_ug_2023_05_22()
 package main
 
 import (
-	"bdl.dbinstall/bdl/install"
 	"bdl.local/bdl/ctxt"
-	"bdl.local/bdl/generic/tiglib"
 	"fmt"
-	"path"
 )
 
 func Migrate_2024_04_17_ugs_orphelines__27(ctx *ctxt.Context) {
-	analyze_2024_04_17ctx(ctx)
-	fmt.Println("Migration effectuée : 2024-04-17-ugs-orphelines")
-}
-
-func analyze_2024_04_17ctx(*ctxt.Context) {
-	filename := path.Join(install.GetDataDir(), "ug.csv")
-	records, _ := tiglib.CsvMap(filename, ',')
-	for _, record := range records {
-		code_ug := record["PG"]
-		if code_ug == "" || code_ug == "0" {
-			continue
-		}
-		code_parcelle6 := record["PC"]
-		code_parcelle11 := record["ID_PARCELLE_11"]
-		// fmt.Printf("%s %s\n",code_parcelle6,code_parcelle11)
-		// break
-		//		if (code_parcelle6 == "0" || code_parcelle6 == "") && code_parcelle11 != "" {
-		//		if code_parcelle6 == "0" || code_parcelle6 == "" {
-		if code_ug == "X-22" {
-			// fmt.Printf("%s %s\n",code_parcelle6,code_parcelle11)
-			fmt.Printf("%s %s %s\n", code_ug, code_parcelle6, code_parcelle11)
-		}
+	db := ctx.DB
+	var query string
+	//
+	// ajout parcelle 0M0168
+	//
+    // table parcelle : id n'est pas serial (prend la valeur dans la base sctl)
+    // 1230 vient de la base 2018
+	idParcelle := 1230
+	var err error
+	query ="insert into parcelle(id,id_proprietaire,code,surface,id_commune) values($1,$2,$3,$4,$5) returning id"
+	_, err = db.Exec(
+		query,
+		idParcelle,
+		1,
+		"0M0168",
+		58.864,
+		7)
+	if err != nil {
+		panic(err)
 	}
+	query = "insert into parcelle_lieudit(id_parcelle,id_lieudit) values($1,$2)"
+	_, err = db.Exec(
+		query,
+		idParcelle,
+		358)
+	if err != nil {
+		panic(err)
+	}
+	//
+	query = "insert into parcelle_fermier(id_parcelle,id_fermier) values($1,$2)"
+	_, err = db.Exec(
+		query,
+		idParcelle,
+		44)
+	if err != nil {
+		panic(err)
+	}
+	//
+	// Ajout liens parcelle - ug
+	//
+	query = "insert into parcelle_ug(id_parcelle,id_ug) values($1,$2)"
+	for _, idUG := range([]int{282,624,513,33}){
+        _, err = db.Exec(
+            query,
+            idParcelle,
+            idUG)
+        if err != nil {
+            panic(err)
+        }
+	}
+	
+	fmt.Println("Migration effectuée : 2024-04-17-ugs-orphelines")
 }
