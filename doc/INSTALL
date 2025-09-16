@@ -9,7 +9,7 @@ sudo apt install postgres
 sudo -s -u postgres
 psql
 
-Remplacer <*> avec les valeurs utilisées
+Remplacer <*> avec les valeurs utilisées (définies dans appli/config.env)
 
 CREATE USER <pg_user>;
 ALTER ROLE <pg_user> WITH CREATEDB;
@@ -31,8 +31,10 @@ RUN
 2 possibilités :
 
 1) Fichier config.env
+- cd appli/
 - copier config.env.dist en config.env
 - Modifier les valeurs dans config.env
+- cd src/
 - go run run-bdl.go
 
 2) Variables d'environnement définies à la volée

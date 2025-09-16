@@ -1,6 +1,4 @@
 /*
-*****************************************************************************
-
 	Given a string, computes an array of strings whose length is maximum <limit>.
 	Existing newlines (\n) are preserved.
 	Only lines (substrings without \n) containing more than <limit> chars are split
@@ -19,8 +17,6 @@
 	@copyright  BDL, Bois du Larzac
 	@license    GPL
 	@history    2020-04-07 14:39:39+02:00, Thierry Graff : Creation
-
-*******************************************************************************
 */
 package tiglib
 

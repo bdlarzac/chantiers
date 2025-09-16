@@ -1,11 +1,11 @@
-/******************************************************************************
+/*
     Lit un fichier csv et le charge dans une map.
     Les clés sont tirées de la première ligne.
 
     @license    GPL
     @history    2019-11-05 05:36:35+01:00, Thierry Graff : Creation
     @history    2020-12-30 17:40:23+01:00, Luka Peschke : Supprime dépendance vers github.com/recursionpharma/go-csv-map
-********************************************************************************/
+*/
 
 package tiglib
 

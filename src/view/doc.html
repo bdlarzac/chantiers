@@ -6,6 +6,7 @@
 <h1>{{.Header.Title}}</h1>
 
 <ul class="spaced">
+    <li>Autres fichiers présents dans le <a href="/doc/">répertoire <code>doc/</code></a></li>
     <li><a href="/doc/cahier-des-charges-bdl-2020.html">Cahier des charges</a> (attention, dernière mise à jour en 2020)</li>
     <li>
         <a href="/doc/schema-bdd-bdl.svg">Schéma de la base</a>
@@ -21,17 +22,71 @@
         </ul>
     </li>
     <li><a href="/doc/pourcent-venteplaq.html">Calcul des pourcentages SCTL / GFA pour les ventes de plaquettes</a></li>
-    <li>Autres fichiers présents dans le <a href="/doc/">répertoire <code>doc/</code></a></li>
 </ul>
 
 <!-- ********************************************************************************* -->
-<!-- 
-<h2>TODO</h2>
+<h2>Notes pour programmeurs</h2>
+Abbréviations utilisées partout dans le code (noms des fichiers, noms des structures, noms des variables).
 
-<ul class="spaced">
-    <li>Import données forestières</li>
-    <li>Import BDD SCTL directement dans Access</li>
-    <li>Déploiement Windows</li>
-</ul>
--->
-                                                                                                                
+<table class="entities">
+    <tr>
+        <th>Abbréviation</th>
+        <th>Signification</th>
+    </tr>
+    <tr>
+        <td>chaufer</td>
+        <td>Chantier chauffage fermier</td>
+    </tr>
+    <tr>
+        <td>chautre</td>
+        <td>Chantier autres valorisations</td>
+    </tr>
+    <tr>
+        <td>plaq</td>
+        <td>Chantier plaquettes</td>
+    </tr>
+    <tr>
+        <td>humid</td>
+        <td>Mesure d'humidité</td>
+    </tr>
+    <tr>
+        <td>plaqop</td>
+        <td>Opération simple (abattage, débardage, déchiquetage, broyage) liée à un chantier plaquette</td>
+    </tr>
+    <tr>
+        <td>plaqrange</td>
+        <td>Opération de rangement de plaquettes dans un hangar</td>
+    </tr>
+    <tr>
+        <td>plaqtrans</td>
+        <td>Opération de transport entre un chantier plaquettes et un hangar</td>
+    </tr>
+    <tr>
+        <td>stockage</td>
+        <td>Lieu de stockage (hangar)</td>
+    </tr>
+    <tr>
+        <td>stockfrais</td>
+        <td>Frais lié à un lieu de stockage</td>
+    </tr>
+    <tr>
+        <td>typo</td>
+        <td>Couche typologique venant du PSG</td>
+    </tr>
+    <tr>
+        <td>valo</td>
+        <td>Valorisation (pâte à papier, bois d'oeuvre etc.)</td>
+    </tr>
+    <tr>
+        <td>ventecharge</td>
+        <td>Opération de chargement lors d'une vente de plaquettes</td>
+    </tr>
+    <tr>
+        <td>ventelivre</td>
+        <td>Opération de livraison lors d'une vente de plaquettes</td>
+    </tr>
+    <tr>
+        <td>venteplaq</td>
+        <td>Vente de plaquettes</td>
+    </tr>
+</table>
