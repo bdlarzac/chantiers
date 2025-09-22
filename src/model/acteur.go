@@ -218,7 +218,7 @@ func GetClients(db *sqlx.DB) (acteurs []*Acteur, err error) {
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
 func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
-	////////////// remplacer par GetActeursByRole() //////////////
+	////////////// TODO remplacer par GetActeursByRole() //////////////
 	acteurs = []*Acteur{}
 	query := "select * from acteur where fournisseur"
 	err = db.Select(&acteurs, query)
@@ -231,7 +231,7 @@ func GetFournisseurs(db *sqlx.DB) (acteurs []*Acteur, err error) {
 // Renvoie les Acteurs ayant participé à une vente plaquettes en tant que client
 // Ne contient que les champs de la table acteur.
 // Les autres champs ne sont pas remplis.
-// //////////// remplacer par GetSortedActeursByRole() //////////////
+// //////////// TODO remplacer par GetSortedActeursByRole() //////////////
 func GetClientsPlaquettes(db *sqlx.DB) (acteurs []*Acteur, err error) {
 	acteurs = []*Acteur{}
 	query := `select * from acteur where id in(
@@ -260,7 +260,7 @@ func GetListeActeurs(db *sqlx.DB) (res map[int]string, err error) {
 }
 
 // Renvoie les acteurs SCTL et GFA, marqué comme propriétaires
-// //////////// remplacer par GetSortedActeursByRole() //////////////
+// //////////// TODO remplacer par GetSortedActeursByRole() //////////////
 func GetProprietaires(db *sqlx.DB) (res map[int]string, err error) {
 	res = map[int]string{}
 	acteurs := []*Acteur{}
