@@ -5,6 +5,8 @@ dbdump
 tmp
 log
 
+src/vince-data
+
 # private data
 manage/data-private
 manage/sctl-analyse/results/evolution-Exploita.csv
