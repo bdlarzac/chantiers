@@ -1,6 +1,9 @@
 /*
 Rôles des acteurs
 
+La notion de rôle n'est pas typée en base (pas de type role pour faire une enum).
+Les strings stockées dans acteur_role.code_role correspondent aux clés de RoleMap.
+
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 @history    2023-04-04 16:49:32+02:00, Thierry Graff : Creation
