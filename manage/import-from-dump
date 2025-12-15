@@ -1,7 +1,9 @@
 #!/usr/bin/bash
 
 #
-# Commande pour importer un dump postgres de la base de prod dans la base locale 
+# Commande pour importer un dump postgres de la base de prod dans la base locale
+#
+# Script à utiliser en local
 # A exécuter depuis le répertoire parent (appli/).
 #
 

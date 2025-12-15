@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+
+#
+# Commande pour transférer la base de prod dans la base beta 
+#
+# Script à utiliser sur la version beta
+# A exécuter depuis le répertoire parent (appli/).
+#
+# Suppose que les params de connexion à la base soient les mêmes pour la base prod et la base beta
+# ($DATABASE_DBNAME $DATABASE_USER $DATABASE_HOST $DATABASE_PORT - cf config.env dans prod et beta)
+#
+
+if [ $# -ne 0 ]; then
+    echo "ERREUR : cette commande ne prend aucun argument"
+    exit
+fi
+
+source config.env   # charge donc la config beta
+
+export PGPASSWORD=$DATABASE_PASSWORD
+
+schema_prod='bdlprod'           # on est dans le rep beta, on n'a pas accès à la conf de prod
+schema_beta=$DATABASE_SCHEMA    # récupéré dans config.env
+
+# dump la base de prod dans le répertoire depuis lequel ce script est exécuté (appli/)
+dumpfile='dbprod.pg.dump'
+pg_dump --file $dumpfile -h $DATABASE_HOST -p $DATABASE_PORT -U $DATABASE_USER -n $schema_prod $DATABASE_DBNAME
+
+# remplace bdlprod par bdlbeta dans le dump
+sed -i "s#$schema_prod#$schema_beta#g" $dumpfile
+
+# Supprime le schéma beta
+psql -d $DATABASE_DBNAME -U $DATABASE_USER -h $DATABASE_HOST -p $DATABASE_PORT -c "drop schema $schema_beta cascade"
+# remplit le schéma beta avec le dump de prod
+psql $DATABASE_DBNAME -U $DATABASE_USER -h $DATABASE_HOST -p $DATABASE_PORT < $dumpfile
+
+rm $dumpfile
+
+echo "Done"
