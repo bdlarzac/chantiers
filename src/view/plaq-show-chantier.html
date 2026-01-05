@@ -4,7 +4,20 @@
 */}}
 
 {{with .Details.Chantier}}
-<h2>
+
+<div id="nav-page-chantiers" class="float-right">
+    {{if .Operations}}
+        <span class="padding-right2"><a href="#operations-simples">Opérations</a></span>
+    {{end}}
+    {{if .Transports}}
+        <span class="padding-right2"><a href="#transports">Transport plateforme</a></span>
+    {{end}}
+    {{if .Rangements}}
+        <span class="padding-right2"><a href="#rangements">Rangement</a></span>
+    {{end}}
+</div>
+
+<h2 id="operations-simples">
     Opérations
     <a class="padding-left" href="/chantier/plaquette/{{.Id}}/op/new">
         <img class="bigicon inline" src="/static/img/new.png" title="Ajouter une opération simple (abattage, débardage, déchiquetage, broyage)">
@@ -69,7 +82,7 @@
 </script>
 
 <!-- *********************** Transport ************************ -->
-<h2>
+<h2 id="transports">
     Transport plateforme     
     {{if .TasActifs}}
     <a class="padding-left" href="/chantier/plaquette/{{.Id}}/transport/new">
@@ -296,7 +309,7 @@
 
 
 <!-- *********************** Rangement ************************ -->
-<h2>
+<h2 id="rangements">
     Rangement
     <a class="padding-left" href="/chantier/plaquette/{{.Id}}/range/new">
         {{if .TasActifs}}
