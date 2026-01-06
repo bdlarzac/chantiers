@@ -34,6 +34,8 @@ type PlaqOp struct {
 
 // ************************** Instance methods *******************************
 // Rôle de l'Acteur d'une opération simple
+// Un peu con, info répétée dans RoleName() de model/role.go
+// mais au début, les rôles n'existaient pas => refacto possible 
 func (op *PlaqOp) RoleName() string {
 	switch op.TypOp {
 	case "AB":
@@ -44,6 +46,8 @@ func (op *PlaqOp) RoleName() string {
 		return "débardeur"
 	case "DC":
 		return "déchiqueteur"
+	case "LO":
+		return "logistique"
 	}
 	return "??? Rôle inconnu ???"
 }

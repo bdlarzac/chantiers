@@ -26,6 +26,7 @@
             <div><input class="chk-op" type="checkbox" id="DB" name="DB"><label for="DB">Débardage</label></div>
             <div><input class="chk-op" type="checkbox" id="DC" name="DC"><label for="DC">Déchiquetage</label></div>
             <div><input class="chk-op" type="checkbox" id="BR" name="BR"><label for="BR">Broyage (nettoyage parcelle)</label></div>
+            <div><input class="chk-op" type="checkbox" id="LO" name="LO"><label for="LO">Logistique</label></div>
             <div>
                 <b>Transport plateforme</b>
                 <div class="padding-left2">
@@ -99,6 +100,7 @@ function changeOpToutRien(){
         document.getElementById("DB").checked = true;
         document.getElementById("BR").checked = true;
         document.getElementById("DC").checked = true;
+        document.getElementById("LO").checked = true;
         document.getElementById("TR").checked = true;
         document.getElementById("TR-CO").checked = true;
         document.getElementById("TR-OU").checked = true;
@@ -119,6 +121,7 @@ function changeOpToutRien(){
         document.getElementById("DB").checked = false;
         document.getElementById("BR").checked = false;
         document.getElementById("DC").checked = false;
+        document.getElementById("LO").checked = false;
         document.getElementById("TR").checked = false;
         document.getElementById("TR-CO").checked = false;
         document.getElementById("TR-OU").checked = false;

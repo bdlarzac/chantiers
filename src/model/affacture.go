@@ -59,7 +59,7 @@ func (aff *Affacture) ComputeItems(db *sqlx.DB) (err error) {
 	for _, typeActivite := range aff.TypesActivites {
 		switch typeActivite {
 		// Opérations simples
-		case "AB", "DB", "DC", "BR":
+		case "AB", "DB", "DC", "BR", "LO":
 			err = aff.computeItemsOperationSimple(db, typeActivite)
 			if err != nil {
 				return werr.Wrapf(err, "Erreur appel Affacture.computeItemsOperationSimple()")

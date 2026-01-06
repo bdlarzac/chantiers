@@ -24,6 +24,8 @@ func LabelActivite(code string) string {
 		return "Déchiquetage"
 	case "BR":
 		return "Broyage"
+	case "LO":
+		return "Logistique"
 	//
 	// Autres activités
 	//

@@ -51,6 +51,7 @@ type CoutPlaq struct {
 	Debardage    float64
 	Dechiquetage float64
 	Broyage      float64
+	Logistique   float64
 	FauxFrais    float64 // repas et réparation
 	Transport    float64
 	Rangement    float64
@@ -448,6 +449,9 @@ func (ch *Plaq) ComputeCouts(db *sqlx.DB, config *Config) (err error) {
 		case "DC":
 			ch.CoutParMap.Dechiquetage += cout / nMapSec
 			ch.CoutTotal.Dechiquetage += cout
+		case "LO":
+			ch.CoutParMap.Logistique += cout / nMapSec
+			ch.CoutTotal.Logistique += cout
 		}
 	}
 	//

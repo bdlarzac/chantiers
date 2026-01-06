@@ -165,7 +165,7 @@ func UpdateActeur(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) err
 		if err != nil {
 			return werr.Wrap(err)
 		}
-		// pour update, plus pratique de rediriger vers la liste
+		// pour update, plus pratique de rediriger vers la liste (demande de BDL)
 		ctx.Redirect = "/acteur/liste"
 		//ctx.Redirect = "/acteur/" + r.PostFormValue("id")
 		return nil

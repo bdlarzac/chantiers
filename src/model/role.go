@@ -11,14 +11,21 @@ Les strings stockées dans acteur_role.code_role correspondent aux clés de Role
 package model
 
 // Association code rôle => label
-// Attention, si on modifie les codes, il faut aussi modifier view/acteur-form.html à la main
 // Les codes correspondent aux valeurs stockées en base dans acteur_role.code_role
+// Attention, si on modifie les codes, il faut aussi modifier à la main
+// - view/acteur-form.html
+// - view/affacture-form.html
+// - ComputeItems() dans model.affacture.go
+// Si on ajoute une opération simple, aussi modifier
+// - RoleName() dans model/plaqop.go
+// - dans model.plaq.go, modifier la struct CoutPlaq et ComputeCouts()
 var RoleMap = map[string]string{
 	// Chantier plaquettes, opérations simples :
 	"PLA-AB": "Abatteur", // = bûcheron
 	"PLA-DB": "Débardeur",
 	"PLA-DC": "Déchiqueteur",
 	"PLA-BR": "Broyeur",
+	"PLA-LO": "Aide logistique",
 	// Chantier plaquettes, transport :
 	"PLT-TR": "Transporteur PF",
 	"PLT-CO": "Conducteur transport PF",

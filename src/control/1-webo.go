@@ -72,6 +72,7 @@ func WeboTypeOp() []webo.OptionString {
 		webo.OptionString{OptionValue: "typeop-DB", OptionLabel: model.LabelActivite("DB")},
 		webo.OptionString{OptionValue: "typeop-DC", OptionLabel: model.LabelActivite("DC")},
 		webo.OptionString{OptionValue: "typeop-BR", OptionLabel: model.LabelActivite("BR")},
+		webo.OptionString{OptionValue: "typeop-LO", OptionLabel: model.LabelActivite("LO")},
 	}
 }
 

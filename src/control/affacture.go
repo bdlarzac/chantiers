@@ -83,6 +83,9 @@ func ShowAffacture(ctx *ctxt.Context, w http.ResponseWriter, r *http.Request) er
 	if r.PostFormValue("BR") == "on" {
 		aff.TypesActivites = append(aff.TypesActivites, "BR")
 	}
+	if r.PostFormValue("LO") == "on" {
+		aff.TypesActivites = append(aff.TypesActivites, "LO")
+	}
 	if r.PostFormValue("TR") == "on" {
 		aff.TypesActivites = append(aff.TypesActivites, "TR")
 	}
