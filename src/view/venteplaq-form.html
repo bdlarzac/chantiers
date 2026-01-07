@@ -44,6 +44,30 @@
         <legend class="bold padding-right05 padding-left05">Facture</legend>
         <div class="grid2-form">
             
+            <label>Type de Facture</label>
+            <div>
+                <div>
+                    <input type="radio" name="radio-type-facture" value="radio-type-facture-map" id="radio-type-facture-map" onclick="showHideMwh();">
+                    <label class="normal" for="radio-type-facture-map">Normale (en map)</label>
+                </div>
+                <div>
+                    <input type="radio" name="radio-type-facture" value="radio-type-facture-mwh" id="radio-type-facture-mwh" onclick="showHideMwh();">
+                    <label class="normal" for="radio-type-facture-mwh">En Mwh</label>
+                    <div id="facture-mwh-subform" class="padding-left2">
+                        <div class=" margin-top05">
+                            <label class="optional" for="facturemwhpuht">PU HT du Mwh&nbsp;&nbsp;&nbsp;</label>
+                            <input type="number" name="facturemwhpuht" id="facturemwhpuht"
+                                   step="0.01" min="0" value="{{.FactureMwhPUHT | zero2empty}}" class="width5">
+                        </div>
+                        <div class=" margin-top05">
+                            <label class="optional" for="facturemwhnb">Nombre de Mwh</label>
+                            <input type="number" name="facturemwhnb" id="facturemwhnb"
+                                   step="1" min="0" value="{{.FactureMwhNb | zero2empty}}" class="width5">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <label class="optional" for="numfacture">Numéro Facture</label>
             <input type="text" name="numfacture" id="numfacture" value="{{.NumFacture}}" class="width15" readonly>
             
@@ -103,11 +127,23 @@
     <div class="help-content">
         <div class="help-title">Aide</div>
         <div class="section">
-            <b>Quantité</b> : La quantité d'une vente n'est pas renseignée ici.
-            <br>Elle sera renseignée dans les opérations de <b>chargement</b> liées aux livraisons de cette vente.
+            Une facture peut être de deux types :
+            <ul>
+                <li>
+                    Facture "normale", exprimée en maps.
+                    <br>Dans ce cas, la <b>quantité</b> d'une vente n'est pas renseignée ici.
+                    <br>Elle est renseignée dans les opérations de <b>chargement</b> liées aux livraisons de cette vente.
+                </li>
+                <li>
+                    Facture exprimée en Mwh.
+                    <br>Dans ce cas, la prix de la facture n'est pas lié à la quantité de maps réellement vendue.
+                    <br>Il faut spécifier le coût HT d'un Mwh et la quantité de Mwh facturée.
+                </li>
+            </ul>
         </div>
         <div class="section">
             <b>Taux TVA</b> : ce taux concerne les plaquettes ; il est le même pour toutes les ventes.
+            <br>Ce taux est aussi appliqué lorsque la facture est exprimée en Mwh.
             <br>Il peut être changé dans la configuration :
             <br>fichier <code>config.yml</code>, section <code>tva-bdl</code>, valeur <code>vente-plaquettes</code>.
         </div>
@@ -128,7 +164,6 @@
 <script>
 window.addEventListener("load", function(){
     initialize();
-    
 });
 
 // ***************************************
@@ -143,6 +178,8 @@ function initialize(){
         else{
             document.getElementById("CHOOSE_FOURNISSEUR").setAttribute("selected", "selected");
         }
+        // par défaut, facture normale (en map, pas en mwh)
+        document.getElementById("radio-type-facture-map").setAttribute("selected", "selected");
     }
     // form update
     else{
@@ -165,6 +202,7 @@ function initialize(){
     }
     // form new et update
     changeFactureLivraison();
+    showHideMwh();
 }
 
 // ***************************************
@@ -199,6 +237,16 @@ function changeUniteFactureLivraison(){
     }
     else{
         document.getElementById("facturelivraisonnbkm").disabled = false;
+    }
+}
+
+function showHideMwh(){
+    const subformElt = document.getElementById("facture-mwh-subform");
+    if(document.getElementById("radio-type-facture-mwh").checked == true){
+        subformElt.style.display = 'block';
+    }
+    else{
+        subformElt.style.display = 'none';
     }
 }
 

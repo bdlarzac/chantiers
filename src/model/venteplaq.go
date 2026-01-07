@@ -37,14 +37,17 @@ type VentePlaq struct {
 	DateVente     time.Time
 	DatePaiement  time.Time
 	// Facture
+	TypeFacture           string            // MA (facture normale en maps) ou MW (Mwh)
 	NumFacture            string
 	DateFacture           time.Time
 	FactureLivraison      bool
 	FactureLivraisonPUHT  float64
 	FactureLivraisonTVA   float64
 	FactureNotes          bool
-	FactureLivraisonUnite string  // voir note dans commentaire de la classe
-	FactureLivraisonNbKm  float64 // voir note dans commentaire de la classe
+	FactureLivraisonUnite string  // voir note dans commentaire du présent fichier
+	FactureLivraisonNbKm  float64 // voir note dans commentaire du présent fichier
+	FactureMwhNb          float64 `db:"facture_mwh_nb"`
+	FactureMwhPUHT        float64 `db:"facture_mwh_pu"`
 	//
 	Notes string
 	// Pas stocké en base

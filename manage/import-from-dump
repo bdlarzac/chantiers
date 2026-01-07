@@ -22,6 +22,8 @@ zipfile=$dumpfile.zip
 # $RESTORE_DIR vient de config.env
 if [ ! -f $RESTORE_DIR/$zipfile ]; then
     echo "Fichier inexistant: $RESTORE_DIR/$zipfile"
+    echo "Spécifier le nom du fichier zip contenant le dump postgres SANS l'extension zip"
+    echo "Ex: $0 bdl-2021-11-10-155100.pgdump"
     exit
 fi
 

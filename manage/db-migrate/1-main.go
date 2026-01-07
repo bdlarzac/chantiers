@@ -88,6 +88,8 @@ func main() {
 		Migrate_2023_07_21_bloc_notes(ctx)
 	case "Migrate_2024_04_17_ugs_orphelines__27":
 		Migrate_2024_04_17_ugs_orphelines__27(ctx)
+	case "Migrate_2026_01_07_facture_mwh__30":
+		Migrate_2026_01_07_facture_mwh__30(ctx)
 	default:
 		fmt.Println("Migration inconnue : " + migration)
 		fmt.Println("Modifier 1.main.go pour la rajouter dans le switch")

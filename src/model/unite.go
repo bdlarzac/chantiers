@@ -12,11 +12,13 @@ package model
 // - plaqop.unite
 // - chaufer.unite
 // - chautre.unite
+// - venteplaq.typefacture
 var UniteMap = map[string]string{
 	"HE": "heures",
 	"JO": "jours",
 	"M3": "m<sup>3</sup>",
 	"MA": "maps",
+	"MW": "mwh",
 	"ST": "stères",
 	"TO": "tonnes",
 }
