@@ -46,6 +46,7 @@ func MustInitTemplates() {
 		"labelExploitation": labelExploitation,
 		"labelRole":         labelRole,
 		"labelStockFrais":   labelStockFrais,
+		"labelTypeFacture":  labelTypeFacture,
 		"labelTypeVente":    labelTypeVente,
 		"labelTypo":         labelTypo,
 		"labelTypo_long":    labelTypo_long,
@@ -208,6 +209,11 @@ func labelRole(code string) template.HTML {
 // Nom d'un type de vente (pour chautre: bois sur pied, bord de route...), à partir de son code
 func labelTypeVente(code string) template.HTML {
 	return template.HTML(model.ChautreTypeVenteMap[code])
+}
+
+// Nom d'un type de facture pour une vente plaquettes (Map ou Mwh), à partir de son code
+func labelTypeFacture(code string) template.HTML {
+	return template.HTML(model.VentePlaqTypeFacture[code])
 }
 
 // Nom d'une typo (couche typologique venant du PSG) utilisée dans cette appli, à partir de son code

@@ -24,7 +24,7 @@
         <label for="puht">PU HT</label>
         <div>
             <input type="number" name="puht" id="puht" step="0.01" min="0" value="{{.PUHT | zero2empty}}" class="width5">
-            &euro; / map
+            &euro; / <span id="label-unite-puht">{{.TypeFacture | labelTypeFacture}}</span>
         </div>
         
         <label for="tva">Taux TVA</label>
@@ -47,20 +47,15 @@
             <label>Type de Facture</label>
             <div>
                 <div>
-                    <input type="radio" name="radio-type-facture" value="radio-type-facture-map" id="radio-type-facture-map" onclick="showHideMwh();">
+                    <input type="radio" name="radio-type-facture" value="radio-type-facture-map" id="radio-type-facture-map" onclick="changeFactureMwh();">
                     <label class="normal" for="radio-type-facture-map">Normale (en map)</label>
                 </div>
                 <div>
-                    <input type="radio" name="radio-type-facture" value="radio-type-facture-mwh" id="radio-type-facture-mwh" onclick="showHideMwh();">
-                    <label class="normal" for="radio-type-facture-mwh">En Mwh</label>
+                    <input type="radio" name="radio-type-facture" value="radio-type-facture-mwh" id="radio-type-facture-mwh" onclick="changeFactureMwh();">
+                    <label class="normal" for="radio-type-facture-mwh">En mwh</label>
                     <div id="facture-mwh-subform" class="padding-left2">
                         <div class=" margin-top05">
-                            <label class="optional" for="facturemwhpuht">PU HT du Mwh&nbsp;&nbsp;&nbsp;</label>
-                            <input type="number" name="facturemwhpuht" id="facturemwhpuht"
-                                   step="0.01" min="0" value="{{.FactureMwhPUHT | zero2empty}}" class="width5">
-                        </div>
-                        <div class=" margin-top05">
-                            <label class="optional" for="facturemwhnb">Nombre de Mwh</label>
+                            <label for="facturemwhnb">Nombre de mwh</label>
                             <input type="number" name="facturemwhnb" id="facturemwhnb"
                                    step="1" min="0" value="{{.FactureMwhNb | zero2empty}}" class="width5">
                         </div>
@@ -209,7 +204,7 @@ function initialize(){
     }
     // form new et update
     changeFactureLivraison();
-    showHideMwh();
+    changeFactureMwh();
 }
 
 // ***************************************
@@ -248,13 +243,15 @@ function changeUniteFactureLivraison(){
 }
 
 /** Gère affichage sous-formulaire type de facture **/
-function showHideMwh(){
+function changeFactureMwh(){
     const subformElt = document.getElementById("facture-mwh-subform");
     if(document.getElementById("radio-type-facture-mwh").checked == true){
         subformElt.style.display = 'block';
+        document.getElementById("label-unite-puht").innerHTML = {{"MW" | labelTypeFacture}};
     }
     else{
         subformElt.style.display = 'none';
+        document.getElementById("label-unite-puht").innerHTML = {{"MA" | labelTypeFacture}};
     }
 }
 

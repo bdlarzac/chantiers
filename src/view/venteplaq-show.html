@@ -6,7 +6,12 @@
 {{with .Details.Vente}}
 {{$idVente := .Id}}
 <script>
-    const prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
+    let prixPlaquettesHT = 0;
+    {{if eq .TypeFacture "MA"}}
+        prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
+    {{else}}
+        prixPlaquettesHT = prixHT({{.PUHT}}, {{.FactureMwhNb}});
+    {{end}}
     let prixLivraisonHT = 0;
     let prixTotalHT = prixPlaquettesHT;
     {{if .FactureLivraison}}
@@ -46,15 +51,18 @@
     <span>Client</span>
     <span class="bold"><a href="/acteur/{{.IdClient}}">{{.Client.String}}</a></span>
     
-    <span>Fournisseur</span>
-    <span class="bold"><a href="/acteur/{{.IdFournisseur}}">{{.Fournisseur.Nom}}</a></span>
+    <span class="margin-top05">Fournisseur</span>
+    <span class="bold margin-top05"><a href="/acteur/{{.IdFournisseur}}">{{.Fournisseur.Nom}}</a></span>
     
-    <span>Date vente</span>
-    <span class="bold">{{.DateVente | dateFr}}</span>
+    <span class="margin-top05">Date vente</span>
+    <span class="bold margin-top05">{{.DateVente | dateFr}}</span>
+    
+    <span class="margin-top05">Quantité livrée</span>
+    <span class="bold margin-top05">{{.Qte}} maps</span>
     
     {{if .Chantiers}}
-        <div>Chantiers</div>
-        <div>
+        <div class="margin-top05">Chantiers</div>
+        <div class="margin-top05">
         {{range .Chantiers}}
             <div><a href="/chantier/plaquette/{{.Id}}">{{.FullString}}</a></div>
         {{end}}
@@ -68,7 +76,11 @@
 <div class="margin-bottom bold center">Prix plaquettes</div>
 <div class="grid2-pres">
     <span>Quantité</span>
-    <span class="bold"><script>document.write(formatNb({{.Qte}}));</script> maps</span>
+    {{if eq .TypeFacture "MA"}}
+        <span class="bold"><script>document.write(formatNb({{.Qte}}));</script> maps</span>
+    {{else}}
+        <span class="bold"><script>document.write(formatNb({{.FactureMwhNb}}));</script> mwh</span>
+    {{end}}
     
     <span>PU HT</span>
     <span class="bold">{{.PUHT | twoDigits}} &euro;</span>

@@ -1,6 +1,8 @@
 /*
 La table facture permet la génération automatique du numéro de facture.
 
+Les labels pour les types de facture sont dans model/venteplaq.go
+
 @copyright  BDL, Bois du Larzac.
 @licence    GPL, conformémént au fichier LICENCE situé à la racine du projet.
 @history    2023-02-23 17:55:53+01:00, Thierry Graff : Creation

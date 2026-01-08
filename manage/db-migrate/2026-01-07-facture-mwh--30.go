@@ -21,7 +21,6 @@ func Migrate_2026_01_07_facture_mwh__30(ctx *ctxt.Context) {
 	db := ctx.DB
 	queries := []string{
 	    "alter table venteplaq add column typefacture char(2)            -- 'MA' (map) ou 'MW' (Mwh)",
-	    "alter table venteplaq add column facture_mwh_pu numeric not null default 0",
 	    "alter table venteplaq add column facture_mwh_nb numeric not null default 0",
 	    "update venteplaq set typefacture='MA'",
 	}
