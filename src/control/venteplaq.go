@@ -19,6 +19,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+"fmt"
 )
 
 type detailsVentePlaqForm struct {
@@ -292,6 +293,29 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 	vente.DateVente, err = time.Parse("2006-01-02", r.PostFormValue("datevente"))
 	if err != nil {
 		return vente, werr.Wrap(err)
+	}
+	//
+fmt.Printf("%+v\n", r.PostForm)
+    // On gère le type de facture avant pour le PUHT ?
+	if r.PostFormValue("radio-type-facture") == "radio-type-facture-map" {
+	    vente.TypeFacture = "MA"
+	} else {
+	    vente.TypeFacture = "MW"
+	}
+	if vente.TypeFacture == "MA" {
+	    vente.FactureMwhPUHT = 0
+	    vente.FactureMwhNb = 0
+	} else {
+	    vente.FactureMwhPUHT, err = strconv.ParseFloat(r.PostFormValue("facturemwhpuht"), 32)
+	    vente.FactureMwhPUHT = tiglib.Round(vente.FactureMwhPUHT, 2)
+        if err != nil {
+            return vente, werr.Wrap(err)
+        }
+	    vente.FactureMwhNb, err = strconv.ParseFloat(r.PostFormValue("facturemwhnb"), 32)
+	    vente.FactureMwhNb = tiglib.Round(vente.FactureMwhNb, 2)
+        if err != nil {
+            return vente, werr.Wrap(err)
+        }
 	}
 	//
 	// Facture

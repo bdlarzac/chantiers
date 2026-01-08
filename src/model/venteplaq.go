@@ -363,6 +363,9 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
         datepaiement,
         numfacture,
         datefacture,
+        typefacture,
+        facture_mwh_pu,
+        facture_mwh_nb,
         facturelivraison,
         facturelivraisonpuht,
         facturelivraisonunite,
@@ -370,7 +373,7 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
         facturelivraisontva,
         facturenotes,
         notes
-        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) returning id`
+        ) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) returning id`
 	id := int(0)
 	err := db.QueryRow(
 		query,
@@ -382,6 +385,9 @@ func InsertVentePlaq(db *sqlx.DB, vp *VentePlaq) (int, error) {
 		vp.DatePaiement,
 		vp.NumFacture,
 		vp.DateFacture,
+		vp.TypeFacture,
+		vp.FactureMwhPUHT,
+		vp.FactureMwhNb,
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
 		vp.FactureLivraisonUnite,
@@ -405,6 +411,9 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
         datepaiement,
         numfacture,
         datefacture,
+        typefacture,
+        facture_mwh_pu,
+        facture_mwh_nb,
         facturelivraison,
         facturelivraisonpuht,
         facturelivraisonunite,
@@ -412,7 +421,7 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
         facturelivraisontva,
         facturenotes,
         notes
-        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) where id=$16`
+        ) = ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) where id=$19`
 	_, err := db.Exec(
 		query,
 		vp.IdClient,
@@ -423,6 +432,9 @@ func UpdateVentePlaq(db *sqlx.DB, vp *VentePlaq) error {
 		vp.DatePaiement,
 		vp.NumFacture,
 		vp.DateFacture,
+		vp.TypeFacture,
+		vp.FactureMwhPUHT,
+		vp.FactureMwhNb,
 		vp.FactureLivraison,
 		vp.FactureLivraisonPUHT,
 		vp.FactureLivraisonUnite,

@@ -179,7 +179,7 @@ function initialize(){
             document.getElementById("CHOOSE_FOURNISSEUR").setAttribute("selected", "selected");
         }
         // par défaut, facture normale (en map, pas en mwh)
-        document.getElementById("radio-type-facture-map").setAttribute("selected", "selected");
+        document.getElementById("radio-type-facture-map").setAttribute("checked", "checked");
     }
     // form update
     else{
@@ -194,6 +194,13 @@ function initialize(){
                 document.getElementById("FACTURELIVRAISONUNITE-KM").selected = true;
                 document.getElementById("facturelivraisonnbkm").disabled = false;
             {{end}}
+        }
+        //
+        if({{.TypeFacture}} == "MA"){
+            document.getElementById("radio-type-facture-map").setAttribute("checked", "checked");
+        }
+        else{
+            document.getElementById("radio-type-facture-mwh").setAttribute("checked", "checked");
         }
         //
         if({{.FactureNotes}}){
@@ -240,6 +247,7 @@ function changeUniteFactureLivraison(){
     }
 }
 
+/** Gère affichage sous-formulaire type de facture **/
 function showHideMwh(){
     const subformElt = document.getElementById("facture-mwh-subform");
     if(document.getElementById("radio-type-facture-mwh").checked == true){
