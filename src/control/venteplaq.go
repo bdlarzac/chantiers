@@ -19,7 +19,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-"fmt"
 )
 
 type detailsVentePlaqForm struct {
@@ -295,8 +294,6 @@ func ventePlaqForm2var(ctx *ctxt.Context, r *http.Request) (*model.VentePlaq, er
 		return vente, werr.Wrap(err)
 	}
 	//
-fmt.Printf("%+v\n", r.PostForm)
-    // On gère le type de facture avant pour le PUHT ?
 	if r.PostFormValue("radio-type-facture") == "radio-type-facture-map" {
 	    vente.TypeFacture = "MA"
 	} else {
@@ -456,6 +453,14 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	// ligne avec valeurs de la vente
 	//
 	var prixHTPlaquettes, prixHT float64
+	var qte, map_mwh string
+	if vente.TypeFacture == "MA" {
+	    map_mwh = "MAP"
+	    qte = strconv.FormatFloat(vente.Qte, 'f', 2, 64)
+	} else {
+	    map_mwh = "MWH"
+	    qte = strconv.FormatFloat(vente.FactureMwhNb, 'f', 2, 64)
+	}
 	pdf.SetFont("Arial", "B", 10)
 	x = x0
 	y += he
@@ -466,11 +471,11 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w2
-	pdf.MultiCell(wi, he, strconv.FormatFloat(vente.Qte, 'f', 2, 64), "RB", "C", false)
+	pdf.MultiCell(wi, he, qte, "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w3
-	pdf.MultiCell(wi, he, "MAP", "RB", "C", false)
+	pdf.MultiCell(wi, he, map_mwh, "RB", "C", false)
 	x += wi
 	pdf.SetXY(x, y)
 	wi = w4
@@ -616,16 +621,17 @@ func ShowFactureVentePlaq(ctx *ctxt.Context, w http.ResponseWriter, r *http.Requ
 	x = x0
 	y += 2 * he
 	pdf.SetXY(x, y)
-	pdf.Write(he, tr("Livraison effectuée par"))
+	pdf.Write(he, tr("Livraisons"))
 	y += he
 	for _, livraison := range vente.Livraisons {
 		pdf.SetXY(x, y)
+		pdf.Write(he, "- "+tr(strconv.FormatFloat(livraison.Qte, 'f', 2, 64))+" maps")
+		pdf.Write(he, " le "+tr(tiglib.DateFr(livraison.DateLivre)))
 		if livraison.TypeCout == "G" { // coût global
-			pdf.Write(he, "- "+tr(livraison.Livreur.String()))
+			pdf.Write(he, " par "+tr(livraison.Livreur.String()))
 		} else { // coût détaillé
-			pdf.Write(he, "- "+tr(livraison.Conducteur.String()))
+			pdf.Write(he, " par "+tr(livraison.Conducteur.String()))
 		}
-		pdf.Write(he, ", le "+tr(tiglib.DateFr(livraison.DateLivre)))
 
 		y += he
 	}
