@@ -17,7 +17,6 @@ package model
 // - view/affacture-form.html
 // - ComputeItems() dans model.affacture.go
 // Si on ajoute une opération simple, aussi modifier
-// - RoleName() dans model/plaqop.go
 // - dans model.plaq.go, modifier la struct CoutPlaq et ComputeCouts()
 var RoleMap = map[string]string{
 	// Chantier plaquettes, opérations simples :
