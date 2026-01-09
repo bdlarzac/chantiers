@@ -10,6 +10,7 @@
     {{if eq .TypeFacture "MA"}}
         prixPlaquettesHT = prixHT({{.PUHT}}, {{.Qte}});
     {{else}}
+        // facture en mwh
         prixPlaquettesHT = prixHT({{.PUHT}}, {{.FactureMwhNb}});
     {{end}}
     let prixLivraisonHT = 0;
@@ -147,12 +148,12 @@
     <div class="flex-wrap">
         <div class="padding-right border-right margin-right">
             <div class="grid2-pres">
-                <span>Date facture</span>
+                <span>Facturation</span>
                 <span class="bold">
-                    {{if not .DateFacture.IsZero}}
-                        {{.DateFacture | dateFr}}
+                    {{if eq .TypeFacture "MA"}}
+                        Maps
                     {{else}}
-                        NON SPECIFIÉE
+                        Mwh
                     {{end}}
                 </span>
                 
@@ -162,6 +163,15 @@
                         {{.NumFacture}}
                     {{else}}
                         NON SPECIFIÉ
+                    {{end}}
+                </span>
+                
+                <span class="margin-top05">Date facture</span>
+                <span class="bold margin-top05">
+                    {{if not .DateFacture.IsZero}}
+                        {{.DateFacture | dateFr}}
+                    {{else}}
+                        NON SPECIFIÉE
                     {{end}}
                 </span>
                 
